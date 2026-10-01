@@ -31,7 +31,7 @@ For the handoff, name the owner of each external integration, define what is exc
 For the SaaS demo request:
 
 - A request without a full name, valid email, company, team size or privacy acknowledgement is blocked.
-- Team size presents the three agreed ranges in both languages.
+- Team size presents the three agreed ranges in every selected language.
 - The helper text explains where the invitation will be sent.
 - Production submission prevents duplicate requests while waiting for an API response.
 - A successful response displays the agreed confirmation copy. A failure preserves input and offers a retry.

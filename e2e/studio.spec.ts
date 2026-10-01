@@ -204,7 +204,9 @@ test('Persian UI and preview use RTL while form languages stay limited to two', 
   expect(
     await page.evaluate((): boolean => document.documentElement.scrollWidth <= window.innerWidth),
   ).toBe(true);
-  await page.screenshot({ path: 'reports/persian-rtl-mobile.png' });
+  await page.screenshot({ path: 'reports/persian-rtl-mobile.png', fullPage: true });
+  await page.locator('.rendered-form').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'reports/persian-rtl-mobile-preview.png' });
 });
 
 test('configure, restore, export and import a commercial form', async ({ page }): Promise<void> => {
@@ -297,7 +299,7 @@ test('records a complete review, exports its handoff and invalidates it after a 
   await expect(page.getByRole('button', { name: 'Review dokumentieren' })).toBeDisabled();
 });
 
-test('both locales, each workflow step, themes and mobile layout pass an axe scan', async ({
+test('German and English workflows, themes and mobile layout pass an axe scan', async ({
   page,
 }): Promise<void> => {
   await page.goto('/#workspace');

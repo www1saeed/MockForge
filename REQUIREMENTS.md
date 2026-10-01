@@ -14,7 +14,7 @@ The open-source introduction, documentation and presentation must explain why th
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Product brief   | Name, owner, audience, goal and scope are editable and exported.                                                                                                                                                                                                  |
 | Navigation      | Overview first; full-width workspace with narrow icon links, persistent header and footer linking Saeed and 1saeed.com.                                                                                                                                           |
-| Copy            | Select German, English or both. Title, introduction, field/choice/tooltip and button copy are editable in each selected language. Switching modes retains inactive copy.                                                                                          |
+| Copy            | Support German, English and Persian while allowing one or two active form languages. Title, introduction, field/choice/tooltip and button copy are editable in each selected language. Switching retains inactive copy.                                                  |
 | Design          | Bootstrap plus Material, Carbon and Fluent inspired previews. Explicit integration limitations.                                                                                                                                                                   |
 | Fields          | Text, email, number, URL, date, textarea, select, radio, checkbox and repeatable group. Add, edit, delete and move by buttons; group children have the same leaf-field editor.                                                                                    |
 | Repeat groups   | Cards or semantic tables with individually validated native controls. Configure a minimum of 0–20 and a maximum of 1–20 entries, and up to 20 child definitions. No nested groups. Add responses locally; confirm row deletion. Reset restores the minimum count. |
@@ -41,15 +41,15 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Follow the documented Clean Code conventions and pass every configured quality gate. Maintain behavior-focused unit/component and E2E regression coverage, with minimum Jest coverage of 80% statements, 75% branches, 80% functions and 80% lines. See the [quality report](docs/QUALITY.md) for measured results and analysis scope.
 
 - Every explicit field/button deletion and simulated delete action requires a modal confirmation with a named target, safe cancellation and keyboard focus containment.
-- Shared, dismissible DE/EN toast feedback covers information, successes, warnings and errors. Errors remain longer than ordinary notifications; hover/focus pauses expiry.
+- Shared, dismissible DE/EN/FA toast feedback covers information, successes, warnings and errors. Errors remain longer than ordinary notifications; hover/focus pauses expiry.
 
 - Public npm dependencies and static deployment.
-- Strict TypeScript and schema 1.2.0 validation with a one-megabyte import limit, 100-definition limit including group children, 20-button limit and 500-character pattern limit. Bound repeat rows/children, reject nesting and duplicate ids across the entire form. Upgrade this Studio's own 1.0.0 and 1.1.0 files; preserve rejection of foreign editions.
+- Strict TypeScript and schema 1.3.0 validation with a one-megabyte import limit, at most two selected languages, 100-definition limit including group children, 20-button limit and 500-character pattern limit. Bound repeat rows/children, reject nesting and duplicate ids across the entire form. Upgrade this Studio's own 1.0.0, 1.1.0 and 1.2.0 files; preserve rejection of foreign editions.
 - Responsive shell without horizontal page overflow on mobile.
 - Visible labels, keyboard-operable actions and native modal focus management.
 - Selected-field reorder and trash actions beside the field list; a sticky, internally scrollable desktop preview during long editor sessions. Narrow screens use normal stacked flow.
 - Organized domain/components/styles, explanatory English comments and enforced Prettier formatting for open-source contributions.
-- German source copy with English targets. English documentation.
+- German and English base copy with a complete Persian runtime catalog. English documentation.
 - WCAG 2.1 AA as the accessibility target, verified with automated axe checks and manual keyboard review.
 - No unsupported claims about development time saved.
 

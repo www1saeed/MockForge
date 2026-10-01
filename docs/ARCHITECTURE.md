@@ -6,7 +6,7 @@ The project has its own manifest, lockfile, Angular configuration, source, tests
 
 ## Domain and state
 
-`project.ts` is the public domain entry point. The JSON 1.2.0 contract lives in `project.model.ts`, fictional factories in `project.examples.ts`, unknown-input validation in `project.validation.ts` and Markdown export in `project.handoff.ts`. These leaf modules import the model directly to avoid circular dependencies. `ProjectStore` is component-provided and owns the current immutable specification with Angular signals. Signals suit this synchronous single-form application and keep derived selection/review readiness readable without a second state library.
+`project.ts` is the public domain entry point. The JSON 1.3.0 contract lives in `project.model.ts`, fictional factories in `project.examples.ts`, unknown-input validation in `project.validation.ts` and Markdown export in `project.handoff.ts`. These leaf modules import the model directly to avoid circular dependencies. `ProjectStore` is component-provided and owns the current immutable specification with Angular signals. Signals suit this synchronous single-form application and keep derived selection/review readiness readable without a second state library.
 
 State changes go through `update`, which clears every review checkbox and acknowledgement timestamp. `updateReview` changes only the review record. `replace` clones an already validated or locally created project. The UI resets imported acknowledgements because another file cannot establish review identity in this workspace.
 
@@ -14,7 +14,7 @@ LocalStorage writes are synchronous after each edit. A form specification is sma
 
 ## Import and rendering
 
-The file reader rejects files over 1 MB. `validateProject` checks schema version, selected languages, nine leaf types plus groups, bounded constraints, localized strings, options, unique safe field/button ids, button variants/actions/class tokens and the review record. Group structure is checked before flattening, so untrusted nested data is never recursively traversed. `parseProject` upgrades this Studio's own 1.0.0 files by adding both languages, empty tooltip/pattern properties and a button from the old submit copy. Studio 1.1.0 changes only its version; missing required properties are not repaired. Both migrations validate the result and clear acknowledgement. Other MockForge editions remain incompatible. A valid file becomes a pending replacement until the native modal returns a choice.
+The file reader rejects files over 1 MB. `validateProject` checks schema version, one or two selected languages, nine leaf types plus groups, bounded constraints, localized strings, options, unique safe field/button ids, button variants/actions/class tokens and the review record. Group structure is checked before flattening, so untrusted nested data is never recursively traversed. `parseProject` upgrades this Studio's 1.0.0 and 1.1.0 formats through their existing compatibility path, then recursively adds empty Persian values to every localized property. Schema 1.2.0 supports the same Persian migration, including group children. Every migration validates the result and clears acknowledgement. Other MockForge editions remain incompatible. A valid file becomes a pending replacement until the native modal returns a choice.
 
 ## Repeatable groups
 
@@ -53,7 +53,9 @@ References checked for the design direction:
 
 ## Internationalization decision
 
-The independent project uses a typed DE/EN runtime catalog instead of build-time Angular XLIFF. Product-owner discussions benefit from switching language without rebuilding or navigating away. Form language selection (DE, EN or both) is separate from UI and preview language. Both translations remain in domain data when one is inactive. Editors render every selected language together; review readiness checks selected languages only. The catalog check command retains a familiar i18n validation gate. Browser-native validation messages follow the browser/OS language; custom pattern messages use the preview language.
+The independent project uses typed DE/EN and Persian runtime catalogs instead of build-time Angular XLIFF. Product-owner discussions benefit from switching language without rebuilding or navigating away. The UI, configured form languages and preview language are independent. A project stores all three translations but activates only one or two at a time, preventing the field and button editors from becoming three columns wide. Review readiness checks only selected languages.
+
+Persian UI sets `lang="fa"` and `dir="rtl"` on the document. The preview sets direction from its own language, so an LTR Studio can review an RTL form and vice versa. CSS logical properties mirror shell, navigation, borders and spacing. Persian sections use the local IranSans webfont; technical values such as URLs, email addresses, RegEx patterns and CSS class tokens remain LTR. The catalog check verifies matching, non-empty entries in all three UI languages. Browser-native validation messages still follow the browser/OS language; custom pattern messages use the preview language.
 
 ## Deployment and privacy
 

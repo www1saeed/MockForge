@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 84 passing automated tests: 64 unit/component tests and 20 end-to-end tests.** Verified on October 1, 2026, with **98.16% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 87 passing automated tests: 66 unit/component tests and 21 end-to-end tests.** Verified on October 1, 2026, with **98.24% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -68,12 +68,12 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 ## What works
 
 - An overview introduces the approach before opening the full-width, five-step workspace. A narrow icon rail, persistent header and footer keep navigation available.
-- German-only, English-only or bilingual forms. Selected languages appear together in field and button editors, independently of the Studio interface language.
+- German, English and Persian form copy, with one or two languages active at a time so field and button editors stay readable. Inactive translations remain stored.
 - Nine native field types plus repeatable groups with card/table layouts, editable child fields and minimum/maximum entry counts. Required rules, text length constraints, localized tooltips and full-value RegEx patterns have localized messages.
 - Show or hide the interactive preview on every step; it starts hidden for the brief, copy and form editor. Choose its language and desktop/mobile width separately.
 - Configurable buttons: localized labels, primary/secondary/ghost/danger appearance, behavior, CSS classes, developer notes and order. Validation, submission, saving, cancellation, deletion and next/back actions are local simulations; reset clears preview inputs.
 - Real Bootstrap form styling plus Material, Carbon and Fluent inspired visual presets.
-- German/English UI and form copy, with instant switching.
+- German, English and Persian UI with instant switching. Persian uses RTL layout and the bundled IranSans webfont; the Studio UI and form preview can use different directions.
 - Commercial demos: SaaS lead qualification, commerce returns, agency inquiries and the large Atlas project/procurement request with every field type, team cards and a line-item table.
 - LocalStorage persistence, JSON import/export and a Markdown implementation brief.
 - Review checklist with reviewer name and timestamp. Specification edits invalidate the review.
@@ -86,13 +86,13 @@ Material, Carbon and Fluent presets are **visual approximations**, not integrati
 
 1. Open the SaaS example and agree on the business goal and scope.
 2. Discuss whether a personal email is allowed and which team-size options sales needs.
-3. Inspect both languages, validation and the mobile preview.
+3. Inspect each selected language, validation and the mobile preview.
 4. Document the expected response after submission and the future CRM integration.
 5. Resolve the open questions, complete the review and export the JSON together with the brief.
 
 The review record is local and unauthenticated. It supports an actual conversation and explicit agreement outside the app. Imports reset review status. Preview inputs are not persisted or submitted. Backend integration, email delivery, refunds and CRM workflows are outside this mockup tool.
 
-JSON exports use Studio schema **1.2.0**. Existing Studio 1.0.0 and 1.1.0 drafts are upgraded on restore/import; 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. Inactive language copy is retained when switching language modes. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
+JSON exports use Studio schema **1.3.0**. Existing Studio 1.0.0, 1.1.0 and 1.2.0 drafts are upgraded on restore/import; missing Persian values start empty and 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. One or two of the three supported form languages can be active, while inactive copy remains stored. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
 
 Repeat groups support one level of up to 20 child fields and 0–20 entries, with at least one child definition. The total specification limit of 100 counts groups and children together. Preview entries validate independently and use distinct radio groups. Removing an entry asks for confirmation; resetting responses returns groups to their minimum count. Response values are never persisted or exported. The Atlas example contains 26 field definitions: 12 regular fields, two groups and 12 child fields. Its team limit is 1–8 and its procurement limit is 1–12. Pricing, totals and finance approval remain production requirements to agree separately.
 
@@ -127,7 +127,7 @@ Unit/component tests exercise import validation, immutable persistence, review i
 
 ## License
 
-The newly authored source in this project is licensed under [MIT](LICENSE). Third-party dependencies retain their own licenses. The release workflow preserves Angular's generated dependency license notices.
+The newly authored source in this project is licensed under [MIT](LICENSE). Third-party dependencies and bundled fonts retain their own licenses. Confirm that your IranSans license permits public redistribution before publishing the font files; otherwise replace or omit them. The release workflow preserves Angular's generated dependency license notices.
 
 ## Group editing and table spacing
 
@@ -139,4 +139,4 @@ Form tooltips use Bootstrap. Each field can place its tooltip on the title or on
 
 Open **Edit child fields** to work with a child list beside its properties. The main field list becomes a narrow type-icon rail with Bootstrap tooltips showing each field's index, name and type. Closing child editing or selecting a main field restores the full list. The main list can also be collapsed or expanded manually; these view choices do not alter the specification.
 
-Table groups offer **Table fields without gaps** for a continuous grid. This boolean setting is saved and exported, participates in review invalidation and appears in the Markdown handoff. Existing schema 1.2.0 files without the optional `group.gapless` property retain comfortable spacing.
+Table groups offer **Table fields without gaps** for a continuous grid. This boolean setting is saved and exported, participates in review invalidation and appears in the Markdown handoff. Migrated schema 1.2.0 files without the optional `group.gapless` property retain comfortable spacing.

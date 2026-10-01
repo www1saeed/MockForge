@@ -8,7 +8,7 @@ Read the [architecture](ARCHITECTURE.md) before changing behavior. Keep this pro
 - `project.examples.ts`, `project.validation.ts` and `project.handoff.ts` own fictional examples, unknown-input validation and Markdown export respectively. `project.ts` is their public entry point.
 - `ProjectStore` owns immutable specification changes, persistence and review invalidation.
 - `AppComponent` coordinates navigation and editing. `FieldListComponent` emits selection and structural actions; `FormPreviewComponent` owns temporary native form responses and local simulations.
-- `studio.config.ts` holds typed navigation and workflow configuration. All visible copy belongs in the paired German/English catalog.
+- `studio.config.ts` holds typed navigation and workflow configuration. All visible copy belongs in the typed German/English base catalog and complete Persian catalog.
 - `FeedbackService` owns deletion requests and toast timers; `FeedbackComponent` owns the native confirmation modal and live notification region. Deletion handlers capture stable ids and mutate the specification only inside the confirmed callback.
 - `PreviewFieldComponent` renders native leaf controls; `RepeatGroupComponent` owns transient repeat rows. Keep row identities distinct from definition ids, validate each instance and never persist responses. Group definitions support one level only.
 - `src/styles.css` imports styles by responsibility: foundation, shell, workspace, preview, presets and content. Change the owning rule rather than adding another override at the bottom.
@@ -16,6 +16,8 @@ Read the [architecture](ARCHITECTURE.md) before changing behavior. Keep this pro
 Use strict TypeScript and explicit return types. Document public responsibilities and non-obvious constraints in English: explain state ownership, validation boundaries and why browser behavior matters. Avoid comments that merely repeat an assignment. Keep imports flowing from presentation to domain; domain modules do not depend on Angular.
 
 The header and footer frame one scrolling main area. On wide screens the preview sticks inside that area and scrolls internally when needed. Workspace containers use `overflow: clip` so they do not accidentally replace the sticky scrolling ancestor. On narrow screens the preview returns to normal document flow.
+
+Use CSS logical properties for inline spacing and borders so RTL remains a first-class layout rather than an override. Keep technical values such as RegEx patterns, URLs, email addresses and CSS class tokens LTR. Studio direction follows the UI locale; preview direction follows its independently selected form language.
 
 ## Local verification
 

@@ -52,7 +52,7 @@ Let's review one form before committing to its implementation. Bring your desire
 
 For a larger discussion, open **Atlas project & procurement**. It contains every field type, repeated team cards and a procurement table. Add a second stakeholder, compare card/table layouts, switch preview language and try an invalid item code. Agree entry limits, required child data and the deletion confirmation. The mockup captures quantities but performs no pricing, purchasing or finance approval; record those production rules in decisions and notes.
 
-When saying "we agree exact wording," edit a label and show both languages. When saying "we clarify behavior," record success/failure requirements in a note. When saying "we preserve the agreement," export the brief. When saying "we review later changes," edit a field after acknowledgement and show the reset.
+When saying "we agree exact wording," edit a label and show the selected languages. When saying "we clarify behavior," record success/failure requirements in a note. When saying "we preserve the agreement," export the brief. When saying "we review later changes," edit a field after acknowledgement and show the reset.
 
 Do not equate preview confirmation with email delivery, CRM routing or a refund. Those are requirements to agree for production work.
 
