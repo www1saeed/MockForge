@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { BootstrapTooltipDirective } from './bootstrap-tooltip.directive';
 import { Field, Locale } from './project.model';
 import { copy } from './translations';
@@ -13,6 +13,7 @@ import { copy } from './translations';
   selector: 'app-field-title',
   standalone: true,
   imports: [BootstrapTooltipDirective],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <span
       class="field-title-text"

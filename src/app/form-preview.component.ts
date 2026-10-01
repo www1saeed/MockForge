@@ -1,4 +1,13 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FeedbackService } from './feedback.service';
 import { FormsModule } from '@angular/forms';
 import {
@@ -46,6 +55,7 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
   standalone: true,
   imports: [FormsModule, PreviewFieldComponent, RepeatGroupComponent],
   templateUrl: './form-preview.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     class: 'preview-panel',
     id: 'live-preview',

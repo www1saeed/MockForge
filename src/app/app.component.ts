@@ -8,6 +8,7 @@ import {
   OnInit,
   signal,
   ViewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import {
@@ -66,6 +67,7 @@ import {
   standalone: true,
   imports: [FormsModule, FieldListComponent, FormPreviewComponent, FeedbackComponent],
   providers: [ProjectStore],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {

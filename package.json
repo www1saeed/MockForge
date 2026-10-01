@@ -20,21 +20,21 @@
     "format:check": "prettier --check src e2e scripts/check-translations.mjs *.json *.js *.mjs *.ts .github/workflows/verify.yml"
   },
   "dependencies": {
-    "@angular/common": "~21.2.25",
-    "@angular/compiler": "~21.2.25",
-    "@angular/core": "~21.2.25",
-    "@angular/forms": "~21.2.25",
-    "@angular/platform-browser": "~21.2.25",
+    "@angular/common": "~22.2.1",
+    "@angular/compiler": "~22.2.1",
+    "@angular/core": "~22.2.1",
+    "@angular/forms": "~22.2.1",
+    "@angular/platform-browser": "~22.2.1",
     "bootstrap": "~5.3.7",
     "rxjs": "~7.8.2",
     "tslib": "~2.8.1",
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "~21.2.24",
-    "@angular/cli": "~21.2.24",
-    "@angular/compiler-cli": "~21.2.25",
-    "@angular/platform-browser-dynamic": "~21.2.25",
+    "@angular/build": "~22.2.0",
+    "@angular/cli": "~22.2.0",
+    "@angular/compiler-cli": "~22.2.1",
+    "@angular/platform-browser-dynamic": "~22.2.1",
     "@axe-core/playwright": "~4.12.1",
     "@playwright/test": "~1.61.1",
     "@types/bootstrap": "5.2.11",
@@ -45,7 +45,7 @@
     "jest-environment-jsdom": "~30.5.2",
     "jest-preset-angular": "~17.0.1",
     "prettier": "3.9.9",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.3",
     "typescript-eslint": "~8.71.0"
   }
 }

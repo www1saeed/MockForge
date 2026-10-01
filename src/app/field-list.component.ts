@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Field, FIELD_TYPES, FieldType, Locale, Text } from './project.model';
 import { copy, CopyKey } from './translations';
@@ -20,6 +20,7 @@ import { FIELD_ICONS } from './studio.config';
   standalone: true,
   imports: [FormsModule, BootstrapTooltipDirective],
   templateUrl: './field-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { class: 'field-list', '[class.field-list-collapsed]': 'collapsed()' },
 })
 export class FieldListComponent {
