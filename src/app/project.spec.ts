@@ -64,9 +64,13 @@ describe('Open-source project contract', (): void => {
       ),
     };
     const migrated = parseProject(legacy);
-    expect(migrated?.schemaVersion).toBe('1.2.0');
-    expect(migrated?.buttons[0].label).toEqual(project.submit);
-    expect(migrated?.fields[0].tooltip).toEqual({ de: '', en: '' });
+    expect(migrated?.schemaVersion).toBe('1.3.0');
+    expect(migrated?.buttons[0].label).toEqual({
+      de: project.submit.de,
+      en: project.submit.en,
+      fa: '',
+    });
+    expect(migrated?.fields[0].tooltip).toEqual({ de: '', en: '', fa: '' });
     expect(migrated?.review.approvedAt).toBeNull();
     expect(parseProject({ ...legacy, fields: [null] })).toBeNull();
     expect(parseProject({ ...legacy, submit: 'broken' })).toBeNull();
@@ -74,9 +78,11 @@ describe('Open-source project contract', (): void => {
   });
   test('validates language selections, button contracts and Unicode patterns', (): void => {
     const project = example('saas');
-    for (const languages of [[], ['de', 'de'], ['fr']])
+    for (const languages of [[], ['de', 'de'], ['fr'], ['de', 'en', 'fa']])
       expect(validateProject({ ...project, languages })).toBe(false);
     expect(validateProject({ ...project, languages: ['en'] })).toBe(true);
+    expect(validateProject({ ...project, languages: ['fa'] })).toBe(true);
+    expect(validateProject({ ...project, languages: ['en', 'fa'] })).toBe(true);
     for (const change of [
       { action: 'network' },
       { variant: 'unknown' },
@@ -101,7 +107,7 @@ describe('Open-source project contract', (): void => {
     expect(validateProject({ ...project, fields: [{ ...project.fields[0], tooltip: null }] })).toBe(
       false,
     );
-    project.fields[0].tooltip = { de: 'Wie im Ausweis', en: 'As on your ID' };
+    project.fields[0].tooltip = { de: 'Wie im Ausweis', en: 'As on your ID', fa: 'مطابق مدرک' };
     project.fields[0].pattern = '[A-Z]{3}';
     project.buttons[0].note = 'Route to the sales team.';
     const brief = handoff(project);
@@ -146,7 +152,7 @@ describe('Open-source project contract', (): void => {
       },
     };
     const restored = parseProject(legacy);
-    expect(restored?.schemaVersion).toBe('1.2.0');
+    expect(restored?.schemaVersion).toBe('1.3.0');
     expect(restored?.fields).toEqual(project.fields);
     expect(restored?.review.approvedAt).toBeNull();
     expect(restored?.review.checks).toEqual(Array(5).fill(false));
@@ -156,6 +162,32 @@ describe('Open-source project contract', (): void => {
     expect(
       parseProject({ ...legacy, fields: [createField('group', 'unsupported-old-group')] }),
     ).toBeNull();
+  });
+  test('upgrades schema 1.2 text recursively with empty Persian copy', (): void => {
+    const withoutPersian = (value: unknown): unknown => {
+      if (Array.isArray(value)) return value.map(withoutPersian);
+      if (!value || typeof value !== 'object') return value;
+      return Object.fromEntries(
+        Object.entries(value)
+          .filter(([key]): boolean => key !== 'fa')
+          .map(([key, nested]): [string, unknown] => [key, withoutPersian(nested)]),
+      );
+    };
+    const legacy = withoutPersian({
+      ...example('complex'),
+      schemaVersion: '1.2.0',
+      review: {
+        ...example('complex').review,
+        checks: Array(5).fill(true),
+        approvedAt: '2026-10-01T00:00:00Z',
+      },
+    });
+    const restored = parseProject(legacy);
+    expect(restored?.schemaVersion).toBe('1.3.0');
+    expect(restored?.title.fa).toBe('');
+    expect(restored?.fields.find((field) => field.group)?.group?.fields[0].label.fa).toBe('');
+    expect(restored?.review.checks).toEqual(Array(5).fill(false));
+    expect(restored?.review.approvedAt).toBeNull();
   });
   test('rejects unsafe or unbounded repeat definitions before flattening', (): void => {
     const project = example('saas');
@@ -215,17 +247,18 @@ describe('Open-source project contract', (): void => {
     const project = example('saas');
     project.fields[0].label = { de: 'Name' } as never;
     expect(validateProject(project)).toBe(false);
-    project.fields[0].label = { de: 'Name', en: 'Name' };
+    project.fields[0].label = { de: 'Name', en: 'Name', fa: 'نام' };
     project.fields[3].options = [];
     expect(validateProject(project)).toBe(false);
   });
-  test('exports implementation details, both locales and review limitations', (): void => {
+  test('exports implementation details, all locales and review limitations', (): void => {
     const project = example('saas');
     project.fields[0].note = 'Use the preferred full name.';
     const brief = handoff(project);
     expect(brief).toContain('Use the preferred full name.');
     expect(brief).toContain('Label DE: Vollständiger Name');
     expect(brief).toContain('Label EN: Full name');
+    expect(brief).toContain('Label FA:');
     expect(brief).toContain('not authenticated approval');
     expect(brief).toContain('Open questions');
   });

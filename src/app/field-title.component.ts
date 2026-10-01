@@ -1,7 +1,7 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { BootstrapTooltipDirective } from './bootstrap-tooltip.directive';
 import { Field, Locale } from './project.model';
-import { copy } from './translations';
+import { translate } from './translations';
 
 /**
  * Share title-level Bootstrap tooltip behavior across labels, legends and table headers.
@@ -68,6 +68,6 @@ export class FieldTitleComponent {
     );
   }
   tooltipLabel(): string {
-    return `${copy.tooltip[this.locale() === 'de' ? 0 : 1]}: ${this.field().label[this.locale()]}`;
+    return `${translate('tooltip', this.locale())}: ${this.field().label[this.locale()]}`;
   }
 }

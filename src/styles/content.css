@@ -54,8 +54,8 @@ h1 {
 }
 
 .hero-aside {
-  border-left: 1px solid var(--line);
-  padding-left: 30px;
+  border-inline-start: 1px solid var(--line);
+  padding-inline-start: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -83,7 +83,7 @@ h1 {
 .hero-aside strong {
   color: var(--accent);
   font-size: 10px;
-  margin-right: 13px;
+  margin-inline-end: 13px;
 }
 
 .hero-footnote {
@@ -208,14 +208,13 @@ h1 {
 }
 
 .benefit-note {
-  border-left: 3px solid var(--accent);
+  border-inline-start: 3px solid var(--accent);
   padding: 20px 25px;
   background: var(--accent-soft);
   max-width: 1300px;
   line-height: 1.8;
   margin: 20px 0 30px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-inline: auto;
 }
 
 .example-agency span:last-child {

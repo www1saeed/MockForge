@@ -43,6 +43,6 @@ Use `main` as the default branch, review before merging and keep generated build
 
 ## Before announcing
 
-Verify the deployed project URL, DE/EN switching, native dialog, import/export, reload restore and mobile view. Link to the presentation from the demo. Use screenshots of fictional examples. Describe inspired presets accurately and present the review as a local acknowledgement rather than authenticated sign-off.
+Verify the deployed project URL, DE/EN/FA switching, Persian RTL layout and font delivery, native dialog, import/export, reload restore and mobile view. Confirm that the IranSans license permits redistribution before publishing its files. Link to the presentation from the demo. Use screenshots of fictional examples. Describe inspired presets accurately and present the review as a local acknowledgement rather than authenticated sign-off.
 
 Lead the release message with the owner's benefit: agree detailed requirements before production development and reduce avoidable changes caused by misunderstandings. Link the commercial examples and readable brief as evidence. Use docs/SALES_DEMO.md for the repository description, portfolio paragraph and customer invitation. Replace any placeholder URLs only after the real repository/demo exists.

@@ -1,7 +1,7 @@
 import { Component, computed, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Field, FIELD_TYPES, FieldType, Locale, Text } from './project.model';
-import { copy, CopyKey } from './translations';
+import { CopyKey, translate } from './translations';
 import { BootstrapTooltipDirective } from './bootstrap-tooltip.directive';
 import { FIELD_ICONS } from './studio.config';
 
@@ -57,6 +57,6 @@ export class FieldListComponent {
   }
 
   t(key: CopyKey): string {
-    return copy[key][this.locale() === 'de' ? 0 : 1];
+    return translate(key, this.locale());
   }
 }

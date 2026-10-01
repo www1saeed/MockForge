@@ -166,7 +166,7 @@ test('edit group definitions, switch layout and transfer the complete specificat
   if (!path) throw new Error('Missing grouped export');
   const project = JSON.parse(await readFile(path, 'utf8'));
   const team = project.fields.find((field: { id: string }): boolean => field.id === 'team-members');
-  expect(project.schemaVersion).toBe('1.2.0');
+  expect(project.schemaVersion).toBe('1.3.0');
   expect(team.group).toMatchObject({ layout: 'table', minItems: 0, maxItems: 3, gapless: true });
   expect(team.group.fields.at(-1).label.en).toBe('Access type');
   await page.reload();

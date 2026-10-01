@@ -14,13 +14,19 @@ import {
   validPattern,
   allFields,
   Field,
+  LOCALES,
 } from './project.model';
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 function isText(value: unknown): value is Text {
-  return record(value) && typeof value['de'] === 'string' && typeof value['en'] === 'string';
+  return (
+    record(value) &&
+    typeof value['de'] === 'string' &&
+    typeof value['en'] === 'string' &&
+    typeof value['fa'] === 'string'
+  );
 }
 
 /**
@@ -30,7 +36,7 @@ function isText(value: unknown): value is Text {
  * class tokens select existing styles and cannot inject arbitrary CSS declarations.
  */
 export function validateProject(value: unknown): value is Project {
-  if (!record(value) || value['schemaVersion'] !== '1.2.0') return false;
+  if (!record(value) || value['schemaVersion'] !== '1.3.0') return false;
   if (
     !['name', 'owner', 'audience', 'goal', 'scope', 'decisions', 'questions'].every(
       (key: string): boolean => typeof value[key] === 'string',
@@ -46,7 +52,7 @@ export function validateProject(value: unknown): value is Project {
     languages.length < 1 ||
     languages.length > 2 ||
     new Set(languages).size !== languages.length ||
-    !languages.every((lang: unknown): boolean => lang === 'de' || lang === 'en')
+    !languages.every((lang: unknown): boolean => LOCALES.includes(lang as (typeof LOCALES)[number]))
   )
     return false;
   const buttons = value['buttons'];
@@ -174,34 +180,112 @@ export function validateProject(value: unknown): value is Project {
   );
 }
 
+function addPersianText(value: unknown): unknown {
+  return record(value) && typeof value['de'] === 'string' && typeof value['en'] === 'string'
+    ? { ...value, fa: typeof value['fa'] === 'string' ? value['fa'] : '' }
+    : value;
+}
+
+/** Add the new locale throughout a previously validated-shaped 1.2 specification. */
+function migratePersian(value: Record<string, unknown>): unknown {
+  const fields = Array.isArray(value['fields'])
+    ? value['fields'].map((field: unknown): unknown => {
+        if (!record(field)) return field;
+        const group = record(field['group']) ? field['group'] : undefined;
+        return {
+          ...field,
+          label: addPersianText(field['label']),
+          placeholder: addPersianText(field['placeholder']),
+          help: addPersianText(field['help']),
+          tooltip: addPersianText(field['tooltip']),
+          patternMessage: addPersianText(field['patternMessage']),
+          options: Array.isArray(field['options'])
+            ? field['options'].map(addPersianText)
+            : field['options'],
+          ...(group
+            ? {
+                group: {
+                  ...group,
+                  fields: Array.isArray(group['fields'])
+                    ? group['fields'].map((child: unknown): unknown =>
+                        record(child)
+                          ? {
+                              ...child,
+                              label: addPersianText(child['label']),
+                              placeholder: addPersianText(child['placeholder']),
+                              help: addPersianText(child['help']),
+                              tooltip: addPersianText(child['tooltip']),
+                              patternMessage: addPersianText(child['patternMessage']),
+                              options: Array.isArray(child['options'])
+                                ? child['options'].map(addPersianText)
+                                : child['options'],
+                            }
+                          : child,
+                      )
+                    : group['fields'],
+                },
+              }
+            : {}),
+        };
+      })
+    : value['fields'];
+  return {
+    ...value,
+    schemaVersion: '1.3.0',
+    title: addPersianText(value['title']),
+    description: addPersianText(value['description']),
+    submit: addPersianText(value['submit']),
+    buttons: Array.isArray(value['buttons'])
+      ? value['buttons'].map((button: unknown): unknown =>
+          record(button) ? { ...button, label: addPersianText(button['label']) } : button,
+        )
+      : value['buttons'],
+    fields,
+  };
+}
+
 /** Upgrade this Studio's previous contract while keeping foreign editions incompatible. */
 export function parseProject(value: unknown): Project | null {
   if (validateProject(value)) return value;
   if (
     !record(value) ||
-    !['1.0.0', '1.1.0'].includes(value['schemaVersion'] as string) ||
+    !['1.0.0', '1.1.0', '1.2.0'].includes(value['schemaVersion'] as string) ||
     !Array.isArray(value['fields']) ||
-    !isText(value['submit'])
+    !record(value['submit']) ||
+    typeof value['submit']['de'] !== 'string' ||
+    typeof value['submit']['en'] !== 'string'
   )
     return null;
-  if (value['fields'].some((field: unknown): boolean => record(field) && field['type'] === 'group'))
+  if (
+    value['schemaVersion'] !== '1.2.0' &&
+    value['fields'].some((field: unknown): boolean => record(field) && field['type'] === 'group')
+  )
     return null;
   // Version 1.1 already required localized pattern/tooltip/button properties.
   // Do not silently repair malformed 1.1 files with defaults intended for 1.0.
-  const next: unknown =
-    value['schemaVersion'] === '1.1.0'
-      ? { ...value, schemaVersion: '1.2.0' }
-      : {
-          ...value,
-          schemaVersion: '1.2.0',
-          languages: value['languages'] ?? ['de', 'en'],
-          buttons: value['buttons'] ?? [createButton('submit', value['submit'])],
-          fields: value['fields'].map((field: unknown): unknown =>
-            record(field)
-              ? { tooltip: text('', ''), pattern: '', patternMessage: text('', ''), ...field }
-              : field,
-          ),
-        };
+  const previous: unknown =
+    value['schemaVersion'] === '1.2.0'
+      ? value
+      : value['schemaVersion'] === '1.1.0'
+        ? { ...value, schemaVersion: '1.2.0' }
+        : {
+            ...value,
+            schemaVersion: '1.2.0',
+            languages: value['languages'] ?? ['de', 'en'],
+            buttons: value['buttons'] ?? [
+              createButton(
+                'submit',
+                text(value['submit']['de'] as string, value['submit']['en'] as string),
+              ),
+            ],
+            fields: value['fields'].map((field: unknown): unknown =>
+              record(field)
+                ? { tooltip: text('', ''), pattern: '', patternMessage: text('', ''), ...field }
+                : field,
+            ),
+          };
+  if (!record(previous)) return null;
+  const next = migratePersian(previous);
   if (!validateProject(next)) return null;
   return {
     ...next,

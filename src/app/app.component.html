@@ -61,7 +61,7 @@
           ><span aria-hidden="true">●</span
           >{{ t(store.storageError() ? 'storageError' : 'local') }}</span
         >
-        <div class="locale-toggle" aria-label="Language">
+        <div class="locale-toggle" [attr.aria-label]="t('formLanguages')">
           <button
             [class.selected]="locale() === 'de'"
             [attr.aria-pressed]="locale() === 'de'"
@@ -73,7 +73,13 @@
             [attr.aria-pressed]="locale() === 'en'"
             (click)="setLocale('en')"
           >
-            EN
+            EN</button
+          ><button
+            [class.selected]="locale() === 'fa'"
+            [attr.aria-pressed]="locale() === 'fa'"
+            (click)="setLocale('fa')"
+          >
+            FA
           </button>
         </div>
       </div>
@@ -120,7 +126,7 @@
           id="workspace"
           class="workspace"
           [class.full-preview]="previewFullWidth()"
-          aria-label="Mockup workspace"
+          [attr.aria-label]="t('formWorkspace')"
         >
           <div class="workspace-heading">
             <div>
@@ -154,9 +160,9 @@
             type="file"
             accept=".json,application/json"
             (change)="importFile($event)"
-            aria-label="JSON import"
+            [attr.aria-label]="t('import')"
           />
-          <nav class="workflow" aria-label="Workflow">
+          <nav class="workflow" [attr.aria-label]="t('formWorkspace')">
             @for (key of steps; track key; let index = $index) {
               <button
                 [class.current]="step() === index"
@@ -218,38 +224,41 @@
                 }
                 @case (1) {
                   <p class="section-description">{{ t('languageLead') }}</p>
-                  <label for="form-languages">{{ t('formLanguages') }}</label
-                  ><select
-                    id="form-languages"
-                    [ngModel]="project().languages.length === 2 ? 'both' : project().languages[0]"
-                    (ngModelChange)="setLanguages($event)"
-                  >
-                    <option value="de">{{ t('onlyDe') }}</option>
-                    <option value="en">{{ t('onlyEn') }}</option>
-                    <option value="both">{{ t('bothLanguages') }}</option>
-                  </select>
+                  <fieldset class="language-picker">
+                    <legend>{{ t('formLanguages') }}</legend>
+                    @for (lang of formLocales; track lang) {
+                      <label [for]="'form-language-' + lang">
+                        <input
+                          type="checkbox"
+                          [id]="'form-language-' + lang"
+                          [checked]="project().languages.includes(lang)"
+                          [disabled]="
+                            (!project().languages.includes(lang) &&
+                              project().languages.length >= 2) ||
+                            (project().languages.includes(lang) && project().languages.length === 1)
+                          "
+                          (change)="toggleFormLanguage(lang, $any($event.target).checked)"
+                        />
+                        {{ lang === 'de' ? 'Deutsch' : lang === 'en' ? 'English' : 'فارسی' }}
+                      </label>
+                    }
+                  </fieldset>
                   <div class="localized-grid" [class.bilingual]="project().languages.length === 2">
                     @for (lang of project().languages; track lang) {
-                      <div class="language-section">
+                      <div class="language-section" [attr.dir]="lang === 'fa' ? 'rtl' : 'ltr'">
                         <span class="tiny-label">{{ lang.toUpperCase() }}</span>
                         <label [for]="'title-' + lang">{{ t('formTitle') }}</label
                         ><input
                           [id]="'title-' + lang"
-                          [ngModel]="lang === 'de' ? project().title.de : project().title.en"
-                          (ngModelChange)="
-                            projectText('title', lang === 'de' ? 'de' : 'en', $event)
-                          "
+                          [ngModel]="project().title[lang]"
+                          (ngModelChange)="projectText('title', lang, $event)"
                         />
                         <label [for]="'description-' + lang">{{ t('description') }}</label
                         ><textarea
                           [id]="'description-' + lang"
                           rows="2"
-                          [ngModel]="
-                            lang === 'de' ? project().description.de : project().description.en
-                          "
-                          (ngModelChange)="
-                            projectText('description', lang === 'de' ? 'de' : 'en', $event)
-                          "
+                          [ngModel]="project().description[lang]"
+                          (ngModelChange)="projectText('description', lang, $event)"
                         ></textarea>
                       </div>
                     }
@@ -415,7 +424,10 @@
                               [class.bilingual]="project().languages.length === 2"
                             >
                               @for (lang of project().languages; track lang) {
-                                <div class="language-section">
+                                <div
+                                  class="language-section"
+                                  [attr.dir]="lang === 'fa' ? 'rtl' : 'ltr'"
+                                >
                                   <span class="tiny-label">{{ lang.toUpperCase() }}</span>
                                   @for (key of localizedFieldKeys; track key) {
                                     <label [for]="'field-' + key + '-' + lang"
@@ -545,7 +557,10 @@
                           [class.bilingual]="project().languages.length === 2"
                         >
                           @for (lang of project().languages; track lang) {
-                            <div>
+                            <div
+                              class="language-section"
+                              [attr.dir]="lang === 'fa' ? 'rtl' : 'ltr'"
+                            >
                               <label [for]="button.id + '-label-' + lang"
                                 >{{ t('label') }} ({{ lang.toUpperCase() }})</label
                               ><input

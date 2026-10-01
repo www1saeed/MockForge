@@ -155,7 +155,7 @@ describe('Alignment workspace', (): void => {
     app.setLocale('de');
     expect(app.previewLocale()).toBe('en');
     app.setLanguages('de');
-    app.update({ owner: 'PO', questions: '', title: { de: 'Titel', en: '' } });
+    app.update({ owner: 'PO', questions: '', title: { de: 'Titel', en: '', fa: '' } });
     app.selectedId.set('name');
     app.fieldText('label', '', 'en');
     app.setReviewer('Reviewer');
@@ -164,6 +164,25 @@ describe('Alignment workspace', (): void => {
     app.setLanguages('both');
     for (let index = 0; index < 5; index++) app.setCheck(index, true);
     expect(app.canApprove()).toBe(false);
+  });
+  test('allows one or two form languages and applies Persian document direction', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.setLanguages('de');
+    app.toggleFormLanguage('fa', true);
+    expect(app.project().languages).toEqual(['de', 'fa']);
+    app.toggleFormLanguage('en', true);
+    expect(app.project().languages).toEqual(['de', 'fa']);
+    app.toggleFormLanguage('de', false);
+    expect(app.project().languages).toEqual(['fa']);
+    app.toggleFormLanguage('fa', false);
+    expect(app.project().languages).toEqual(['fa']);
+
+    app.setLocale('fa');
+    expect(document.documentElement.lang).toBe('fa');
+    expect(document.documentElement.dir).toBe('rtl');
+    expect(app.t('overview')).toBe('نمای کلی');
+    app.setLocale('de');
+    expect(document.documentElement.dir).toBe('ltr');
   });
   test('keeps invalid patterns out of persistence and checks full values with localized messages', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
@@ -210,7 +229,7 @@ describe('Alignment workspace', (): void => {
     app.addButton();
     expect(app.project().buttons).toHaveLength(20);
     app.update({ buttons: [] });
-    expect(app.project().submit).toEqual({ de: '', en: '' });
+    expect(app.project().submit).toEqual({ de: '', en: '', fa: '' });
   });
   test('adds, edits, reorders and removes a field', (): void => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -433,7 +452,7 @@ describe('Alignment workspace', (): void => {
     app.update({ owner: 'PO', questions: '' });
     app.setReviewer('Alex');
     app.selectedId.set('team');
-    app.fieldChange({ options: [{ de: 'Klein', en: '' }] });
+    app.fieldChange({ options: [{ de: 'Klein', en: '', fa: '' }] });
     for (let index = 0; index < 5; index++) app.setCheck(index, true);
     expect(app.canApprove()).toBe(false);
     app.update({ fields: [] });

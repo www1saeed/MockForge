@@ -1,6 +1,6 @@
 import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { Field, Locale, supportsPattern, Text } from './project.model';
-import { copy, CopyKey } from './translations';
+import { CopyKey, translate } from './translations';
 import { FieldTitleComponent } from './field-title.component';
 
 export interface PatternInput {
@@ -32,6 +32,6 @@ export class PreviewFieldComponent {
     return value[this.locale()];
   }
   t(key: CopyKey): string {
-    return copy[key][this.locale() === 'de' ? 0 : 1];
+    return translate(key, this.locale());
   }
 }

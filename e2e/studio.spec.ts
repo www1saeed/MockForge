@@ -108,13 +108,13 @@ test('form language selection, localized tooltips, patterns and configured butto
 }): Promise<void> => {
   await page.goto('/#workspace');
   await page.locator('.workflow button').nth(1).click();
-  await page.getByLabel('Sprachen des Formulars').selectOption('en');
+  await page.locator('#form-language-de').uncheck();
   await expect(page.locator('#title-de')).toHaveCount(0);
   await page.locator('.workflow button').nth(3).click();
   await expect(page.locator('#field-label-de')).toHaveCount(0);
   await expect(page.locator('#field-label-en')).toBeVisible();
   await page.locator('.workflow button').nth(1).click();
-  await page.getByLabel('Sprachen des Formulars').selectOption('both');
+  await page.locator('#form-language-de').check();
   await page.screenshot({ path: 'reports/languages-desktop.png' });
   await page.locator('.workflow button').nth(3).click();
   await page.locator('#field-tooltip-de').fill('Genau drei Großbuchstaben');
@@ -160,7 +160,7 @@ test('form language selection, localized tooltips, patterns and configured butto
   const path = await (await downloadEvent).path();
   if (!path) throw new Error('Export missing');
   const exported = JSON.parse(await readFile(path, 'utf8'));
-  expect(exported.schemaVersion).toBe('1.2.0');
+  expect(exported.schemaVersion).toBe('1.3.0');
   expect(exported.fields[0].pattern).toBe('[A-Z]{3}');
   expect(exported.buttons[1].action).toBe('reset');
   expect(exported.buttons[1].note).toBe('Clear only preview entries.');
@@ -168,6 +168,45 @@ test('form language selection, localized tooltips, patterns and configured butto
   await page.locator('.workflow button').nth(3).click();
   await expect(page.locator('#field-tooltip-en')).toHaveValue('Exactly three uppercase letters');
   await expect(page.locator('#button-1-action')).toHaveValue('reset');
+});
+
+test('Persian UI and preview use RTL while form languages stay limited to two', async ({
+  page,
+}): Promise<void> => {
+  await page.goto('/#workspace');
+  await page.locator('.workflow button').nth(1).click();
+  await page.locator('#form-language-en').uncheck();
+  await page.locator('#form-language-fa').check();
+  await expect(page.locator('#form-language-en')).toBeDisabled();
+  await expect(page.locator('#title-fa')).toHaveValue('گردش کار بعدی شما از اینجا آغاز می‌شود.');
+
+  await page.locator('.topbar').getByRole('button', { name: 'FA', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await expect(page.locator('.section-description')).toContainText('یک یا دو زبان');
+  await page.getByRole('button', { name: 'نمایش پیش‌نمایش' }).click();
+  await page.locator('.preview-panel').getByRole('button', { name: 'FA', exact: true }).click();
+  await expect(page.locator('.rendered-form')).toHaveAttribute('dir', 'rtl');
+  await expect(page.locator('.rendered-form h3')).toHaveText(
+    'گردش کار بعدی شما از اینجا آغاز می‌شود.',
+  );
+  expect(
+    await page
+      .locator('.rendered-form')
+      .evaluate((element): boolean => getComputedStyle(element).fontFamily.includes('IRANSans')),
+  ).toBe(true);
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({ path: 'reports/persian-rtl-desktop.png' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate((): boolean => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBe(true);
+  await page.screenshot({ path: 'reports/persian-rtl-mobile.png', fullPage: true });
+  await page.locator('.rendered-form').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'reports/persian-rtl-mobile-preview.png' });
 });
 
 test('configure, restore, export and import a commercial form', async ({ page }): Promise<void> => {
@@ -260,7 +299,7 @@ test('records a complete review, exports its handoff and invalidates it after a 
   await expect(page.getByRole('button', { name: 'Review dokumentieren' })).toBeDisabled();
 });
 
-test('both locales, each workflow step, themes and mobile layout pass an axe scan', async ({
+test('German and English workflows, themes and mobile layout pass an axe scan', async ({
   page,
 }): Promise<void> => {
   await page.goto('/#workspace');

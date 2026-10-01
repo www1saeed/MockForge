@@ -8,8 +8,8 @@ describe('Form tooltip titles', (): void => {
     TestBed.configureTestingModule({ imports: [FieldTitleComponent] });
     const fixture = TestBed.createComponent(FieldTitleComponent);
     const field = createField('text', 'test');
-    field.label = { de: 'Name', en: 'Name' };
-    field.tooltip = { de: 'Hinweis', en: '' };
+    field.label = { de: 'Name', en: 'Name', fa: 'نام' };
+    field.tooltip = { de: 'Hinweis', en: '', fa: '' };
     fixture.componentRef.setInput('field', field);
     fixture.componentRef.setInput('locale', 'de');
     fixture.detectChanges();
@@ -35,7 +35,7 @@ describe('Form tooltip titles', (): void => {
     TestBed.configureTestingModule({ imports: [PreviewFieldComponent] });
     const fixture = TestBed.createComponent(PreviewFieldComponent);
     const field = createField('checkbox', 'consent');
-    field.tooltip = { de: 'Hinweis', en: 'Help' };
+    field.tooltip = { de: 'Hinweis', en: 'Help', fa: 'راهنما' };
     fixture.componentRef.setInput('field', field);
     fixture.componentRef.setInput('locale', 'de');
     fixture.componentRef.setInput('controlId', 'consent-response');

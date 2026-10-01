@@ -22,7 +22,7 @@ import {
 } from './project.model';
 import { PreviewFieldComponent } from './preview-field.component';
 import { RepeatGroupComponent } from './repeat-group.component';
-import { copy, CopyKey } from './translations';
+import { CopyKey, translate } from './translations';
 
 /** All actions are local; none of these messages represents a backend response. */
 const ACTION_MESSAGES: Record<Exclude<ButtonAction, 'none'>, CopyKey> = {
@@ -91,10 +91,10 @@ export class FormPreviewComponent {
 
   /** Toolbar copy follows Studio language; the form itself uses the preview language. */
   t(key: CopyKey): string {
-    return copy[key][this.uiLocale() === 'de' ? 0 : 1];
+    return translate(key, this.uiLocale());
   }
   formCopy(key: CopyKey): string {
-    return copy[key][this.language() === 'de' ? 0 : 1];
+    return translate(key, this.language());
   }
   text(value: Text): string {
     return value[this.language()];

@@ -13,7 +13,7 @@ describe('FormPreviewComponent', (): void => {
     const fixture = TestBed.createComponent(FormPreviewComponent);
     const field = createField('text', 'code');
     field.pattern = '[A-Z]{3}';
-    field.patternMessage = { de: 'Drei Buchstaben', en: 'Three letters' };
+    field.patternMessage = { de: 'Drei Buchstaben', en: 'Three letters', fa: 'سه حرف' };
     fixture.componentRef.setInput('project', { ...example('saas'), fields: [field] });
     fixture.detectChanges();
     return {
