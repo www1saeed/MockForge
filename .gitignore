@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.angular/
+coverage/
+reports/
+test-results/
+playwright-report/
+.jest-cache/
+.env*
+.DS_Store
+.idea/
+output/
