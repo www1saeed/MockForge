@@ -1,4 +1,12 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FeedbackService } from './feedback.service';
 import { Field, Locale, Text } from './project.model';
 import { PatternInput, PreviewFieldComponent } from './preview-field.component';
@@ -22,6 +30,7 @@ interface PreviewRow {
   standalone: true,
   imports: [PreviewFieldComponent, FieldTitleComponent, BootstrapTooltipDirective],
   templateUrl: './repeat-group.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { class: 'repeat-group full-width' },
 })
 export class RepeatGroupComponent {

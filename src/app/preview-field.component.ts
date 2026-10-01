@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { Field, Locale, supportsPattern, Text } from './project.model';
 import { copy, CopyKey } from './translations';
 import { FieldTitleComponent } from './field-title.component';
@@ -18,6 +18,7 @@ export interface PatternInput {
   standalone: true,
   imports: [FieldTitleComponent],
   templateUrl: './preview-field.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { class: 'preview-field' },
 })
 export class PreviewFieldComponent {

@@ -1,4 +1,12 @@
-import { Component, ElementRef, effect, inject, input, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  effect,
+  inject,
+  input,
+  viewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FeedbackService } from './feedback.service';
 import { Locale } from './project.model';
 import { copy, CopyKey } from './translations';
@@ -7,6 +15,7 @@ import { copy, CopyKey } from './translations';
 @Component({
   selector: 'app-feedback',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './feedback.component.html',
 })
 export class FeedbackComponent {

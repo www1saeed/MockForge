@@ -1,6 +1,9 @@
+import { provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 
-bootstrapApplication(AppComponent).catch((error: unknown): void => {
-  console.error(error);
-});
+bootstrapApplication(AppComponent, { providers: [provideZoneChangeDetection()] }).catch(
+  (error: unknown): void => {
+    console.error(error);
+  },
+);
