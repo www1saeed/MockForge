@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="export-brand"
+      content="data:image/png;base64,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"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="How MockForge Studio helps product owners and developers agree on exact form requirements and reduce avoidable implementation rework."
+    />
+    <title>MockForge Studio · Agreement before implementation</title>
+    <link rel="icon" type="image/png" href="brand/favicon-32.png" />
+    <style>
+      :root {
+        --ink: #172c3a;
+        --accent: #086c60;
+        --muted: #52636d;
+        --paper: #f6f8f5;
+        --line: #cfdad4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Segoe UI', Arial, sans-serif;
+      }
+      a {
+        color: var(--accent);
+        text-underline-offset: 4px;
+      }
+      button,
+      select {
+        font: inherit;
+        color: var(--ink);
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        min-height: 44px;
+        padding: 9px 13px;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      button[aria-pressed='true'] {
+        background: var(--accent);
+        color: white;
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+      .skip {
+        position: absolute;
+        left: 16px;
+        top: -100px;
+        background: white;
+        padding: 12px;
+        z-index: 5;
+      }
+      .skip:focus {
+        top: 12px;
+      }
+      .topbar,
+      .bottom-bar {
+        padding: 18px 4vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .actions,
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+      }
+      main {
+        max-width: 1600px;
+        margin: auto;
+      }
+      .slide {
+        display: flex;
+        flex-direction: column;
+        min-height: 650px;
+        padding: 42px 7vw 30px;
+      }
+      .slide[hidden] {
+        display: none;
+      }
+      .eyebrow {
+        color: var(--accent);
+        margin: 0 0 20px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      h1,
+      h2 {
+        font-size: clamp(36px, 4.2vw, 64px);
+        font-weight: 600;
+        letter-spacing: -2px;
+        line-height: 1.08;
+        margin: 0;
+        max-width: 1160px;
+        text-wrap: balance;
+      }
+      h1 {
+        font-size: clamp(48px, 5.8vw, 86px);
+      }
+      h1 span,
+      h2 span {
+        color: var(--accent);
+      }
+      h3 {
+        font-size: 23px;
+        margin: 0 0 14px;
+        font-weight: 600;
+        letter-spacing: -0.4px;
+      }
+      p {
+        line-height: 1.55;
+      }
+      .lead {
+        font-size: clamp(20px, 2vw, 28px);
+        color: var(--muted);
+        max-width: 1000px;
+        margin: 24px 0 0;
+      }
+      .cover {
+        justify-content: center;
+        min-height: 650px;
+      }
+      .cover .lead {
+        max-width: 790px;
+      }
+      .cover-mark {
+        width: 78px;
+        height: 78px;
+        margin-bottom: 28px;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 46px;
+        margin-top: 34px;
+      }
+      .split > div {
+        min-width: 0;
+      }
+      .split > div + div {
+        border-left: 1px solid var(--line);
+        padding-left: 40px;
+      }
+      .split p,
+      .list li {
+        font-size: 20px;
+        margin: 0 0 18px;
+        line-height: 1.55;
+      }
+      .list {
+        list-style: none;
+        margin: 30px 0 0;
+        padding: 0;
+      }
+      .list li {
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+      }
+      .list strong {
+        color: var(--accent);
+      }
+      .takeaway {
+        font-size: 21px;
+        margin: 26px 0 0;
+        padding-top: 20px;
+        border-top: 2px solid var(--accent);
+        max-width: 1160px;
+      }
+      .note {
+        font-size: 15px;
+        color: var(--muted);
+        margin: 20px 0 0;
+        max-width: 1100px;
+      }
+      .slide-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: auto;
+        padding-top: 28px;
+      }
+      .slide-footer a {
+        color: var(--muted);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+        font-size: 18px;
+        line-height: 1.45;
+      }
+      caption {
+        text-align: left;
+        color: var(--muted);
+        margin-bottom: 12px;
+        font-size: 15px;
+      }
+      td,
+      th {
+        text-align: left;
+        vertical-align: top;
+        padding: 16px 18px 16px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .metric {
+        font-size: clamp(56px, 7vw, 96px);
+        color: var(--accent);
+        letter-spacing: -4px;
+        line-height: 1.1;
+        margin-bottom: 18px;
+      }
+      .narration {
+        border-top: 1px solid var(--line);
+        padding: 18px 4vw;
+        background: white;
+      }
+      .narration-tools {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .voice-field {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      #voice {
+        max-width: min(340px, 72vw);
+      }
+      #audio-status {
+        font-size: 14px;
+        color: var(--muted);
+      }
+      details {
+        max-width: 1160px;
+        margin-top: 16px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+        padding: 6px 0;
+      }
+      #transcript {
+        font-size: 17px;
+        color: var(--muted);
+      }
+      .bottom-bar {
+        border-top: 1px solid var(--line);
+        border-bottom: 0;
+        font-size: 14px;
+      }
+      #counter {
+        min-width: 65px;
+        text-align: center;
+      }
+      .progress {
+        height: 3px;
+        background: var(--line);
+      }
+      #progress {
+        height: 100%;
+        background: var(--accent);
+        width: 0;
+      }
+      noscript p {
+        padding: 16px 4vw;
+      }
+      @media (max-width: 700px) {
+        .slide,
+        .cover {
+          padding: 30px 6vw;
+          min-height: 600px;
+        }
+        h1,
+        h2 {
+          letter-spacing: -1.3px;
+        }
+        .split {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .split > div + div {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          padding: 22px 0 0;
+        }
+        .split p,
+        .list li {
+          font-size: 18px;
+        }
+        table {
+          font-size: 15px;
+          overflow-wrap: anywhere;
+        }
+        td,
+        th {
+          padding: 12px 8px 12px 0;
+        }
+        .topbar,
+        .bottom-bar,
+        .narration {
+          padding-left: 6vw;
+          padding-right: 6vw;
+        }
+        .takeaway {
+          font-size: 19px;
+        }
+        .slide-footer {
+          font-size: 11px;
+        }
+      }
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 12mm;
+        }
+        body {
+          background: white;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+        .topbar,
+        .bottom-bar,
+        .narration,
+        .progress,
+        .skip,
+        noscript {
+          display: none !important;
+        }
+        main {
+          max-width: none;
+          margin: 0;
+        }
+        .slide,
+        .slide[hidden],
+        .cover {
+          display: flex !important;
+          min-height: 0;
+          height: 184mm;
+          padding: 6mm 7mm;
+          break-after: page;
+          break-inside: avoid;
+        }
+        .slide:last-child {
+          break-after: auto;
+        }
+        .eyebrow {
+          font-size: 9pt;
+          margin-bottom: 5mm;
+        }
+        h1 {
+          font-size: 43pt;
+        }
+        h2 {
+          font-size: 30pt;
+          letter-spacing: -1px;
+        }
+        h3 {
+          font-size: 17pt;
+          margin-bottom: 3mm;
+        }
+        .lead {
+          font-size: 17pt;
+          margin-top: 5mm;
+        }
+        .split {
+          grid-template-columns: 1fr 1fr;
+          gap: 9mm;
+          margin-top: 7mm;
+        }
+        .split > div + div {
+          border-left: 1px solid var(--line);
+          border-top: 0;
+          padding: 0 0 0 8mm;
+        }
+        .split p,
+        .list li {
+          font-size: 13pt;
+          margin-bottom: 4mm;
+        }
+        .list {
+          margin-top: 6mm;
+        }
+        .list li {
+          padding-top: 3mm;
+        }
+        table {
+          font-size: 12pt;
+          margin-top: 6mm;
+        }
+        caption {
+          font-size: 9pt;
+        }
+        td,
+        th {
+          padding: 3mm 4mm 3mm 0;
+        }
+        .takeaway {
+          font-size: 14pt;
+          margin-top: 5mm;
+          padding-top: 4mm;
+        }
+        .note {
+          font-size: 10pt;
+          margin-top: 4mm;
+        }
+        .slide-footer {
+          font-size: 9pt;
+          padding-top: 5mm;
+        }
+        .metric {
+          font-size: 54pt;
+          margin-bottom: 4mm;
+        }
+        .cover-mark {
+          width: 18mm;
+          height: 18mm;
+          margin-bottom: 7mm;
+        }
+        a {
+          text-decoration: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#deck">Skip to presentation</a>
+    <header class="topbar">
+      <span class="brand"
+        ><img src="brand/logo.png" alt="" width="36" height="36" />MockForge Studio</span
+      >
+      <div class="actions">
+        <a href="../index.html">Open the workspace</a
+        ><button id="save" type="button">Save presentation</button
+        ><button id="print" type="button">Print / Save PDF</button>
+      </div>
+    </header>
+    <noscript
+      ><p>
+        All slides are available below. Enable JavaScript for navigation, narration and saving. Use
+        your browser's print command to save the complete presentation as PDF.
+      </p></noscript
+    >
+    <main id="deck" tabindex="-1">
+      <section
+        class="slide cover active"
+        aria-labelledby="title-1"
+        data-narration="MockForge Studio helps a product owner and a developer agree on a form before production development begins. Instead of discussing an abstract ticket, we review a working mockup with exact wording, rules and actions. Your requirements guide the implementation, including the small details. The goal is to reduce avoidable changes caused by assumptions. This presentation follows a fictional demo request from its first brief to an implementation agreement."
+      >
+        <img class="cover-mark" src="brand/logo.png" alt="" width="78" height="78" />
+        <p class="eyebrow">Product owner alignment / Open source</p>
+        <h1 id="title-1">Your requirements<br /><span>shape the implementation</span></h1>
+        <p class="lead">
+          A concrete agreement before production coding makes the intended experience easier to
+          build and test.
+        </p>
+        <p class="note">MockForge Studio turns a form idea into an interactive specification.</p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-2"
+        data-narration="A short request such as build a demo form can hide important business decisions. The developer still needs to decide which fields are required, what the button promises and what happens after submission. If those assumptions differ from the owner's expectations, the sprint review becomes the first requirements conversation. The team may then reopen code, translations and tests. MockForge brings that conversation forward, while changes are still changes to a specification."
+      >
+        <p class="eyebrow">01 / The delivery problem</p>
+        <h2 id="title-2">A short ticket can hide<br /><span>expensive assumptions</span></h2>
+        <p class="lead">
+          “Build a demo request form” does not define the experience sales expects.
+        </p>
+        <div class="split">
+          <div>
+            <h3>The owner imagines</h3>
+            <p>
+              A short request, optional phone number and a personal follow-up within two working
+              days.
+            </p>
+            <p>Copy that works in German and English, including clear mobile feedback.</p>
+          </div>
+          <div>
+            <h3>The developer still has to decide</h3>
+            <p>Required fields, team-size choices, button wording and confirmation behavior.</p>
+            <p>Routing, integration failures and which cases acceptance tests must cover.</p>
+          </div>
+        </div>
+        <p class="takeaway">
+          When these decisions emerge in sprint review, the team may have to revisit completed work.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-3"
+        data-narration="My commitment as a developer is that your wishes guide what I implement. We look at the actual form together and discuss small details before I build the production system. You can try required fields, both languages and the mobile layout. We also record behavior that the mockup cannot execute, such as CRM routing or a failure response. This gives us a baseline for implementation and a clear way to discuss later changes."
+      >
+        <p class="eyebrow">02 / The developer's commitment</p>
+        <h2 id="title-3">The owner can review<br /><span>the intended result</span></h2>
+        <p class="lead">
+          “Your wishes guide my implementation, including the small details. We agree on what users
+          should see and what each action should do before I start production coding.”
+        </p>
+        <ul class="list">
+          <li>
+            <strong>A visible experience.</strong> Try exact labels, field order, validation and
+            mobile layout.
+          </li>
+          <li>
+            <strong>A written baseline.</strong> Preserve the agreed copy and rules alongside
+            implementation notes.
+          </li>
+          <li>
+            <strong>A shared change discussion.</strong> Assess new requests against the scope we
+            agreed together.
+          </li>
+        </ul>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-4"
+        data-narration="Each capability supports a specific decision. Bilingual editing lets the owner approve wording in both selected languages. Native validation makes required inputs and error cases visible before implementation. Repeat groups let the owner try how many people or line items the form needs. Developer notes keep intended server behavior alongside those choices. The mockup does not deliver emails or connect to a CRM. Those responsibilities belong in the implementation agreement."
+      >
+        <p class="eyebrow">03 / Capabilities with a purpose</p>
+        <h2 id="title-4">Small details become<br /><span>reviewable requirements</span></h2>
+        <table>
+          <caption>
+            What the owner can settle before implementation
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Studio capability</th>
+              <th scope="col">Decision it supports</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bilingual labels and messages</td>
+              <td>Approve exact wording in every selected language.</td>
+            </tr>
+            <tr>
+              <td>Native validation and mobile preview</td>
+              <td>Try required inputs and the experience of correcting mistakes.</td>
+            </tr>
+            <tr>
+              <td>Repeat cards and tables</td>
+              <td>Agree on repeated data, row limits and deletion behavior.</td>
+            </tr>
+            <tr>
+              <td>Button actions and developer notes</td>
+              <td>Separate visible behavior from the production workflow to implement.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Submission, saving and navigation are local simulations. CRM delivery and email handling
+          require production implementation.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-5"
+        data-narration="Consider the fictional Orbit SaaS demo request. The initial ticket asks for name, email and team size. In the alignment session, sales clarifies that individual consultants can request a demo too. They do not want a required phone number, and the submit action should promise a conversation rather than immediate access. We choose exact wording in both languages and document a response target. The owner tries these decisions in the preview before the developer starts production work."
+      >
+        <p class="eyebrow">04 / Fictional Orbit SaaS example</p>
+        <h2 id="title-5">One form.<br /><span>Several business decisions.</span></h2>
+        <p class="lead">Initial request: “Capture demo leads with name, email and team size.”</p>
+        <div class="split">
+          <div>
+            <h3>Questions for the owner</h3>
+            <p>Can a consultant use a personal email? Does sales need a phone number?</p>
+            <p>Does submission book a demo, request contact or create an immediate trial?</p>
+          </div>
+          <div>
+            <h3>Agreed in the mockup</h3>
+            <p>
+              Accept valid personal or work email. Keep phone optional. Include a “Just me”
+              team-size choice.
+            </p>
+            <p>Use “Request a demo”. Document a sales response within two working days.</p>
+          </div>
+        </div>
+        <p class="note">
+          Illustrative workshop outcome, not a claim about a real customer. The response promise
+          requires an operational commitment from the production team.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-6"
+        data-narration="Without a concrete baseline, the first sprint might implement a required phone number and a start trial button. During review, the owner explains that this is a contact request. The developer then changes required validation, rewrites German and English copy, updates the confirmation flow and revises acceptance tests. Another review checks the corrected result. This is an illustrative sequence, not a measured project history. It shows how a small misunderstanding can create repeated work across several layers."
+      >
+        <p class="eyebrow">05 / How repeated work happens</p>
+        <h2 id="title-6">
+          Late clarification can reopen<br /><span>implementation and tests</span>
+        </h2>
+        <ol class="list">
+          <li>
+            <strong>Sprint 1:</strong> The developer assumes phone is required and labels the action
+            “Start trial”.
+          </li>
+          <li>
+            <strong>Review:</strong> Sales explains that the form only requests a conversation and
+            should accept consultants.
+          </li>
+          <li>
+            <strong>Follow-up work:</strong> Change required rules, both translations, confirmation
+            behavior and acceptance tests.
+          </li>
+          <li>
+            <strong>Another review:</strong> Recheck the corrected experience and coordinate release
+            of the changes.
+          </li>
+        </ol>
+        <p class="takeaway">
+          A misunderstood requirement can consume implementation hours again, even when the original
+          code works correctly.
+        </p>
+        <p class="note">Illustrative sequence. No measured sprint reduction or savings claim.</p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-7"
+        data-narration="With MockForge Studio, the same team first opens the SaaS example and edits the form together. They set phone to optional, select the accepted team-size options and approve the button label in both languages. The developer records routing and failure behavior as production notes. The owner completes review and the team exports the JSON and readable brief. The developer can then implement and test these agreed requirements. This can prevent a correction loop caused by those specific assumptions, while new product insights may still lead to later changes."
+      >
+        <p class="eyebrow">06 / The same request with MockForge Studio</p>
+        <h2 id="title-7">Clarification happens<br /><span>before the code depends on it</span></h2>
+        <ol class="list">
+          <li>
+            <strong>Review together:</strong> Set phone to optional, agree team-size choices and
+            test mobile input.
+          </li>
+          <li>
+            <strong>Approve the wording:</strong> “Request a demo” and its German equivalent
+            describe the intended action.
+          </li>
+          <li>
+            <strong>Record production behavior:</strong> Sales routing, confirmation, failure
+            handling and the response target.
+          </li>
+          <li>
+            <strong>Implement the baseline:</strong> Use the exported specification to write the
+            production form and acceptance tests.
+          </li>
+        </ol>
+        <p class="takeaway">
+          The avoidable correction moves into the mockup, before UI logic and integration tests
+          depend on the wrong assumption.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-8"
+        data-narration="The benefit comes from the dependencies around a decision. Changing a field in a mockup means editing its specification and reviewing the result. Changing the same requirement after implementation can also affect API validation, messages, tests and release coordination. Early alignment is worthwhile when the rework it avoids exceeds the effort spent discussing and preparing the mockup. MockForge has no measured savings data. Teams can assess their own results by tracking requirement corrections, implementation hours and whether each change came from a missed decision or a new insight."
+      >
+        <p class="eyebrow">07 / The economic argument</p>
+        <h2 id="title-8">Fewer assumptions can mean<br /><span>less repeated effort</span></h2>
+        <div class="split">
+          <div>
+            <h3>A decision in the mockup</h3>
+            <p>Edit the requirement, try the experience and review the revised baseline.</p>
+            <p>Spend alignment time before production dependencies accumulate.</p>
+          </div>
+          <div>
+            <h3>The same decision after implementation</h3>
+            <p>Potentially revisit UI logic, API validation, translations and tests.</p>
+            <p>Coordinate another review, integration check and release.</p>
+          </div>
+        </div>
+        <p class="takeaway">
+          Potential net benefit = avoidable rework prevented minus the effort of early alignment.
+        </p>
+        <p class="note">
+          No savings were measured. Track clarification-driven changes and implementation hours in
+          your own project. New insights and technical discovery still need time.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-9"
+        data-narration="The handoff connects the mockup to development. JSON preserves the structured form definition. The readable brief carries copy, rules, developer notes and decisions. The team adds production acceptance criteria for APIs, security, errors and operations. A local review record helps identify the acknowledged draft, and specification edits reset that acknowledgement. The record does not authenticate the reviewer. Your team's real approval process establishes responsibility. This makes the baseline concrete without pretending that a mockup is a production system."
+      >
+        <p class="eyebrow">08 / A handoff the team can use</p>
+        <h2 id="title-9">The agreement becomes<br /><span>an implementation baseline</span></h2>
+        <table>
+          <caption>
+            Artifacts and their role in development
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Artifact</th>
+              <th scope="col">How it supports implementation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Structured JSON</td>
+              <td>Preserves field definitions, localized copy, rules and button configuration.</td>
+            </tr>
+            <tr>
+              <td>Readable Markdown brief</td>
+              <td>Keeps business decisions and developer notes available during coding.</td>
+            </tr>
+            <tr>
+              <td>Implementation agreement</td>
+              <td>
+                Adds APIs, failures, scope and acceptance criteria through the team's process.
+              </td>
+            </tr>
+            <tr>
+              <td>Local review record</td>
+              <td>Identifies the acknowledged draft. Specification changes reopen review.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">
+          The local record is unauthenticated. Production code, authenticated approval and backend
+          integrations remain separate work.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-10"
+        data-narration="MockForge Studio applies the same discussion to different commercial forms. A return request needs clear eligibility and refund wording. An agency inquiry needs budget choices that help the first conversation. A procurement request needs row limits and an explicit approval process. The included examples are fictional. They help the owner and developer ask concrete questions, rather than demonstrating completed backend workflows. In every case, the next step is an agreed specification and production acceptance criteria."
+      >
+        <p class="eyebrow">09 / More conversations the same approach supports</p>
+        <h2 id="title-10">Business intent behind<br /><span>every form decision</span></h2>
+        <table>
+          <caption>
+            Fictional examples included in the Studio
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Scenario</th>
+              <th scope="col">Decision before coding</th>
+              <th scope="col">Production work to agree</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Commerce return</td>
+              <td>Request a return or promise a refund?</td>
+              <td>Eligibility, order lookup and refund handling.</td>
+            </tr>
+            <tr>
+              <td>Agency inquiry</td>
+              <td>Which budget ranges help qualification?</td>
+              <td>Follow-up owner and scheduling.</td>
+            </tr>
+            <tr>
+              <td>Project &amp; procurement</td>
+              <td>How many people and line items can repeat?</td>
+              <td>Totals, purchasing and finance approval.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="takeaway">
+          The mockup gives business decisions a visible place before the developer commits
+          implementation effort.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-11"
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October first, 2026 quality checkpoint, all 64 unit and component tests and all 20 end to end tests passed. Line coverage was 98.16 percent. Formatting, ESLint, translation validation and the production build also passed. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+      >
+        <p class="eyebrow">10 / Engineering evidence</p>
+        <h2 id="title-11">A tested foundation<br /><span>for the alignment conversation</span></h2>
+        <div class="split">
+          <div>
+            <div class="metric">84</div>
+            <h3>Passing automated tests</h3>
+            <p>64 unit/component tests across eight suites.<br />20 Chromium end-to-end tests.</p>
+          </div>
+          <div>
+            <div class="metric">98.16%</div>
+            <h3>Line coverage</h3>
+            <p>
+              Strict TypeScript, separated responsibilities, immutable state and validated imports.
+            </p>
+          </div>
+        </div>
+        <p class="takeaway">
+          Formatting, ESLint, translation validation and the production build also pass.
+        </p>
+        <p class="note">
+          Verified October 1, 2026. Jest line coverage, not E2E coverage. Documented Clean Code
+          conventions. Sonar analysis is not configured. Details: docs/QUALITY.md in the source
+          repository.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-12"
+        data-narration="For a first alignment session, bring one real form idea and the business outcome it should support. We start with the audience and the scope, then review exact fields, both languages and the mobile experience. We resolve open questions into decisions and record remaining technical investigations. You leave with an interactive mockup and an exported baseline for an implementation agreement. Your wishes guide what I build. Later changes remain welcome, and we discuss their effect on the agreed scope, effort and acceptance criteria together."
+      >
+        <p class="eyebrow">11 / Your first alignment session</p>
+        <h2 id="title-12">One form idea.<br /><span>A concrete shared baseline.</span></h2>
+        <p class="lead">
+          Bring the outcome your users need. We review the experience together and document what I
+          should build.
+        </p>
+        <ul class="list">
+          <li>
+            <strong>Before the session:</strong> Bring your audience, current form or ticket, and
+            important business rules.
+          </li>
+          <li>
+            <strong>During the session:</strong> Settle wording, input rules and actions. Record
+            remaining investigations.
+          </li>
+          <li>
+            <strong>After the session:</strong> Export the mockup specification and agree production
+            scope and acceptance criteria.
+          </li>
+        </ul>
+        <p class="takeaway">
+          Your wishes guide the implementation. Later changes get a clear discussion of scope and
+          effort.
+        </p>
+      </section>
+    </main>
+    <div class="progress" aria-hidden="true"><div id="progress"></div></div>
+    <aside class="narration" aria-label="Spoken explanation">
+      <div class="narration-tools">
+        <button id="read" type="button" aria-pressed="false">Read explanation</button
+        ><button id="repeat" type="button">Repeat</button
+        ><button id="stop" type="button">Stop</button
+        ><label class="voice-field" for="voice"
+          >Voice
+          <select id="voice">
+            <option value="">Browser default voice</option>
+          </select></label
+        ><span id="audio-status" role="status"
+          >Audio starts only when you choose Read explanation.</span
+        >
+      </div>
+      <details>
+        <summary>Explanation transcript</summary>
+        <p id="transcript"></p>
+      </details>
+    </aside>
+    <footer class="bottom-bar">
+      <span>Agreement before implementation</span>
+      <nav class="controls" aria-label="Slide navigation">
+        <button id="previous" type="button" aria-label="Previous slide">Previous</button
+        ><span id="counter" role="status"></span
+        ><button id="next" type="button" aria-label="Next slide">Next</button>
+      </nav>
+      <span
+        >Arrow keys to navigate ·
+        <a href="https://1saeed.com/" target="_blank" rel="noopener">© 1Saeed.com</a></span
+      >
+    </footer>
+    <script>
+      (() => {
+        const slides = [...document.querySelectorAll('main section')];
+        const read = document.getElementById('read');
+        const voiceSelect = document.getElementById('voice');
+        const status = document.getElementById('audio-status');
+        const synth = window.speechSynthesis;
+        const supported = !!synth && typeof window.SpeechSynthesisUtterance === 'function';
+        let current = 0;
+        let audioEnabled = false;
+        let utterance = null;
+        let voices = [];
+        slides.forEach((slide, index) => {
+          const footer = document.createElement('div');
+          footer.className = 'slide-footer';
+          const author = document.createElement('a');
+          author.href = 'https://1saeed.com/';
+          author.textContent = 'MockForge Studio / © 1Saeed.com';
+          const number = document.createElement('span');
+          number.textContent = `${String(index + 1).padStart(2, '0')} / ${slides.length}`;
+          footer.append(author, number);
+          slide.append(footer);
+        });
+        function cancelSpeech() {
+          const previous = utterance;
+          utterance = null;
+          if (previous) {
+            previous.onend = null;
+            previous.onerror = null;
+          }
+          if (supported) synth.cancel();
+        }
+        function updateAudio() {
+          read.setAttribute('aria-pressed', String(audioEnabled));
+          read.textContent = audioEnabled ? 'Reading enabled' : 'Read explanation';
+        }
+        function speak() {
+          cancelSpeech();
+          if (!supported || !audioEnabled) return;
+          const speech = new SpeechSynthesisUtterance(slides[current].dataset.narration);
+          utterance = speech;
+          speech.lang = 'en-US';
+          speech.rate = 0.96;
+          speech.voice = voices.find((voice) => voice.voiceURI === voiceSelect.value) || null;
+          speech.onend = () => {
+            if (utterance !== speech) return;
+            utterance = null;
+            status.textContent = 'Explanation finished. Choose Repeat or move to the next slide.';
+          };
+          speech.onerror = (event) => {
+            if (utterance !== speech) return;
+            utterance = null;
+            if (event.error === 'canceled' || event.error === 'interrupted') return;
+            audioEnabled = false;
+            updateAudio();
+            status.textContent =
+              'Speech could not start. Try another voice or read the explanation transcript.';
+          };
+          status.textContent = `Reading explanation for slide ${current + 1}.`;
+          synth.speak(speech);
+        }
+        function fillVoices() {
+          const selected = voiceSelect.value;
+          voices = synth
+            .getVoices()
+            .slice()
+            .sort((left, right) => {
+              return (
+                Number(/^en([-_]|$)/i.test(right.lang)) - Number(/^en([-_]|$)/i.test(left.lang))
+              );
+            });
+          voiceSelect.replaceChildren(new Option('Browser default voice', ''));
+          voices.forEach((voice) =>
+            voiceSelect.add(new Option(`${voice.name} (${voice.lang})`, voice.voiceURI)),
+          );
+          if (voices.some((voice) => voice.voiceURI === selected)) voiceSelect.value = selected;
+        }
+        function show(index) {
+          current = Math.max(0, Math.min(slides.length - 1, index));
+          slides.forEach((slide, i) => {
+            slide.hidden = i !== current;
+            slide.classList.toggle('active', i === current);
+          });
+          document.getElementById('counter').textContent = `${current + 1} / ${slides.length}`;
+          document.getElementById('previous').disabled = current === 0;
+          document.getElementById('next').disabled = current === slides.length - 1;
+          document.getElementById('progress').style.width =
+            `${((current + 1) / slides.length) * 100}%`;
+          document.getElementById('transcript').textContent = slides[current].dataset.narration;
+          speak();
+        }
+        read.addEventListener('click', () => {
+          audioEnabled = !audioEnabled;
+          updateAudio();
+          if (audioEnabled) speak();
+          else {
+            cancelSpeech();
+            status.textContent = 'Reading stopped.';
+          }
+        });
+        document.getElementById('repeat').addEventListener('click', () => {
+          audioEnabled = true;
+          updateAudio();
+          speak();
+        });
+        document.getElementById('stop').addEventListener('click', () => {
+          audioEnabled = false;
+          updateAudio();
+          cancelSpeech();
+          status.textContent = 'Reading stopped.';
+        });
+        voiceSelect.addEventListener('change', () => {
+          if (audioEnabled) speak();
+        });
+        document.getElementById('previous').addEventListener('click', () => show(current - 1));
+        document.getElementById('next').addEventListener('click', () => show(current + 1));
+        document.addEventListener('keydown', (event) => {
+          if (
+            event.target.closest('input, textarea, select, summary, [contenteditable="true"]') ||
+            event.altKey ||
+            event.ctrlKey ||
+            event.metaKey
+          )
+            return;
+          const targets = {
+            ArrowRight: current + 1,
+            PageDown: current + 1,
+            ArrowLeft: current - 1,
+            PageUp: current - 1,
+            Home: 0,
+            End: slides.length - 1,
+          };
+          if (event.key in targets) {
+            event.preventDefault();
+            show(targets[event.key]);
+          }
+          if (event.key === 'Escape') {
+            audioEnabled = false;
+            updateAudio();
+            cancelSpeech();
+            status.textContent = 'Reading stopped.';
+          }
+        });
+        function stopForPrint() {
+          audioEnabled = false;
+          updateAudio();
+          cancelSpeech();
+          status.textContent = 'Reading stopped for printing.';
+        }
+        window.addEventListener('beforeprint', stopForPrint);
+        window.addEventListener('pagehide', cancelSpeech);
+        document.getElementById('print').addEventListener('click', () => {
+          stopForPrint();
+          window.print();
+        });
+        document.getElementById('save').addEventListener('click', () => {
+          const button = document.getElementById('save');
+          button.disabled = true;
+          try {
+            const clone = document.documentElement.cloneNode(true);
+            // Embedded small brand asset keeps saving functional on file:// as well as HTTP.
+            const dataUrl = document.querySelector('meta[name="export-brand"]').content;
+            if (!dataUrl.startsWith('data:image/png;base64,')) throw new Error('Image unavailable');
+            clone.querySelectorAll('img').forEach((image) => (image.src = dataUrl));
+            clone.querySelector('link[rel="icon"]').href = dataUrl;
+            clone.querySelectorAll('.slide-footer').forEach((footer) => footer.remove());
+            clone.querySelectorAll('main section').forEach((slide) => {
+              slide.hidden = false;
+              slide.classList.remove('active');
+            });
+            clone.querySelector('#save').disabled = false;
+            clone.querySelector('#read').setAttribute('aria-pressed', 'false');
+            clone.querySelector('#read').textContent = 'Read explanation';
+            clone.querySelector('#audio-status').textContent =
+              'Audio starts only when you choose Read explanation.';
+            clone.querySelector('#voice').replaceChildren(new Option('Browser default voice', ''));
+            clone.querySelector('.topbar a').href = new URL('../index.html', location.href).href;
+            const url = URL.createObjectURL(
+              new Blob(['<!doctype html>\n', clone.outerHTML], { type: 'text/html;charset=utf-8' }),
+            );
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'mockforge-studio-presentation.html';
+            link.click();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+            status.textContent =
+              'Presentation saved with embedded branding. Open the HTML file to present or print offline.';
+          } catch {
+            status.textContent =
+              'Could not embed branding. Use your browser’s Save page as complete webpage, or Print / Save PDF.';
+          } finally {
+            button.disabled = false;
+          }
+        });
+        if (supported) {
+          fillVoices();
+          synth.addEventListener('voiceschanged', fillVoices);
+        } else {
+          [
+            read,
+            document.getElementById('repeat'),
+            document.getElementById('stop'),
+            voiceSelect,
+          ].forEach((control) => (control.disabled = true));
+          status.textContent =
+            'Speech is unavailable in this browser. Every explanation remains available as a transcript.';
+        }
+        show(0);
+      })();
+    </script>
+  </body>
+</html>
