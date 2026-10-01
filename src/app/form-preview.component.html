@@ -34,11 +34,20 @@
     <span aria-hidden="true">● ● ●</span><span>preview.mockforge.local</span
     ><span aria-hidden="true">↗</span>
   </div>
-  <div [class]="'rendered-form theme-' + project().theme">
+  <div
+    [class]="'rendered-form theme-' + project().theme"
+    [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
+  >
     <span class="preview-brand">{{ project().name.split(' · ')[0] }}</span>
     <h3>{{ text(project().title) }}</h3>
     <p class="preview-intro">{{ text(project().description) }}</p>
-    <form #previewForm ngNativeValidate (submit)="submit($event)" [attr.lang]="language()">
+    <form
+      #previewForm
+      ngNativeValidate
+      (submit)="submit($event)"
+      [attr.lang]="language()"
+      [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
+    >
       <div class="preview-fields" [class.two-columns]="project().columns === 2 && !mobile()">
         @for (field of project().fields; track field.id) {
           @if (field.type === 'group') {

@@ -65,7 +65,11 @@ describe('Open-source project contract', (): void => {
     };
     const migrated = parseProject(legacy);
     expect(migrated?.schemaVersion).toBe('1.3.0');
-    expect(migrated?.buttons[0].label).toEqual(project.submit);
+    expect(migrated?.buttons[0].label).toEqual({
+      de: project.submit.de,
+      en: project.submit.en,
+      fa: '',
+    });
     expect(migrated?.fields[0].tooltip).toEqual({ de: '', en: '', fa: '' });
     expect(migrated?.review.approvedAt).toBeNull();
     expect(parseProject({ ...legacy, fields: [null] })).toBeNull();

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FeedbackService } from './feedback.service';
 import { Locale } from './project.model';
-import { copy, CopyKey } from './translations';
+import { CopyKey, translate } from './translations';
 
 /** Native modal focus containment plus non-blocking, localized live announcements. */
 @Component({
@@ -33,6 +33,6 @@ export class FeedbackComponent {
   }
 
   t(key: CopyKey): string {
-    return copy[key][this.locale() === 'de' ? 0 : 1];
+    return translate(key, this.locale());
   }
 }

@@ -1,5 +1,21 @@
 /* Design tokens, native-control defaults, accessible focus, reusable actions and the replacement modal. */
 
+@font-face {
+  font-family: 'IRANSans';
+  src: url('../../fonts/iransans/IRANSans.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANSans';
+  src: url('../../fonts/iransans/IRANSans-Black.woff2') format('woff2');
+  font-weight: 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --ink: #172b39;
   --muted: #546674;
@@ -32,6 +48,21 @@ body {
   color: var(--ink);
   background: var(--canvas);
   font-size: 14px;
+}
+
+html[lang='fa'] body,
+[lang='fa'],
+[dir='rtl'].language-section,
+.rendered-form[dir='rtl'] {
+  font-family: 'IRANSans', Tahoma, Arial, sans-serif;
+}
+
+[dir='rtl'] input[type='email'],
+[dir='rtl'] input[type='url'],
+#field-pattern,
+[id$='-classes'] {
+  direction: ltr;
+  text-align: left;
 }
 
 button {
@@ -106,7 +137,7 @@ p {
 .skip-link {
   position: fixed;
   top: -100px;
-  left: 15px;
+  inset-inline-start: 15px;
   z-index: 20;
   padding: 12px;
   background: white;
@@ -166,7 +197,7 @@ p {
   border: 0;
   background: none;
   color: var(--ink);
-  padding-left: 0;
+  padding-inline-start: 0;
 }
 
 .add-button {
@@ -199,7 +230,7 @@ p {
   background: none;
   border: 0;
   color: var(--danger);
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .icon-button {

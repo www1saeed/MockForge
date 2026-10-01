@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   gap: 13px;
-  text-align: left;
+  text-align: start;
   border: 0;
   background: transparent;
   color: #c6d5d9;
@@ -74,7 +74,7 @@
 .breadcrumb {
   font-weight: 600;
   font-size: 14px;
-  margin-right: auto;
+  margin-inline-end: auto;
 }
 
 .topbar-actions {
@@ -91,7 +91,7 @@
 .save-status span {
   font-size: 8px;
   color: var(--accent);
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 
 .save-error {

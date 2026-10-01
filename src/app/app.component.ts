@@ -23,6 +23,7 @@ import {
   FormButton,
   handoff,
   Locale,
+  LOCALES,
   parseProject,
   Project,
   Text,
@@ -34,7 +35,7 @@ import {
   ExampleKind,
 } from './project';
 import { ProjectStore } from './project.store';
-import { copy, CopyKey } from './translations';
+import { CopyKey, translate } from './translations';
 import { FieldListComponent } from './field-list.component';
 import { FormPreviewComponent } from './form-preview.component';
 import { FeedbackComponent } from './feedback.component';
@@ -82,6 +83,7 @@ export class AppComponent implements OnInit {
   /** View-only expansion preserves the mounted preview and its unsaved response values. */
   readonly previewFullWidth = signal(false);
   readonly previewLocale = signal<Locale>('de');
+  readonly formLocales = LOCALES;
   readonly patternDrafts = signal<Partial<Record<string, string>>>({});
   readonly buttonVariants = BUTTON_VARIANTS;
   readonly buttonActions = BUTTON_ACTIONS;
@@ -197,6 +199,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.store.restore();
     this.selectedId.set(this.project().fields[0]?.id ?? '');
+    this.applyDocumentLocale(this.locale());
     this.readLocation();
   }
   /** Honor browser back/forward navigation; unknown hashes safely return to the overview. */
@@ -224,12 +227,16 @@ export class AppComponent implements OnInit {
   }
   /** Resolve Studio interface copy without changing the selected form or preview language. */
   t(key: CopyKey): string {
-    return copy[key][this.locale() === 'de' ? 0 : 1];
+    return translate(key, this.locale());
   }
   /** Switch UI copy in place; this is a viewing preference, not a specification change. */
   setLocale(locale: Locale): void {
     this.locale.set(locale);
+    this.applyDocumentLocale(locale);
+  }
+  private applyDocumentLocale(locale: Locale): void {
     document.documentElement.lang = locale;
+    document.documentElement.dir = locale === 'fa' ? 'rtl' : 'ltr';
   }
   /** Retain preview language preference across preview show/hide transitions. */
   setPreviewLocale(locale: Locale): void {
@@ -254,7 +261,21 @@ export class AppComponent implements OnInit {
   }
   /** Retain inactive translations while changing which languages require review. */
   setLanguages(choice: string): void {
-    this.update({ languages: choice === 'both' ? ['de', 'en'] : [choice === 'en' ? 'en' : 'de'] });
+    this.update({
+      languages:
+        choice === 'both' ? ['de', 'en'] : [choice === 'en' ? 'en' : choice === 'fa' ? 'fa' : 'de'],
+    });
+  }
+  /** Keep one or two form languages active; never let a third choice crowd the editor. */
+  toggleFormLanguage(locale: Locale, selected: boolean): void {
+    const current = this.project().languages;
+    if (selected) {
+      if (current.includes(locale) || current.length >= 2) return;
+      this.update({ languages: [...current, locale] });
+      return;
+    }
+    if (!current.includes(locale) || current.length === 1) return;
+    this.update({ languages: current.filter((language): boolean => language !== locale) });
   }
   /** Use exhaustive, typed maps rather than constructing unchecked translation keys. */
   variantLabel(variant: FormButton['variant']): string {
@@ -370,7 +391,7 @@ export class AppComponent implements OnInit {
       );
     } else this.updateField(field.id, change);
   }
-  /** Apply line-based choices by shared row index so both languages describe the same options. */
+  /** Apply line-based choices by shared row index so selected languages describe the same options. */
   changeOptions(value: string, locale: Locale = this.locale()): void {
     const field = this.selected();
     if (!field) return;

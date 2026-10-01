@@ -189,8 +189,8 @@
 }
 
 .field-list {
-  border-right: 1px solid var(--line);
-  padding-right: 16px;
+  border-inline-end: 1px solid var(--line);
+  padding-inline-end: 16px;
   position: sticky;
   top: var(--workspace-inset);
   align-self: start;
@@ -223,8 +223,8 @@
     100dvh - var(--header-height) - var(--footer-height) - 2 * var(--workspace-inset)
   );
   overflow-y: auto;
-  border-right: 1px solid var(--line);
-  padding-right: 8px;
+  border-inline-end: 1px solid var(--line);
+  padding-inline-end: 8px;
 }
 .field-list-collapsed .field-list-heading {
   justify-content: center;
@@ -245,7 +245,7 @@
   --bs-tooltip-opacity: 1;
 }
 .field-rail-tooltip .tooltip-inner {
-  text-align: left;
+  text-align: start;
   font-size: 13px;
 }
 
@@ -255,7 +255,7 @@
   gap: 8px;
   width: 100%;
   background: none;
-  text-align: left;
+  text-align: start;
   border: 1px solid transparent;
   border-radius: 6px;
   padding: 12px 8px;
@@ -287,7 +287,7 @@
 }
 
 .field-arrow {
-  margin-left: auto;
+  margin-inline-start: auto;
   color: var(--accent);
 }
 
@@ -339,7 +339,7 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
-  text-align: left;
+  text-align: start;
 }
 
 .theme-card.chosen {
@@ -453,6 +453,41 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.language-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 0;
+  border: 0;
+}
+
+.language-picker legend {
+  width: 100%;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.language-picker label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  font-weight: 500;
+}
+
+.language-picker input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
 .language-section {
   min-width: 0;
 }
@@ -543,8 +578,8 @@
     position: static;
     max-height: none;
     overflow-y: visible;
-    border-right: 0;
-    padding-right: 0;
+    border-inline-end: 0;
+    padding-inline-end: 0;
   }
   .inspector {
     border-top: 1px solid var(--line);

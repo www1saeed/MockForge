@@ -2,11 +2,51 @@ import { createButton, createField, Field, FieldType, Project, text } from './pr
 
 /** Commercial examples are fictional briefs, never customer claims. */
 export type ExampleKind = 'saas' | 'commerce' | 'agency' | 'complex';
+const PERSIAN_FIELD_LABELS: Readonly<Record<string, string>> = {
+  'team-members': 'تیم پروژه',
+  'member-name': 'نام',
+  'member-email': 'ایمیل کاری',
+  'member-role': 'نقش',
+  'member-start': 'تاریخ دسترسی',
+  'member-profile': 'پیوند پروفایل',
+  'member-contact': 'مسئول پاسخ‌گویی',
+  'line-items': 'اقلام خرید',
+  'item-code': 'کد کالا',
+  'item-name': 'شرح',
+  'item-quantity': 'تعداد',
+  'item-category': 'دسته‌بندی',
+  'item-delivery': 'تاریخ نیاز',
+  'item-notes': 'توجیه',
+  'project-title': 'عنوان پروژه',
+  'project-code': 'شناسهٔ پروژه',
+  'request-email': 'ایمیل تماس',
+  'project-url': 'وب‌سایت پروژه',
+  'project-budget': 'بودجهٔ برنامه‌ریزی‌شده به یورو',
+  'project-start': 'تاریخ ترجیحی شروع',
+  'project-summary': 'اهداف و معیارهای موفقیت',
+  'project-department': 'واحد سازمانی',
+  'project-priority': 'اولویت',
+  'project-remote': 'همکاری در چند مکان',
+  'project-risks': 'ریسک‌ها و وابستگی‌ها',
+  'project-confirm': 'دامنه و اقلام را با ذی‌نفعان هماهنگ کرده‌ام.',
+  name: 'نام کامل',
+  email: 'نشانی ایمیل',
+  company: 'شرکت',
+  team: 'اندازهٔ تیم',
+  needs: 'چه چیزی را می‌خواهید بهبود دهید؟',
+  privacy: 'اطلاعیهٔ حریم خصوصی را خوانده‌ام.',
+  order: 'شمارهٔ سفارش',
+  reason: 'دلیل مرجوعی',
+  details: 'توضیحات بیشتر',
+  budget: 'محدودهٔ بودجه',
+  date: 'تاریخ ترجیحی شروع',
+  brief: 'می‌خواهید به چه نتیجه‌ای برسید؟',
+};
 export function example(kind: ExampleKind): Project {
   const base: Project = {
     schemaVersion: '1.3.0',
     languages: ['de', 'en'],
-    buttons: [createButton('submit', text('Anfrage senden', 'Send request'))],
+    buttons: [createButton('submit', text('Anfrage senden', 'Send request', 'ارسال درخواست'))],
     name: '',
     owner: '',
     audience: '',
@@ -14,7 +54,7 @@ export function example(kind: ExampleKind): Project {
     scope: '',
     title: text('', ''),
     description: text('', ''),
-    submit: text('Anfrage senden', 'Send request'),
+    submit: text('Anfrage senden', 'Send request', 'ارسال درخواست'),
     theme: 'bootstrap',
     columns: 2,
     fields: [],
@@ -24,7 +64,7 @@ export function example(kind: ExampleKind): Project {
   };
   const field = (id: string, type: FieldType, de: string, en: string, required = true): Field => ({
     ...createField(type, id),
-    label: text(de, en),
+    label: text(de, en, PERSIAN_FIELD_LABELS[id] ?? ''),
     required,
   });
   if (kind === 'complex') {
@@ -33,8 +73,13 @@ export function example(kind: ExampleKind): Project {
     team.help = text(
       'Erfasse Verantwortliche und ihre Rollen.',
       'List stakeholders and their roles.',
+      'مسئولان و نقش‌هایشان را ثبت کنید.',
     );
-    team.tooltip = text('Jede Karte beschreibt eine Person.', 'Each card describes one person.');
+    team.tooltip = text(
+      'Jede Karte beschreibt eine Person.',
+      'Each card describes one person.',
+      'هر کارت یک شخص را توصیف می‌کند.',
+    );
     team.group = {
       layout: 'cards',
       minItems: 1,
@@ -45,9 +90,9 @@ export function example(kind: ExampleKind): Project {
         {
           ...field('member-role', 'select', 'Rolle', 'Role'),
           options: [
-            text('Projektleitung', 'Project lead'),
-            text('Fachbereich', 'Business owner'),
-            text('Technik', 'Engineering'),
+            text('Projektleitung', 'Project lead', 'مدیر پروژه'),
+            text('Fachbereich', 'Business owner', 'مالک کسب‌وکار'),
+            text('Technik', 'Engineering', 'فنی'),
           ],
         },
         field('member-start', 'date', 'Verfügbar ab', 'Available from', false),
@@ -67,6 +112,7 @@ export function example(kind: ExampleKind): Project {
     items.help = text(
       'Ein Produkt oder eine Leistung pro Zeile.',
       'One product or service per row.',
+      'در هر ردیف یک محصول یا خدمت وارد کنید.',
     );
     items.group = {
       layout: 'table',
@@ -76,11 +122,12 @@ export function example(kind: ExampleKind): Project {
         {
           ...field('item-code', 'text', 'Artikelcode', 'Item code'),
           pattern: '[A-Z]{2}-[0-9]{4}',
-          placeholder: text('IT-2048', 'IT-2048'),
-          patternMessage: text('Format: IT-2048', 'Format: IT-2048'),
+          placeholder: text('IT-2048', 'IT-2048', 'IT-2048'),
+          patternMessage: text('Format: IT-2048', 'Format: IT-2048', 'قالب: IT-2048'),
           tooltip: text(
             'Zwei Großbuchstaben, Bindestrich, vier Ziffern.',
             'Two uppercase letters, a hyphen, four digits.',
+            'دو حرف بزرگ لاتین، خط تیره و چهار رقم.',
           ),
         },
         field('item-name', 'text', 'Bezeichnung', 'Description'),
@@ -88,9 +135,9 @@ export function example(kind: ExampleKind): Project {
         {
           ...field('item-category', 'select', 'Kategorie', 'Category'),
           options: [
-            text('Hardware', 'Hardware'),
-            text('Software', 'Software'),
-            text('Dienstleistung', 'Service'),
+            text('Hardware', 'Hardware', 'سخت‌افزار'),
+            text('Software', 'Software', 'نرم‌افزار'),
+            text('Dienstleistung', 'Service', 'خدمات'),
           ],
         },
         field('item-delivery', 'date', 'Benötigt am', 'Needed by', false),
@@ -107,17 +154,26 @@ export function example(kind: ExampleKind): Project {
       goal: 'Align project scope, responsible people and requested line items before finance approval.',
       scope:
         'A bilingual request with repeatable stakeholder cards and procurement rows. No pricing, identity lookup, finance approval or purchasing integration.',
-      title: text('Plane dein Projekt bis ins Detail.', 'Plan your project in detail.'),
+      title: text(
+        'Plane dein Projekt bis ins Detail.',
+        'Plan your project in detail.',
+        'پروژهٔ خود را با جزئیات برنامه‌ریزی کنید.',
+      ),
       description: text(
         'Beschreibe Ziele, Team und Beschaffung. Prüfe alle Angaben gemeinsam vor der Umsetzung.',
         'Describe goals, team and procurement. Review the details together before implementation.',
+        'اهداف، تیم و خرید را شرح دهید و پیش از پیاده‌سازی همهٔ جزئیات را با هم مرور کنید.',
       ),
       fields: [
         {
           ...field('project-title', 'text', 'Projekttitel', 'Project title'),
           minLength: 3,
           maxLength: 120,
-          placeholder: text('Kundenportal erneuern', 'Renew the customer portal'),
+          placeholder: text(
+            'Kundenportal erneuern',
+            'Renew the customer portal',
+            'نوسازی پرتال مشتریان',
+          ),
         },
         {
           ...field('project-code', 'text', 'Projektkennung', 'Project reference'),
@@ -125,11 +181,13 @@ export function example(kind: ExampleKind): Project {
           patternMessage: text(
             'Bitte PRJ- und vier Ziffern eingeben.',
             'Enter PRJ- followed by four digits.',
+            'PRJ- و سپس چهار رقم وارد کنید.',
           ),
-          placeholder: text('PRJ-2026', 'PRJ-2026'),
+          placeholder: text('PRJ-2026', 'PRJ-2026', 'PRJ-2026'),
           tooltip: text(
             'Die Kennung wird später im ERP geprüft.',
             'The reference will later be verified in the ERP.',
+            'این شناسه بعداً در ERP بررسی می‌شود.',
           ),
         },
         field('request-email', 'email', 'E-Mail für Rückfragen', 'Contact email'),
@@ -148,23 +206,28 @@ export function example(kind: ExampleKind): Project {
           help: text(
             'Beschreibe ein konkretes Ergebnis und die Abnahme.',
             'Describe a concrete outcome and acceptance criteria.',
+            'یک نتیجهٔ مشخص و معیارهای پذیرش را شرح دهید.',
           ),
         },
         {
           ...field('project-department', 'select', 'Fachbereich', 'Department'),
           options: [
-            text('Vertrieb', 'Sales'),
-            text('Betrieb', 'Operations'),
-            text('IT', 'IT'),
-            text('Finanzen', 'Finance'),
+            text('Vertrieb', 'Sales', 'فروش'),
+            text('Betrieb', 'Operations', 'عملیات'),
+            text('IT', 'IT', 'فناوری اطلاعات'),
+            text('Finanzen', 'Finance', 'مالی'),
           ],
         },
         {
           ...field('project-priority', 'radio', 'Priorität', 'Priority'),
           options: [
-            text('Normal', 'Normal'),
-            text('Hoch', 'High'),
-            text('Kritisch – Begründung erforderlich', 'Critical – justification required'),
+            text('Normal', 'Normal', 'عادی'),
+            text('Hoch', 'High', 'بالا'),
+            text(
+              'Kritisch – Begründung erforderlich',
+              'Critical – justification required',
+              'بحرانی – نیازمند توجیه',
+            ),
           ],
         },
         field(
@@ -195,26 +258,29 @@ export function example(kind: ExampleKind): Project {
       ],
       buttons: [
         {
-          ...createButton('submit', text('Antrag prüfen', 'Review request')),
+          ...createButton('submit', text('Antrag prüfen', 'Review request', 'بررسی درخواست')),
           note: 'Simulates submission; actual finance routing is outside this mockup.',
         },
         {
-          ...createButton('save-draft', text('Entwurf prüfen', 'Check draft')),
+          ...createButton('save-draft', text('Entwurf prüfen', 'Check draft', 'بررسی پیش‌نویس')),
           variant: 'secondary',
           action: 'save',
         },
         {
-          ...createButton('clear', text('Eingaben zurücksetzen', 'Reset responses')),
+          ...createButton(
+            'clear',
+            text('Eingaben zurücksetzen', 'Reset responses', 'پاک‌کردن پاسخ‌ها'),
+          ),
           variant: 'ghost',
           action: 'reset',
         },
         {
-          ...createButton('cancel', text('Abbrechen', 'Cancel')),
+          ...createButton('cancel', text('Abbrechen', 'Cancel', 'لغو')),
           variant: 'ghost',
           action: 'cancel',
         },
       ],
-      submit: text('Antrag prüfen', 'Review request'),
+      submit: text('Antrag prüfen', 'Review request', 'بررسی درخواست'),
       decisions:
         'Use cards for stakeholder profiles and a table for comparable procurement positions. Every repeated entry validates independently. Team size is 1–8; line items are 1–12. Both languages require exact labels. No totals, permissions or automatic purchasing are implied.',
       questions:
@@ -228,35 +294,44 @@ export function example(kind: ExampleKind): Project {
       audience: 'Operations teams evaluating a B2B SaaS product',
       goal: 'Qualify demo requests without asking for unnecessary information.',
       scope: 'Demo request form. CRM integration is a later implementation task.',
-      title: text('Dein nächster Workflow beginnt hier.', 'Your next workflow starts here.'),
+      title: text(
+        'Dein nächster Workflow beginnt hier.',
+        'Your next workflow starts here.',
+        'گردش کار بعدی شما از اینجا آغاز می‌شود.',
+      ),
       description: text(
         'Erzähle uns von deinem Team. Wir zeigen dir, wie Orbit euren Alltag vereinfacht.',
         'Tell us about your team. See how Orbit can simplify your day.',
+        'از تیم خود بگویید تا نشان دهیم اوربیت چگونه کار روزانه را ساده‌تر می‌کند.',
       ),
-      submit: text('Demo anfragen', 'Request a demo'),
-      buttons: [createButton('submit', text('Demo anfragen', 'Request a demo'))],
+      submit: text('Demo anfragen', 'Request a demo', 'درخواست دمو'),
+      buttons: [createButton('submit', text('Demo anfragen', 'Request a demo', 'درخواست دمو'))],
       fields: [
         {
           ...field('name', 'text', 'Vollständiger Name', 'Full name'),
-          placeholder: text('Alex Morgan', 'Alex Morgan'),
+          placeholder: text('Alex Morgan', 'Alex Morgan', 'علی رضایی'),
           minLength: 2,
         },
         {
           ...field('email', 'email', 'Geschäftliche E-Mail', 'Work email'),
-          placeholder: text('alex@company.com', 'alex@company.com'),
-          help: text('Hierhin senden wir deine Einladung.', 'We will send your invitation here.'),
+          placeholder: text('alex@company.com', 'alex@company.com', 'ali@company.com'),
+          help: text(
+            'Hierhin senden wir deine Einladung.',
+            'We will send your invitation here.',
+            'دعوت‌نامه را به این نشانی می‌فرستیم.',
+          ),
           note: 'PO decision needed: should personal email domains be allowed?',
         },
         {
           ...field('company', 'text', 'Unternehmen', 'Company'),
-          placeholder: text('Acme Studio', 'Acme Studio'),
+          placeholder: text('Acme Studio', 'Acme Studio', 'استودیو نمونه'),
         },
         {
           ...field('team', 'select', 'Teamgröße', 'Team size'),
           options: [
-            text('1–10 Personen', '1–10 people'),
-            text('11–50 Personen', '11–50 people'),
-            text('51+ Personen', '51+ people'),
+            text('1–10 Personen', '1–10 people', '۱ تا ۱۰ نفر'),
+            text('11–50 Personen', '11–50 people', '۱۱ تا ۵۰ نفر'),
+            text('51+ Personen', '51+ people', 'بیش از ۵۱ نفر'),
           ],
         },
         {
@@ -270,6 +345,7 @@ export function example(kind: ExampleKind): Project {
           placeholder: text(
             'Zum Beispiel: Kundenanfragen schneller bearbeiten',
             'For example: respond to customers faster',
+            'برای نمونه: پاسخ‌گویی سریع‌تر به مشتریان',
           ),
         },
         {
@@ -295,23 +371,30 @@ export function example(kind: ExampleKind): Project {
       audience: 'Customers requesting an online order return',
       goal: 'Capture the minimum information support needs to evaluate a return.',
       scope: 'Return request only. No refunds, labels or order lookup.',
-      title: text('Eine Retoure, ganz unkompliziert.', 'A simpler way to return.'),
+      title: text(
+        'Eine Retoure, ganz unkompliziert.',
+        'A simpler way to return.',
+        'راهی ساده‌تر برای مرجوعی.',
+      ),
       description: text(
         'Teile uns mit, was du zurückgeben möchtest.',
         'Tell us what you would like to return.',
+        'به ما بگویید چه چیزی را می‌خواهید برگردانید.',
       ),
-      submit: text('Retoure anfragen', 'Request a return'),
+      submit: text('Retoure anfragen', 'Request a return', 'درخواست مرجوعی'),
       theme: 'material',
-      buttons: [createButton('submit', text('Retoure anfragen', 'Request a return'))],
+      buttons: [
+        createButton('submit', text('Retoure anfragen', 'Request a return', 'درخواست مرجوعی')),
+      ],
       fields: [
         field('order', 'text', 'Bestellnummer', 'Order number'),
         field('email', 'email', 'E-Mail-Adresse', 'Email address'),
         {
           ...field('reason', 'radio', 'Grund der Retoure', 'Reason for return'),
           options: [
-            text('Passt nicht', 'Does not fit'),
-            text('Beschädigt', 'Damaged'),
-            text('Anderer Grund', 'Other reason'),
+            text('Passt nicht', 'Does not fit', 'مناسب نیست'),
+            text('Beschädigt', 'Damaged', 'آسیب‌دیده است'),
+            text('Anderer Grund', 'Other reason', 'دلیل دیگر'),
           ],
         },
         field('details', 'textarea', 'Weitere Angaben', 'Additional details', false),
@@ -328,10 +411,15 @@ export function example(kind: ExampleKind): Project {
     goal: 'Help the sales team understand project fit before the first call.',
     scope: 'Inquiry form only. No booking or automatic pricing.',
     theme: 'fluent',
-    title: text('Lass uns dein Vorhaben verstehen.', 'Let us understand your next project.'),
+    title: text(
+      'Lass uns dein Vorhaben verstehen.',
+      'Let us understand your next project.',
+      'بیایید پروژهٔ بعدی شما را بهتر بشناسیم.',
+    ),
     description: text(
       'Ein paar Details helfen uns, das erste Gespräch vorzubereiten.',
       'A few details help us prepare our first conversation.',
+      'چند جزئیات به ما کمک می‌کند برای نخستین گفت‌وگو آماده شویم.',
     ),
     fields: [
       field('name', 'text', 'Dein Name', 'Your name'),
@@ -339,9 +427,9 @@ export function example(kind: ExampleKind): Project {
       {
         ...field('budget', 'select', 'Budgetrahmen', 'Budget range'),
         options: [
-          text('10.000–25.000 €', '€10,000–25,000'),
-          text('25.000–50.000 €', '€25,000–50,000'),
-          text('Noch offen', 'To be decided'),
+          text('10.000–25.000 €', '€10,000–25,000', '۱۰٬۰۰۰ تا ۲۵٬۰۰۰ یورو'),
+          text('25.000–50.000 €', '€25,000–50,000', '۲۵٬۰۰۰ تا ۵۰٬۰۰۰ یورو'),
+          text('Noch offen', 'To be decided', 'هنوز مشخص نیست'),
         ],
       },
       field('date', 'date', 'Gewünschter Start', 'Preferred start', false),

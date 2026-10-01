@@ -120,13 +120,16 @@ export function createField(type: FieldType, id: string): Field {
   return {
     id,
     type,
-    label: type === 'group' ? text('Neue Gruppe', 'New group') : text('Neues Feld', 'New field'),
+    label:
+      type === 'group'
+        ? text('Neue Gruppe', 'New group', 'گروه تازه')
+        : text('Neues Feld', 'New field', 'فیلد تازه'),
     placeholder: text('', ''),
     help: text('', ''),
     required: type === 'group',
     options:
       type === 'select' || type === 'radio'
-        ? [text('Option 1', 'Option 1'), text('Option 2', 'Option 2')]
+        ? [text('Option 1', 'Option 1', 'گزینهٔ ۱'), text('Option 2', 'Option 2', 'گزینهٔ ۲')]
         : [],
     note: '',
     minLength: 0,
@@ -164,6 +167,9 @@ export function supportsPattern(field: Field): boolean {
 }
 
 /** A new button carries only presentation and local simulation behavior. */
-export function createButton(id: string, label: Text = text('Senden', 'Submit')): FormButton {
+export function createButton(
+  id: string,
+  label: Text = text('Senden', 'Submit', 'ارسال'),
+): FormButton {
   return { id, label, variant: 'primary', action: 'submit', cssClass: '', note: '' };
 }

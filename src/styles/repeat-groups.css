@@ -135,7 +135,7 @@
 }
 .repeat-table th {
   position: relative;
-  text-align: left;
+  text-align: start;
   padding: 12px;
   background: #f4f7f8;
   vertical-align: top;
@@ -171,7 +171,7 @@
 /* Continuous table cells remove outer gaps while retaining readable control padding. */
 .repeat-table.gapless td {
   padding: 0;
-  border-right: 1px solid var(--line);
+  border-inline-end: 1px solid var(--line);
 }
 .repeat-table.gapless .form-control,
 .repeat-table.gapless .form-select {

@@ -165,6 +165,25 @@ describe('Alignment workspace', (): void => {
     for (let index = 0; index < 5; index++) app.setCheck(index, true);
     expect(app.canApprove()).toBe(false);
   });
+  test('allows one or two form languages and applies Persian document direction', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.setLanguages('de');
+    app.toggleFormLanguage('fa', true);
+    expect(app.project().languages).toEqual(['de', 'fa']);
+    app.toggleFormLanguage('en', true);
+    expect(app.project().languages).toEqual(['de', 'fa']);
+    app.toggleFormLanguage('de', false);
+    expect(app.project().languages).toEqual(['fa']);
+    app.toggleFormLanguage('fa', false);
+    expect(app.project().languages).toEqual(['fa']);
+
+    app.setLocale('fa');
+    expect(document.documentElement.lang).toBe('fa');
+    expect(document.documentElement.dir).toBe('rtl');
+    expect(app.t('overview')).toBe('نمای کلی');
+    app.setLocale('de');
+    expect(document.documentElement.dir).toBe('ltr');
+  });
   test('keeps invalid patterns out of persistence and checks full values with localized messages', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.selectedId.set('name');

@@ -10,7 +10,7 @@ import {
 import { FeedbackService } from './feedback.service';
 import { Field, Locale, Text } from './project.model';
 import { PatternInput, PreviewFieldComponent } from './preview-field.component';
-import { copy, CopyKey } from './translations';
+import { CopyKey, translate } from './translations';
 import { FieldTitleComponent } from './field-title.component';
 import { BootstrapTooltipDirective } from './bootstrap-tooltip.directive';
 
@@ -57,7 +57,7 @@ export class RepeatGroupComponent {
     return value[this.locale()];
   }
   t(key: CopyKey): string {
-    return copy[key][this.locale() === 'de' ? 0 : 1];
+    return translate(key, this.locale());
   }
   controlId(row: number, child: Field): string {
     // Colons cannot occur in definition ids, preventing collisions with root controls.

@@ -1,3 +1,6 @@
+import type { Locale } from './project.model';
+import { faCopy } from './translations.fa';
+
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
   expandFields: ['Hauptfeldliste aufklappen', 'Expand main field list'],
@@ -420,3 +423,9 @@ export const copy = {
   checkbox: ['Checkbox', 'Checkbox'],
 } satisfies Record<string, readonly [string, string]>;
 export type CopyKey = keyof typeof copy;
+
+/** Resolve interface copy without leaking catalog storage details into components. */
+export function translate(key: CopyKey, locale: Locale): string {
+  if (locale === 'fa') return faCopy[key];
+  return copy[key][locale === 'de' ? 0 : 1];
+}
