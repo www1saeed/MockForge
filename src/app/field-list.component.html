@@ -1,0 +1,160 @@
+<div class="field-list-heading">
+  @if (!collapsed()) {
+    <span>{{ t('fields') }}</span
+    ><span>{{ fields().length.toString().padStart(2, '0') }}</span>
+  }
+  @if (collapsible()) {
+    <button
+      type="button"
+      class="icon-button field-list-toggle"
+      [attr.aria-label]="t(collapsed() ? 'expandFields' : 'collapseFields')"
+      [attr.aria-expanded]="!collapsed()"
+      [appBootstrapTooltip]="t(collapsed() ? 'expandFields' : 'collapseFields')"
+      (click)="collapsedChange.emit(!collapsed())"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        aria-hidden="true"
+      >
+        <path [attr.d]="collapsed() ? 'M9 5l7 7-7 7' : 'M15 5l-7 7 7 7'"></path>
+      </svg>
+    </button>
+  }
+</div>
+
+@for (field of fields(); track field.id; let index = $index) {
+  <button
+    type="button"
+    class="field-row"
+    [class.field-icon-row]="collapsed()"
+    [class.chosen]="selectedId() === field.id"
+    [attr.aria-pressed]="selectedId() === field.id"
+    [attr.aria-label]="collapsed() ? tooltipLabel(field, index) : null"
+    [appBootstrapTooltip]="collapsed() ? tooltipLabel(field, index) : null"
+    (click)="selected.emit(field.id)"
+  >
+    @if (collapsed()) {
+      <svg
+        width="21"
+        height="21"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path [attr.d]="icons[field.type]"></path>
+      </svg>
+      <span class="visually-hidden">{{ tooltipLabel(field, index) }}</span>
+    } @else {
+      <span class="field-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+      <span
+        ><strong>{{ label(field.label) || field.id }}</strong
+        ><small
+          >{{ t(field.type) }} · {{ t(field.required ? 'required' : 'optional') }}</small
+        ></span
+      >
+      <span class="field-arrow" aria-hidden="true">›</span>
+    }
+  </button>
+}
+@if (!fields().length) {
+  <p class="section-description">{{ t('noFields') }}</p>
+}
+
+<!-- Native buttons provide keyboard activation; disabled boundaries cannot reorder the list. -->
+@if (!collapsed()) {
+  <div class="field-list-tools" role="group" [attr.aria-label]="t('fieldActions')">
+    <button
+      type="button"
+      class="icon-button"
+      [attr.aria-label]="t('moveUp')"
+      [title]="t('moveUp')"
+      [disabled]="selectedIndex() <= 0"
+      (click)="moved.emit(-1)"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 20V4 M5 11l7-7 7 7"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="icon-button"
+      [attr.aria-label]="t('moveDown')"
+      [title]="t('moveDown')"
+      [disabled]="selectedIndex() < 0 || selectedIndex() === fields().length - 1"
+      (click)="moved.emit(1)"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 4v16 M5 13l7 7 7-7"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="icon-button field-delete"
+      [attr.aria-label]="t('remove')"
+      [title]="t('remove')"
+      [disabled]="selectedIndex() < 0"
+      (click)="removed.emit()"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M3 6h18 M9 6V3h6v3 M5 6l1 15h12l1-15 M10 10v7 M14 10v7"></path>
+      </svg>
+    </button>
+    <span class="field-tools-hint">{{ t('selectedFieldActions') }}</span>
+  </div>
+
+  <div class="add-field">
+    <label [for]="controlId()">{{ t('fieldType') }}</label>
+    <select [id]="controlId()" [ngModel]="newType()" (ngModelChange)="newType.set($event)">
+      @for (type of fieldTypes(); track type) {
+        <option [value]="type">{{ t(type) }}</option>
+      }
+    </select>
+    <button
+      type="button"
+      class="add-button"
+      [disabled]="fields().length >= 100"
+      (click)="added.emit(newType())"
+    >
+      + {{ t('addField') }}
+    </button>
+  </div>
+}

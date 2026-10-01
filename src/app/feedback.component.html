@@ -1,0 +1,62 @@
+<dialog
+  #deleteDialog
+  class="delete-dialog"
+  aria-labelledby="delete-title"
+  aria-describedby="delete-description"
+  (cancel)="feedback.cancelDelete()"
+>
+  <div class="delete-dialog-icon" aria-hidden="true">
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+    >
+      <path d="M3 6h18 M9 6V3h6v3 M5 6l1 15h12l1-15 M10 10v7 M14 10v7"></path>
+    </svg>
+  </div>
+  <p class="eyebrow">{{ t('deleteEyebrow') }}</p>
+  <h2 id="delete-title">{{ t('deleteTitle') }}</h2>
+  <p class="delete-target">{{ feedback.deletion()?.label }}</p>
+  <p id="delete-description">{{ t(feedback.deletion()?.description ?? 'deleteDescription') }}</p>
+  <div class="dialog-actions">
+    <button type="button" class="secondary-button" autofocus (click)="feedback.cancelDelete()">
+      {{ t('cancel') }}
+    </button>
+    <button type="button" class="delete-confirm-button" (click)="feedback.confirmDelete()">
+      {{ t('confirmDelete') }}
+    </button>
+  </div>
+</dialog>
+<div class="toast-stack" role="region" [attr.aria-label]="t('notifications')">
+  @for (toast of feedback.toasts(); track toast.id) {
+    <div
+      class="toast-card"
+      [class]="'toast-card toast-' + toast.kind"
+      [attr.role]="toast.kind === 'error' ? 'alert' : 'status'"
+      aria-atomic="true"
+      (mouseenter)="feedback.pause(toast.id)"
+      (mouseleave)="feedback.resume(toast.id)"
+      (focusin)="feedback.pause(toast.id)"
+      (focusout)="feedback.resume(toast.id)"
+    >
+      <span class="toast-symbol" aria-hidden="true">{{
+        toast.kind === 'success' ? '✓' : toast.kind === 'info' ? 'i' : '!'
+      }}</span>
+      <div>
+        <strong>{{ t(toast.kind) }}</strong>
+        <p>{{ t(toast.key) }}</p>
+      </div>
+      <button
+        type="button"
+        class="toast-close"
+        [attr.aria-label]="t('dismissNotification')"
+        (click)="feedback.dismiss(toast.id)"
+      >
+        ×
+      </button>
+    </div>
+  }
+</div>

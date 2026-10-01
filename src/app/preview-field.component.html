@@ -1,0 +1,88 @@
+@if (field().type !== 'checkbox' && field().type !== 'radio') {
+  <label class="form-label" [for]="controlId()"
+    ><app-field-title [field]="field()" [locale]="locale()" [enabled]="showTooltip()" />
+  </label>
+}
+@switch (field().type) {
+  @case ('textarea') {
+    <textarea
+      class="form-control"
+      [id]="controlId()"
+      [name]="controlId()"
+      [attr.data-field-id]="field().id"
+      rows="3"
+      [required]="field().required"
+      [placeholder]="text(field().placeholder)"
+      [attr.minlength]="field().minLength || null"
+      (input)="patternInput.emit({ event: $event, field: field() })"
+      [attr.maxlength]="field().maxLength || null"
+      [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null"
+    ></textarea>
+  }
+  @case ('select') {
+    <select
+      class="form-select"
+      [id]="controlId()"
+      [name]="controlId()"
+      [attr.data-field-id]="field().id"
+      [required]="field().required"
+      [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null"
+    >
+      <option value="">{{ t('choose') }}</option>
+      @for (option of field().options; track $index) {
+        <option [value]="$index">{{ text(option) }}</option>
+      }
+    </select>
+  }
+  @case ('checkbox') {
+    <label class="check-row preview-check" [for]="controlId()"
+      ><input
+        class="form-check-input"
+        type="checkbox"
+        [id]="controlId()"
+        [name]="controlId()"
+        [attr.data-field-id]="field().id"
+        [required]="field().required"
+        [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null"
+      /><app-field-title [field]="field()" [locale]="locale()" [enabled]="showTooltip()" />
+    </label>
+  }
+  @case ('radio') {
+    <fieldset [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null">
+      <legend>
+        <app-field-title [field]="field()" [locale]="locale()" [enabled]="showTooltip()" />
+      </legend>
+      @for (option of field().options; track $index) {
+        <label class="check-row"
+          ><input
+            class="form-check-input"
+            type="radio"
+            [name]="controlId()"
+            [attr.data-field-id]="field().id"
+            [value]="$index"
+            [required]="field().required"
+          />{{ text(option) }}</label
+        >
+      }
+    </fieldset>
+  }
+  @default {
+    <input
+      class="form-control"
+      [type]="field().type"
+      [attr.pattern]="supportsPattern(field()) ? field().pattern || null : null"
+      [id]="controlId()"
+      [name]="controlId()"
+      [attr.data-field-id]="field().id"
+      [required]="field().required"
+      [placeholder]="text(field().placeholder)"
+      [attr.minlength]="field().minLength || null"
+      (input)="patternInput.emit({ event: $event, field: field() })"
+      [attr.maxlength]="field().maxLength || null"
+      [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null"
+    />
+  }
+}
+@if (text(field().help)) {
+  <small class="form-text" [id]="'help-' + controlId()">{{ text(field().help) }}</small>
+}

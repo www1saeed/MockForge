@@ -1,0 +1,14 @@
+/*
+ * Studio stylesheet entry point. Import order is deliberate: Bootstrap controls,
+ * shared tokens/actions, shell layout, editors, preview, presets and content.
+ * Each module owns its responsive rules; avoid appending global override layers.
+ */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import './styles/foundation.css';
+@import './styles/shell.css';
+@import './styles/workspace.css';
+@import './styles/preview.css';
+@import './styles/presets.css';
+@import './styles/content.css';
+@import './styles/feedback.css';
+@import './styles/repeat-groups.css';

@@ -1,0 +1,75 @@
+/* Scoped visual approximations only. Bootstrap remains the actual imported control stylesheet. */
+
+.theme-material {
+  --theme-accent: #6750a4;
+  background: #fef7ff;
+}
+
+.theme-material .form-control {
+  background: #f2edf6;
+  border-radius: 4px 4px 0 0;
+  border: 0;
+  border-bottom: 1px solid #79747e;
+}
+
+.theme-material .form-select {
+  background: #f2edf6;
+  border-radius: 4px 4px 0 0;
+  border: 0;
+  border-bottom: 1px solid #79747e;
+}
+
+.theme-material .preview-submit {
+  border-radius: 24px;
+}
+
+.theme-material .form-check-input:checked {
+  background-color: var(--theme-accent);
+  border-color: var(--theme-accent);
+}
+
+.theme-carbon {
+  --theme-accent: #0f62fe;
+}
+
+.theme-carbon .form-control {
+  background: #f4f4f4;
+  border: 0;
+  border-bottom: 1px solid #8d8d8d;
+  border-radius: 0;
+}
+
+.theme-carbon .form-select {
+  background: #f4f4f4;
+  border: 0;
+  border-bottom: 1px solid #8d8d8d;
+  border-radius: 0;
+}
+
+.theme-carbon h3 {
+  font-weight: 400;
+}
+
+.theme-carbon .preview-submit {
+  border-radius: 0;
+}
+
+.theme-fluent {
+  --theme-accent: #0f6cbd;
+}
+
+.theme-fluent .form-control {
+  border-radius: 4px;
+  border-bottom-color: #616161;
+  box-shadow: 0 1px 1px #00000005;
+}
+
+.theme-fluent .form-select {
+  border-radius: 4px;
+  border-bottom-color: #616161;
+  box-shadow: 0 1px 1px #00000005;
+}
+
+.theme-fluent .preview-submit {
+  border-radius: 4px;
+}

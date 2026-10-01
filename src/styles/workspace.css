@@ -1,0 +1,559 @@
+/* Specification editors, selected-field actions, bilingual copy, design choices, buttons and review. */
+
+/*
+ * overflow: clip preserves rounded workspace edges without creating a second
+ * scroll container. overflow: hidden would capture sticky descendants and stop
+ * the preview from following the main scroller during long button editing.
+ */
+.workspace {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: clip;
+  box-shadow: 0 5px 30px #142c3805;
+  scroll-margin-top: 20px;
+  min-height: 100%;
+}
+
+.workspace-heading {
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.workspace-heading h2 {
+  font-size: 24px;
+  letter-spacing: -0.4px;
+  margin-top: 6px;
+}
+
+.workflow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 0 18px;
+  background: #fcfcfd;
+}
+
+.workflow button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 18px 12px;
+  font-size: 14px;
+  color: var(--muted);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-weight: 500;
+}
+
+.workflow button span {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+.workflow .current {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.workflow .current span {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+}
+
+.configuration {
+  padding: 28px;
+  min-width: 0;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.section-heading h3 {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.status-pill {
+  font-size: 9px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 3px 7px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.status-pill.reviewed {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.section-description {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 13px 0 23px;
+}
+
+.configuration label {
+  font-size: 15px;
+  font-weight: 600;
+  display: block;
+  margin: 15px 0 6px;
+}
+
+.configuration input:not([type='checkbox']):not([type='radio']) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 10px;
+  background: white;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.configuration select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 10px;
+  background: white;
+  color: var(--ink);
+  font-size: 15px;
+  min-height: 44px;
+}
+
+.configuration textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 10px;
+  background: white;
+  color: var(--ink);
+  font-size: 15px;
+  resize: vertical;
+}
+
+.configuration input:focus {
+  border-color: var(--accent);
+}
+
+.configuration textarea:focus {
+  border-color: var(--accent);
+}
+
+.configuration select:focus {
+  border-color: var(--accent);
+}
+
+.configuration .check-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.field-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.65fr) minmax(0, 1.35fr);
+  gap: 28px;
+}
+
+.field-list {
+  border-right: 1px solid var(--line);
+  padding-right: 16px;
+  position: sticky;
+  top: var(--workspace-inset);
+  align-self: start;
+  max-height: calc(
+    100dvh - var(--header-height) - var(--footer-height) - 2 * var(--workspace-inset)
+  );
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.field-list-heading {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  padding-bottom: 13px;
+  align-items: center;
+}
+
+/* The root rail remains independently scrollable while the adjacent child inspector grows. */
+.field-editor-grid.root-list-collapsed,
+.preview-hidden .field-editor-grid.root-list-collapsed {
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 20px;
+}
+.root-field-list.field-list-collapsed {
+  position: sticky;
+  top: var(--workspace-inset);
+  max-height: calc(
+    100dvh - var(--header-height) - var(--footer-height) - 2 * var(--workspace-inset)
+  );
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  padding-right: 8px;
+}
+.field-list-collapsed .field-list-heading {
+  justify-content: center;
+}
+.field-list-collapsed .field-icon-row {
+  padding: 0;
+  min-height: 44px;
+  justify-content: center;
+}
+.field-list-toggle {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 5px;
+}
+.field-rail-tooltip {
+  --bs-tooltip-max-width: 320px;
+  --bs-tooltip-bg: var(--ink);
+  --bs-tooltip-opacity: 1;
+}
+.field-rail-tooltip .tooltip-inner {
+  text-align: left;
+  font-size: 13px;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 12px 8px;
+  margin-bottom: 5px;
+}
+
+.field-row.chosen {
+  background: var(--accent-soft);
+  border-color: #c0ded1;
+}
+
+.field-index {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.field-row strong {
+  font-size: 15px;
+  font-weight: 600;
+  display: block;
+  line-height: 1.5;
+}
+
+.field-row small {
+  font-size: 12px;
+  color: var(--muted);
+  display: block;
+  margin-top: 3px;
+}
+
+.field-arrow {
+  margin-left: auto;
+  color: var(--accent);
+}
+
+.add-field {
+  margin-top: 22px;
+  border-top: 1px dashed var(--line);
+}
+
+.inspector-heading {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
+.inspector-heading h4 {
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.inspector-heading span {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.inspector label:first-of-type {
+  margin-top: 0;
+}
+
+.length-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.field-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.theme-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: left;
+}
+
+.theme-card.chosen {
+  border: 2px solid var(--accent);
+  padding: 11px;
+  background: #f8fcfa;
+}
+
+.theme-card strong {
+  display: block;
+  font-size: 12px;
+  margin: 12px 0 5px;
+}
+
+.theme-card small {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.7;
+  display: block;
+}
+
+.theme-sample {
+  padding: 12px;
+  background: #f5f7fa;
+  display: grid;
+  gap: 7px;
+  border-radius: 4px;
+}
+
+.theme-sample span {
+  height: 14px;
+  border: 1px solid #c6cfd8;
+  border-radius: 3px;
+  background: white;
+}
+
+.theme-sample b {
+  height: 14px;
+  width: 50%;
+  background: #0d6efd;
+  border-radius: 3px;
+}
+
+.theme-sample.material {
+  background: #f2edf6;
+}
+
+.theme-sample.material b {
+  background: #6750a4;
+  border-radius: 12px;
+}
+
+.theme-sample.carbon span {
+  border-radius: 0;
+  border-width: 0 0 1px;
+}
+
+.theme-sample.carbon b {
+  border-radius: 0;
+  background: #0f62fe;
+}
+
+.theme-sample.fluent b {
+  background: #0f6cbd;
+}
+
+.language-section + .language-section {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 1px solid var(--line);
+  border: 0;
+}
+
+.review-checklist {
+  margin: 22px 0;
+}
+
+.review-record {
+  background: var(--accent-soft);
+  padding: 12px;
+  color: var(--accent);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 14px;
+  overflow-wrap: anywhere;
+}
+
+.editor-layout.preview-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.configuration h3 {
+  font-size: 22px;
+}
+
+.configuration h4 {
+  font-size: 17px;
+}
+
+.configuration input:not([type='checkbox']) {
+  min-height: 44px;
+}
+
+.localized-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+}
+
+.localized-grid.bilingual {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.language-section {
+  min-width: 0;
+}
+
+.button-editor {
+  border-top: 1px solid var(--line);
+  margin-top: 32px;
+  padding-top: 28px;
+}
+
+.button-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px;
+  margin-top: 18px;
+}
+
+.button-properties {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.field-list-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.field-list-tools .icon-button {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 7px;
+}
+.field-delete {
+  color: var(--danger);
+}
+.field-tools-hint {
+  font-size: 11px;
+  color: var(--muted);
+  width: 100%;
+}
+@media (max-width: 1200px) {
+  .editor-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .workspace-heading {
+    padding: 20px 16px;
+    display: block;
+  }
+  .workspace-heading h2 {
+    font-size: 22px;
+  }
+  .transfer-actions {
+    margin-top: 15px;
+    gap: 8px;
+  }
+  .workflow {
+    padding: 0 4px;
+    overflow-x: auto;
+  }
+  .workflow button {
+    font-size: 11px;
+    padding: 12px 5px;
+    min-width: 72px;
+    flex-direction: column;
+    text-align: center;
+  }
+  .configuration {
+    padding: 20px 16px;
+  }
+  .configuration label,
+  .configuration input:not([type='checkbox']):not([type='radio']),
+  .configuration textarea,
+  .configuration select {
+    font-size: 16px;
+  }
+  .field-editor-grid,
+  .preview-hidden .field-editor-grid,
+  .localized-grid.bilingual,
+  .button-properties {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .field-list {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    border-right: 0;
+    padding-right: 0;
+  }
+  .inspector {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .field-row {
+    padding: 10px;
+  }
+  .button-card {
+    padding: 16px;
+  }
+}

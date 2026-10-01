@@ -1,0 +1,764 @@
+<a class="skip-link" href="#main-content" (click)="skipToContent($event)">{{ t('skipContent') }}</a>
+<div class="studio-shell">
+  <aside class="sidebar" [attr.aria-label]="t('navigation')">
+    <a
+      class="rail-logo"
+      href="#overview"
+      (click)="navigate($event, 'overview')"
+      aria-label="MockForge Studio"
+      ><img src="assets/brand/logo.png" alt="" width="38" height="38"
+    /></a>
+    <nav>
+      @for (item of navigation; track item.view) {
+        <a
+          [href]="'#' + item.view"
+          [class.active]="view() === item.view"
+          [attr.aria-current]="view() === item.view ? 'page' : null"
+          [attr.aria-label]="t(item.view)"
+          [title]="t(item.view)"
+          (click)="navigate($event, item.view)"
+          ><svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path [attr.d]="item.path"></path></svg
+        ></a>
+      }
+      <a
+        href="assets/presentation.html"
+        target="_blank"
+        rel="noopener"
+        [attr.aria-label]="t('presentation')"
+        [title]="t('presentation')"
+        ><svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true"
+        >
+          <path d="M4 4h16v12H4z M12 16v5 M8 21h8 M8 8h8 M8 12h5"></path></svg
+      ></a>
+    </nav>
+  </aside>
+  <div class="main-shell" [class.workspace-view]="view() === 'workspace'">
+    <header class="topbar">
+      <a class="header-brand" href="#overview" (click)="navigate($event, 'overview')"
+        >MockForge <span>Studio</span></a
+      >
+      <div class="breadcrumb">{{ t(view()) }}</div>
+      <div class="topbar-actions">
+        <span class="save-status" [class.save-error]="store.storageError()"
+          ><span aria-hidden="true">●</span
+          >{{ t(store.storageError() ? 'storageError' : 'local') }}</span
+        >
+        <div class="locale-toggle" aria-label="Language">
+          <button
+            [class.selected]="locale() === 'de'"
+            [attr.aria-pressed]="locale() === 'de'"
+            (click)="setLocale('de')"
+          >
+            DE</button
+          ><button
+            [class.selected]="locale() === 'en'"
+            [attr.aria-pressed]="locale() === 'en'"
+            (click)="setLocale('en')"
+          >
+            EN
+          </button>
+        </div>
+      </div>
+    </header>
+    <main id="main-content" tabindex="-1">
+      @if (view() === 'overview') {
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span aria-hidden="true"></span>{{ t('eyebrow') }}</p>
+            <h1>
+              {{ t('headline') }}<br /><span>{{ t('headlineAccent') }}</span>
+            </h1>
+            <p class="hero-description">{{ t('heroText') }}</p>
+            <div class="hero-actions">
+              <button class="primary-button" (click)="scrollWorkspace()">
+                {{ t('configure') }} <span aria-hidden="true">↗</span></button
+              ><button class="text-button" (click)="openView('examples')">
+                {{ t('seeExamples') }} <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+          <div class="hero-aside">
+            <span class="hero-number">01 / 03</span>
+            <div class="hero-line"></div>
+            <p><strong>01</strong>{{ t('promise1') }}</p>
+            <p><strong>02</strong>{{ t('promise2') }}</p>
+            <p><strong>03</strong>{{ t('promise3') }}</p>
+            <div class="hero-footnote">IDEA <span>→</span> AGREEMENT <span>→</span> BUILD</div>
+          </div>
+        </section>
+        <section class="overview-grid" [attr.aria-label]="t('overview')">
+          @for (key of ['guide1', 'guide2', 'guide3']; track key; let index = $index) {
+            <article>
+              <span class="overview-number">0{{ index + 1 }}</span>
+              <h2>{{ t(index === 0 ? 'guide1' : index === 1 ? 'guide2' : 'guide3') }}</h2>
+              <p>{{ t(index === 0 ? 'guide1Text' : index === 1 ? 'guide2Text' : 'guide3Text') }}</p>
+            </article>
+          }
+        </section>
+        <p class="benefit-note">{{ t('benefit') }}</p>
+      }
+      @if (view() === 'workspace') {
+        <section
+          id="workspace"
+          class="workspace"
+          [class.full-preview]="previewFullWidth()"
+          aria-label="Mockup workspace"
+        >
+          <div class="workspace-heading">
+            <div>
+              <span class="tiny-label">{{ t('formWorkspace') }}</span>
+              <h2>{{ project().name }}</h2>
+            </div>
+            <div class="transfer-actions">
+              <button
+                class="secondary-button"
+                [attr.aria-expanded]="previewVisible()"
+                [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
+                (click)="togglePreview()"
+              >
+                {{ t(previewVisible() ? 'hidePreview' : 'showPreview') }}</button
+              ><button
+                class="secondary-button"
+                [attr.aria-pressed]="previewFullWidth()"
+                [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
+                (click)="togglePreviewWidth()"
+              >
+                {{ t(previewFullWidth() ? 'restoreEditor' : 'expandPreview') }}</button
+              ><button class="secondary-button" (click)="fileInput.click()">
+                ↓ {{ t('import') }}</button
+              ><button class="secondary-button" (click)="exportJson()">↑ {{ t('export') }}</button>
+            </div>
+          </div>
+          <input
+            #fileInput
+            class="visually-hidden"
+            tabindex="-1"
+            type="file"
+            accept=".json,application/json"
+            (change)="importFile($event)"
+            aria-label="JSON import"
+          />
+          <nav class="workflow" aria-label="Workflow">
+            @for (key of steps; track key; let index = $index) {
+              <button
+                [class.current]="step() === index"
+                [attr.aria-current]="step() === index ? 'step' : null"
+                (click)="setStep(index)"
+              >
+                <span>{{ index + 1 }}</span
+                >{{ t(key) }}
+              </button>
+            }
+          </nav>
+          <div
+            class="editor-layout"
+            [class.preview-hidden]="!previewVisible()"
+            [class.preview-full-width]="previewFullWidth()"
+          >
+            <section class="configuration">
+              <div class="section-heading">
+                <h3>{{ t(steps[step()]) }}</h3>
+                <span class="status-pill" [class.reviewed]="project().review.approvedAt">{{
+                  t(project().review.approvedAt ? 'approved' : 'draft')
+                }}</span>
+              </div>
+              @switch (step()) {
+                @case (0) {
+                  <p class="section-description">{{ t('briefLead') }}</p>
+                  <label for="project-name">{{ t('name') }}</label
+                  ><input
+                    id="project-name"
+                    [ngModel]="project().name"
+                    (ngModelChange)="update({ name: $event })"
+                  />
+                  <label for="owner">{{ t('owner') }}</label
+                  ><input
+                    id="owner"
+                    [ngModel]="project().owner"
+                    (ngModelChange)="update({ owner: $event })"
+                  />
+                  <label for="audience">{{ t('audience') }}</label
+                  ><input
+                    id="audience"
+                    [ngModel]="project().audience"
+                    (ngModelChange)="update({ audience: $event })"
+                  />
+                  <label for="goal">{{ t('goal') }}</label
+                  ><textarea
+                    id="goal"
+                    rows="3"
+                    [ngModel]="project().goal"
+                    (ngModelChange)="update({ goal: $event })"
+                  ></textarea>
+                  <label for="scope">{{ t('scope') }}</label
+                  ><textarea
+                    id="scope"
+                    rows="3"
+                    [ngModel]="project().scope"
+                    (ngModelChange)="update({ scope: $event })"
+                  ></textarea>
+                }
+                @case (1) {
+                  <p class="section-description">{{ t('languageLead') }}</p>
+                  <label for="form-languages">{{ t('formLanguages') }}</label
+                  ><select
+                    id="form-languages"
+                    [ngModel]="project().languages.length === 2 ? 'both' : project().languages[0]"
+                    (ngModelChange)="setLanguages($event)"
+                  >
+                    <option value="de">{{ t('onlyDe') }}</option>
+                    <option value="en">{{ t('onlyEn') }}</option>
+                    <option value="both">{{ t('bothLanguages') }}</option>
+                  </select>
+                  <div class="localized-grid" [class.bilingual]="project().languages.length === 2">
+                    @for (lang of project().languages; track lang) {
+                      <div class="language-section">
+                        <span class="tiny-label">{{ lang.toUpperCase() }}</span>
+                        <label [for]="'title-' + lang">{{ t('formTitle') }}</label
+                        ><input
+                          [id]="'title-' + lang"
+                          [ngModel]="lang === 'de' ? project().title.de : project().title.en"
+                          (ngModelChange)="
+                            projectText('title', lang === 'de' ? 'de' : 'en', $event)
+                          "
+                        />
+                        <label [for]="'description-' + lang">{{ t('description') }}</label
+                        ><textarea
+                          [id]="'description-' + lang"
+                          rows="2"
+                          [ngModel]="
+                            lang === 'de' ? project().description.de : project().description.en
+                          "
+                          (ngModelChange)="
+                            projectText('description', lang === 'de' ? 'de' : 'en', $event)
+                          "
+                        ></textarea>
+                      </div>
+                    }
+                  </div>
+                  <p class="fine-print">{{ t('buttonsCopyHint') }}</p>
+                }
+                @case (2) {
+                  <p class="section-description">{{ t('designLead') }}</p>
+                  <div class="theme-grid">
+                    @for (theme of themes; track theme.id) {
+                      <button
+                        class="theme-card"
+                        [class.chosen]="project().theme === theme.id"
+                        [attr.aria-pressed]="project().theme === theme.id"
+                        (click)="update({ theme: theme.id })"
+                      >
+                        <div [class]="'theme-sample ' + theme.id" aria-hidden="true">
+                          <span></span><span></span><b></b>
+                        </div>
+                        <strong>{{ theme.name }}</strong
+                        ><small>{{ t(theme.description) }}</small>
+                      </button>
+                    }
+                  </div>
+                  <p class="fine-print">{{ t('themeNotice') }}</p>
+                  <label for="columns">{{ t('layout') }}</label
+                  ><select
+                    id="columns"
+                    [ngModel]="project().columns"
+                    (ngModelChange)="update({ columns: $event })"
+                  >
+                    <option [ngValue]="1">{{ t('oneColumn') }}</option>
+                    <option [ngValue]="2">{{ t('twoColumns') }}</option>
+                  </select>
+                }
+                @case (3) {
+                  <p class="section-description">{{ t('fieldLead') }}</p>
+                  <div class="field-editor-grid" [class.root-list-collapsed]="rootListCollapsed()">
+                    <!-- List actions stay next to the fields, rather than below a long inspector. -->
+                    <app-field-list
+                      class="root-field-list"
+                      [fields]="project().fields"
+                      [selectedId]="rootSelectedId()"
+                      [locale]="locale()"
+                      [languages]="project().languages"
+                      [collapsible]="true"
+                      [collapsed]="rootListCollapsed()"
+                      (collapsedChange)="rootListCollapsed.set($event)"
+                      (selected)="selectRootField($event)"
+                      (moved)="moveField($event, true)"
+                      (removed)="removeField(true)"
+                      (added)="addField($event)"
+                    ></app-field-list>
+                    <div class="inspector">
+                      @if (editingGroup(); as parent) {
+                        @if (parent.group; as group) {
+                          <section class="group-editor" aria-labelledby="group-settings-title">
+                            <div class="section-heading">
+                              <h4 id="group-settings-title">
+                                {{ t('groupSettings') }} · {{ parent.label[locale()] || parent.id }}
+                              </h4>
+                              <button
+                                type="button"
+                                class="secondary-button"
+                                (click)="childEditorOpen() ? closeGroupFields() : openGroupFields()"
+                              >
+                                {{ t(childEditorOpen() ? 'closeGroupFields' : 'editGroupFields') }}
+                              </button>
+                            </div>
+                            <p class="fine-print">{{ t('groupHint') }}</p>
+                            <div class="group-settings-grid">
+                              <div>
+                                <label for="group-layout">{{ t('groupLayout') }}</label
+                                ><select
+                                  id="group-layout"
+                                  [ngModel]="group.layout"
+                                  (ngModelChange)="groupChange({ layout: $event })"
+                                >
+                                  <option value="cards">{{ t('cards') }}</option>
+                                  <option value="table">{{ t('table') }}</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label for="group-min">{{ t('minItems') }}</label
+                                ><input
+                                  id="group-min"
+                                  type="number"
+                                  min="0"
+                                  [max]="group.maxItems"
+                                  [ngModel]="group.minItems"
+                                  (ngModelChange)="groupChange({ minItems: $event })"
+                                />
+                              </div>
+                              <div>
+                                <label for="group-max">{{ t('maxItems') }}</label
+                                ><input
+                                  id="group-max"
+                                  type="number"
+                                  min="1"
+                                  max="20"
+                                  [ngModel]="group.maxItems"
+                                  (ngModelChange)="groupChange({ maxItems: $event })"
+                                />
+                              </div>
+                            </div>
+                            @if (group.layout === 'table') {
+                              <label class="check-row"
+                                ><input
+                                  id="group-gapless"
+                                  type="checkbox"
+                                  [ngModel]="group.gapless ?? false"
+                                  (ngModelChange)="groupChange({ gapless: $event })"
+                                />{{ t('gaplessTable') }}</label
+                              >
+                              <p class="fine-print">{{ t('gaplessTableHint') }}</p>
+                            }
+                          </section>
+                        }
+                      }
+                      <div
+                        class="field-detail-layout"
+                        [class.group-fields-open]="childEditorOpen()"
+                      >
+                        @if (childEditorOpen()) {
+                          @if (editingGroup()?.group; as group) {
+                            <aside class="group-child-sidebar" aria-labelledby="group-fields-title">
+                              <h4 id="group-fields-title">{{ t('groupFields') }}</h4>
+                              <app-field-list
+                                class="group-child-list"
+                                [fields]="group.fields"
+                                [selectedId]="selectedId()"
+                                [locale]="locale()"
+                                [languages]="project().languages"
+                                [fieldTypes]="leafFieldTypes"
+                                controlId="group-new-type"
+                                (selected)="selectChildField($event)"
+                                (moved)="moveField($event)"
+                                (removed)="removeField()"
+                                (added)="addGroupField($event)"
+                              />
+                            </aside>
+                          }
+                        }
+                        <div class="field-properties">
+                          @if (selected(); as field) {
+                            <div class="inspector-heading">
+                              <h4>{{ t('inspector') }}</h4>
+                              <span>{{ project().languages.join(' / ').toUpperCase() }}</span>
+                            </div>
+                            <label for="field-type">{{ t('fieldType') }}</label
+                            ><select
+                              id="field-type"
+                              #fieldTypeControl="ngModel"
+                              [ngModel]="field.type"
+                              (ngModelChange)="changeType($event, fieldTypeControl)"
+                            >
+                              @for (type of availableFieldTypes(); track type) {
+                                <option [value]="type">{{ t(type) }}</option>
+                              }
+                            </select>
+                            <div
+                              class="localized-grid"
+                              [class.bilingual]="project().languages.length === 2"
+                            >
+                              @for (lang of project().languages; track lang) {
+                                <div class="language-section">
+                                  <span class="tiny-label">{{ lang.toUpperCase() }}</span>
+                                  @for (key of localizedFieldKeys; track key) {
+                                    <label [for]="'field-' + key + '-' + lang"
+                                      >{{ t(key) }} ({{ lang.toUpperCase() }})</label
+                                    ><input
+                                      [id]="'field-' + key + '-' + lang"
+                                      [ngModel]="field[key][lang]"
+                                      (ngModelChange)="fieldText(key, $event, lang)"
+                                    />
+                                  }
+                                  @if (field.type === 'select' || field.type === 'radio') {
+                                    <label [for]="'field-options-' + lang"
+                                      >{{ t('options') }} ({{ lang.toUpperCase() }})</label
+                                    ><textarea
+                                      [id]="'field-options-' + lang"
+                                      rows="3"
+                                      [ngModel]="optionLines(field, lang)"
+                                      (ngModelChange)="changeOptions($event, lang)"
+                                    ></textarea>
+                                  }
+                                  @if (supportsPattern(field)) {
+                                    <label [for]="'field-pattern-message-' + lang"
+                                      >{{ t('patternMessage') }} ({{ lang.toUpperCase() }})</label
+                                    ><input
+                                      [id]="'field-pattern-message-' + lang"
+                                      [ngModel]="field.patternMessage[lang]"
+                                      (ngModelChange)="fieldText('patternMessage', $event, lang)"
+                                    />
+                                  }
+                                </div>
+                              }
+                            </div>
+                            <label for="field-tooltip-placement">{{ t('tooltipPlacement') }}</label>
+                            <select
+                              id="field-tooltip-placement"
+                              [ngModel]="field.tooltipPlacement ?? 'icon'"
+                              (ngModelChange)="fieldChange({ tooltipPlacement: $event })"
+                            >
+                              <option value="title">{{ t('tooltipOnTitle') }}</option>
+                              <option value="icon">{{ t('tooltipBesideTitle') }}</option>
+                              <option value="info">{{ t('tooltipInfoIcon') }}</option>
+                            </select>
+                            @if (field.type !== 'group') {
+                              <label class="check-row"
+                                ><input
+                                  type="checkbox"
+                                  [ngModel]="field.required"
+                                  (ngModelChange)="fieldChange({ required: $event })"
+                                />{{ t('required') }}</label
+                              >
+                            }
+                            @if (supportsPattern(field)) {
+                              <label for="field-pattern">{{ t('pattern') }}</label
+                              ><input
+                                id="field-pattern"
+                                maxlength="500"
+                                [ngModel]="patternDrafts()[field.id] ?? field.pattern"
+                                (ngModelChange)="changePattern($event)"
+                                [attr.aria-invalid]="patternError(field)"
+                                aria-describedby="pattern-hint"
+                              />
+                              <p id="pattern-hint" class="fine-print">{{ t('patternHint') }}</p>
+                              @if (patternError(field)) {
+                                <p class="pattern-error" role="alert">{{ t('invalidPattern') }}</p>
+                              }
+                            }
+                            @if (
+                              field.type === 'text' ||
+                              field.type === 'email' ||
+                              field.type === 'url' ||
+                              field.type === 'textarea'
+                            ) {
+                              <div class="length-row">
+                                <div>
+                                  <label for="min-length">{{ t('minLength') }}</label
+                                  ><input
+                                    id="min-length"
+                                    type="number"
+                                    min="0"
+                                    max="10000"
+                                    [ngModel]="field.minLength"
+                                    (ngModelChange)="changeLength('minLength', $event)"
+                                  />
+                                </div>
+                                <div>
+                                  <label for="max-length">{{ t('maxLength') }}</label
+                                  ><input
+                                    id="max-length"
+                                    type="number"
+                                    min="0"
+                                    max="10000"
+                                    [ngModel]="field.maxLength"
+                                    (ngModelChange)="changeLength('maxLength', $event)"
+                                  />
+                                </div>
+                              </div>
+                            }
+                            <label for="field-note">{{ t('note') }}</label
+                            ><textarea
+                              id="field-note"
+                              rows="3"
+                              [ngModel]="field.note"
+                              (ngModelChange)="fieldChange({ note: $event })"
+                            ></textarea>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <section class="button-editor">
+                    <div class="section-heading">
+                      <h3>{{ t('buttons') }}</h3>
+                      <button
+                        class="secondary-button"
+                        (click)="addButton()"
+                        [disabled]="project().buttons.length >= 20"
+                      >
+                        + {{ t('addButton') }}
+                      </button>
+                    </div>
+                    <p class="fine-print">{{ t('buttonsHint') }}</p>
+                    @for (button of project().buttons; track button.id; let index = $index) {
+                      <article class="button-card">
+                        <h4>{{ t('button') }} {{ index + 1 }}</h4>
+                        <div
+                          class="localized-grid"
+                          [class.bilingual]="project().languages.length === 2"
+                        >
+                          @for (lang of project().languages; track lang) {
+                            <div>
+                              <label [for]="button.id + '-label-' + lang"
+                                >{{ t('label') }} ({{ lang.toUpperCase() }})</label
+                              ><input
+                                [id]="button.id + '-label-' + lang"
+                                [ngModel]="button.label[lang]"
+                                (ngModelChange)="buttonText(index, lang, $event)"
+                              />
+                            </div>
+                          }
+                        </div>
+                        <div class="button-properties">
+                          <div>
+                            <label [for]="button.id + '-variant'">{{ t('buttonVariant') }}</label
+                            ><select
+                              [id]="button.id + '-variant'"
+                              [ngModel]="button.variant"
+                              (ngModelChange)="buttonChange(index, { variant: $event })"
+                            >
+                              @for (variant of buttonVariants; track variant) {
+                                <option [value]="variant">{{ variantLabel(variant) }}</option>
+                              }
+                            </select>
+                          </div>
+                          <div>
+                            <label [for]="button.id + '-action'">{{ t('buttonAction') }}</label
+                            ><select
+                              [id]="button.id + '-action'"
+                              [ngModel]="button.action"
+                              (ngModelChange)="buttonChange(index, { action: $event })"
+                            >
+                              @for (action of buttonActions; track action) {
+                                <option [value]="action">{{ actionLabel(action) }}</option>
+                              }
+                            </select>
+                          </div>
+                          <div>
+                            <label [for]="button.id + '-classes'">{{ t('cssClasses') }}</label
+                            ><input
+                              [id]="button.id + '-classes'"
+                              [ngModel]="button.cssClass"
+                              (ngModelChange)="buttonClasses(index, $event)"
+                            />
+                          </div>
+                        </div>
+                        <label [for]="button.id + '-note'">{{ t('note') }}</label
+                        ><textarea
+                          [id]="button.id + '-note'"
+                          rows="2"
+                          [ngModel]="button.note"
+                          (ngModelChange)="buttonChange(index, { note: $event })"
+                        ></textarea>
+                        <div class="field-actions">
+                          <button
+                            class="icon-button"
+                            [attr.aria-label]="t('buttonUp')"
+                            (click)="moveButton(index, -1)"
+                            [disabled]="index === 0"
+                          >
+                            ↑</button
+                          ><button
+                            class="icon-button"
+                            [attr.aria-label]="t('buttonDown')"
+                            (click)="moveButton(index, 1)"
+                            [disabled]="index === project().buttons.length - 1"
+                          >
+                            ↓</button
+                          ><button class="danger-button" (click)="removeButton(index)">
+                            {{ t('removeButton') }}
+                          </button>
+                        </div>
+                      </article>
+                    }
+                    @if (!project().buttons.length) {
+                      <p class="section-description">{{ t('noButtons') }}</p>
+                    }
+                  </section>
+                }
+                @case (4) {
+                  <p class="section-description">{{ t('reviewLead') }}</p>
+                  <label for="decisions">{{ t('decisions') }}</label
+                  ><textarea
+                    id="decisions"
+                    rows="4"
+                    [ngModel]="project().decisions"
+                    (ngModelChange)="update({ decisions: $event })"
+                  ></textarea>
+                  <label for="questions">{{ t('questions') }}</label
+                  ><textarea
+                    id="questions"
+                    rows="3"
+                    [ngModel]="project().questions"
+                    (ngModelChange)="update({ questions: $event })"
+                  ></textarea>
+                  <div class="review-checklist">
+                    @for (key of checks; track key; let index = $index) {
+                      <label class="check-row"
+                        ><input
+                          type="checkbox"
+                          [ngModel]="project().review.checks[index]"
+                          (ngModelChange)="setCheck(index, $event)"
+                        />{{ t(key) }}</label
+                      >
+                    }
+                  </div>
+                  <label for="reviewer">{{ t('reviewer') }}</label
+                  ><input
+                    id="reviewer"
+                    [ngModel]="project().review.reviewer"
+                    (ngModelChange)="setReviewer($event)"
+                  />
+                  <p class="fine-print">{{ t('approveHint') }}</p>
+                  <button
+                    class="primary-button"
+                    (click)="approve()"
+                    [disabled]="!canApprove() || !!project().review.approvedAt"
+                  >
+                    {{ t('approve') }}
+                  </button>
+                  @if (project().review.approvedAt) {
+                    <p class="review-record">
+                      ✓ {{ project().review.reviewer }} · {{ project().review.approvedAt }}
+                    </p>
+                  }
+                  <p class="fine-print">{{ t('localReview') }}</p>
+                  <button class="secondary-button" (click)="exportBrief()">
+                    ↗ {{ t('handoff') }}
+                  </button>
+                }
+              }
+            </section>
+            @if (previewVisible()) {
+              <!-- The preview owns response values and simulations; the project store never sees them. -->
+              <app-form-preview
+                [project]="project()"
+                [uiLocale]="locale()"
+                [locale]="previewLocale()"
+                [mobile]="mobile()"
+                (localeChange)="setPreviewLocale($event)"
+                (mobileChange)="mobile.set($event)"
+              ></app-form-preview>
+            }
+          </div>
+        </section>
+      }
+      @if (view() === 'examples') {
+        <section id="workspace" class="content-page">
+          <p class="eyebrow">COMMERCIAL USE CASES</p>
+          <h1>{{ t('businessTitle') }}</h1>
+          <p class="page-lead">{{ t('businessLead') }}</p>
+          <div class="example-grid">
+            @for (sample of samples; track sample.id) {
+              <article class="example-card">
+                <div class="example-art" [class]="'example-art example-' + sample.id">
+                  <span>{{ sample.number }}</span
+                  ><span>{{ sample.tag }}</span>
+                </div>
+                <div class="example-content">
+                  <span class="tiny-label">{{ sample.tag }}</span>
+                  <h2>{{ t(sample.title) }}</h2>
+                  <p>{{ t(sample.body) }}</p>
+                  <button class="secondary-button" (click)="loadExample(sample.id)">
+                    {{ t('load') }} ↗
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+      @if (view() === 'guide') {
+        <section id="workspace" class="content-page guide-page">
+          <p class="eyebrow">THE MOCKFORGE APPROACH</p>
+          <h1>{{ t('guideTitle') }}</h1>
+          <p class="page-lead">{{ t('guideText') }}</p>
+          <div class="guide-steps">
+            @for (key of ['guide1', 'guide2', 'guide3']; track key; let index = $index) {
+              <article>
+                <span class="guide-number">0{{ index + 1 }}</span>
+                <div>
+                  <h2>{{ t(index === 0 ? 'guide1' : index === 1 ? 'guide2' : 'guide3') }}</h2>
+                  <p>
+                    {{ t(index === 0 ? 'guide1Text' : index === 1 ? 'guide2Text' : 'guide3Text') }}
+                  </p>
+                </div>
+              </article>
+            }
+          </div>
+          <p class="benefit-note">{{ t('benefit') }}</p>
+          <a class="primary-button" href="assets/presentation.html" target="_blank" rel="noopener"
+            >{{ t('presentation') }} ↗</a
+          >
+        </section>
+      }
+    </main>
+    <footer class="studio-footer">
+      <span>{{ t('footer') }}</span
+      ><a href="https://1saeed.com/" target="_blank" rel="noopener">© 1Saeed.com</a>
+    </footer>
+  </div>
+</div>
+<dialog
+  #replaceDialog
+  class="replace-dialog"
+  aria-labelledby="replace-title"
+  aria-describedby="replace-description"
+  (cancel)="cancelReplace()"
+>
+  <h2 id="replace-title">{{ t('replaceTitle') }}</h2>
+  <p id="replace-description">{{ t('replaceText') }}</p>
+  <div class="dialog-actions">
+    <button class="secondary-button" autofocus (click)="cancelReplace()">{{ t('cancel') }}</button
+    ><button class="secondary-button" (click)="confirmReplace(true)">{{ t('saveFirst') }}</button
+    ><button class="primary-button" (click)="confirmReplace()">{{ t('replace') }}</button>
+  </div>
+</dialog>
+<app-feedback [locale]="locale()" />

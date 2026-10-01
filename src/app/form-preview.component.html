@@ -1,0 +1,82 @@
+<div class="preview-toolbar">
+  <span class="tiny-label"
+    ><span class="live-dot" aria-hidden="true"></span>{{ t('preview') }}</span
+  >
+  <div class="locale-toggle" [attr.aria-label]="t('previewLanguage')">
+    @for (lang of project().languages; track lang) {
+      <button
+        [class.selected]="language() === lang"
+        [attr.aria-pressed]="language() === lang"
+        (click)="localeChange.emit(lang)"
+      >
+        {{ lang.toUpperCase() }}
+      </button>
+    }
+  </div>
+  <div class="device-toggle">
+    <button
+      [class.selected]="!mobile()"
+      [attr.aria-pressed]="!mobile()"
+      (click)="mobileChange.emit(false)"
+    >
+      {{ t('desktop') }}</button
+    ><button
+      [class.selected]="mobile()"
+      [attr.aria-pressed]="mobile()"
+      (click)="mobileChange.emit(true)"
+    >
+      {{ t('mobile') }}
+    </button>
+  </div>
+</div>
+<div class="browser-frame" [class.mobile-frame]="mobile()">
+  <div class="browser-bar">
+    <span aria-hidden="true">● ● ●</span><span>preview.mockforge.local</span
+    ><span aria-hidden="true">↗</span>
+  </div>
+  <div [class]="'rendered-form theme-' + project().theme">
+    <span class="preview-brand">{{ project().name.split(' · ')[0] }}</span>
+    <h3>{{ text(project().title) }}</h3>
+    <p class="preview-intro">{{ text(project().description) }}</p>
+    <form #previewForm ngNativeValidate (submit)="submit($event)" [attr.lang]="language()">
+      <div class="preview-fields" [class.two-columns]="project().columns === 2 && !mobile()">
+        @for (field of project().fields; track field.id) {
+          @if (field.type === 'group') {
+            <app-repeat-group
+              [field]="field"
+              [locale]="language()"
+              [resetToken]="resetToken()"
+              (patternInput)="validatePattern($event.event, $event.field)"
+              (responsesChanged)="simulated.set(false)"
+            />
+          } @else {
+            <app-preview-field
+              [field]="field"
+              [locale]="language()"
+              [controlId]="'preview-' + field.id"
+              [class.full-width]="
+                field.type === 'textarea' || field.type === 'checkbox' || field.type === 'radio'
+              "
+              (patternInput)="validatePattern($event.event, $event.field)"
+            />
+          }
+        }
+      </div>
+      <div class="preview-buttons">
+        @for (button of project().buttons; track button.id) {
+          <button
+            type="button"
+            [class]="'btn preview-submit button-' + button.variant + ' ' + button.cssClass"
+            (click)="runButton(button, previewForm)"
+          >
+            {{ text(button.label) }}
+          </button>
+        }
+      </div>
+    </form>
+    @if (simulated()) {
+      <p class="simulation-result" role="status">{{ simulationMessage() }}</p>
+    }
+  </div>
+</div>
+<p class="preview-caption">{{ t('previewHint') }}</p>

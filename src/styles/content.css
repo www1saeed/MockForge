@@ -1,0 +1,300 @@
+/* Overview, fictional commercial examples and methodology content share the Studio design tokens. */
+
+h1 {
+  margin: 0;
+  font-size: clamp(29px, 2.9vw, 47px);
+  letter-spacing: -1.8px;
+  line-height: 1.13;
+  font-weight: 650;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 35px;
+  padding: 8px 0 38px;
+  max-width: 1300px;
+  margin: 20px auto 0;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  font-weight: 700;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.eyebrow span {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.hero h1 span {
+  color: var(--accent);
+}
+
+.hero-description {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 18px 0 23px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+}
+
+.hero-aside {
+  border-left: 1px solid var(--line);
+  padding-left: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-number {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.hero-line {
+  height: 3px;
+  width: 40px;
+  background: var(--orange);
+  margin: 17px 0 20px;
+}
+
+.hero-aside p {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 14px;
+}
+
+.hero-aside strong {
+  color: var(--accent);
+  font-size: 10px;
+  margin-right: 13px;
+}
+
+.hero-footnote {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  margin-top: 18px;
+}
+
+.hero-footnote span {
+  margin: 0 5px;
+  color: var(--orange);
+}
+
+.content-page {
+  padding: 22px 0 50px;
+  min-height: calc(100vh - 180px);
+}
+
+.content-page h1 {
+  max-width: 790px;
+}
+
+.page-lead {
+  color: var(--muted);
+  max-width: 730px;
+  line-height: 1.9;
+  font-size: 15px;
+  margin: 23px 0 38px;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.example-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+.example-art {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 190px;
+  padding: 25px;
+  background: #dceee4;
+  color: #145f50;
+}
+
+.example-art span:first-child {
+  font-size: 65px;
+  font-weight: 300;
+  letter-spacing: -4px;
+}
+
+.example-art span:last-child {
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.example-commerce {
+  background: #eee5f5;
+  color: #6750a4;
+}
+
+.example-agency {
+  background: #e2ebf5;
+  color: #0f6cbd;
+}
+
+.example-content {
+  padding: 26px;
+}
+
+.example-content h2 {
+  font-size: 22px;
+  line-height: 1.4;
+  margin: 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.example-content p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  min-height: 100px;
+  margin-bottom: 18px;
+}
+
+.guide-steps {
+  max-width: 850px;
+}
+
+.guide-steps article {
+  display: flex;
+  gap: 30px;
+  padding: 30px 0;
+  border-top: 1px solid var(--line);
+}
+
+.guide-number {
+  font-size: 40px;
+  font-weight: 300;
+  color: var(--accent);
+}
+
+.guide-steps h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.guide-steps p {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+.benefit-note {
+  border-left: 3px solid var(--accent);
+  padding: 20px 25px;
+  background: var(--accent-soft);
+  max-width: 1300px;
+  line-height: 1.8;
+  margin: 20px 0 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.example-agency span:last-child {
+  color: var(--ink);
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 1300px;
+  margin: 12px auto 32px;
+}
+
+.overview-grid article {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+}
+
+.overview-number {
+  color: var(--accent);
+  font-size: 28px;
+}
+
+.overview-grid h2 {
+  font-size: 20px;
+  margin: 16px 0;
+}
+
+.overview-grid p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+@media (max-width: 1200px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-aside {
+    display: none;
+  }
+  .overview-grid {
+    gap: 16px;
+  }
+  .overview-grid article {
+    padding: 20px;
+  }
+}
+@media (max-width: 760px) {
+  .hero {
+    margin-top: 0;
+    padding-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: 30px;
+  }
+  .hero-description {
+    font-size: 15px;
+  }
+  .hero-actions {
+    gap: 13px;
+  }
+  .overview-grid,
+  .example-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .overview-grid h2 {
+    font-size: 19px;
+  }
+  .content-page h1 {
+    font-size: 35px;
+  }
+  .guide-steps article {
+    gap: 20px;
+  }
+  .example-content p {
+    min-height: auto;
+  }
+}
