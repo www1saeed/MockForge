@@ -1,6 +1,4 @@
 name: Verify and optionally deploy
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 on:
   push:
     branches: [main]
@@ -8,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: Publish the verified build to GitHub Pages
+        description: Publish the verified build to GitHub Pages (pushes to main always deploy)
         type: boolean
         default: false
 permissions:
@@ -30,11 +28,11 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist/studio/browser
   deploy:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.deploy)
     needs: verify
     runs-on: ubuntu-24.04
     permissions:
