@@ -160,7 +160,7 @@ test('form language selection, localized tooltips, patterns and configured butto
   const path = await (await downloadEvent).path();
   if (!path) throw new Error('Export missing');
   const exported = JSON.parse(await readFile(path, 'utf8'));
-  expect(exported.schemaVersion).toBe('1.2.0');
+  expect(exported.schemaVersion).toBe('1.3.0');
   expect(exported.fields[0].pattern).toBe('[A-Z]{3}');
   expect(exported.buttons[1].action).toBe('reset');
   expect(exported.buttons[1].note).toBe('Clear only preview entries.');

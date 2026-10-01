@@ -1,5 +1,6 @@
 /** Framework independent contract for a single form and its review baseline. */
-export type Locale = 'de' | 'en';
+export type Locale = 'de' | 'en' | 'fa';
+export const LOCALES: readonly Locale[] = ['de', 'en', 'fa'];
 export type Theme = 'bootstrap' | 'material' | 'carbon' | 'fluent';
 export type FieldType =
   | 'text'
@@ -23,9 +24,10 @@ export interface RepeatGroup {
   fields: Field[];
 }
 export interface Text {
-  /** Both translations remain stored even when one language is inactive. */
+  /** All translations remain stored even when a language is inactive. */
   de: string;
   en: string;
+  fa: string;
 }
 export interface Field {
   /** Stable, validated identifiers also connect preview labels and native controls. */
@@ -71,7 +73,7 @@ export interface FormButton {
   note: string;
 }
 export interface Project {
-  schemaVersion: '1.2.0';
+  schemaVersion: '1.3.0';
   name: string;
   owner: string;
   audience: string;
@@ -111,7 +113,7 @@ export function allFields(fields: readonly Field[]): Field[] {
 }
 export const THEMES: readonly Theme[] = ['bootstrap', 'material', 'carbon', 'fluent'];
 export const STORAGE_KEY = 'mockforge-studio-v1';
-export const text = (de: string, en: string): Text => ({ de, en });
+export const text = (de: string, en: string, fa = ''): Text => ({ de, en, fa });
 
 /** A fresh field keeps every editable property explicit in the export. */
 export function createField(type: FieldType, id: string): Field {

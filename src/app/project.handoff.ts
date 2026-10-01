@@ -5,9 +5,9 @@ function inline(value: string): string {
   return value.replace(/[\r\n]+/g, ' ').replace(/\|/g, '\\|');
 }
 
-/** Preserve both translations, including inactive copy that may be needed later. */
+/** Preserve all translations, including inactive copy that may be needed later. */
 function localized(label: string, value: Text): string {
-  return `${label} DE: ${value.de}\n${label} EN: ${value.en}`;
+  return `${label} DE: ${value.de}\n${label} EN: ${value.en}\n${label} FA: ${value.fa}`;
 }
 
 function renderField(field: Field, language: Project['languages'][number]): string {
@@ -22,7 +22,7 @@ function renderField(field: Field, language: Project['languages'][number]): stri
       `Tooltip trigger: ${field.tooltipPlacement === 'title' ? 'Field title' : field.tooltipPlacement === 'info' ? 'Information icon beside title' : 'Question-mark icon beside title'}`,
       `Pattern: ${field.pattern || 'None'}`,
       localized('Pattern message', field.patternMessage),
-      `Options: ${field.options.map((option: Text): string => `${option.de} / ${option.en}`).join('; ')}`,
+      `Options: ${field.options.map((option: Text): string => `${option.de} / ${option.en} / ${option.fa}`).join('; ')}`,
     ].join('\n'),
     `Developer note: ${field.note || 'None'}`,
     ...(field.group
@@ -52,7 +52,7 @@ function renderButton(button: FormButton, language: Project['languages'][number]
 /**
  * Render a portable implementation brief without Angular, HTML or backend dependencies.
  *
- * Headings use the first configured form language, while the body retains both
+ * Headings use the first configured form language, while the body retains all
  * translations and explicitly records the active language set. Buttons are the
  * authoritative action specification; the legacy submit-copy property is kept only
  * in JSON for compatibility. The final review note distinguishes a local record

@@ -7,7 +7,7 @@ describe('FieldListComponent', (): void => {
     TestBed.configureTestingModule({ imports: [FieldListComponent] });
     const fixture = TestBed.createComponent(FieldListComponent);
     const field = createField('email', 'contact');
-    field.label = { de: 'Kontakt', en: 'Contact' };
+    field.label = { de: 'Kontakt', en: 'Contact', fa: 'تماس' };
     fixture.componentRef.setInput('fields', [field]);
     fixture.componentRef.setInput('selectedId', field.id);
     fixture.componentRef.setInput('locale', 'de');
@@ -41,7 +41,7 @@ describe('FieldListComponent', (): void => {
     fixture.componentRef.setInput('languages', ['en']);
     fixture.detectChanges();
     const component = fixture.componentInstance;
-    expect(component.label({ de: 'Deutsch', en: 'English' })).toBe('English');
+    expect(component.label({ de: 'Deutsch', en: 'English', fa: 'فارسی' })).toBe('English');
     const moved = jest.fn();
     const removed = jest.fn();
     const selected = jest.fn();

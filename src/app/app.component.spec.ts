@@ -155,7 +155,7 @@ describe('Alignment workspace', (): void => {
     app.setLocale('de');
     expect(app.previewLocale()).toBe('en');
     app.setLanguages('de');
-    app.update({ owner: 'PO', questions: '', title: { de: 'Titel', en: '' } });
+    app.update({ owner: 'PO', questions: '', title: { de: 'Titel', en: '', fa: '' } });
     app.selectedId.set('name');
     app.fieldText('label', '', 'en');
     app.setReviewer('Reviewer');
@@ -210,7 +210,7 @@ describe('Alignment workspace', (): void => {
     app.addButton();
     expect(app.project().buttons).toHaveLength(20);
     app.update({ buttons: [] });
-    expect(app.project().submit).toEqual({ de: '', en: '' });
+    expect(app.project().submit).toEqual({ de: '', en: '', fa: '' });
   });
   test('adds, edits, reorders and removes a field', (): void => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -433,7 +433,7 @@ describe('Alignment workspace', (): void => {
     app.update({ owner: 'PO', questions: '' });
     app.setReviewer('Alex');
     app.selectedId.set('team');
-    app.fieldChange({ options: [{ de: 'Klein', en: '' }] });
+    app.fieldChange({ options: [{ de: 'Klein', en: '', fa: '' }] });
     for (let index = 0; index < 5; index++) app.setCheck(index, true);
     expect(app.canApprove()).toBe(false);
     app.update({ fields: [] });

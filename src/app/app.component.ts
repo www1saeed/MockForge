@@ -271,7 +271,7 @@ export class AppComponent implements OnInit {
       ...(change.buttons
         ? {
             submit: change.buttons.find((button: FormButton): boolean => button.action === 'submit')
-              ?.label ?? { de: '', en: '' },
+              ?.label ?? { de: '', en: '', fa: '' },
           }
         : {}),
     });
@@ -378,7 +378,7 @@ export class AppComponent implements OnInit {
       .split('\n')
       .slice(0, 100)
       .map((line: string, index: number): Text => ({
-        ...(field.options[index] ?? { de: '', en: '' }),
+        ...(field.options[index] ?? { de: '', en: '', fa: '' }),
         [locale]: line,
       }));
     this.fieldChange({ options });

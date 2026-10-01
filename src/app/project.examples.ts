@@ -4,7 +4,7 @@ import { createButton, createField, Field, FieldType, Project, text } from './pr
 export type ExampleKind = 'saas' | 'commerce' | 'agency' | 'complex';
 export function example(kind: ExampleKind): Project {
   const base: Project = {
-    schemaVersion: '1.2.0',
+    schemaVersion: '1.3.0',
     languages: ['de', 'en'],
     buttons: [createButton('submit', text('Anfrage senden', 'Send request'))],
     name: '',
