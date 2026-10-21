@@ -1,0 +1,59 @@
+# Feature behavior comparison
+
+Compared on October 21, 2026, against original MockForge commit `0b84d116a50327b4ad6c098681bd5abed866f599`. Studio's feature commits are `8b09757` (clipboard), `3bc53dc` (preview data) and `6641712` (shell). The original repository was inspected and tested without source changes. This comparison covers the three requested feature areas, not the complete applications.
+
+**The implementations are not functionally identical.** Clipboard transfer and live project context share their central behavior. Studio's preview generator is a smaller adaptation; passing the tests below does not establish complete feature parity or identical generated values.
+
+## Behavior matrix
+
+| Area                     | Shared behavior                                                                                                                                                     | Difference / result                                                                                                                                                                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Copy                     | Snapshot configuration, include group children, assign globally unique IDs, allow repeated paste.                                                                   | Equivalent transfer semantics. The original derives IDs from source names; Studio allocates `field-N`. Generated ID strings are not identical.                                                                                                                     |
+| Cut                      | Keep source until paste; resolve its latest configuration; move atomically; retain IDs; clear after success. Cancel does not delete the source.                     | Equivalent central behavior. The original moves top-level fields between form/wizard pages. Studio also moves leaf children between root/group lists and enforces its own 100-definition/20-child bounds.                                                          |
+| Clipboard lifecycle      | Survive authoring-step changes; clear on project replacement/reload; cancel invalidated cut sources; never serialize clipboard or intercept text shortcuts.         | Equivalent shared lifecycle. The original also handles form-mode/page changes; Studio has one form page and no mode switch.                                                                                                                                        |
+| Review after paste       | A successful paste changes the specification.                                                                                                                       | Studio automatically invalidates checks and acknowledgement. The original edition's review model differs; review records and schemas are not interchangeable.                                                                                                      |
+| Fill action and settings | Explicit fill outside the mockup; native accessible settings dialog; preserve populated answers unless replacement is selected; generated answers remain transient. | Equivalent central interaction, with different settings and reporting depth. Studio now also preserves a deliberately unchecked checkbox.                                                                                                                          |
+| Content profiles         | Content language is independent of UI/form locale. Emails/URLs use illustrative example domains.                                                                    | Not equal: original DE/EN/PL/UK/AR/JA/ZH/KO plus international mix; Studio DE/EN/FA. The small catalogues and generated values differ.                                                                                                                             |
+| Semantic values          | Generate examples for native field types and selected recognized labels.                                                                                            | Not equal: original explicit hints/examples, richer bilingual semantic detection and coherent profile identities; Studio uses a small label-based candidate catalogue without persisted hints/examples.                                                            |
+| Seed and reference date  | Generation is deterministic for the same full request.                                                                                                              | Not equal in UI: original advances an internal seed per fill and uses today's reference date; Studio exposes a seed, reuses it until edited and uses fixed illustrative January 2026 dates.                                                                        |
+| Scenarios                | Valid sample data and required-field checks are possible.                                                                                                           | Not equal: original valid/invalid/boundary modes with minimum, maximum, below/above and required-empty cases; Studio valid/empty only. Empty with replacement is a manual required-field check, not the original scenario engine.                                  |
+| Repeat groups            | Fill independently addressed child responses; respect definition bounds; preserve responses by default.                                                             | Not equal: original has a requested group-count setting and wizard scope; Studio fills current mounted rows and creates one row for an empty optional group. Studio retains its own 20-row limit.                                                                  |
+| Pattern validation       | Do not silently claim a usable candidate when constraints cannot be satisfied.                                                                                      | Not equal: original worker-isolated validation, bounded synthesis, known-example fallback, timeout and cancellation; Studio synthesizes only bounded character classes and skips complex expressions. Studio's existing manual pattern validator remains separate. |
+| Diagnostics              | Report that generation may leave missing answers requiring attention.                                                                                               | Not equal: original per-field diagnostics and scenario/profile outcomes; Studio filled/preserved/skipped counts only.                                                                                                                                              |
+| Unicode                  | Support non-Latin text and suitable native text direction.                                                                                                          | Not equal: original NFC/NFD selection and international/mixed profile diagnostics; Studio has Persian content and auto text direction but no normalization setting or mix mode.                                                                                    |
+| Batch API                | No generated answers are persisted as specification data.                                                                                                           | Not equal: original has a bounded 1–500-record API with progress/cancellation and diagnostics; Studio has no batch API or bulk export. The original batch API is not a bulk-list/export UI either.                                                                 |
+| Shell identity           | Project name drives navigation; edits/replacement update live; localized form/application title is separate from stable product branding.                           | Equivalent central behavior. Original uses a banner and a DE fallback for missing English title. Studio uses its persistent header and active-form-language fallback, supports FA/RTL, and leaves an empty subtitle empty. Layout/fallback policies differ.        |
+| Format and integration   | Each application retains its own project contract.                                                                                                                  | Not equal: Studio JSON 1.3.0 is incompatible with the original edition. Original GitLab integration, wizard pages and organization shell are not part of this adaptation.                                                                                          |
+
+## Executed evidence
+
+Studio: **78 unit/component tests across 10 suites**, **25 Chromium end-to-end tests**, **261 DE/EN/FA catalog entries** and **98.32% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 725.87 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
+
+Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 103 tests.
+
+The comparison found one actionable shared-behavior gap: Studio initially treated every unchecked checkbox as empty. Studio now records user answer edits separately from generated events and preserves an intentional unchecked answer unless replacement is requested. A regression test protects this behavior.
+
+Reproduce Studio checks from its root:
+
+```sh
+npm run format:check
+npm run lint
+npx tsc --noEmit -p tsconfig.spec.json
+npm run test:coverage
+npm run extract-i18n
+npm run build
+npm run e2e
+```
+
+Reproduce the targeted original checks from that repository's root (these commands create local test output and the browser command builds its localized test application):
+
+```sh
+node node_modules/jest/bin/jest.js --runInBand --coverage=false --reporters=default --testPathPatterns='form-config.store.spec|layout/components/(banner|header|menu)/.*spec|shared/test-data/.*spec'
+node node_modules/@playwright/test/cli.js test --config e2e/playwright.config.ts e2e/field-clipboard.spec.ts e2e/preview-test-data.spec.ts --project chromium --grep "copies and moves|preserves manual answers" --workers 1
+```
+
+Ignored local evidence from this run is under `reports/reference-feature-tests.json`, `reports/reference-browser/` and the Studio screenshot/test-report directories. Source review was used alongside executed tests to distinguish shared behavior from unsupported features. Equal test results alone would not prove identical behavior.
+
+## Work required for full generator parity
+
+Full parity would require the missing profiles/mix and normalization settings, richer semantic hints/examples, coherent record identity, invalid and boundary scenarios, configurable group counts and page scope, worker-backed validation/cancellation and detailed diagnostics, followed by the separate batch API. It would also require an explicit decision on Studio's Persian support, public JSON schema, fixed-seed behavior and single-page boundary. These capabilities were not silently added to Studio or described as implemented.

@@ -3,6 +3,25 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  guideClipboard: ['Felder kopieren und verschieben', 'Copy and move fields'],
+  guideClipboardText: [
+    'Wähle ein Feld und nutze Kopieren oder Ausschneiden unter der Feldliste. Einfügen hängt es an die Zielliste an. Kopien erhalten neue IDs; Ausschneiden verschiebt erst beim Einfügen und behält die IDs. Ganze Gruppen können kopiert, einzelne Unterfelder verschoben werden. Zwischenablage leeren bricht das Verschieben ab. Ersetzen und Neuladen leeren die Zwischenablage. Texte lassen sich weiterhin mit den normalen Tastenkürzeln bearbeiten.',
+    'Select a field and choose Copy or Cut below its list. Paste appends to the destination list. Copies get new IDs; Cut moves only when pasted and keeps IDs. You can copy complete groups and move leaf children. Clear clipboard cancels a pending move. Replacement and reload clear the clipboard. Normal text-editing shortcuts remain available.',
+  ],
+  guideTestData: ['Vorschau mit Testdaten prüfen', 'Check the preview with test data'],
+  guideTestDataText: [
+    'Blende die Vorschau ein und wähle Testdaten einfüllen. Vorhandene Antworten bleiben erhalten. In den Einstellungen wählst du DE/EN/FA unabhängig von der Formularsprache, einen Startwert und gültige oder leere Werte. Ersetzen muss ausdrücklich aktiviert werden. Gefüllt, Beibehalten und Übersprungen zählen Antwortfelder. Komplexe RegEx werden übersprungen; fehlende Werte prüfst du manuell. Testantworten und Einstellungen werden nicht gespeichert oder exportiert.',
+    'Show the preview and choose Fill test data. Existing answers are preserved. Settings offer DE/EN/FA independently of form language, a seed and valid or empty values. Replacement must be enabled explicitly. Filled, Preserved and Skipped count response fields. Complex patterns are skipped; check missing values manually. Test answers and settings are never saved or exported.',
+  ],
+  guideShell: [
+    'Projekt im Header und in der Navigation',
+    'Project context in the header and navigation',
+  ],
+  guideShellText: [
+    'Der Workspace-Navigationseintrag folgt dem Projektnamen. Im Header erscheinen Projektname und lokalisierter Formulartitel. Umbenennen, Sprachwechsel und Projektimport aktualisieren die Anzeige sofort. Bei leerem Projektnamen erscheint Workspace. Die Studio-Marke bleibt sichtbar.',
+    'The workspace navigation entry follows the project name. The header shows the project name and localized form title. Renaming, language switching and import update the display immediately. An empty project name uses the workspace label. Studio branding stays visible.',
+  ],
+
   fieldClipboard: ['Feld-Zwischenablage', 'Field clipboard'],
   copyField: ['Kopieren', 'Copy'],
   cutField: ['Ausschneiden', 'Cut'],
