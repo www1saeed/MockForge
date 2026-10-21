@@ -8,13 +8,13 @@ The meeting should end with an implementation agreement the owner and developer 
 
 ## Suggested agenda
 
-| Time | Discussion | Output |
-| --- | --- | --- |
-| 0–10 min | Who uses the form, and what should it achieve? | Brief and success criterion |
-| 10–25 min | Walk through labels, hints, choices and required data. | Reviewed field specification |
-| 25–35 min | Select form languages; try incomplete data, patterns, tooltips and mobile view in each selected language. | Validation and copy decisions |
-| 35–45 min | Describe submit behavior, failures and system boundaries. | Developer notes and acceptance criteria |
-| 45–55 min | Resolve questions and confirm the handoff. | JSON, Markdown brief and review record |
+| Time      | Discussion                                                                                                | Output                                  |
+| --------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 0–10 min  | Who uses the form, and what should it achieve?                                                            | Brief and success criterion             |
+| 10–25 min | Walk through labels, hints, choices and required data.                                                    | Reviewed field specification            |
+| 25–35 min | Select form languages; try incomplete data, patterns, tooltips and mobile view in each selected language. | Validation and copy decisions           |
+| 35–45 min | Describe submit behavior, failures and system boundaries.                                                 | Developer notes and acceptance criteria |
+| 45–55 min | Resolve questions and confirm the handoff.                                                                | JSON, Markdown brief and review record  |
 
 These times are facilitation suggestions, not productivity claims.
 
@@ -25,6 +25,16 @@ For each field, confirm its purpose, exact label in every selected language, req
 For the form, confirm one/two columns, mobile order, title, description and exact call to action. Document loading, success, cancellation and server failure behavior in the decisions even though the prototype only simulates submission.
 
 For the handoff, name the owner of each external integration, define what is excluded and state what a developer can verify as accepted. Resolve questions in the decisions before clearing the open-question box. The app does not provide a resolved-question history.
+
+## Use the authoring and test tools during the workshop
+
+Rename the project in the brief and check that the header and workspace navigation identify the current working draft. Review the localized form title separately from the project name.
+
+Reuse a field with **Copy** and **Paste** rather than retyping its rules and translations. For repeated structures, copy the entire group. Use deferred **Cut** when relocating an existing leaf; it stays in place until a valid paste and retains its identifier. Clearing the clipboard cancels the move. Any successful paste invalidates the previous review, just like other specification changes.
+
+In the preview, use **Fill test data** to exercise the form. Settings choose DE/EN/FA sample content, a repeatable seed, valid or empty values and explicit replacement. Existing answers are preserved by default, including intentionally unchecked checkboxes. Empty values with replacement help review required-field feedback. Check the skipped count and supply missing values manually; complex RegEx generation is not included. A generated sample is not evidence that every relevant production boundary has been tested.
+
+The settings dialog can close without filling. Normal preview reset clears responses and returns groups to their minimum entry count. Generated answers never appear in the handoff, JSON, LocalStorage or review. Record production examples and acceptance criteria explicitly in the agreement. See [authoring tools](AUTHORING_TOOLS.md).
 
 ## Example acceptance criteria
 

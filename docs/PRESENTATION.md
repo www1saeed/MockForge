@@ -8,6 +8,10 @@ The fictional Orbit example follows one request through two possible development
 
 The example illustrates avoidable correction work. It does not represent a real customer or measured savings. Early alignment also costs time. Its potential benefit is the rework prevented minus the effort spent on alignment. New insights and technical investigations remain part of development.
 
+## Live product walkthrough after the deck
+
+The deck explains product-owner alignment; the detailed new-tool instructions live in [authoring tools](AUTHORING_TOOLS.md) and the application's localized **How it works** page. For a live follow-up, rename the project to show the dynamic shell, copy a complete group, defer a cut until paste, and fill the preview with synthetic data. Settings and test answers never enter the exported specification. Explain skipped patterns and preserve/replace behavior rather than presenting generated samples as exhaustive validation. The [demo script](SALES_DEMO.md) includes this sequence, and [the comparison](FEATURE_COMPARISON.md) lists the original edition's additional generator capabilities.
+
 ## Navigation and spoken explanations
 
 - Use Previous/Next, arrow keys or Page Up/Page Down. Home/End selects the first/last slide. Arrow keys inside the voice selector retain their native selection behavior.

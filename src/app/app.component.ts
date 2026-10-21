@@ -96,6 +96,11 @@ export class AppComponent implements OnInit {
   readonly localizedFieldKeys = ['label', 'placeholder', 'help', 'tooltip'] as const;
   readonly navigation = NAVIGATION;
   readonly steps = STEP_COPY;
+  readonly guideTools = [
+    { title: 'guideClipboard', body: 'guideClipboardText' },
+    { title: 'guideTestData', body: 'guideTestDataText' },
+    { title: 'guideShell', body: 'guideShellText' },
+  ] as const satisfies readonly { title: CopyKey; body: CopyKey }[];
   readonly checks = CHECK_COPY;
   readonly themes = THEMES_COPY;
   readonly samples = SAMPLES;

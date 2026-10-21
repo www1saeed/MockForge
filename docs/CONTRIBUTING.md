@@ -6,10 +6,11 @@ Read the [architecture](ARCHITECTURE.md) before changing behavior. Keep this pro
 
 - `project.model.ts` defines the framework-independent specification and factories.
 - `project.examples.ts`, `project.validation.ts` and `project.handoff.ts` own fictional examples, unknown-input validation and Markdown export respectively. `project.ts` is their public entry point.
-- `ProjectStore` owns immutable specification changes, persistence and review invalidation.
+- `ProjectStore` owns immutable specification changes, persistence, review invalidation and the session-only field clipboard. Clipboard state must never enter project JSON.
 - `AppComponent` coordinates navigation and editing. `FieldListComponent` emits selection and structural actions; `FormPreviewComponent` owns temporary native form responses and local simulations.
 - `studio.config.ts` holds typed navigation and workflow configuration. All visible copy belongs in the typed German/English base catalog and complete Persian catalog.
 - `FeedbackService` owns deletion requests and toast timers; `FeedbackComponent` owns the native confirmation modal and live notification region. Deletion handlers capture stable ids and mutate the specification only inside the confirmed callback.
+- `preview-test-data.ts` generates bounded candidates and fills mounted responses. Test data must preserve intentional unchecked answers unless replacement is requested; generated events must not mark answers as user edits. Unsupported patterns are skipped without execution.
 - `PreviewFieldComponent` renders native leaf controls; `RepeatGroupComponent` owns transient repeat rows. Keep row identities distinct from definition ids, validate each instance and never persist responses. Group definitions support one level only.
 - `src/styles.css` imports styles by responsibility: foundation, shell, workspace, preview, presets and content. Change the owning rule rather than adding another override at the bottom.
 
@@ -28,6 +29,7 @@ Run `npm run format` after editing. CI checks formatting with `npm run format:ch
 ```sh
 npm run format:check
 npm run lint
+npx tsc --noEmit -p tsconfig.spec.json
 npm run test:coverage
 npm run extract-i18n
 npm run build
@@ -37,3 +39,7 @@ npm run e2e
 Tests should protect user behavior and specification boundaries. Inspect responsive screenshots after layout changes. Never persist preview responses or accept an imported acknowledgement as authenticated approval.
 `bootstrap-tooltip.directive.ts` owns Bootstrap tooltip setup and disposal for the collapsible main-field rail. Keep imported labels plain text and dispose floating nodes when a trigger changes or disappears. Group-list visibility belongs to AppComponent; saved table spacing belongs to the domain model and ProjectStore.
 `field-title.component.ts` renders the shared form title and tooltip trigger. Repeat containers determine tooltip ownership: once in each table header or only in the first current card. Preserve native label/control association, independent checkbox behavior and plain localized tooltip text when changing the markup.
+
+## Documentation and feature comparisons
+
+Keep [authoring tools](AUTHORING_TOOLS.md), [the workshop](PRODUCT_OWNER_WORKSHOP.md), [the demo](SALES_DEMO.md) and the application's DE/EN/FA guide aligned with user-facing behavior. Update README and QUALITY test counts only from completed runs. Reference-repository comparison tests are separate evidence and must never be added to Studio's test total. The [comparison report](FEATURE_COMPARISON.md) records shared behavior and deliberate differences; do not infer full parity from similarly named features.

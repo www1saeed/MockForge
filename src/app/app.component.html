@@ -767,6 +767,17 @@
               </article>
             }
           </div>
+          <div class="guide-steps guide-tools">
+            @for (topic of guideTools; track topic.title; let index = $index) {
+              <article>
+                <span class="guide-number">0{{ index + 4 }}</span>
+                <div>
+                  <h2>{{ t(topic.title) }}</h2>
+                  <p>{{ t(topic.body) }}</p>
+                </div>
+              </article>
+            }
+          </div>
           <p class="benefit-note">{{ t('benefit') }}</p>
           <a class="primary-button" href="assets/presentation.html" target="_blank" rel="noopener"
             >{{ t('presentation') }} ↗</a

@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 87 passing automated tests: 66 unit/component tests and 21 end-to-end tests.** Verified on October 1, 2026, with **98.24% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 103 passing automated tests: 78 unit/component tests and 25 end-to-end tests.** Verified on October 21, 2026, with **98.32% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -71,6 +71,9 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 - German, English and Persian form copy, with one or two languages active at a time so field and button editors stay readable. Inactive translations remain stored.
 - Nine native field types plus repeatable groups with card/table layouts, editable child fields and minimum/maximum entry counts. Required rules, text length constraints, localized tooltips and full-value RegEx patterns have localized messages.
 - Show or hide the interactive preview on every step; it starts hidden for the brief, copy and form editor. Choose its language and desktop/mobile width separately.
+- Internal field clipboard: copy or defer a cut, then paste into the root list or a group. Copies receive fresh IDs; moves retain IDs and use the latest source. Complete groups can be copied. The clipboard stays local to the session.
+- Seeded synthetic preview data in German, English or Persian, independently of UI/form language. Preserve existing answers or replace explicitly; inspect filled/preserved/skipped counts. Settings and generated answers never enter JSON or the review record. See [authoring tools](docs/AUTHORING_TOOLS.md) for supported constraints and usage.
+- The header shows the current project and active form title; the workspace navigation name follows project renaming and replacement immediately.
 - Configurable buttons: localized labels, primary/secondary/ghost/danger appearance, behavior, CSS classes, developer notes and order. Validation, submission, saving, cancellation, deletion and next/back actions are local simulations; reset clears preview inputs.
 - Real Bootstrap form styling plus Material, Carbon and Fluent inspired visual presets.
 - German, English and Persian UI with instant switching. Persian uses RTL layout and the bundled IranSans webfont; the Studio UI and form preview can use different directions.
@@ -81,6 +84,8 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 - An [English presentation](src/assets/presentation.html) with a concrete sprint/rework example, spoken explanations, browser voice selection, transcripts, standalone HTML saving and an A4 landscape PDF layout. See the [presentation guide](docs/PRESENTATION.md).
 
 Material, Carbon and Fluent presets are **visual approximations**, not integrations of their official component libraries. Choose the real production library with the product owner and engineering team. Brand names identify the design references and imply no endorsement.
+
+See [authoring instructions](docs/AUTHORING_TOOLS.md) for copy/cut/paste and seeded preview data, and [the feature comparison](docs/FEATURE_COMPARISON.md) for verified similarities and differences from the original edition. The in-app **How it works** page also explains the tools in all three UI languages.
 
 ## A practical conversation
 

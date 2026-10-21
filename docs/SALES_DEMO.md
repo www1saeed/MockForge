@@ -20,9 +20,17 @@ The twelve-slide presentation follows the same commercial argument. Slides 5–7
 
 ## Preparation
 
-Use fictional data. Export an existing draft before opening an example. Begin on the overview, open the workspace and choose SaaS. Select the form languages independently of the UI language. Hide the preview for detailed editing, then show it and choose its language for the walkthrough. Demonstrate a tooltip, a RegEx error message and a reset/validate button as concrete decisions. Acknowledgement requires copy in all selected languages, a complete brief and resolved questions. Do not imply agreement on behalf of a real customer during a sales demo.
+Use fictional data. Export an existing draft before opening an example. Begin on the overview, open the workspace and choose SaaS. Select the form languages independently of the UI language. Hide the preview for detailed editing, then show it and choose its language for the walkthrough. Demonstrate a tooltip, a RegEx error message and a reset/validate button as concrete decisions. For a populated walkthrough, choose **Fill test data** above the preview. Existing answers stay intact unless replacement is enabled in settings. Use the empty scenario with replacement to check required fields. Call out any skipped candidates: complex patterns still need manual input. Choose DE/EN/FA content independently of the form language. These are synthetic answers, never saved or sent. Acknowledgement requires copy in all selected languages, a complete brief and resolved questions. Do not imply agreement on behalf of a real customer during a sales demo.
 
 Prepare a question relevant to the buyer: lead qualification for sales, the return promise for support, or project fit for an agency. Explain why the business question makes each detail worth discussing.
+
+## Demonstrate the new authoring tools
+
+1. Rename the project in the brief. Show its new name in the workspace header and navigation tooltip. The localized form title appears beneath it; Studio branding remains visible.
+2. In the field editor, select a field and choose **Copy**, then **Paste**. Show the independent configuration and new identifier. Copying a group includes its child definitions.
+3. Choose **Cut** on a leaf child, close child editing and paste into the root list. Explain that the original moves only when paste succeeds and keeps its identifier. Clear clipboard cancels a pending cut. Avoid emptying a group's definition list; at least one child is required.
+4. Show the preview's **Test data settings** dialog. Close it with Escape and show that closing alone does not change answers. Fill explicitly, explain the filled/preserved/skipped summary, then try the normal response reset.
+5. Open **How it works** for the same instructions in the current UI language. See [the detailed guide](AUTHORING_TOOLS.md) for bounds and [the comparison](FEATURE_COMPARISON.md) for differences from the original edition. Do not claim its advanced generator or batch API are present in Studio.
 
 ## Ready-to-use copy
 
