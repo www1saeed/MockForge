@@ -1,5 +1,9 @@
 import {
   Component,
+  ChangeDetectorRef,
+  ViewChild,
+  viewChildren,
+  ElementRef,
   computed,
   effect,
   inject,
@@ -8,6 +12,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { DataScenario, FillReport, fillTestData, ResponseControl } from './preview-test-data';
 import { FeedbackService } from './feedback.service';
 import { FormsModule } from '@angular/forms';
 import {
@@ -64,6 +69,63 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
   },
 })
 export class FormPreviewComponent {
+  @ViewChild('testDataDialog') testDataDialog!: ElementRef<HTMLDialogElement>;
+  private readonly detector = inject(ChangeDetectorRef);
+  readonly groups = viewChildren(RepeatGroupComponent);
+  readonly dataLocale = signal<Locale>('de');
+  readonly dataSeed = signal(1);
+  readonly replaceResponses = signal(false);
+  readonly dataScenario = signal<DataScenario>('valid');
+  readonly dataReport = signal<FillReport | null>(null);
+  private answered = new WeakSet<ResponseControl>();
+  private filling = false;
+
+  /** Preserve intentional unchecked answers, while generated events stay unmarked. */
+  responseEdited(event: Event): void {
+    if (this.filling) return;
+    const control = event.target;
+    if (
+      control instanceof HTMLInputElement ||
+      control instanceof HTMLTextAreaElement ||
+      control instanceof HTMLSelectElement
+    )
+      this.answered.add(control);
+    this.dataReport.set(null);
+    this.simulated.set(false);
+  }
+
+  fillResponses(form: HTMLFormElement): void {
+    // Create one response for an empty optional group, respecting its bounds.
+    for (const group of this.groups()) {
+      if (!group.rows().length) group.addEntry();
+    }
+    this.detector.detectChanges();
+    this.filling = true;
+    try {
+      this.dataReport.set(
+        fillTestData(
+          form,
+          allFields(this.project().fields),
+          this.dataLocale(),
+          this.dataSeed(),
+          this.replaceResponses(),
+          this.dataScenario(),
+          this.answered,
+        ),
+      );
+      this.simulated.set(false);
+    } finally {
+      this.filling = false;
+    }
+  }
+
+  openTestData(): void {
+    this.testDataDialog.nativeElement.showModal();
+  }
+  closeTestData(): void {
+    this.testDataDialog.nativeElement.close();
+  }
+
   readonly feedback = inject(FeedbackService);
   readonly project = input.required<Project>();
   readonly uiLocale = input<Locale>('de');
@@ -86,6 +148,7 @@ export class FormPreviewComponent {
       this.locale();
       this.uiLocale();
       this.simulated.set(false);
+      this.dataReport.set(null);
     });
   }
 
@@ -143,6 +206,8 @@ export class FormPreviewComponent {
     if (button.action === 'none') return;
 
     if (button.action === 'reset') {
+      this.answered = new WeakSet<ResponseControl>();
+      this.dataReport.set(null);
       this.resetToken.update((token): number => token + 1);
       form.reset();
       for (const control of Array.from(form.elements)) {

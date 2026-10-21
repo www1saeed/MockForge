@@ -322,3 +322,49 @@ app-field-title {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Application tools stay outside the rendered mockup and its simulated viewport. */
+.test-data-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  margin-block-end: 16px;
+  background: #e4efea;
+  border: 1px solid #bad3c5;
+  border-radius: 8px;
+}
+.test-data-toolbar p {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 12px;
+}
+.test-data-dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--ink);
+}
+.test-data-dialog::backdrop {
+  background: rgb(13 33 40 / 45%);
+}
+.test-data-dialog label {
+  display: block;
+  margin-block: 14px 6px;
+}
+.test-data-dialog .check-row {
+  display: flex;
+}
+.test-data-dialog select,
+.test-data-dialog input[type='number'] {
+  width: 100%;
+}
+
+.test-data-dialog .form-control,
+.test-data-dialog .form-select {
+  min-height: 44px;
+}

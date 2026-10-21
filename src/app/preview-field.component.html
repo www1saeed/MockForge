@@ -10,6 +10,7 @@
       [id]="controlId()"
       [name]="controlId()"
       [attr.data-field-id]="field().id"
+      dir="auto"
       rows="3"
       [required]="field().required"
       [placeholder]="text(field().placeholder)"
@@ -70,6 +71,7 @@
     <input
       class="form-control"
       [type]="field().type"
+      [attr.dir]="field().type === 'text' ? 'auto' : 'ltr'"
       [attr.pattern]="supportsPattern(field()) ? field().pattern || null : null"
       [id]="controlId()"
       [name]="controlId()"
