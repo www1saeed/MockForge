@@ -592,3 +592,14 @@
     padding: 16px;
   }
 }
+
+.clipboard-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-block: 14px;
+  border-top: 1px solid var(--line);
+}
+.clipboard-tools button {
+  font-size: 12px;
+}

@@ -158,3 +158,37 @@
     </button>
   </div>
 }
+
+@if (!collapsed()) {
+  <div class="clipboard-tools" role="group" [attr.aria-label]="t('fieldClipboard')">
+    <button
+      type="button"
+      class="secondary-button"
+      [disabled]="selectedIndex() < 0"
+      (click)="copied.emit()"
+    >
+      {{ t('copyField') }}
+    </button>
+    <button
+      type="button"
+      class="secondary-button"
+      [disabled]="selectedIndex() < 0"
+      (click)="cut.emit()"
+    >
+      {{ t('cutField') }}
+    </button>
+    <button
+      type="button"
+      class="secondary-button"
+      [disabled]="!clipboardAvailable()"
+      (click)="pasted.emit()"
+    >
+      {{ t('pasteField') }}
+    </button>
+    @if (clipboardAvailable()) {
+      <button type="button" class="text-button" (click)="clipboardCleared.emit()">
+        {{ t('clearClipboard') }}
+      </button>
+    }
+  </div>
+}

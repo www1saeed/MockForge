@@ -311,6 +311,11 @@
                       (moved)="moveField($event, true)"
                       (removed)="removeField(true)"
                       (added)="addField($event)"
+                      [clipboardAvailable]="!!store.clipboard()"
+                      (copied)="captureField('copy', true)"
+                      (cut)="captureField('cut', true)"
+                      (pasted)="pasteField()"
+                      (clipboardCleared)="store.clearClipboard()"
                     ></app-field-list>
                     <div class="inspector">
                       @if (editingGroup(); as parent) {
@@ -398,6 +403,11 @@
                                 (moved)="moveField($event)"
                                 (removed)="removeField()"
                                 (added)="addGroupField($event)"
+                                [clipboardAvailable]="!!store.clipboard()"
+                                (copied)="captureField('copy')"
+                                (cut)="captureField('cut')"
+                                (pasted)="pasteField(true)"
+                                (clipboardCleared)="store.clearClipboard()"
                               />
                             </aside>
                           }
