@@ -3,6 +3,14 @@ import { AppComponent } from './app.component';
 import { createButton, createField, example, FieldType } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('shell labels follow project identity with localized fallback', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.update({ name: '' });
+    expect(app.navigationLabel('workspace')).toBe('Workspace');
+    expect(app.navigationLabel('overview')).toBe(app.t('overview'));
+    app.update({ name: 'Current project' });
+    expect(app.navigationLabel('workspace')).toBe('Current project');
+  });
   test('clipboard actions retain a usable selection', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.store.update({
