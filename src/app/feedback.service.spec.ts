@@ -1,7 +1,9 @@
 import { FeedbackService } from './feedback.service';
 
 describe('FeedbackService', (): void => {
-  afterEach((): void => jest.useRealTimers());
+  afterEach((): void => {
+    jest.useRealTimers();
+  });
 
   it('requires explicit confirmation and permits cancellation', (): void => {
     const service = new FeedbackService();
