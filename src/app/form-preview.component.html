@@ -29,6 +29,20 @@
     </button>
   </div>
 </div>
+<div class="test-data-toolbar" role="group" [attr.aria-label]="t('testData')">
+  <button type="button" class="secondary-button" (click)="fillResponses(previewForm)">
+    {{ t('fillTestData') }}
+  </button>
+  <button type="button" class="text-button" (click)="openTestData()">
+    {{ t('testDataSettings') }}
+  </button>
+  @if (dataReport(); as report) {
+    <p role="status">
+      {{ t('dataFilled') }}: {{ report.filled }} · {{ t('dataPreserved') }}:
+      {{ report.preserved }} · {{ t('dataSkipped') }}: {{ report.skipped }}
+    </p>
+  }
+</div>
 <div class="browser-frame" [class.mobile-frame]="mobile()">
   <div class="browser-bar">
     <span aria-hidden="true">● ● ●</span><span>preview.mockforge.local</span
@@ -45,6 +59,8 @@
       #previewForm
       ngNativeValidate
       (submit)="submit($event)"
+      (input)="responseEdited($event)"
+      (change)="responseEdited($event)"
       [attr.lang]="language()"
       [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
     >
@@ -56,7 +72,7 @@
               [locale]="language()"
               [resetToken]="resetToken()"
               (patternInput)="validatePattern($event.event, $event.field)"
-              (responsesChanged)="simulated.set(false)"
+              (responsesChanged)="simulated.set(false); dataReport.set(null)"
             />
           } @else {
             <app-preview-field
@@ -89,3 +105,49 @@
   </div>
 </div>
 <p class="preview-caption">{{ t('previewHint') }}</p>
+
+<dialog #testDataDialog class="test-data-dialog" aria-labelledby="test-data-title">
+  <h3 id="test-data-title">{{ t('testDataSettings') }}</h3>
+  <p>{{ t('testDataHint') }}</p>
+  <label for="data-locale">{{ t('dataProfile') }}</label>
+  <select
+    class="form-select"
+    id="data-locale"
+    [ngModel]="dataLocale()"
+    (ngModelChange)="dataLocale.set($event)"
+  >
+    <option value="de">Deutsch</option>
+    <option value="en">English</option>
+    <option value="fa">فارسی</option>
+  </select>
+  <label for="data-seed">{{ t('dataSeed') }}</label>
+  <input
+    class="form-control"
+    id="data-seed"
+    type="number"
+    min="0"
+    max="999999"
+    [ngModel]="dataSeed()"
+    (ngModelChange)="dataSeed.set($event)"
+  />
+  <label for="data-scenario">{{ t('dataScenario') }}</label>
+  <select
+    class="form-select"
+    id="data-scenario"
+    [ngModel]="dataScenario()"
+    (ngModelChange)="dataScenario.set($event)"
+  >
+    <option value="valid">{{ t('dataValid') }}</option>
+    <option value="empty">{{ t('dataEmpty') }}</option>
+  </select>
+  <label class="check-row"
+    ><input
+      type="checkbox"
+      [ngModel]="replaceResponses()"
+      (ngModelChange)="replaceResponses.set($event)"
+    />{{ t('replaceResponses') }}</label
+  >
+  <button type="button" class="secondary-button" autofocus (click)="closeTestData()">
+    {{ t('closeSettings') }}
+  </button>
+</dialog>
