@@ -85,7 +85,7 @@ test('overview and full workspace keep the author visible and let preview be hid
       .violations,
   ).toEqual([]);
   await page.screenshot({ path: 'reports/overview-desktop.png' });
-  await page.getByRole('link', { name: 'Workspace', exact: true }).click();
+  await page.locator('.sidebar a[href="#workspace"]').click();
   await expect(page.locator('.hero')).toHaveCount(0);
   await expect(page.locator('.preview-panel')).toHaveCount(0);
   await expect(page.locator('.configuration')).toBeVisible();
@@ -251,7 +251,7 @@ test('invalid import preserves the draft and example replacement can be cancelle
   await page.getByRole('link', { name: 'Business-Beispiele' }).click();
   await page.getByRole('button', { name: 'Beispiel öffnen' }).nth(1).click();
   await page.getByRole('button', { name: 'Abbrechen' }).click();
-  await page.getByRole('link', { name: 'Workspace', exact: true }).click();
+  await page.locator('.sidebar a[href="#workspace"]').click();
   await expect(page.locator('.workspace-heading')).toContainText('Orbit');
 });
 
@@ -339,7 +339,7 @@ test('German and English workflows, themes and mobile layout pass an axe scan', 
       (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
         .violations,
     ).toEqual([]);
-    await page.getByRole('link', { name: 'Workspace', exact: true }).click();
+    await page.locator('.sidebar a[href="#workspace"]').click();
   }
   await page.locator('.workflow button').nth(2).click();
   for (const theme of ['Material', 'Carbon', 'Fluent']) {

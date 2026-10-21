@@ -166,6 +166,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+  /** Shell identity follows the working project, with a localized empty-name fallback. */
+  navigationLabel(view: StudioView): string {
+    return view === 'workspace' ? this.project().name.trim() || this.t('workspace') : this.t(view);
+  }
+
   captureField(mode: 'copy' | 'cut', root = false): void {
     const id = root ? this.rootSelectedId() : this.selectedId();
     this.store.captureField(id, mode);
