@@ -2,6 +2,15 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  fieldClipboard: 'حافظهٔ فیلد',
+  copyField: 'کپی',
+  cutField: 'برش',
+  pasteField: 'چسباندن',
+  clearClipboard: 'پاک کردن حافظه',
+  fieldCopied: 'فیلد کپی شد؛ چسباندن شناسه‌های تازه می‌سازد.',
+  fieldCut: 'فیلد برای جابه‌جایی آماده شد؛ با چسباندن منتقل می‌شود.',
+  fieldPasted: 'فیلد چسبانده شد.',
+  pasteUnavailable: 'چسباندن ممکن نیست؛ منبع، قوانین گروه یا محدودیت فیلد را بررسی کنید.',
   expandFields: 'باز کردن فهرست فیلدهای اصلی',
   collapseFields: 'بستن فهرست فیلدهای اصلی',
   editGroupFields: 'ویرایش زیرفیلدها',

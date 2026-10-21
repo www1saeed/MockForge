@@ -166,6 +166,25 @@ export class AppComponent implements OnInit {
     });
   }
 
+  captureField(mode: 'copy' | 'cut', root = false): void {
+    const id = root ? this.rootSelectedId() : this.selectedId();
+    this.store.captureField(id, mode);
+    this.feedback.notify(mode === 'copy' ? 'fieldCopied' : 'fieldCut', 'info');
+  }
+
+  pasteField(child = false): void {
+    const parentId = child ? this.editingGroup()?.id : undefined;
+    if (child && !parentId) return;
+    const id = this.store.pasteField(parentId);
+    if (!id) {
+      this.feedback.notify('pasteUnavailable', 'warning');
+      return;
+    }
+    if (child) this.selectChildField(id);
+    else this.selectRootField(id);
+    this.feedback.notify('fieldPasted', 'success');
+  }
+
   /** Selecting any main field exits child editing and restores the full main list. */
   selectRootField(id: string): void {
     this.selectedId.set(id);

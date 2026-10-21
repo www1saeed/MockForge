@@ -36,6 +36,11 @@ export class FieldListComponent {
   readonly selected = output<string>();
   readonly moved = output<-1 | 1>();
   readonly removed = output<void>();
+  readonly clipboardAvailable = input(false);
+  readonly copied = output<void>();
+  readonly cut = output<void>();
+  readonly pasted = output<void>();
+  readonly clipboardCleared = output<void>();
   readonly added = output<FieldType>();
 
   readonly newType = signal<FieldType>('text');

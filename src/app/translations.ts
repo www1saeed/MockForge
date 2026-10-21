@@ -3,6 +3,24 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  fieldClipboard: ['Feld-Zwischenablage', 'Field clipboard'],
+  copyField: ['Kopieren', 'Copy'],
+  cutField: ['Ausschneiden', 'Cut'],
+  pasteField: ['Einfügen', 'Paste'],
+  clearClipboard: ['Zwischenablage leeren', 'Clear clipboard'],
+  fieldCopied: [
+    'Feld kopiert. Beim Einfügen werden neue IDs vergeben.',
+    'Field copied. Pasting assigns fresh IDs.',
+  ],
+  fieldCut: [
+    'Feld zum Verschieben vorgemerkt. Erst Einfügen verschiebt es.',
+    'Field marked for moving. Paste completes the move.',
+  ],
+  fieldPasted: ['Feld eingefügt.', 'Field pasted.'],
+  pasteUnavailable: [
+    'Einfügen nicht möglich: Quelle, Gruppenregeln oder Feldgrenzen prüfen.',
+    'Cannot paste: check the source, group rules or field limits.',
+  ],
   expandFields: ['Hauptfeldliste aufklappen', 'Expand main field list'],
   collapseFields: ['Hauptfeldliste zuklappen', 'Collapse main field list'],
   editGroupFields: ['Unterfelder bearbeiten', 'Edit child fields'],
