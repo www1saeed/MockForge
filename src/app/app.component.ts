@@ -38,6 +38,7 @@ import { ProjectStore } from './project.store';
 import { CopyKey, translate } from './translations';
 import { FieldListComponent } from './field-list.component';
 import { FormPreviewComponent } from './form-preview.component';
+import { AuthoringGuideComponent } from './authoring-guide.component';
 import { FeedbackComponent } from './feedback.component';
 import { FeedbackService } from './feedback.service';
 import {
@@ -66,7 +67,13 @@ import {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, FieldListComponent, FormPreviewComponent, FeedbackComponent],
+  imports: [
+    FormsModule,
+    FieldListComponent,
+    FormPreviewComponent,
+    FeedbackComponent,
+    AuthoringGuideComponent,
+  ],
   providers: [ProjectStore],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
@@ -236,7 +243,13 @@ export class AppComponent implements OnInit {
   readLocation(): void {
     const next = window.location.hash.slice(1);
     this.view.set(
-      next === 'workspace' || next === 'examples' || next === 'guide' ? next : 'overview',
+      next === 'workspace' ||
+        next === 'examples' ||
+        next === 'guide' ||
+        next === 'guide-json' ||
+        next === 'guide-ai'
+        ? next
+        : 'overview',
     );
   }
   /** Keep visible content and shareable hash navigation in agreement. */

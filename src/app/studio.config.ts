@@ -2,7 +2,8 @@ import { ButtonAction, ButtonVariant, FieldType, Theme } from './project.model';
 import { CopyKey } from './translations';
 
 /** Shell navigation is independent of the form specification and its review record. */
-export type StudioView = 'overview' | 'workspace' | 'examples' | 'guide';
+export type StudioView =
+  'overview' | 'workspace' | 'examples' | 'guide' | 'guide-json' | 'guide-ai';
 
 /** Named workflow positions keep visibility defaults understandable at their call sites. */
 export const WORKFLOW = { brief: 0, copy: 1, design: 2, fields: 3, review: 4 } as const;
@@ -28,6 +29,14 @@ export const NAVIGATION = [
   { view: 'workspace', path: 'M3 4h18v16H3z M3 9h18 M9 9v11 M12 13h6 M12 17h4' },
   { view: 'examples', path: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
   { view: 'guide', path: 'M5 3h14v18H5z M8 7h8 M8 11h8 M8 15h5' },
+  {
+    view: 'guide-json',
+    path: 'M8 4H5v6l-2 2 2 2v6h3 M16 4h3v6l2 2-2 2v6h-3 M11 8h2 M11 12h2 M11 16h2',
+  },
+  {
+    view: 'guide-ai',
+    path: 'M12 3v3 M12 18v3 M3 12h3 M18 12h3 M7 7l-2-2 M17 7l2-2 M7 17l-2 2 M17 17l2 2 M8 8h8v8H8z',
+  },
 ] as const satisfies readonly { view: StudioView; path: string }[];
 
 export const THEMES_COPY: readonly { id: Theme; name: string; description: CopyKey }[] = [

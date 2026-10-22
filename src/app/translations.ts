@@ -3,6 +3,195 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  'guide-json': ['Formular im Texteditor entwerfen', 'Design a form in a text editor'],
+  'guide-ai': ['Formular mit KI entwerfen', 'Design a form with AI'],
+  authoringNavigation: ['Anleitungen zur Formularerstellung', 'Form authoring guides'],
+  jsonGuideIntro: [
+    'Bearbeite eine vollständige UTF-8-JSON-Datei, importiere sie und verfeinere den Entwurf mit dem Product Owner. Die Beispiele verwenden das aktuelle Studio-Format.',
+    'Edit a complete UTF-8 JSON file, import it and refine the draft with the product owner. These examples and this reference use the current Studio format.',
+  ],
+  aiGuideIntro: [
+    'Gib einem KI-Chatbot das Studio-Format und einen konkreten Auftrag. Lade den Format-Anhang herunter und nutze die kopierbaren Prompts. Prüfe den fertigen Entwurf anschließend in Studio.',
+    'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
+  ],
+  studioFormatNotice: [
+    'Studio-Format 1.3.0: Andere MockForge-Editionen sind nicht kompatibel. Dieser Ablauf implementiert keine Produktionsanbindung und bestätigt keine Review.',
+    'Studio format 1.3.0: other MockForge editions use incompatible files. This workflow does not implement production integrations or establish review approval.',
+  ],
+  authoringWorkflow: [
+    'Vom Texteditor zur geprüften Vorschau',
+    'From text editor to checked preview',
+  ],
+  editorStep1: [
+    'Exportiere deinen Entwurf als Sicherung oder lade ein vollständiges Beispiel herunter. Speichere die Arbeitskopie als UTF-8-Datei mit Endung .form.json.',
+    'Export your draft as a backup or download a complete example. Save a working copy as UTF-8 with a .form.json extension.',
+  ],
+  editorStep2: [
+    'Bearbeite echte JSON-Werte. Behalte alle Pflichtschlüssel und inaktiven Übersetzungen. Keine Kommentare, abschließenden Kommas oder Markdown-Codeblöcke.',
+    'Edit actual JSON values. Keep every required key and inactive translation. Use no comments, trailing commas or Markdown fences.',
+  ],
+  editorStep3: [
+    'Öffne den Workspace und wähle JSON importieren. Der Import ersetzt erst nach deiner Bestätigung. Exportiere bei Bedarf zuerst den bisherigen Stand. Ungültige Dateien werden abgelehnt.',
+    'Open the workspace and choose Import JSON. Replacement requires confirmation; export the current draft first if needed. Invalid files are rejected.',
+  ],
+  editorStep4: [
+    'Prüfe jede aktive Sprache, Pflichtfelder, RegEx, Gruppen und mobile Darstellung. Kläre offene Fragen, führe eine neue Review durch und exportiere den überarbeiteten Stand.',
+    'Check each active language, required fields, patterns, repeat groups and mobile layout. Resolve questions, perform a new review and export the revised draft.',
+  ],
+  completeExamples: ['Vollständige importierbare Beispiele', 'Complete importable examples'],
+  examplesHint: [
+    'Diese fiktiven Beispiele enthalten alle Pflichtschlüssel. Die Kontaktanfrage zeigt Eingabetypen und Aktionen; das Gruppenbeispiel ergänzt Karten und eine optionale lückenlose Tabelle. JSON-Schlüssel bleiben Englisch.',
+    'These fictional examples contain every required key. The contact request shows controls and actions; the group example adds cards and an optional gapless table. JSON property names stay English.',
+  ],
+  starterExample: ['Kontaktanfrage: eine Seite', 'Contact request: one page'],
+  groupsExample: ['Teamkarten und Positionstabelle', 'Team cards and line-item table'],
+  downloadJson: ['JSON herunterladen', 'Download JSON'],
+  copyJson: ['JSON kopieren', 'Copy JSON'],
+  rootContract: ['Projekt: alle Pflichtschlüssel', 'Project: all required keys'],
+  fieldContract: ['Felder: Typen und Regeln', 'Fields: types and rules'],
+  groupContract: ['Wiederholbare Gruppen', 'Repeatable groups'],
+  buttonContract: ['Schaltflächen und Simulationen', 'Buttons and simulations'],
+  versionRule: [
+    'Exakter Wert für neue Studio-Dateien. Ältere Studio-Dateien werden über den bestehenden Import migriert.',
+    'Exact value for new Studio files. Older Studio files use the existing import migration.',
+  ],
+  briefRule: [
+    'Alle sieben Eigenschaften sind Strings, auch bei einem unvollständigen Entwurf. Lösche offene Fragen nicht, um die Review zu umgehen.',
+    'All seven properties are strings, including incomplete drafts. Do not erase unresolved questions to bypass review.',
+  ],
+  textRule: [
+    'Immer de, en und fa als Strings angeben. Inaktive Sprachen dürfen leer sein und bleiben gespeichert. Aktive Sprachen brauchen sinnvolle Texte für die Review.',
+    'Always provide de, en and fa strings. Inactive languages may be empty and remain stored. Active languages need meaningful copy for review.',
+  ],
+  languageRule: [
+    'Eine oder zwei unterschiedliche Sprachen aktivieren. Die Sprache der Studio-Oberfläche ist davon unabhängig.',
+    'Activate one or two distinct languages. Studio UI language is independent.',
+  ],
+  layoutRule: [
+    'Ein oder zwei Spalten. Bootstrap ist integriert; Material, Carbon und Fluent sind visuelle Annäherungen.',
+    'One or two columns. Bootstrap is integrated; Material, Carbon and Fluent are visual approximations.',
+  ],
+  arrayRule: [
+    'Arrays bleiben auch dann vorhanden, wenn sie leer sind. Höchstens 100 Felddefinitionen einschließlich Gruppen und Unterfeldern sowie 20 Buttons.',
+    'Keep arrays even when empty. At most 100 field definitions including groups and children, and 20 buttons.',
+  ],
+  reviewRule: [
+    'Fünf false-Werte, leerer reviewer und approvedAt: null für neue oder KI-bearbeitete Dateien. Importierte Bestätigungen gelten nicht als Review in diesem Workspace.',
+    'Use five false values, an empty reviewer and approvedAt: null for new or AI-edited files. Imported acknowledgements cannot certify review in this workspace.',
+  ],
+  idRule: [
+    'Feld-IDs müssen über Hauptfelder und Unterfelder hinweg eindeutig sein. Bestehende IDs beim Bearbeiten oder Verschieben erhalten.',
+    'Field IDs must be unique across root fields and children. Keep existing IDs when editing or moving fields.',
+  ],
+  typeRule: [
+    'Nur diese zehn Typen. Zusätzliche Schlüssel erzeugen keine Uploads, Assistentenseiten oder bedingten Felder.',
+    'Only these ten types. Extra keys do not add file uploads, wizard pages or conditional fields.',
+  ],
+  fieldNoteRule: [
+    'required ist ein echtes Boolean. note dokumentiert Produktionsverhalten und führt keinen Code aus. Bei Gruppen entspricht required der Bedingung minItems > 0.',
+    'required is a real boolean. note documents production behavior without executing code. For groups, required matches minItems > 0.',
+  ],
+  optionsRule: [
+    'Bis zu 100 Text-Objekte. select und radio brauchen mindestens eine Option. Keine separaten value/label-Objekte verwenden; Checkbox ist ein einzelner Boolean.',
+    'Up to 100 Text objects. select and radio need at least one option. Do not use separate value/label objects; checkbox is a single boolean.',
+  ],
+  lengthRule: [
+    '0 als Maximum bedeutet unbegrenzt. Minimum darf ein gesetztes Maximum nicht überschreiten. Längenregeln gelten für Texte, nicht als Zahlenbereich.',
+    'A maximum of 0 means unlimited. Minimum cannot exceed a nonzero maximum. Length rules apply to text, not numeric ranges.',
+  ],
+  patternRule: [
+    'Vollwert-RegEx mit Unicode-v ohne /.../-Begrenzer. Backslashes in JSON verdoppeln. Für text, email, url und textarea; ein leeres pattern deaktiviert die Regel.',
+    'Whole-value Unicode-v pattern without /.../ delimiters. Double backslashes in JSON. Applies to text, email, url and textarea; empty pattern disables the rule.',
+  ],
+  tooltipRule: [
+    'Optional: title nutzt den Feldtitel, icon den Fragekreis und info den Informationskreis. Fehlend bedeutet Fragekreis. Tooltip-Texte bleiben Klartext.',
+    'Optional: title uses the field title, icon the question circle and info the information circle. Omission means question circle. Tooltip copy stays plain text.',
+  ],
+  groupRule: [
+    'Nur bei type: group vorhanden. Unterfelder sind normale Felddefinitionen ohne weitere Gruppen.',
+    'Present only for type: group. Children are regular leaf field definitions without further groups.',
+  ],
+  groupLayoutRule: [
+    'layout ist erforderlich. Optionales gapless: true entfernt Zwischenräume in Tabellenzellen; Karten behalten ihre normale Darstellung.',
+    'layout is required. Optional gapless: true removes gaps in table cells; cards keep their normal layout.',
+  ],
+  groupBoundsRule: [
+    'Beide Grenzen sind erforderlich; minItems darf maxItems nicht überschreiten. Diese Grenzen zählen Vorschauzeilen, nicht Definitionen.',
+    'Both bounds are required; minItems cannot exceed maxItems. These bounds count preview rows, not definitions.',
+  ],
+  groupChildrenRule: [
+    '1–20 Unterfelder, global eindeutige IDs und keine Verschachtelung. Antworten werden nicht in der Projektdatei gespeichert.',
+    '1-20 children, globally unique IDs and no nesting. Answers are never stored in the project file.',
+  ],
+  buttonIdRule: [
+    'Button-IDs sind innerhalb der Button-Liste eindeutig. label ist ein vollständiges Text-Objekt.',
+    'Button IDs are unique within the button list. label is a complete Text object.',
+  ],
+  buttonVariantRule: [
+    'Legt das Aussehen fest, unabhängig von der Aktion.',
+    'Controls appearance, independently of action.',
+  ],
+  buttonActionRule: [
+    'Nur lokale Simulationen. next/back erzeugen keinen mehrseitigen Assistenten. submit bleibt als Text-Kopie des ersten Submit-Buttons erhalten, sonst leeres Text-Objekt.',
+    'Local simulations only. next/back do not create a wizard. Keep submit as the first submit-button label, or empty Text if none exists.',
+  ],
+  buttonNoteRule: [
+    'cssClass enthält nur vorhandene Klassentokens aus Buchstaben, Ziffern, Unterstrichen, Bindestrichen und Leerraum, höchstens 200 Zeichen. note dokumentiert das spätere Verhalten.',
+    'cssClass contains existing class tokens made of letters, digits, underscores, hyphens and whitespace, at most 200 characters. note documents future behavior.',
+  ],
+  authoringErrors: ['Typische Importfehler', 'Common import errors'],
+  authoringErrorsText: [
+    'Prüfe JSON-Syntax, schemaVersion, fehlende de/en/fa-Schlüssel, doppelte IDs, options als Text-Array und Gruppenlimits. Dateien über 1 MiB werden abgelehnt. Studio meldet derzeit keine detaillierten JSON-Pfade; vergleiche mit einem vollständigen Beispiel. Import setzt Review-Checks, Reviewer und Bestätigung zurück. Vorschauantworten und Testdaten gehören nicht in JSON.',
+    'Check JSON syntax, schemaVersion, missing de/en/fa keys, duplicate IDs, options as Text arrays and group limits. Files above 1 MiB are rejected. Studio currently reports no detailed JSON paths; compare against a complete example. Import resets review checks, reviewer and acknowledgement. Preview responses and test data do not belong in JSON.',
+  ],
+  aiPreparation: ['Format-Anhang zuerst bereitstellen', 'Supply the format reference first'],
+  aiPreparationText: [
+    'Lade den Anhang herunter und füge ihn dem Chat hinzu. Er enthält englische Typdefinitionen, Studio-Regeln und zwei vollständige Beispiele. Ergänze den Prompt mit Ziel, Zielgruppe, Feldern und gewünschten Sprachen.',
+    'Download and attach the kit to the chat. It contains English type declarations, Studio rules and two complete examples. Then complete a prompt with your goal, audience, fields and selected languages.',
+  ],
+  downloadAuthoringKit: ['KI-Format-Anhang herunterladen', 'Download AI authoring kit'],
+  authoringKitHint: [
+    'Die TXT-Datei ist Referenzmaterial und selbst nicht importierbar. Studio ruft keinen externen KI-Dienst automatisch auf.',
+    'The TXT file is reference material, not an importable project. Studio does not automatically contact an external AI service.',
+  ],
+  authoringKitUrl: ['Adresse des Format-Anhangs', 'Format-reference URL'],
+  copyKitUrl: ['Adresse kopieren', 'Copy URL'],
+  kitUrlHint: [
+    'Eine localhost- oder private Adresse ist für externe Chatbots meist nicht erreichbar. Hänge dann die heruntergeladene TXT-Datei an. Nutze einen Link nur, wenn die veröffentlichte Ressource erreichbar ist.',
+    'An external chatbot usually cannot reach localhost or a private URL. Attach the downloaded TXT file instead. A URL is useful only when the published resource is accessible.',
+  ],
+  copyablePrompts: ['Kopierbare Prompts', 'Copyable prompts'],
+  promptsHint: [
+    'Ersetze die Angaben in eckigen Klammern. Jeder Prompt enthält dieselben englischen Formatregeln wie der Anhang. Nutze fiktive Beispiele und prüfe das Ergebnis selbst.',
+    'Replace the bracketed brief placeholders. Each prompt includes the same English format rules as the kit. Use fictional examples and check the output yourself.',
+  ],
+  createPrompt: ['Neuen Entwurf erstellen', 'Create a new draft'],
+  createPromptText: [
+    'Erstelle einen vollständigen MockForge-Studio-Entwurf. Lies zuerst den beigefügten Format-Anhang. Ziel: [Geschäftsziel]. Zielgruppe: [Nutzende]. Umfang: [eine Formularseite]. Aktive Sprachen: [eine oder zwei aus de/en/fa]. Felder, Regeln und Optionen: [Details]. Wiederholbare Daten: [Karten oder Tabelle mit Grenzen]. Button-Verhalten: [Simulation und späteres Produktionsverhalten]. Kläre wichtige Unklarheiten zuerst. Dokumentiere offene Fragen; erfinde keine Freigabe. Gib nach der Klärung nur die vollständige JSON-Datei aus.',
+    'Create a complete MockForge Studio draft. Read the attached authoring kit first. Goal: [business goal]. Audience: [users]. Scope: [one form page]. Active languages: [one or two of de/en/fa]. Fields, rules and choices: [details]. Repeatable data: [cards/table and bounds if needed]. Button behavior: [local simulation and future production behavior]. Clarify essential ambiguities first. Preserve unresolved questions honestly and invent no approval. After clarification, output only the complete JSON file.',
+  ],
+  changePrompt: ['Vorhandenen Export gezielt ändern', 'Revise an existing export'],
+  changePromptText: [
+    'Lies den beigefügten aktuellen Studio-Export und den Format-Anhang. Änderungen: [konkrete Wünsche]. Bearbeite genau diese Datei. Erhalte nicht betroffene Eigenschaften, stabile IDs, Optionen, Entscheidungen und inaktive Übersetzungen. Ändere weder Formatversion noch Formularmodell. Neue Felder brauchen eindeutige IDs. Setze Review-Checks, Reviewer und approvedAt zurück. Dokumentiere offene Fragen. Gib die gesamte aktualisierte JSON-Datei aus, keinen Patch.',
+    'Read the attached current Studio export and authoring kit. Requested changes: [specific changes]. Edit this exact file. Preserve unaffected properties, stable IDs, options, decisions and inactive translations. Do not change format version or form model. New fields need unique IDs. Reset review checks, reviewer and approvedAt. Record new open questions. Output the complete updated JSON file, not a patch.',
+  ],
+  repairPrompt: ['Importfehler untersuchen', 'Investigate an import failure'],
+  repairPromptText: [
+    'Die beigefügte Studio-JSON-Datei lässt sich nicht wie erwartet importieren. Lies den Format-Anhang. Exakte Meldung: [tatsächlicher Wortlaut; keine erfundenen JSON-Pfade]. Beobachtung: [Verhalten]. Erwartung: [gewünschtes Ergebnis]. Prüfe Syntax und Studio-Format, insbesondere Text-Objekte, IDs, Optionen und Gruppenlimits. Repariere die Ursache mit möglichst kleiner fachlicher Änderung. Lösche Inhalte nicht einfach und erfinde keine Funktionen. Gib nach Rückfragen die gesamte korrigierte JSON-Datei aus. Behaupte keinen getesteten Import; den prüfe ich anschließend in Studio.',
+    'The attached Studio JSON does not import as expected. Read the authoring kit. Exact message: [actual wording; no invented JSON paths]. Observed behavior: [description]. Expected behavior: [desired result]. Check syntax and the full Studio contract, especially Text objects, IDs, choices and group bounds. Fix the cause with minimal semantic changes. Do not simply remove rejected content or invent features. After necessary questions, output the complete corrected JSON. Do not claim a tested import; I will check it in Studio.',
+  ],
+  copyPrompt: ['Prompt kopieren', 'Copy prompt'],
+  aiReview: ['Ergebnis importieren und gemeinsam prüfen', 'Import and review the result together'],
+  aiReviewText: [
+    'Speichere nur das vollständige JSON als UTF-8-.form.json. Exportiere den bisherigen Stand, importiere die neue Datei und bestätige die Ersetzung. Prüfe Texte, Regeln, aktive Sprachen, Gruppen, mobile Darstellung und Simulationsaktionen. Kläre Fragen mit dem Product Owner. Die KI-Ausgabe ersetzt keine Review und keine Produktionsentwicklung.',
+    'Save only the complete JSON as a UTF-8 .form.json file. Export the current draft first, import the new file and confirm replacement. Check copy, rules, active languages, groups, mobile layout and simulated actions. Resolve open questions with the product owner; AI output replaces neither review nor production development.',
+  ],
+  authoringCopied: ['In die Zwischenablage kopiert.', 'Copied to clipboard.'],
+  authoringCopyFallback: [
+    'Kopieren war nicht möglich. Der Text ist markiert; nutze die Kopierfunktion deines Geräts.',
+    "Could not copy. The text is selected; use your device's copy command.",
+  ],
+  openWorkspace: ['Workspace öffnen', 'Open workspace'],
   guideClipboard: ['Felder kopieren und verschieben', 'Copy and move fields'],
   guideClipboardText: [
     'Wähle ein Feld und nutze Kopieren oder Ausschneiden unter der Feldliste. Einfügen hängt es an die Zielliste an. Kopien erhalten neue IDs; Ausschneiden verschiebt erst beim Einfügen und behält die IDs. Ganze Gruppen können kopiert, einzelne Unterfelder verschoben werden. Zwischenablage leeren bricht das Verschieben ab. Ersetzen und Neuladen leeren die Zwischenablage. Texte lassen sich weiterhin mit den normalen Tastenkürzeln bearbeiten.',

@@ -749,11 +749,18 @@
           </div>
         </section>
       }
+      @if (view() === 'guide-json' || view() === 'guide-ai') {
+        <app-authoring-guide [locale]="locale()" [mode]="view() === 'guide-ai' ? 'ai' : 'json'" />
+      }
       @if (view() === 'guide') {
         <section id="workspace" class="content-page guide-page">
           <p class="eyebrow">THE MOCKFORGE APPROACH</p>
           <h1>{{ t('guideTitle') }}</h1>
           <p class="page-lead">{{ t('guideText') }}</p>
+          <nav class="authoring-links" [attr.aria-label]="t('authoringNavigation')">
+            <a class="secondary-button" href="#guide-json">{{ t('guide-json') }}</a>
+            <a class="secondary-button" href="#guide-ai">{{ t('guide-ai') }}</a>
+          </nav>
           <div class="guide-steps">
             @for (key of ['guide1', 'guide2', 'guide3']; track key; let index = $index) {
               <article>

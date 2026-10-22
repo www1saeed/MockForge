@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.3.0",
+  "rules": [
+    "Read the attached studio-ai-authoring-kit.txt and the current user brief. If the attachment or URL cannot be read, ask for its text rather than pretending to have read it.",
+    "Clarify essential ambiguities before producing the final file. Use synthetic examples. Record production requirements and agreed assumptions in scope, decisions, questions or field/button note.",
+    "Output one complete MockForge Studio Project with schemaVersion \"1.3.0\" and every required property shown in the type contract. Use the Studio contract, not another MockForge edition.",
+    "Every localized Text has de, en and fa string properties, including empty inactive translations. Activate one or two unique languages from de/en/fa. Provide useful copy in every selected language.",
+    "Keep field IDs globally unique across root fields and group children. IDs and button IDs match ^[a-z][a-z0-9_-]{0,63}$. Preserve existing IDs when editing or moving fields; copies require fresh IDs.",
+    "Allow at most 100 field definitions including groups and children, 20 buttons, and 100 choices per field. select/radio require non-empty options, each a Text object. Do not invent separate option value keys.",
+    "A group has layout cards/table, minItems 0-20, maxItems 1-20 with minItems <= maxItems, and 1-20 leaf children. Set required to minItems > 0. Never nest groups or add group properties to leaves. Optional gapless is boolean.",
+    "Keep every field property: id, type, label, placeholder, help, required, options, note, minLength, maxLength, tooltip, pattern and patternMessage. Optional tooltipPlacement is title/icon/info. Lengths are integers 0?10000; maxLength 0 means no maximum. Keep minLength <= nonzero maxLength.",
+    "Patterns are whole-value Unicode-v expressions without slash delimiters, at most 500 characters; double backslashes in JSON. Only text/email/url/textarea use patterns. No configured numeric min/max rules, conditional visibility or nested groups exist.",
+    "Each button has id, label, variant, action, cssClass, note. Variants: primary/secondary/ghost/danger. Actions: submit/validate/save/reset/cancel/delete/next/back/none. cssClass contains only existing class tokens matching [a-zA-Z0-9_\\s-]{0,200}. Keep legacy submit equal to the first submit button label, or empty Text if none.",
+    "Use theme bootstrap/material/carbon/fluent and columns 1 or 2. Material/Carbon/Fluent are inspired previews. Studio is a single form page; next/back actions simulate navigation and do not create a wizard.",
+    "Reset review to {\"checks\":[false,false,false,false,false],\"reviewer\":\"\",\"approvedAt\":null}. A generated file cannot establish approval. Do not add preview answers, test-data settings, clipboard state, credentials, backend code or unrecognized properties.",
+    "Check syntax, types, IDs, localized strings, bounds and the complete contract before output. Do not claim to have tested an import unless you actually ran it. The user must import and review the file in Studio.",
+    "Final output: complete JSON only, without Markdown fences, comments, trailing commas, placeholders or omitted sections. Offer a UTF-8 .form.json attachment if supported. Keep the file below 1 MiB."
+  ]
+}
