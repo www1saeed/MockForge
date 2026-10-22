@@ -1,0 +1,448 @@
+{
+  "schemaVersion": "1.3.0",
+  "name": "Example team and line items",
+  "owner": "",
+  "audience": "Prospective users (fictional example)",
+  "goal": "Agree which information a contact request needs.",
+  "scope": "Single-page local mockup. Submission and email delivery require production work.",
+  "title": {
+    "de": "Team und Positionen",
+    "en": "Team and line items",
+    "fa": "تیم و اقلام"
+  },
+  "description": {
+    "de": "Ein fiktives Beispiel zum Bearbeiten im Texteditor.",
+    "en": "A fictional example for text-editor authoring.",
+    "fa": "نمونه‌ای فرضی برای ویرایش در ویرایشگر متن."
+  },
+  "submit": {
+    "de": "Anfrage prüfen",
+    "en": "Check request",
+    "fa": "بررسی درخواست"
+  },
+  "theme": "bootstrap",
+  "columns": 1,
+  "languages": ["de", "en"],
+  "buttons": [
+    {
+      "id": "submit",
+      "label": {
+        "de": "Anfrage prüfen",
+        "en": "Check request",
+        "fa": "بررسی درخواست"
+      },
+      "variant": "primary",
+      "action": "submit",
+      "cssClass": "",
+      "note": "Local validation and simulation only. Agree production delivery separately."
+    },
+    {
+      "id": "reset",
+      "label": {
+        "de": "Zurücksetzen",
+        "en": "Reset",
+        "fa": "بازنشانی"
+      },
+      "variant": "secondary",
+      "action": "reset",
+      "cssClass": "",
+      "note": "Clear preview answers only."
+    }
+  ],
+  "fields": [
+    {
+      "id": "contact-name",
+      "type": "text",
+      "label": {
+        "de": "Vollständiger Name",
+        "en": "Full name",
+        "fa": "نام کامل"
+      },
+      "placeholder": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "help": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "required": true,
+      "options": [],
+      "note": "",
+      "minLength": 2,
+      "maxLength": 80,
+      "tooltip": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "tooltipPlacement": "icon",
+      "pattern": "",
+      "patternMessage": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      }
+    },
+    {
+      "id": "contact-email",
+      "type": "email",
+      "label": {
+        "de": "E-Mail",
+        "en": "Email",
+        "fa": "ایمیل"
+      },
+      "placeholder": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "help": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "required": true,
+      "options": [],
+      "note": "",
+      "minLength": 0,
+      "maxLength": 0,
+      "tooltip": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "tooltipPlacement": "icon",
+      "pattern": "",
+      "patternMessage": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      }
+    },
+    {
+      "id": "request-topic",
+      "type": "select",
+      "label": {
+        "de": "Thema",
+        "en": "Topic",
+        "fa": "موضوع"
+      },
+      "placeholder": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "help": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "required": true,
+      "options": [
+        {
+          "de": "Produktdemo",
+          "en": "Product demo",
+          "fa": "نمایش محصول"
+        },
+        {
+          "de": "Rückfrage",
+          "en": "Question",
+          "fa": "پرسش"
+        }
+      ],
+      "note": "",
+      "minLength": 0,
+      "maxLength": 0,
+      "tooltip": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "tooltipPlacement": "icon",
+      "pattern": "",
+      "patternMessage": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      }
+    },
+    {
+      "id": "contact-consent",
+      "type": "checkbox",
+      "label": {
+        "de": "Ich möchte eine Antwort zu meiner Anfrage.",
+        "en": "I would like a reply to my request.",
+        "fa": "مایلم پاسخ درخواست خود را دریافت کنم."
+      },
+      "placeholder": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "help": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "required": true,
+      "options": [],
+      "note": "",
+      "minLength": 0,
+      "maxLength": 0,
+      "tooltip": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "tooltipPlacement": "icon",
+      "pattern": "",
+      "patternMessage": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      }
+    },
+    {
+      "id": "team-members",
+      "type": "group",
+      "label": {
+        "de": "Team",
+        "en": "Team",
+        "fa": "تیم"
+      },
+      "placeholder": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "help": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "required": true,
+      "options": [],
+      "note": "",
+      "minLength": 0,
+      "maxLength": 0,
+      "tooltip": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "tooltipPlacement": "icon",
+      "pattern": "",
+      "patternMessage": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "group": {
+        "layout": "cards",
+        "gapless": false,
+        "minItems": 1,
+        "maxItems": 3,
+        "fields": [
+          {
+            "id": "member-name",
+            "type": "text",
+            "label": {
+              "de": "Name",
+              "en": "Name",
+              "fa": "نام"
+            },
+            "placeholder": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "help": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "required": true,
+            "options": [],
+            "note": "",
+            "minLength": 0,
+            "maxLength": 0,
+            "tooltip": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "tooltipPlacement": "icon",
+            "pattern": "",
+            "patternMessage": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            }
+          },
+          {
+            "id": "member-email",
+            "type": "email",
+            "label": {
+              "de": "E-Mail",
+              "en": "Email",
+              "fa": "ایمیل"
+            },
+            "placeholder": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "help": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "required": true,
+            "options": [],
+            "note": "",
+            "minLength": 0,
+            "maxLength": 0,
+            "tooltip": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "tooltipPlacement": "icon",
+            "pattern": "",
+            "patternMessage": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "line-items",
+      "type": "group",
+      "label": {
+        "de": "Positionen",
+        "en": "Line items",
+        "fa": "اقلام"
+      },
+      "placeholder": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "help": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "required": false,
+      "options": [],
+      "note": "",
+      "minLength": 0,
+      "maxLength": 0,
+      "tooltip": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "tooltipPlacement": "icon",
+      "pattern": "",
+      "patternMessage": {
+        "de": "",
+        "en": "",
+        "fa": ""
+      },
+      "group": {
+        "layout": "table",
+        "gapless": true,
+        "minItems": 0,
+        "maxItems": 5,
+        "fields": [
+          {
+            "id": "item-code",
+            "type": "text",
+            "label": {
+              "de": "Artikelcode",
+              "en": "Item code",
+              "fa": "کد کالا"
+            },
+            "placeholder": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "help": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "required": true,
+            "options": [],
+            "note": "",
+            "minLength": 0,
+            "maxLength": 0,
+            "tooltip": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "tooltipPlacement": "icon",
+            "pattern": "[A-Z]{3}",
+            "patternMessage": {
+              "de": "Drei Großbuchstaben verwenden.",
+              "en": "Use three uppercase letters.",
+              "fa": "سه حرف بزرگ لاتین وارد کنید."
+            }
+          },
+          {
+            "id": "item-quantity",
+            "type": "number",
+            "label": {
+              "de": "Menge",
+              "en": "Quantity",
+              "fa": "تعداد"
+            },
+            "placeholder": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "help": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "required": true,
+            "options": [],
+            "note": "",
+            "minLength": 0,
+            "maxLength": 0,
+            "tooltip": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            },
+            "tooltipPlacement": "icon",
+            "pattern": "",
+            "patternMessage": {
+              "de": "",
+              "en": "",
+              "fa": ""
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "decisions": "Team cards allow 1-3 entries; the optional continuous table allows 0-5. Groups cannot nest.",
+  "questions": "Agree numeric quantity limits and production totals; this format has no numeric minimum/maximum rules.",
+  "review": {
+    "checks": [false, false, false, false, false],
+    "reviewer": "",
+    "approvedAt": null
+  }
+}

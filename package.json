@@ -16,8 +16,10 @@
     "test:coverage": "jest --runInBand --coverage",
     "e2e": "playwright test",
     "extract-i18n": "node scripts/check-translations.mjs",
-    "format": "prettier --write src e2e scripts/check-translations.mjs *.json *.js *.mjs *.ts .github/workflows/verify.yml",
-    "format:check": "prettier --check src e2e scripts/check-translations.mjs *.json *.js *.mjs *.ts .github/workflows/verify.yml"
+    "format": "prettier --write src e2e scripts/*.mjs *.json *.js *.mjs *.ts .github/workflows/verify.yml",
+    "format:check": "prettier --check src e2e scripts/*.mjs *.json *.js *.mjs *.ts .github/workflows/verify.yml",
+    "authoring:build": "node scripts/build-authoring-kit.mjs",
+    "authoring:check": "node scripts/build-authoring-kit.mjs --check"
   },
   "dependencies": {
     "@angular/common": "~22.2.1",

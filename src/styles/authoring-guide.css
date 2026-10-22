@@ -1,0 +1,114 @@
+/* Read-only authoring help shares Studio tokens and keeps long technical text local. */
+.authoring-guide {
+  display: block;
+  max-width: 1120px;
+}
+.authoring-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-block: 0 28px;
+}
+.authoring-links [aria-current='page'] {
+  font-weight: 700;
+}
+.authoring-guide section {
+  margin-block: 34px;
+}
+.authoring-guide h2 {
+  font-size: 24px;
+  margin-block-end: 18px;
+}
+.authoring-guide p,
+.authoring-guide li,
+.authoring-reference dd {
+  line-height: 1.8;
+}
+.authoring-guide li {
+  margin-block-end: 10px;
+}
+.authoring-example,
+.authoring-prompt {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 18px;
+  margin-block: 16px;
+  min-width: 0;
+}
+.authoring-guide summary {
+  font-weight: 600;
+  cursor: pointer;
+  padding-block: 4px;
+}
+.authoring-guide label {
+  display: block;
+  margin-block: 16px 8px;
+  font-weight: 600;
+}
+.authoring-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 16px;
+}
+.authoring-code,
+.authoring-url {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px;
+  color: var(--ink);
+  background: var(--canvas);
+  font-family: Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-block-end: 16px;
+}
+.authoring-code {
+  height: 26rem;
+  min-height: 12rem;
+  resize: vertical;
+}
+.authoring-url {
+  min-height: 5rem;
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+.authoring-reference > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 24px;
+  padding-block: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.authoring-reference dt,
+.authoring-reference dd {
+  overflow-wrap: anywhere;
+  min-width: 0;
+  margin: 0;
+}
+.authoring-reference code,
+.authoring-reference small {
+  display: block;
+  white-space: normal;
+}
+.authoring-reference small {
+  font-weight: 400;
+  color: var(--muted);
+  margin-block-start: 8px;
+}
+.authoring-status {
+  min-height: 1.8em;
+}
+@media (max-width: 760px) {
+  .authoring-reference > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .authoring-code {
+    height: 22rem;
+  }
+}

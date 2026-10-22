@@ -24,6 +24,7 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm run test:coverage
+      - run: npm run authoring:check
       - run: npm run extract-i18n
       - run: npm run build
       - run: npx playwright install --with-deps chromium

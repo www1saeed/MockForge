@@ -1,0 +1,130 @@
+<nav class="authoring-links" [attr.aria-label]="t('authoringNavigation')">
+  <a href="#guide">{{ t('guide') }}</a>
+  <a href="#guide-json" [attr.aria-current]="mode() === 'json' ? 'page' : null">{{
+    t('guide-json')
+  }}</a>
+  <a href="#guide-ai" [attr.aria-current]="mode() === 'ai' ? 'page' : null">{{ t('guide-ai') }}</a>
+</nav>
+<h1>{{ t(mode() === 'json' ? 'guide-json' : 'guide-ai') }}</h1>
+<p class="page-lead">{{ t(mode() === 'json' ? 'jsonGuideIntro' : 'aiGuideIntro') }}</p>
+<p class="benefit-note">{{ t('studioFormatNotice') }}</p>
+
+@if (mode() === 'json') {
+  <section aria-labelledby="authoring-workflow">
+    <h2 id="authoring-workflow">{{ t('authoringWorkflow') }}</h2>
+    <ol>
+      <li>{{ t('editorStep1') }}</li>
+      <li>{{ t('editorStep2') }}</li>
+      <li>{{ t('editorStep3') }}</li>
+      <li>{{ t('editorStep4') }}</li>
+    </ol>
+  </section>
+  <section aria-labelledby="authoring-examples">
+    <h2 id="authoring-examples">{{ t('completeExamples') }}</h2>
+    <p>{{ t('examplesHint') }}</p>
+    @for (example of examples; track example.id) {
+      <details class="authoring-example" [id]="'example-' + example.id">
+        <summary>{{ t(example.title) }}</summary>
+        <div class="authoring-actions">
+          <a
+            class="secondary-button"
+            [href]="'assets/guides/' + example.file"
+            [download]="example.file"
+            >{{ t('downloadJson') }}</a
+          >
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="copy(json(example.value), exampleText)"
+          >
+            {{ t('copyJson') }}
+          </button>
+        </div>
+        <label [for]="'json-' + example.id">{{ t(example.title) }}</label>
+        <textarea
+          #exampleText
+          [id]="'json-' + example.id"
+          class="authoring-code"
+          readonly
+          wrap="off"
+          spellcheck="false"
+          dir="ltr"
+          [value]="json(example.value)"
+        ></textarea>
+      </details>
+    }
+  </section>
+  @for (section of reference; track section.title; let index = $index) {
+    <section [attr.aria-labelledby]="'reference-' + index">
+      <h2 [id]="'reference-' + index">{{ t(section.title) }}</h2>
+      <dl class="authoring-reference">
+        @for (row of section.rows; track row.names) {
+          <div>
+            <dt>
+              <code dir="ltr">{{ row.names }}</code
+              ><small dir="ltr">{{ row.type }}</small>
+            </dt>
+            <dd>{{ t(row.description) }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+  }
+  <section aria-labelledby="import-errors">
+    <h2 id="import-errors">{{ t('authoringErrors') }}</h2>
+    <p>{{ t('authoringErrorsText') }}</p>
+  </section>
+} @else {
+  <section aria-labelledby="ai-preparation">
+    <h2 id="ai-preparation">{{ t('aiPreparation') }}</h2>
+    <p>{{ t('aiPreparationText') }}</p>
+    <a class="primary-button" [href]="kit" download="studio-ai-authoring-kit.txt">{{
+      t('downloadAuthoringKit')
+    }}</a>
+    <p>{{ t('authoringKitHint') }}</p>
+    <label for="authoring-kit-url">{{ t('authoringKitUrl') }}</label>
+    <textarea
+      #kitText
+      id="authoring-kit-url"
+      class="authoring-url"
+      readonly
+      dir="ltr"
+      [value]="kitUrl"
+    ></textarea>
+    <button type="button" class="secondary-button" (click)="copy(kitUrl, kitText)">
+      {{ t('copyKitUrl') }}
+    </button>
+    <p>{{ t('kitUrlHint') }}</p>
+  </section>
+  <section aria-labelledby="ai-prompts">
+    <h2 id="ai-prompts">{{ t('copyablePrompts') }}</h2>
+    <p>{{ t('promptsHint') }}</p>
+    @for (item of prompts; track item.id) {
+      <details class="authoring-prompt" [id]="'prompt-' + item.id">
+        <summary>{{ t(item.title) }}</summary>
+        <label [for]="'prompt-text-' + item.id">{{ t(item.title) }}</label>
+        <textarea
+          #promptText
+          [id]="'prompt-text-' + item.id"
+          class="authoring-code"
+          readonly
+          spellcheck="false"
+          [value]="prompt(item.brief)"
+        ></textarea>
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="copy(prompt(item.brief), promptText)"
+        >
+          {{ t('copyPrompt') }}
+        </button>
+      </details>
+    }
+  </section>
+  <section aria-labelledby="ai-review">
+    <h2 id="ai-review">{{ t('aiReview') }}</h2>
+    <p>{{ t('aiReviewText') }}</p>
+  </section>
+}
+<p role="status" aria-live="polite" class="authoring-status">{{ status() }}</p>
+<a class="primary-button" href="#workspace">{{ t('openWorkspace') }}</a>
