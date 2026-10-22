@@ -64,6 +64,10 @@ When saying "we agree exact wording," edit a label and show the selected languag
 
 Do not equate preview confirmation with email delivery, CRM routing or a refund. Those are requirements to agree for production work.
 
+## Continue in a text editor or chatbot
+
+Show the separate text-editor and AI guide entries. Download a complete JSON example and import it through Studio with replacement confirmation. For assisted authoring, download the TXT kit and copy a creation, revision or repair prompt. Explain that the kit is reference material, external models need an accessible attachment or URL, and every result still needs an actual import and owner review. This is a way to draft the specification, not a live AI/backend integration. See [JSON authoring](JSON_AUTHORING.md) and [AI prompts](AI_AUTHORING.md).
+
 ## After the conversation
 
 Share JSON, brief and the implementation agreement through the actual communication channel when authorized. Include decisions and unresolved technical assumptions. Confirm agreement before scheduling production development. Later requests should identify the baseline requirement affected and the impact to discuss.

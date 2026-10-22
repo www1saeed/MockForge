@@ -27,9 +27,9 @@ Compared on October 21, 2026, against original MockForge commit `0b84d116a50327b
 
 ## Executed evidence
 
-Studio: **78 unit/component tests across 10 suites**, **25 Chromium end-to-end tests**, **261 DE/EN/FA catalog entries** and **98.32% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 725.87 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
+Studio (updated October 22, 2026): **83 unit/component tests across 11 suites**, **29 Chromium end-to-end tests**, **327 DE/EN/FA catalog entries** and **98.40% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 794.91 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
 
-Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 103 tests.
+Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 112 tests.
 
 The comparison found one actionable shared-behavior gap: Studio initially treated every unchecked checkbox as empty. Studio now records user answer edits separately from generated events and preserves an intentional unchecked answer unless replacement is requested. A regression test protects this behavior.
 
@@ -57,3 +57,9 @@ Ignored local evidence from this run is under `reports/reference-feature-tests.j
 ## Work required for full generator parity
 
 Full parity would require the missing profiles/mix and normalization settings, richer semantic hints/examples, coherent record identity, invalid and boundary scenarios, configurable group counts and page scope, worker-backed validation/cancellation and detailed diagnostics, followed by the separate batch API. It would also require an explicit decision on Studio's Persian support, public JSON schema, fixed-seed behavior and single-page boundary. These capabilities were not silently added to Studio or described as implemented.
+
+## Text-editor and AI authoring adaptation - October 22, 2026
+
+Studio now follows the original edition's separate JSON-reference and AI-authoring workflows: dedicated navigable pages, complete copyable/downloadable examples, a downloadable type-contract kit, a deployment-relative kit URL, reusable task briefs and a manual copy fallback. Studio localizes the pages and briefs in DE/EN/FA and derives the kit from its own current model, rules and examples.
+
+The supplied files and prompts are deliberately specific to Studio 1.3.0. They describe Text objects with all three language keys, the one-page form, Studio groups and automatic import-review reset. Studio offers creation, targeted revision and import-repair briefs, rather than reproducing the original edition's domain-specific prompt library, wizard instructions or incompatible project contract. Both downloaded Studio examples pass the real import flow. These shared workflows do not imply cross-edition JSON compatibility or a live AI integration. The original repository was not changed or retested for this documentation adaptation; its earlier comparison evidence remains dated above.

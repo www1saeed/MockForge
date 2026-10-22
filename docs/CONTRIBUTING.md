@@ -6,6 +6,7 @@ Read the [architecture](ARCHITECTURE.md) before changing behavior. Keep this pro
 
 - `project.model.ts` defines the framework-independent specification and factories.
 - `project.examples.ts`, `project.validation.ts` and `project.handoff.ts` own fictional examples, unknown-input validation and Markdown export respectively. `project.ts` is their public entry point.
+- `authoring-guide.component.*` owns the read-only JSON/AI help views. `authoring-guide.reference.ts` reuses JSON examples and shared rules from `src/assets/guides`. `scripts/build-authoring-kit.mjs` derives the downloadable kit from the real model and those assets; regenerate it with `npm run authoring:build` and verify with `npm run authoring:check`.
 - `ProjectStore` owns immutable specification changes, persistence, review invalidation and the session-only field clipboard. Clipboard state must never enter project JSON.
 - `AppComponent` coordinates navigation and editing. `FieldListComponent` emits selection and structural actions; `FormPreviewComponent` owns temporary native form responses and local simulations.
 - `studio.config.ts` holds typed navigation and workflow configuration. All visible copy belongs in the typed German/English base catalog and complete Persian catalog.
@@ -32,6 +33,7 @@ npm run lint
 npx tsc --noEmit -p tsconfig.spec.json
 npm run test:coverage
 npm run extract-i18n
+npm run authoring:check
 npm run build
 npm run e2e
 ```

@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 103 passing automated tests: 78 unit/component tests and 25 end-to-end tests.** Verified on October 21, 2026, with **98.32% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 112 passing automated tests: 83 unit/component tests and 29 end-to-end tests.** Verified on October 22, 2026, with **98.40% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -86,6 +86,12 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 Material, Carbon and Fluent presets are **visual approximations**, not integrations of their official component libraries. Choose the real production library with the product owner and engineering team. Brand names identify the design references and imply no endorsement.
 
 See [authoring instructions](docs/AUTHORING_TOOLS.md) for copy/cut/paste and seeded preview data, and [the feature comparison](docs/FEATURE_COMPARISON.md) for verified similarities and differences from the original edition. The in-app **How it works** page also explains the tools in all three UI languages.
+
+## Author forms in a text editor or with AI
+
+The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 1.3.0 and offers complete contact/group examples to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
+
+See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and format kit](docs/AI_AUTHORING.md). The original MockForge edition uses a different JSON contract.
 
 ## A practical conversation
 

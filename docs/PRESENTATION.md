@@ -10,9 +10,11 @@ The example illustrates avoidable correction work. It does not represent a real 
 
 ## New feature slides and quality evidence
 
-Slides 11?13 demonstrate field copy/cut/paste, seeded preview data and dynamic project context. Each slide includes an extended spoken explanation and the same readable transcript. The deck explains deferred cut, fresh copy IDs, preserving answers, explicit replacement, skipped patterns and transient data. It does not claim the original edition's advanced generator or batch API are present.
+Slides 11-13 demonstrate field copy/cut/paste, seeded preview data and dynamic project context. Each slide includes an extended spoken explanation and the same readable transcript. The deck explains deferred cut, fresh copy IDs, preserving answers, explicit replacement, skipped patterns and transient data. It does not claim the original edition's advanced generator or batch API are present.
 
-Slide 14 records the October 21, 2026 checkpoint: 103 Studio tests (78 unit/component and 25 Chromium E2E), 98.32% Jest line coverage and 261 DE/EN/FA catalog entries. It also identifies the existing bundle-size warning. These are dated engineering results, not customer savings. Slide 15 closes with the first alignment session.
+Slide 14 records the October 22, 2026 checkpoint: 112 Studio tests (83 unit/component and 29 Chromium E2E), 98.40% Jest line coverage and 327 DE/EN/FA catalog entries. It also identifies the existing bundle-size warning. These are dated engineering results, not customer savings. Slide 15 closes with the first alignment session.
+
+The shell-context slide also points to the dedicated text-editor reference and copyable AI briefs. See [manual JSON authoring](JSON_AUTHORING.md) and [AI authoring](AI_AUTHORING.md) for the downloadable kit and complete examples.
 
 ## Live product walkthrough after the deck
 

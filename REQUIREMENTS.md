@@ -81,3 +81,12 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 
 - The in-app guide explains clipboard, test-data settings and dynamic project context in all three UI languages. README, workshop, demo and contributor instructions must reflect these features.
 - Feature comparisons must report differences rather than claim parity from shared names. The original edition's extra profiles, scenario/worker/batch engines and wizard flow are not implemented in Studio; see docs/FEATURE_COMPARISON.md.
+
+## Text-editor and AI authoring help
+
+- Provide separate navigable DE/EN/FA guides for manually authored JSON and AI-assisted form drafting. The existing methodology guide links to both; direct hashes, browser history and reload work.
+- Document the Studio 1.3.0 contract, all required root/field/group/button properties, supported enums, localized Text shape, IDs, constraints and import limitations. Do not imply compatibility with other MockForge editions or detailed JSON-path diagnostics.
+- Supply two complete importable JSON examples and selectable copy/download controls. Demonstrate ordinary fields, actions, cards and an optional continuous table.
+- Supply a downloadable UTF-8 authoring kit with the actual type contract, shared rules and both complete examples. Generate it from maintained sources and reject stale output in CI. Explain attachment versus publicly accessible URL and localhost restrictions.
+- Offer localized creation, targeted revision and repair briefs with shared format constraints. Do not automatically invoke an external model. Copy failures select text for manual copying; help never changes the current draft.
+- Generated JSON still requires actual import and product-owner review. Never invent reviewer identity, approval, production integrations, test-data persistence or unsupported schema features.

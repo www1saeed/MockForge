@@ -23,3 +23,7 @@ The in-app **How it works** page repeats these instructions in German, English a
 ## Dynamic shell context
 
 The workspace navigation tooltip and accessible name follow the current project name. The workspace header shows that name and the form title in the active UI language when configured, otherwise the first configured form language. Empty project names use the translated workspace label. Renaming and importing another project update the shell immediately. Studio branding remains visible, and long names truncate inside the available header width.
+
+## Author a file outside the visual editor
+
+The navigation also opens separate [text-editor instructions](JSON_AUTHORING.md) and [AI prompts](AI_AUTHORING.md), available in-app in all three UI languages. Both use the actual Studio 1.3.0 contract and share complete downloadable examples. The generated TXT kit is reference material; import the resulting JSON, confirm replacement and review it before use.
