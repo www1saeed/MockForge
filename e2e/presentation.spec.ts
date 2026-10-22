@@ -7,7 +7,23 @@ test('presentation navigation and readable desktop/mobile slides', async ({
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto('/assets/presentation.html');
   const count = await page.locator('main section').count();
-  expect(count).toBe(12);
+  expect(count).toBe(15);
+  const clipboard = page.locator('section[aria-labelledby="title-11"]');
+  const data = page.locator('section[aria-labelledby="title-12"]');
+  const shell = page.locator('section[aria-labelledby="title-13"]');
+  const quality = page.locator('section[aria-labelledby="title-14"]');
+  await expect(clipboard).toContainText('Cut waits for a valid destination');
+  await expect(data).toContainText('DE/EN/FA');
+  await expect(data).toContainText('batch generation are not included');
+  await expect(shell).toContainText('The project name identifies the draft');
+  await expect(quality).toContainText('103');
+  await expect(quality).toContainText('78 unit/component tests');
+  await expect(quality).toContainText('25 Chromium end-to-end tests');
+  await expect(quality).toContainText('98.32%');
+  for (const slide of await page.locator('main section').all()) {
+    const narration = await slide.getAttribute('data-narration');
+    expect(narration!.length).toBeGreaterThan(200);
+  }
   for (let index = 0; index < count; index++) {
     await expect(page.locator('#counter')).toHaveText(`${index + 1} / ${count}`);
     await expect(page.locator('section.active')).toBeVisible();
@@ -80,6 +96,25 @@ test('presentation narration loads voices, follows slides and stops on request',
   ).toBe(3);
   await page.getByText('Explanation transcript', { exact: true }).click();
   await expect(page.locator('#transcript')).toContainText('My commitment as a developer');
+  await page.locator('#deck').focus();
+  await page.keyboard.press('Home');
+  for (let index = 0; index < 10; index++)
+    await page.getByRole('button', { name: 'Next slide' }).click();
+  await page.getByRole('button', { name: 'Read explanation', exact: true }).click();
+  for (let index = 11; index <= 14; index++) {
+    await expect(page.locator('section.active')).toHaveAttribute(
+      'aria-labelledby',
+      `title-${index}`,
+    );
+    const expected = await page.locator('section.active').getAttribute('data-narration');
+    await expect(page.locator('#transcript')).toHaveText(expected!);
+    expect(
+      await page.evaluate((): string | undefined =>
+        (window as unknown as { __speechTest: { spoken: string[] } }).__speechTest.spoken.at(-1),
+      ),
+    ).toBe(expected);
+    if (index < 14) await page.getByRole('button', { name: 'Next slide' }).click();
+  }
 });
 
 test('presentation remains readable without speech and downloads a standalone HTML', async ({
@@ -100,15 +135,17 @@ test('presentation remains readable without speech and downloads a standalone HT
   const { readFile } = await import('node:fs/promises');
   const html = await readFile(path, 'utf8');
   expect(html).toContain('data:image/png;base64,');
+  expect(html).toContain('Cut waits for a valid destination');
+  expect(html).toContain('98.32%');
   const { resolve } = await import('node:path');
   const { pathToFileURL } = await import('node:url');
   const savedPath = resolve('reports/saved-presentation.html');
   await download.saveAs(savedPath);
   await page.goto(pathToFileURL(savedPath).href);
-  await expect(page.locator('#counter')).toHaveText('1 / 12');
-  await expect(page.locator('.slide-footer')).toHaveCount(12);
+  await expect(page.locator('#counter')).toHaveText('1 / 15');
+  await expect(page.locator('.slide-footer')).toHaveCount(15);
   await page.getByRole('button', { name: 'Next slide' }).click();
-  await expect(page.locator('#counter')).toHaveText('2 / 12');
+  await expect(page.locator('#counter')).toHaveText('2 / 15');
   const savedAgain = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Save presentation', exact: true }).click();
   expect((await savedAgain).suggestedFilename()).toBe('mockforge-studio-presentation.html');
@@ -129,6 +166,16 @@ test('print layout reveals every slide with contained content and no navigation'
     ).toBe(true);
   }
   await page.screenshot({ path: 'reports/presentation-print.png', fullPage: true });
+  const { mkdir } = await import('node:fs/promises');
+  await mkdir('output/pdf', { recursive: true });
+  await page.pdf({
+    path: 'output/pdf/mockforge-studio-presentation.pdf',
+    format: 'A4',
+    landscape: true,
+    preferCSSPageSize: true,
+    printBackground: true,
+    displayHeaderFooter: false,
+  });
 });
 
 test('workspace screenshots and responsive bounds', async ({ page }): Promise<void> => {

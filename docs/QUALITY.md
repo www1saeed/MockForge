@@ -63,3 +63,7 @@ npm run e2e
 ```
 
 The [verification workflow](../.github/workflows/verify.yml) runs the same gates for pushes and pull requests. Local success does not establish that the workflow has run on GitHub. Passing tests and high coverage support confidence in the tested scope; automated accessibility scans supplement manual review and do not establish complete accessibility compliance.
+
+## Presentation maintenance ? October 22, 2026
+
+The HTML presentation now has fifteen slides, including dedicated clipboard, preview-data and dynamic-shell explanations. Its quality slide records the complete October 21 checkpoint above: 103 tests and 98.32% line coverage. All five existing presentation/responsive Chromium tests were rerun after strengthening their assertions for the new content and narration. The actual PDF export was renewed and all fifteen pages were rendered and visually inspected, alongside the new mobile slides. ESLint, spec TypeScript checking, formatting and production build passed; the unchanged bundle warning remains. No tests were added, so the suite inventory remains 78 unit/component plus 25 E2E tests. This focused verification does not claim a fresh full-suite run on October 22.

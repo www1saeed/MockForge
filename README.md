@@ -40,7 +40,7 @@ The [agreement template](docs/IMPLEMENTATION_AGREEMENT_TEMPLATE.md) extends the 
 | Agency inquiry              | Which budget/start-date choices help prepare the first conversation?                                                |
 | Atlas project & procurement | Which stakeholders and line items can repeat, what are their limits, and which approval rules belong in production? |
 
-These are fictional examples for customer discussions. See [positioning and arguments](docs/POSITIONING.md), the [15-minute demo](docs/SALES_DEMO.md) and the [twelve-slide presentation](src/assets/presentation.html).
+These are fictional examples for customer discussions. See [positioning and arguments](docs/POSITIONING.md), the [15-minute demo](docs/SALES_DEMO.md) and the [fifteen-slide presentation](src/assets/presentation.html).
 
 **Bring one form idea. Agree on the details together before committing implementation effort.**
 
