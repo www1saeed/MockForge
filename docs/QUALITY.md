@@ -1,32 +1,32 @@
 # Code quality and test evidence
 
-**103 passing automated tests. 98.32% line coverage. All configured quality gates pass.**
+**112 passing automated tests. 98.40% line coverage. All configured quality gates pass.**
 
-MockForge Studio is developed with documented Clean Code practices and substantial automated regression coverage for its current feature set. Complete local verification passed on **October 21, 2026**. Counts describe this checkpoint; rerun the commands after changes.
+MockForge Studio is developed with documented Clean Code practices and substantial automated regression coverage for its current feature set. Complete local verification passed on **October 22, 2026**. Counts describe this checkpoint; rerun the commands after changes.
 
 ## Verification results
 
 | Check                       | Verified result                                  |
 | --------------------------- | ------------------------------------------------ |
-| Jest unit/component tests   | **78 passed** across **10 suites**               |
-| Playwright end-to-end tests | **25 passed**, running in Chromium               |
-| Total automated tests       | **103 passed**                                   |
-| Statement coverage          | **96.94%**; required minimum 80%                 |
-| Branch coverage             | **89.80%**; required minimum 75%                 |
-| Function coverage           | **97.07%**; required minimum 80%                 |
-| Line coverage               | **98.32%**; required minimum 80%                 |
+| Jest unit/component tests   | **83 passed** across **11 suites**               |
+| Playwright end-to-end tests | **29 passed**, running in Chromium               |
+| Total automated tests       | **112 passed**                                   |
+| Statement coverage          | **96.96%**; required minimum 80%                 |
+| Branch coverage             | **89.72%**; required minimum 75%                 |
+| Function coverage           | **97.16%**; required minimum 80%                 |
+| Line coverage               | **98.40%**; required minimum 80%                 |
 | ESLint                      | Passed without reported violations               |
 | Prettier style check        | All matched files pass                           |
-| Runtime translations        | **261 German/English/Persian entries** validated |
+| Runtime translations        | **327 German/English/Persian entries** validated |
 | Angular production build    | Passed                                           |
 
 The spec TypeScript check (`npx tsc --noEmit -p tsconfig.spec.json`) also passes. It exposed a pre-existing timer-cleanup callback returning the Jest object despite declaring `void`; the callback now uses a block body.
 
-The production build succeeds with a bundle-size warning: the initial bundle is 725.87 kB against the existing 700 kB warning budget (the 1 MB failure limit is unchanged). No budget was raised. Browser development runs also retain Angular's existing oversized-logo advisory.
+The production build succeeds with a bundle-size warning: the initial bundle is 794.91 kB against the existing 700 kB warning budget (the 1 MB failure limit is unchanged). No budget was raised. Browser development runs also retain Angular's existing oversized-logo advisory.
 
-New coverage includes session clipboard copying/moving across root/group lists, definition limits, deferred-cut cancellation, seeded native preview filling, unsupported-pattern reporting, answer preservation, localized settings dialogs and live shell identity. The new desktop and Persian mobile screenshots were visually inspected. The complete 25-test Chromium suite passed, including DE/EN/FA guide content, mobile bounds and accessibility scans.
+New coverage includes session clipboard copying/moving across root/group lists, definition limits, deferred-cut cancellation, seeded native preview filling, unsupported-pattern reporting, answer preservation, localized settings dialogs and live shell identity. The new desktop and Persian mobile screenshots were visually inspected. The complete 29-test Chromium suite passed, including DE/EN/FA guide content, mobile bounds and accessibility scans.
 
-The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio’s 103 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
+The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio's 112 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
 
 Coverage percentages come from Jest's instrumented application source, not E2E coverage. Browser tests include desktop/mobile layout, Persian RTL direction and font loading, the presentation, repeat groups, tooltip behavior, full-width response retention, import/export, persistence, native validation, confirmation and accessibility scans. The total counts executed tests, not assertions or accessibility rules. The suite exceeds every configured coverage threshold and provides extensive regression protection for the implemented scope.
 
@@ -57,6 +57,7 @@ npm run format:check
 npm run lint
 npm run test:coverage
 npm run extract-i18n
+npm run authoring:check
 npm run build
 npx playwright install chromium
 npm run e2e
@@ -64,6 +65,10 @@ npm run e2e
 
 The [verification workflow](../.github/workflows/verify.yml) runs the same gates for pushes and pull requests. Local success does not establish that the workflow has run on GitHub. Passing tests and high coverage support confidence in the tested scope; automated accessibility scans supplement manual review and do not establish complete accessibility compliance.
 
-## Presentation maintenance ? October 22, 2026
+## Earlier presentation maintenance - October 22, 2026
 
-The HTML presentation now has fifteen slides, including dedicated clipboard, preview-data and dynamic-shell explanations. Its quality slide records the complete October 21 checkpoint above: 103 tests and 98.32% line coverage. All five existing presentation/responsive Chromium tests were rerun after strengthening their assertions for the new content and narration. The actual PDF export was renewed and all fifteen pages were rendered and visually inspected, alongside the new mobile slides. ESLint, spec TypeScript checking, formatting and production build passed; the unchanged bundle warning remains. No tests were added, so the suite inventory remains 78 unit/component plus 25 E2E tests. This focused verification does not claim a fresh full-suite run on October 22.
+The HTML presentation now has fifteen slides, including dedicated clipboard, preview-data and dynamic-shell explanations. Its quality slide records the then-current October 21 checkpoint: 103 tests and 98.32% line coverage. All five existing presentation/responsive Chromium tests were rerun after strengthening their assertions for the new content and narration. The actual PDF export was renewed and all fifteen pages were rendered and visually inspected, alongside the new mobile slides. ESLint, spec TypeScript checking, formatting and production build passed; the unchanged bundle warning remains. No tests were added, so that earlier suite inventory remained 78 unit/component plus 25 E2E tests. This focused verification does not claim a fresh full-suite run on October 22.
+
+## Text-editor and AI guides - October 22, 2026
+
+Five new unit/component tests and four new browser tests bring the inventory to 112. They validate the complete downloadable examples against the actual import validator, compare the generated kit with the real model/rules/examples, exercise localized prompts and clipboard success/denial, download the actual kit/examples and import both JSON files through Studio. DE/EN/FA help pages pass accessibility scans and mobile horizontal bounds, and their screenshots were visually inspected. The full 83-test Jest and 29-test Chromium suites pass; final focused checks cover the updated guides and presentation. No external chatbot was invoked, so arbitrary model outputs are not certified. `npm run authoring:check` now runs in CI and rejects a stale kit.

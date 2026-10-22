@@ -16,10 +16,10 @@ test('presentation navigation and readable desktop/mobile slides', async ({
   await expect(data).toContainText('DE/EN/FA');
   await expect(data).toContainText('batch generation are not included');
   await expect(shell).toContainText('The project name identifies the draft');
-  await expect(quality).toContainText('103');
-  await expect(quality).toContainText('78 unit/component tests');
-  await expect(quality).toContainText('25 Chromium end-to-end tests');
-  await expect(quality).toContainText('98.32%');
+  await expect(quality).toContainText('112');
+  await expect(quality).toContainText('83 unit/component tests');
+  await expect(quality).toContainText('29 Chromium end-to-end tests');
+  await expect(quality).toContainText('98.40%');
   for (const slide of await page.locator('main section').all()) {
     const narration = await slide.getAttribute('data-narration');
     expect(narration!.length).toBeGreaterThan(200);
@@ -136,7 +136,7 @@ test('presentation remains readable without speech and downloads a standalone HT
   const html = await readFile(path, 'utf8');
   expect(html).toContain('data:image/png;base64,');
   expect(html).toContain('Cut waits for a valid destination');
-  expect(html).toContain('98.32%');
+  expect(html).toContain('98.40%');
   const { resolve } = await import('node:path');
   const { pathToFileURL } = await import('node:url');
   const savedPath = resolve('reports/saved-presentation.html');
