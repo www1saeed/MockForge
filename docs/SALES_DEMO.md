@@ -16,7 +16,7 @@ Show how the developer protects the client's intent before production implementa
 | 12-14 min | Review and export                             | "This gives us a reviewed starting point. If the specification changes, we review it again."                             |
 | 14-15 min | Invite a customer session                     | "Bring your form idea. We will agree details and implementation scope before production development."                    |
 
-The twelve-slide presentation follows the same commercial argument. Slides 5–7 trace a fictional SaaS request through late clarification and prior mockup alignment, showing how assumptions can reopen implementation and tests. Spoken explanations add context to every slide. See the [presentation guide](PRESENTATION.md) for browser voices, standalone HTML saving and PDF printing. The agenda is a facilitation suggestion, not a guaranteed duration or time-saving claim.
+The fifteen-slide presentation follows the same commercial argument. Slides 5–7 trace a fictional SaaS request through late clarification and prior mockup alignment, showing how assumptions can reopen implementation and tests. Spoken explanations add context to every slide. See the [presentation guide](PRESENTATION.md) for browser voices, standalone HTML saving and PDF printing. The agenda is a facilitation suggestion, not a guaranteed duration or time-saving claim.
 
 ## Preparation
 

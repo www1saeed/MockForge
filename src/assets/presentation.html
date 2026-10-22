@@ -796,18 +796,112 @@
       <section
         class="slide"
         aria-labelledby="title-11"
-        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October first, 2026 quality checkpoint, all 64 unit and component tests and all 20 end to end tests passed. Line coverage was 98.16 percent. Formatting, ESLint, translation validation and the production build also passed. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+        data-narration="The field clipboard helps a workshop reuse decisions already expressed in a field. Copy captures its saved configuration, including translations, validation and developer notes. Copying a complete repeat group includes its child definitions. Every paste creates fresh unique identifiers so the copied fields remain independent. Cut works differently: the original stays in place until a valid paste moves its latest configuration, retaining identifiers. You can move a leaf between the root list and a group, provided the group keeps at least one child and all field limits remain satisfied. Clearing the clipboard cancels the move. Replacement and reload also clear it. A successful paste changes the specification and reopens review. Ordinary text clipboard shortcuts remain available."
       >
-        <p class="eyebrow">10 / Engineering evidence</p>
-        <h2 id="title-11">A tested foundation<br /><span>for the alignment conversation</span></h2>
+        <p class="eyebrow">10 / Reusing agreed field details</p>
+        <h2 id="title-11">
+          Field decisions can be reused<br /><span>without retyping every rule</span>
+        </h2>
         <div class="split">
           <div>
-            <div class="metric">84</div>
-            <h3>Passing automated tests</h3>
-            <p>64 unit/component tests across eight suites.<br />20 Chromium end-to-end tests.</p>
+            <h3>Copy creates an independent field</h3>
+            <p>Select a field, choose Copy, then Paste in the destination list.</p>
+            <p>
+              Keep its translations and rules. A whole group includes its children. Copies receive
+              fresh IDs.
+            </p>
           </div>
           <div>
-            <div class="metric">98.16%</div>
+            <h3>Cut waits for a valid destination</h3>
+            <p>The source stays until Paste moves its latest configuration with the same IDs.</p>
+            <p>
+              Move leaf children between root and group lists. Clear clipboard cancels a pending
+              move.
+            </p>
+          </div>
+        </div>
+        <p class="takeaway">
+          Reuse the agreed details, then review the changed specification with the owner.
+        </p>
+        <p class="note">
+          Group and field limits still apply. The internal clipboard is session-only. Normal
+          text-editing shortcuts remain available.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-12"
+        data-narration="Synthetic preview data makes the alignment conversation easier to try with populated controls. The fill action sits above the mockup. Open settings to choose German, English or Persian content independently of the form language, and set a seed for repeatable values. Valid samples check supported field constraints. The empty scenario, with replacement enabled, helps you inspect required-field feedback. Existing answers remain by default, including a deliberately unchecked checkbox. The report counts filled, preserved and skipped response fields. Repeat rows receive independent answers, and an optional empty group receives one row. Complex patterns are skipped rather than guessed, so missing answers still need manual input. Generated responses and settings never enter storage, exports or review. Advanced boundary scenarios and a batch API are not part of this Studio generator."
+      >
+        <p class="eyebrow">11 / Trying the form with synthetic answers</p>
+        <h2 id="title-12">Preview data makes<br /><span>the experience easier to check</span></h2>
+        <ul class="list">
+          <li>
+            <strong>Choose the sample.</strong> DE/EN/FA content, a repeatable seed and valid or
+            empty values. Form language stays independent.
+          </li>
+          <li>
+            <strong>Keep the owner's input.</strong> Preserve existing answers by default. Enable
+            replacement explicitly. Inspect filled, preserved and skipped counts.
+          </li>
+          <li>
+            <strong>Check the gaps.</strong> Repeated entries fill independently. Unsupported
+            patterns need manual input. Test answers never enter storage or exports.
+          </li>
+        </ul>
+        <p class="note">
+          Use empty values with replacement to check required fields. Studio supports bounded simple
+          RegEx samples; advanced boundary scenarios and batch generation are not included.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-13"
+        data-narration="A working session needs clear project context while people navigate and edit. The workspace navigation entry follows the current project name. The header shows that name together with the localized form title, while MockForge Studio keeps its own visible identity. Renaming or importing another project updates the context immediately. If the project name is blank, the navigation uses the translated workspace label. The form title follows the current UI language when that language is active for the form, otherwise it uses the first active form language. Studio supports German, English and Persian, including right-to-left layout. This helps the owner recognize the draft and wording being discussed without changing the stored form contract or replacing the product's brand."
+      >
+        <p class="eyebrow">12 / Recognizing the working draft</p>
+        <h2 id="title-13">The shell follows<br /><span>the project under discussion</span></h2>
+        <div class="split">
+          <div>
+            <h3>The project name identifies the draft</h3>
+            <p>
+              Rename it in the brief. The workspace header and navigation name update immediately.
+            </p>
+            <p>
+              Importing another project updates the same context. An empty name uses the workspace
+              label.
+            </p>
+          </div>
+          <div>
+            <h3>The form title identifies the experience</h3>
+            <p>The header shows the localized form title, with an active-form-language fallback.</p>
+            <p>
+              DE/EN/FA switching retains Studio branding and supports Persian right-to-left layout.
+            </p>
+          </div>
+        </div>
+        <p class="takeaway">
+          The owner can recognize the current project while reviewing its exact wording.
+        </p>
+        <p class="note">
+          The in-app How it works guide explains the new tools in all three UI languages.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-14"
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-first, 2026 quality checkpoint, all 78 unit and component tests across ten suites and all 25 Chromium end to end tests passed. That is 103 Studio tests. Line coverage was 98.32 percent. The catalog check verified 261 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+      >
+        <p class="eyebrow">13 / Engineering evidence</p>
+        <h2 id="title-14">A tested foundation<br /><span>for the alignment conversation</span></h2>
+        <div class="split">
+          <div>
+            <div class="metric">103</div>
+            <h3>Passing automated tests</h3>
+            <p>78 unit/component tests across ten suites.<br />25 Chromium end-to-end tests.</p>
+          </div>
+          <div>
+            <div class="metric">98.32%</div>
             <h3>Line coverage</h3>
             <p>
               Strict TypeScript, separated responsibilities, immutable state and validated imports.
@@ -818,18 +912,17 @@
           Formatting, ESLint, translation validation and the production build also pass.
         </p>
         <p class="note">
-          Verified October 1, 2026. Jest line coverage, not E2E coverage. Documented Clean Code
-          conventions. Sonar analysis is not configured. Details: docs/QUALITY.md in the source
-          repository.
+          Verified October 21, 2026. Jest line coverage. 261 DE/EN/FA catalog entries. Build passes
+          with a size warning. Sonar analysis is not configured. Details: docs/QUALITY.md.
         </p>
       </section>
       <section
         class="slide"
-        aria-labelledby="title-12"
-        data-narration="For a first alignment session, bring one real form idea and the business outcome it should support. We start with the audience and the scope, then review exact fields, both languages and the mobile experience. We resolve open questions into decisions and record remaining technical investigations. You leave with an interactive mockup and an exported baseline for an implementation agreement. Your wishes guide what I build. Later changes remain welcome, and we discuss their effect on the agreed scope, effort and acceptance criteria together."
+        aria-labelledby="title-15"
+        data-narration="For a first alignment session, bring one real form idea and the business outcome it should support. We start with the audience and the scope, then review exact fields, the selected form languages and the mobile experience. We resolve open questions into decisions and record remaining technical investigations. You leave with an interactive mockup and an exported baseline for an implementation agreement. Your wishes guide what I build. Later changes remain welcome, and we discuss their effect on the agreed scope, effort and acceptance criteria together."
       >
-        <p class="eyebrow">11 / Your first alignment session</p>
-        <h2 id="title-12">One form idea.<br /><span>A concrete shared baseline.</span></h2>
+        <p class="eyebrow">14 / Your first alignment session</p>
+        <h2 id="title-15">One form idea.<br /><span>A concrete shared baseline.</span></h2>
         <p class="lead">
           Bring the outcome your users need. We review the experience together and document what I
           should build.
