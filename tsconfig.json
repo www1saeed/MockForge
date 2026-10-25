@@ -10,6 +10,7 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "isolatedModules": true
   },
   "angularCompilerOptions": { "strictTemplates": true, "strictInjectionParameters": true }

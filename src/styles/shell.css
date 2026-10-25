@@ -72,6 +72,12 @@
 }
 
 .breadcrumb {
+  display: block;
+  margin-block: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
   font-weight: 600;
   font-size: 14px;
   margin-inline-end: auto;
@@ -225,7 +231,8 @@ main {
     font-size: 19px;
   }
   .breadcrumb {
-    display: none;
+    flex-basis: 100%;
+    font-size: 12px;
   }
   .topbar-actions {
     width: 100%;
@@ -249,4 +256,12 @@ main {
   .studio-footer a {
     font-size: 12px;
   }
+}
+
+.shell-form-title {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -14,7 +14,7 @@ The open-source introduction, documentation and presentation must explain why th
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Product brief   | Name, owner, audience, goal and scope are editable and exported.                                                                                                                                                                                                  |
 | Navigation      | Overview first; full-width workspace with narrow icon links, persistent header and footer linking Saeed and 1saeed.com.                                                                                                                                           |
-| Copy            | Support German, English and Persian while allowing one or two active form languages. Title, introduction, field/choice/tooltip and button copy are editable in each selected language. Switching retains inactive copy.                                                  |
+| Copy            | Support German, English and Persian while allowing one or two active form languages. Title, introduction, field/choice/tooltip and button copy are editable in each selected language. Switching retains inactive copy.                                           |
 | Design          | Bootstrap plus Material, Carbon and Fluent inspired previews. Explicit integration limitations.                                                                                                                                                                   |
 | Fields          | Text, email, number, URL, date, textarea, select, radio, checkbox and repeatable group. Add, edit, delete and move by buttons; group children have the same leaf-field editor.                                                                                    |
 | Repeat groups   | Cards or semantic tables with individually validated native controls. Configure a minimum of 0–20 and a maximum of 1–20 entries, and up to 20 child definitions. No nested groups. Add responses locally; confirm row deletion. Reset restores the minimum count. |
@@ -70,3 +70,44 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Opening child editing automatically collapses the main field list into a narrow type-icon rail. Bootstrap tooltips expose index, active-language name and type through hover or focus.
 - Closing child editing or selecting a main field restores the full main list. Users can also toggle the main list manually.
 - Visibility state remains transient. Specification edits, including table spacing, invalidate review.
+
+## Authoring tools — October 21, 2026
+
+- Copy/cut/paste works for root fields and leaf children, preserving all localized configuration. Complete groups may be copied at root level. Cut is deferred until a successful atomic paste, uses the latest source and retains IDs. Copies receive unique IDs. Failed pastes preserve both specification and clipboard. All field/group limits remain enforced.
+- The internal clipboard survives workflow changes and is cleared on replacement, restore/reload or explicit cancellation. Removing a cut source cancels that cut. It never accesses the operating-system clipboard or intercepts text-editing shortcuts. Only a successful paste invalidates review.
+- Test-data tools sit outside the mockup. Session settings include DE/EN/FA content profile, explicit seed, valid/empty/invalid/boundary scenarios and explicit replacement. Text boundaries cover exact minimum/maximum, one unit below/above and required-empty. Required/type and shared explicit text-length validation verify expected candidate outcomes. Per-field diagnostics report rule, expected/observed validity and skipped reasons; mismatches restore prior responses. Arbitrary RegEx synthesis, numeric/date bounds and bulk generation are not included.
+- Every mounted root and group response can be filled independently. Preserve existing responses, including deliberately unchecked checkboxes. Group rows can stay mounted (adding one to an empty group), use the configured minimum or maximum; shrinking requires replacement. Counts include response instances and explicitly requested group checks. The report displays the first 20 entries. Preview data/settings/reports are not saved or exported. Reset clears responses, validity, reports and edit history and restores group minima.
+- Workspace navigation uses the current project name with a localized fallback; the header also exposes the active localized form title. Renaming, replacement, reload and UI-language changes refresh identity without losing the current route.
+
+- The in-app guide explains clipboard, test-data settings and dynamic project context in all three UI languages. README, workshop, demo and contributor instructions must reflect these features.
+- Feature comparisons must report differences rather than claim parity from shared names. The original edition's extra profiles, richer synthesis and wizard flow are not fully implemented in Studio; see docs/FEATURE_COMPARISON.md.
+
+## Text-editor and AI authoring help
+
+- Provide separate navigable DE/EN/FA guides for manually authored JSON and AI-assisted form drafting. The existing methodology guide links to both; direct hashes, browser history and reload work.
+- Document the Studio 1.3.0 contract, all required root/field/group/button properties, supported enums, localized Text shape, IDs, constraints and import limitations. Do not imply compatibility with other MockForge editions or detailed JSON-path diagnostics.
+- Supply two complete importable JSON examples and selectable copy/download controls. Demonstrate ordinary fields, actions, cards and an optional continuous table.
+- Supply a downloadable UTF-8 authoring kit with the actual type contract, shared rules and both complete examples. Generate it from maintained sources and reject stale output in CI. Explain attachment versus publicly accessible URL and localhost restrictions.
+- Offer localized creation, targeted revision and repair briefs with shared format constraints. Do not automatically invoke an external model. Copy failures select text for manual copying; help never changes the current draft.
+- Generated JSON still requires actual import and product-owner review. Never invent reviewer identity, approval, production integrations, test-data persistence or unsupported schema features.
+
+### Coherent synthetic records
+
+- Recognized root identity/address fields share one synthetic record; each repeat row has its own DE/EN/FA record. Native technical types precede exact normalized label, placeholder and help phrases. Conflicting recognized translations use generic text and report ambiguity. Report meaning/source and constraint/scenario adjustments.
+- Seed/profile/reference date and physical response structure reproduce data, including after reset/reload. Reordering definitions or preserving unrelated responses must not change identity values. Do not reconstruct generated identities from manual responses.
+- Expose a strict calendar reference date from 1000-01-01 to 9999-12-31, default 2026-01-01. Date fields receive it unchanged; no system-clock or relative-date dependency. Invalid settings block filling. Settings and diagnostics remain transient; schema remains 1.3.0.
+- Do not imply population realism, unique identities, real-world address correctness, persisted hints/examples or complete original-edition parity. Existing length/pattern and native validation rules still take precedence over record relationships.
+
+### Bounded patterns and worker isolation
+
+- Generate a documented finite concatenation subset. Only admitted patterns may use native pattern attributes; uncertain matching must run in disposable workers for both generation and manual input. Never claim arbitrary pattern synthesis.
+- Enforce 500-unit worker patterns, 512-unit inputs, a 750 ms check deadline, one active/32 queued checks, and at most 16 nonempty deferred checks within a 2.5 s generation budget. Expose timeout/budget/unavailable/error outcomes; unverified values cannot submit successfully.
+- Stage candidates without writing responses or resizing rows. Cancellation or changes to responses, rows, settings, project/language or preview lifetime invalidate pending generation. Configured validation waits for current checks and cannot apply stale success. Reset clears response validity and aborts obsolete work. Preserve existing answers and unchanged specification/review/export semantics.
+- Validate that native controls represent candidates unchanged; restore unsuitable values and report the reason. Worker/synthesis limits remain visible product boundaries.
+
+## Developer batch generation
+
+- Provide a browser-only, session-only API requesting 1-500 records with explicit locale/seed/date/scenario, configured minimum/maximum group rows and chunked progress.
+- Reuse native preview candidate validation in detached controls, without modifying the live project, responses, storage or review. Keep skipped answers explicit and omit their values.
+- Bound setup controls/choices, serialized snapshot/output, worker checks and cooperative generation time. Support cancellation and retain only complete accepted records on partial runs.
+- Report observed duplicate records and per-response diversity without asserting unique people or exhaustive coverage. Bulk UI, download formats and representative device benchmarks are separate work. See docs/TEST_DATA_BATCH_API.md.

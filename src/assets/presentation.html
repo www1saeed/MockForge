@@ -796,18 +796,116 @@
       <section
         class="slide"
         aria-labelledby="title-11"
-        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October first, 2026 quality checkpoint, all 64 unit and component tests and all 20 end to end tests passed. Line coverage was 98.16 percent. Formatting, ESLint, translation validation and the production build also passed. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+        data-narration="The field clipboard helps a workshop reuse decisions already expressed in a field. Copy captures its saved configuration, including translations, validation and developer notes. Copying a complete repeat group includes its child definitions. Every paste creates fresh unique identifiers so the copied fields remain independent. Cut works differently: the original stays in place until a valid paste moves its latest configuration, retaining identifiers. You can move a leaf between the root list and a group, provided the group keeps at least one child and all field limits remain satisfied. Clearing the clipboard cancels the move. Replacement and reload also clear it. A successful paste changes the specification and reopens review. Ordinary text clipboard shortcuts remain available."
       >
-        <p class="eyebrow">10 / Engineering evidence</p>
-        <h2 id="title-11">A tested foundation<br /><span>for the alignment conversation</span></h2>
+        <p class="eyebrow">10 / Reusing agreed field details</p>
+        <h2 id="title-11">
+          Field decisions can be reused<br /><span>without retyping every rule</span>
+        </h2>
         <div class="split">
           <div>
-            <div class="metric">84</div>
-            <h3>Passing automated tests</h3>
-            <p>64 unit/component tests across eight suites.<br />20 Chromium end-to-end tests.</p>
+            <h3>Copy creates an independent field</h3>
+            <p>Select a field, choose Copy, then Paste in the destination list.</p>
+            <p>
+              Keep its translations and rules. A whole group includes its children. Copies receive
+              fresh IDs.
+            </p>
           </div>
           <div>
-            <div class="metric">98.16%</div>
+            <h3>Cut waits for a valid destination</h3>
+            <p>The source stays until Paste moves its latest configuration with the same IDs.</p>
+            <p>
+              Move leaf children between root and group lists. Clear clipboard cancels a pending
+              move.
+            </p>
+          </div>
+        </div>
+        <p class="takeaway">
+          Reuse the agreed details, then review the changed specification with the owner.
+        </p>
+        <p class="note">
+          Group and field limits still apply. The internal clipboard is session-only. Normal
+          text-editing shortcuts remain available.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-12"
+        data-narration="Synthetic preview data makes the alignment conversation easier to try with populated controls. Choose German, English or Persian content, a repeatable seed and a reference date. Names, email and address belong to a coherent fictional record for the root form and each group row. Recognition sources and constraint adjustments stay visible in the report. Valid, invalid and text-boundary cases check expected versus observed validity. Bounded identifier patterns now combine literals, classes, escapes and finite repetition. Other patterns can verify a known fixture in an isolated local worker, without attempting arbitrary synthesis. Manual uncertain patterns use the same isolation so a slow expression cannot block the interface. Explicit time, input and queue limits produce visible unverified outcomes. Configured validating actions wait for current checks and never treat pending or failed verification as success. Generation stages candidates before changing answers or rows. Cancel, edit or change the request to discard pending results without partial filling. Preserved manual responses and constraint adjustments can break record relationships. A separate developer API now generates one to five hundred session-only records with chunked progress, cancellation and observed duplicate statistics. Detached native validation never changes the visible preview. Output and time budgets can return complete accepted records as an explicit partial batch. There is no bulk screen or export button. Numeric and date bounds and additional profiles remain future work. No generated answers or reports enter storage, exports or review."
+      >
+        <p class="eyebrow">11 / Trying the form with synthetic answers</p>
+        <h2 id="title-12">Preview data makes<br /><span>the experience easier to check</span></h2>
+        <ul class="list">
+          <li>
+            <strong>Choose a record.</strong> DE/EN/FA, seed and reference date. Names, email and
+            address stay coherent per root form and group row.
+          </li>
+          <li>
+            <strong>Keep the owner's input.</strong> Preserve existing answers by default. Enable
+            replacement explicitly, including before shrinking repeat groups.
+          </li>
+          <li>
+            <strong>Verify each case.</strong> Valid/invalid and text boundaries show
+            expected/observed validity. Bounded samples and isolated pattern checks keep limits
+            visible.
+          </li>
+        </ul>
+        <p class="note">
+          Cancel discards pending changes. Unverified patterns cannot submit successfully. Developer
+          API: 1-500 records, progress, cancel and observed duplicates. No bulk UI/export; answers
+          stay unsaved.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-13"
+        data-narration="A working session needs clear project context while people navigate and edit. The workspace navigation entry follows the current project name. The header shows that name together with the localized form title, while MockForge Studio keeps its own visible identity. Renaming or importing another project updates the context immediately. If the project name is blank, the navigation uses the translated workspace label. The form title follows the current UI language when that language is active for the form, otherwise it uses the first active form language. Studio supports German, English and Persian, including right-to-left layout. The separate text-editor and AI guides supply the Studio contract, complete examples and copyable task briefs. Every externally authored result still needs import and review. This helps the owner recognize the draft and wording being discussed without changing the stored form contract or replacing the product's brand."
+      >
+        <p class="eyebrow">12 / Recognizing the working draft</p>
+        <h2 id="title-13">The shell follows<br /><span>the project under discussion</span></h2>
+        <div class="split">
+          <div>
+            <h3>The project name identifies the draft</h3>
+            <p>
+              Rename it in the brief. The workspace header and navigation name update immediately.
+            </p>
+            <p>
+              Importing another project updates the same context. An empty name uses the workspace
+              label.
+            </p>
+          </div>
+          <div>
+            <h3>The form title identifies the experience</h3>
+            <p>The header shows the localized form title, with an active-form-language fallback.</p>
+            <p>
+              DE/EN/FA switching retains Studio branding and supports Persian right-to-left layout.
+            </p>
+          </div>
+        </div>
+        <p class="takeaway">
+          The owner can recognize the current project while reviewing its exact wording.
+        </p>
+        <p class="note">
+          The guide includes a text-editor reference and copyable AI briefs in DE/EN/FA.
+        </p>
+      </section>
+      <section
+        class="slide"
+        aria-labelledby="title-14"
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-fifth, 2026 quality checkpoint, all 131 unit and component tests across fourteen suites and all 44 Chromium end to end tests passed. That is 175 Studio tests. Line coverage was 98.24 percent. The catalog check verified 381 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+      >
+        <p class="eyebrow">13 / Engineering evidence</p>
+        <h2 id="title-14">A tested foundation<br /><span>for the alignment conversation</span></h2>
+        <div class="split">
+          <div>
+            <div class="metric">175</div>
+            <h3>Passing automated tests</h3>
+            <p>
+              131 unit/component tests across fourteen suites.<br />44 Chromium end-to-end tests.
+            </p>
+          </div>
+          <div>
+            <div class="metric">98.24%</div>
             <h3>Line coverage</h3>
             <p>
               Strict TypeScript, separated responsibilities, immutable state and validated imports.
@@ -818,18 +916,17 @@
           Formatting, ESLint, translation validation and the production build also pass.
         </p>
         <p class="note">
-          Verified October 1, 2026. Jest line coverage, not E2E coverage. Documented Clean Code
-          conventions. Sonar analysis is not configured. Details: docs/QUALITY.md in the source
-          repository.
+          Verified October 25, 2026. Jest line coverage. 381 DE/EN/FA catalog entries. Build passes
+          with a size warning. Sonar analysis is not configured. Details: docs/QUALITY.md.
         </p>
       </section>
       <section
         class="slide"
-        aria-labelledby="title-12"
-        data-narration="For a first alignment session, bring one real form idea and the business outcome it should support. We start with the audience and the scope, then review exact fields, both languages and the mobile experience. We resolve open questions into decisions and record remaining technical investigations. You leave with an interactive mockup and an exported baseline for an implementation agreement. Your wishes guide what I build. Later changes remain welcome, and we discuss their effect on the agreed scope, effort and acceptance criteria together."
+        aria-labelledby="title-15"
+        data-narration="For a first alignment session, bring one real form idea and the business outcome it should support. We start with the audience and the scope, then review exact fields, the selected form languages and the mobile experience. We resolve open questions into decisions and record remaining technical investigations. You leave with an interactive mockup and an exported baseline for an implementation agreement. Your wishes guide what I build. Later changes remain welcome, and we discuss their effect on the agreed scope, effort and acceptance criteria together."
       >
-        <p class="eyebrow">11 / Your first alignment session</p>
-        <h2 id="title-12">One form idea.<br /><span>A concrete shared baseline.</span></h2>
+        <p class="eyebrow">14 / Your first alignment session</p>
+        <h2 id="title-15">One form idea.<br /><span>A concrete shared baseline.</span></h2>
         <p class="lead">
           Bring the outcome your users need. We review the experience together and document what I
           should build.

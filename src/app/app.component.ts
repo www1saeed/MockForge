@@ -30,6 +30,7 @@ import {
   validPattern,
   supportsPattern,
   allFields,
+  allocateFieldId,
   LEAF_FIELD_TYPES,
   RepeatGroup,
   ExampleKind,
@@ -38,6 +39,7 @@ import { ProjectStore } from './project.store';
 import { CopyKey, translate } from './translations';
 import { FieldListComponent } from './field-list.component';
 import { FormPreviewComponent } from './form-preview.component';
+import { AuthoringGuideComponent } from './authoring-guide.component';
 import { FeedbackComponent } from './feedback.component';
 import { FeedbackService } from './feedback.service';
 import {
@@ -66,7 +68,13 @@ import {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, FieldListComponent, FormPreviewComponent, FeedbackComponent],
+  imports: [
+    FormsModule,
+    FieldListComponent,
+    FormPreviewComponent,
+    FeedbackComponent,
+    AuthoringGuideComponent,
+  ],
   providers: [ProjectStore],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
@@ -96,6 +104,11 @@ export class AppComponent implements OnInit {
   readonly localizedFieldKeys = ['label', 'placeholder', 'help', 'tooltip'] as const;
   readonly navigation = NAVIGATION;
   readonly steps = STEP_COPY;
+  readonly guideTools = [
+    { title: 'guideClipboard', body: 'guideClipboardText' },
+    { title: 'guideTestData', body: 'guideTestDataText' },
+    { title: 'guideShell', body: 'guideShellText' },
+  ] as const satisfies readonly { title: CopyKey; body: CopyKey }[];
   readonly checks = CHECK_COPY;
   readonly themes = THEMES_COPY;
   readonly samples = SAMPLES;
@@ -166,6 +179,30 @@ export class AppComponent implements OnInit {
     });
   }
 
+  /** Shell identity follows the working project, with a localized empty-name fallback. */
+  navigationLabel(view: StudioView): string {
+    return view === 'workspace' ? this.project().name.trim() || this.t('workspace') : this.t(view);
+  }
+
+  captureField(mode: 'copy' | 'cut', root = false): void {
+    const id = root ? this.rootSelectedId() : this.selectedId();
+    this.store.captureField(id, mode);
+    this.feedback.notify(mode === 'copy' ? 'fieldCopied' : 'fieldCut', 'info');
+  }
+
+  pasteField(child = false): void {
+    const parentId = child ? this.editingGroup()?.id : undefined;
+    if (child && !parentId) return;
+    const id = this.store.pasteField(parentId);
+    if (!id) {
+      this.feedback.notify('pasteUnavailable', 'warning');
+      return;
+    }
+    if (child) this.selectChildField(id);
+    else this.selectRootField(id);
+    this.feedback.notify('fieldPasted', 'success');
+  }
+
   /** Selecting any main field exits child editing and restores the full main list. */
   selectRootField(id: string): void {
     this.selectedId.set(id);
@@ -207,7 +244,13 @@ export class AppComponent implements OnInit {
   readLocation(): void {
     const next = window.location.hash.slice(1);
     this.view.set(
-      next === 'workspace' || next === 'examples' || next === 'guide' ? next : 'overview',
+      next === 'workspace' ||
+        next === 'examples' ||
+        next === 'guide' ||
+        next === 'guide-json' ||
+        next === 'guide-ai'
+        ? next
+        : 'overview',
     );
   }
   /** Keep visible content and shareable hash navigation in agreement. */
@@ -570,9 +613,7 @@ export class AppComponent implements OnInit {
       ...allFields(this.project().fields).map((field): string => field.id),
       ...reserved,
     ]);
-    let suffix = 1;
-    while (ids.has(`field-${suffix}`)) suffix++;
-    return `field-${suffix}`;
+    return allocateFieldId(ids);
   }
 
   /** A deleted id may be reused; its transient RegEx draft must not attach to a new field. */

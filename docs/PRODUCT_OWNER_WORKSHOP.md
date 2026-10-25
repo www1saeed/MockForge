@@ -8,13 +8,13 @@ The meeting should end with an implementation agreement the owner and developer 
 
 ## Suggested agenda
 
-| Time | Discussion | Output |
-| --- | --- | --- |
-| 0–10 min | Who uses the form, and what should it achieve? | Brief and success criterion |
-| 10–25 min | Walk through labels, hints, choices and required data. | Reviewed field specification |
-| 25–35 min | Select form languages; try incomplete data, patterns, tooltips and mobile view in each selected language. | Validation and copy decisions |
-| 35–45 min | Describe submit behavior, failures and system boundaries. | Developer notes and acceptance criteria |
-| 45–55 min | Resolve questions and confirm the handoff. | JSON, Markdown brief and review record |
+| Time      | Discussion                                                                                                | Output                                  |
+| --------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 0–10 min  | Who uses the form, and what should it achieve?                                                            | Brief and success criterion             |
+| 10–25 min | Walk through labels, hints, choices and required data.                                                    | Reviewed field specification            |
+| 25–35 min | Select form languages; try incomplete data, patterns, tooltips and mobile view in each selected language. | Validation and copy decisions           |
+| 35–45 min | Describe submit behavior, failures and system boundaries.                                                 | Developer notes and acceptance criteria |
+| 45–55 min | Resolve questions and confirm the handoff.                                                                | JSON, Markdown brief and review record  |
 
 These times are facilitation suggestions, not productivity claims.
 
@@ -25,6 +25,16 @@ For each field, confirm its purpose, exact label in every selected language, req
 For the form, confirm one/two columns, mobile order, title, description and exact call to action. Document loading, success, cancellation and server failure behavior in the decisions even though the prototype only simulates submission.
 
 For the handoff, name the owner of each external integration, define what is excluded and state what a developer can verify as accepted. Resolve questions in the decisions before clearing the open-question box. The app does not provide a resolved-question history.
+
+## Use the authoring and test tools during the workshop
+
+Rename the project in the brief and check that the header and workspace navigation identify the current working draft. Review the localized form title separately from the project name.
+
+Reuse a field with **Copy** and **Paste** rather than retyping its rules and translations. For repeated structures, copy the entire group. Use deferred **Cut** when relocating an existing leaf; it stays in place until a valid paste and retains its identifier. Clearing the clipboard cancels the move. Any successful paste invalidates the previous review, just like other specification changes.
+
+In the preview, use **Fill test data** to exercise the form. Settings choose DE/EN/FA content, a repeatable seed, valid/empty/invalid/boundary values and explicit replacement. Try exact text limits, one character below/above and required-empty feedback. Try group minimum/maximum rows; shrinking requires replacement to protect existing responses. Expand per-field results for expected and observed validity and skipped reasons. Existing answers, including intentionally unchecked checkboxes, are preserved by default. Complex RegEx and numeric/date boundaries are not supported. A generated sample is not evidence that every relevant production boundary has been tested. See [the tools guide](AUTHORING_TOOLS.md) for the walkthrough.
+
+The settings dialog can close without filling. Normal preview reset clears responses and returns groups to their minimum entry count. Generated answers never appear in the handoff, JSON, LocalStorage or review. Record production examples and acceptance criteria explicitly in the agreement. See [authoring tools](AUTHORING_TOOLS.md).
 
 ## Example acceptance criteria
 
@@ -66,3 +76,15 @@ The app's empty question box is a review condition, not a reason to erase unreso
 "This session gives me a clear basis for implementing your wishes. We can refine these details now instead of changing production code because I guessed wrong. Once we agree the scope, I can estimate and test that work more precisely. If you discover a new need later, we can discuss its impact against this baseline."
 
 Do not promise a fixed saving. Evaluate the session by the decisions it resolves and the clarity of the resulting implementation scope.
+
+### Review a coherent example
+
+Use First name, Last name, Full name, Email and address component labels to review a consistent fictional record. Choose DE/EN/FA content, seed and reference date explicitly; each group row gets its own record. Inspect the recognition source and any adjustment flags. Preserved manual responses may describe another person, and length/invalid scenarios can break a relationship. Discuss whether the real form needs these fields and limits; illustrative postal/address fixtures are not production address validation.
+
+### Review pattern limits
+
+Try an identifier with fixed literals, uppercase letters and digits. Explain that deferred patterns verify a known fixture in isolation rather than synthesizing arbitrary strings. Inspect timeout/budget/unavailable outcomes. Cancel a pending fill and confirm that answers and group rows do not partially change. Pending or unverified manual responses cannot establish a successful validation simulation. These defensive limits may leave a legitimate long response unverified; record production validation expectations separately.
+
+### Discuss multiple samples
+
+Developers can use the [bounded browser batch API](TEST_DATA_BATCH_API.md) to inspect up to 500 synthetic records in memory. This is not a customer-facing bulk screen or export promise. Discuss repeated values, skipped answers and partial budget results explicitly; synthetic variety does not establish realistic population coverage.

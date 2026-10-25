@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 87 passing automated tests: 66 unit/component tests and 21 end-to-end tests.** Verified on October 1, 2026, with **98.24% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 175 passing automated tests: 131 unit/component tests and 44 end-to-end tests.** Verified on October 25, 2026, with **98.24% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -40,7 +40,7 @@ The [agreement template](docs/IMPLEMENTATION_AGREEMENT_TEMPLATE.md) extends the 
 | Agency inquiry              | Which budget/start-date choices help prepare the first conversation?                                                |
 | Atlas project & procurement | Which stakeholders and line items can repeat, what are their limits, and which approval rules belong in production? |
 
-These are fictional examples for customer discussions. See [positioning and arguments](docs/POSITIONING.md), the [15-minute demo](docs/SALES_DEMO.md) and the [twelve-slide presentation](src/assets/presentation.html).
+These are fictional examples for customer discussions. See [positioning and arguments](docs/POSITIONING.md), the [15-minute demo](docs/SALES_DEMO.md) and the [fifteen-slide presentation](src/assets/presentation.html).
 
 **Bring one form idea. Agree on the details together before committing implementation effort.**
 
@@ -71,6 +71,9 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 - German, English and Persian form copy, with one or two languages active at a time so field and button editors stay readable. Inactive translations remain stored.
 - Nine native field types plus repeatable groups with card/table layouts, editable child fields and minimum/maximum entry counts. Required rules, text length constraints, localized tooltips and full-value RegEx patterns have localized messages.
 - Show or hide the interactive preview on every step; it starts hidden for the brief, copy and form editor. Choose its language and desktop/mobile width separately.
+- Internal field clipboard: copy or defer a cut, then paste into the root list or a group. Copies receive fresh IDs; moves retain IDs and use the latest source. Complete groups can be copied. The clipboard stays local to the session.
+- Seeded synthetic preview data in German, English or Persian, independently of UI/form language. Preserve existing answers or replace explicitly; inspect filled/preserved/skipped counts. Settings and generated answers never enter JSON or the review record. See [authoring tools](docs/AUTHORING_TOOLS.md) for supported constraints and usage.
+- The header shows the current project and active form title; the workspace navigation name follows project renaming and replacement immediately.
 - Configurable buttons: localized labels, primary/secondary/ghost/danger appearance, behavior, CSS classes, developer notes and order. Validation, submission, saving, cancellation, deletion and next/back actions are local simulations; reset clears preview inputs.
 - Real Bootstrap form styling plus Material, Carbon and Fluent inspired visual presets.
 - German, English and Persian UI with instant switching. Persian uses RTL layout and the bundled IranSans webfont; the Studio UI and form preview can use different directions.
@@ -81,6 +84,14 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 - An [English presentation](src/assets/presentation.html) with a concrete sprint/rework example, spoken explanations, browser voice selection, transcripts, standalone HTML saving and an A4 landscape PDF layout. See the [presentation guide](docs/PRESENTATION.md).
 
 Material, Carbon and Fluent presets are **visual approximations**, not integrations of their official component libraries. Choose the real production library with the product owner and engineering team. Brand names identify the design references and imply no endorsement.
+
+See [authoring instructions](docs/AUTHORING_TOOLS.md) for copy/cut/paste and seeded preview data, and [the feature comparison](docs/FEATURE_COMPARISON.md) for verified similarities and differences from the original edition. The in-app **How it works** page also explains the tools in all three UI languages.
+
+## Author forms in a text editor or with AI
+
+The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 1.3.0 and offers complete contact/group examples to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
+
+See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and format kit](docs/AI_AUTHORING.md). The original MockForge edition uses a different JSON contract.
 
 ## A practical conversation
 
@@ -140,3 +151,15 @@ Form tooltips use Bootstrap. Each field can place its tooltip on the title or on
 Open **Edit child fields** to work with a child list beside its properties. The main field list becomes a narrow type-icon rail with Bootstrap tooltips showing each field's index, name and type. Closing child editing or selecting a main field restores the full list. The main list can also be collapsed or expanded manually; these view choices do not alter the specification.
 
 Table groups offer **Table fields without gaps** for a continuous grid. This boolean setting is saved and exported, participates in review invalidation and appears in the Markdown handoff. Migrated schema 1.2.0 files without the optional `group.gapless` property retain comfortable spacing.
+
+### Preview boundary scenarios
+
+Test valid, empty and deliberately invalid responses, exact text limits, one character below/above and required-empty cases. Choose existing/minimum/maximum group rows; shrinking requires explicit replacement. Per-field results compare expected and observed candidate validity and explain skipped cases. Answers and reports stay local and transient. A separate developer-only browser batch API generates 1-500 records with progress, cancellation and observed diversity. Numeric/date bounds and bulk UI/export remain separate work. See the [batch API guide](docs/TEST_DATA_BATCH_API.md). See [authoring tools](docs/AUTHORING_TOOLS.md) and the [generator roadmap](docs/TEST_DATA_GENERATOR_PLAN.md).
+
+### Coherent preview records
+
+First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. Studio JSON stays at 1.3.0; persisted semantic hints/examples are future work. See [the tools guide](docs/AUTHORING_TOOLS.md).
+
+### Bounded pattern examples and isolated checks
+
+Generate finite identifier patterns, or verify a known fixture against a deferred pattern in a disposable local worker. Manual uncertain patterns use the same isolation. Time/size limits stay visible; pending or failed checks cannot submit successfully. Cancel or edit to discard pending generation before answers/rows change. No arbitrary pattern synthesis or schema change is introduced. See [the exact limits](docs/AUTHORING_TOOLS.md).

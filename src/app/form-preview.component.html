@@ -29,6 +29,71 @@
     </button>
   </div>
 </div>
+<div class="test-data-toolbar" role="group" [attr.aria-label]="t('testData')">
+  <button
+    type="button"
+    class="secondary-button"
+    [disabled]="!referenceDateValid() || generating()"
+    (click)="fillResponses(previewForm)"
+  >
+    {{ t('fillTestData') }}
+  </button>
+  @if (generating()) {
+    <button type="button" class="text-button" (click)="cancelGeneration()">
+      {{ t('dataCancelGeneration') }}
+    </button>
+    <p role="status">{{ t('dataGenerating') }}</p>
+  }
+  @if (checkingPatterns()) {
+    <p role="status">{{ t('dataPatternChecking') }}</p>
+  }
+  @if (generationNotice(); as notice) {
+    <p role="status">{{ t(notice) }}</p>
+  }
+  <button type="button" class="text-button" (click)="openTestData()">
+    {{ t('testDataSettings') }}
+  </button>
+  @if (!referenceDateValid()) {
+    <p role="alert">{{ t('dataReferenceInvalid') }}</p>
+  }
+  @if (dataReport(); as report) {
+    <p role="status">
+      {{ t('dataFilled') }}: {{ report.filled }} · {{ t('dataPreserved') }}:
+      {{ report.preserved }} · {{ t('dataSkipped') }}: {{ report.skipped }}
+    </p>
+  }
+</div>
+@if (dataReport(); as report) {
+  <details class="test-data-diagnostics">
+    <summary>{{ t('dataDetails') }} ({{ report.diagnostics.length }})</summary>
+    <p>{{ t('dataDetailsHint') }}</p>
+    <ol>
+      @for (item of report.diagnostics.slice(0, 20); track $index) {
+        <li>
+          <strong>{{ diagnosticLabel(item) }}</strong>
+          <span>{{ diagnosticReason(item.reason) }} · {{ diagnosticRule(item.rule) }}</span>
+          @if (item.semantic; as semantic) {
+            <span
+              >{{ t('dataRecognition') }}: {{ semanticMeaning(semantic.meaning) }} ·
+              {{ semanticSource(semantic.source) }}</span
+            >
+          }
+          @if (item.adjusted) {
+            <span>{{ t('dataAdjusted') }}</span>
+          }
+          <span
+            >{{ t('dataExpected') }}: {{ diagnosticValidity(item.expectedValid) }} ·
+            {{ t('dataObserved') }}: {{ diagnosticValidity(item.actualValid) }}</span
+          >
+          <code dir="ltr">{{ item.response }}</code>
+        </li>
+      }
+    </ol>
+    @if (report.diagnostics.length > 20) {
+      <p>{{ t('dataDetailsLimit') }}</p>
+    }
+  </details>
+}
 <div class="browser-frame" [class.mobile-frame]="mobile()">
   <div class="browser-bar">
     <span aria-hidden="true">● ● ●</span><span>preview.mockforge.local</span
@@ -45,6 +110,8 @@
       #previewForm
       ngNativeValidate
       (submit)="submit($event)"
+      (input)="responseEdited($event)"
+      (change)="responseEdited($event)"
       [attr.lang]="language()"
       [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
     >
@@ -56,7 +123,7 @@
               [locale]="language()"
               [resetToken]="resetToken()"
               (patternInput)="validatePattern($event.event, $event.field)"
-              (responsesChanged)="simulated.set(false)"
+              (responsesChanged)="rowsEdited()"
             />
           } @else {
             <app-preview-field
@@ -89,3 +156,90 @@
   </div>
 </div>
 <p class="preview-caption">{{ t('previewHint') }}</p>
+
+<dialog #testDataDialog class="test-data-dialog" aria-labelledby="test-data-title">
+  <h3 id="test-data-title">{{ t('testDataSettings') }}</h3>
+  <p>{{ t('testDataHint') }}</p>
+  <label for="data-locale">{{ t('dataProfile') }}</label>
+  <select
+    class="form-select"
+    id="data-locale"
+    [ngModel]="dataLocale()"
+    (ngModelChange)="dataLocale.set($event)"
+  >
+    <option value="de">Deutsch</option>
+    <option value="en">English</option>
+    <option value="fa">فارسی</option>
+  </select>
+  <label for="data-seed">{{ t('dataSeed') }}</label>
+  <input
+    class="form-control"
+    id="data-seed"
+    type="number"
+    min="0"
+    max="999999"
+    [ngModel]="dataSeed()"
+    (ngModelChange)="dataSeed.set($event)"
+  />
+  <label for="data-reference-date">{{ t('dataReferenceDate') }}</label>
+  <input
+    class="form-control"
+    id="data-reference-date"
+    type="date"
+    min="1000-01-01"
+    max="9999-12-31"
+    [ngModel]="dataReferenceDate()"
+    (ngModelChange)="dataReferenceDate.set($event)"
+    [attr.aria-invalid]="!referenceDateValid()"
+    aria-describedby="data-reference-hint"
+  />
+  <p id="data-reference-hint">{{ t('dataReferenceHint') }}</p>
+  <label for="data-scenario">{{ t('dataScenario') }}</label>
+  <select
+    class="form-select"
+    id="data-scenario"
+    [ngModel]="dataScenario()"
+    (ngModelChange)="dataScenario.set($event)"
+  >
+    <option value="valid">{{ t('dataValid') }}</option>
+    <option value="empty">{{ t('dataEmpty') }}</option>
+    <option value="invalid">{{ t('dataInvalid') }}</option>
+    <option value="boundary">{{ t('dataBoundary') }}</option>
+  </select>
+  @if (dataScenario() === 'boundary') {
+    <label for="data-boundary">{{ t('dataBoundary') }}</label>
+    <select
+      class="form-select"
+      id="data-boundary"
+      [ngModel]="dataBoundary()"
+      (ngModelChange)="dataBoundary.set($event)"
+    >
+      <option value="minimum">{{ t('dataMinimum') }}</option>
+      <option value="maximum">{{ t('dataMaximum') }}</option>
+      <option value="belowMinimum">{{ t('dataBelowMinimum') }}</option>
+      <option value="aboveMaximum">{{ t('dataAboveMaximum') }}</option>
+      <option value="requiredEmpty">{{ t('dataRequiredEmpty') }}</option>
+    </select>
+  }
+  <label for="data-group-rows">{{ t('dataGroupRows') }}</label>
+  <select
+    class="form-select"
+    id="data-group-rows"
+    [ngModel]="dataGroupRows()"
+    (ngModelChange)="dataGroupRows.set($event)"
+  >
+    <option value="existing">{{ t('dataExistingRows') }}</option>
+    <option value="minimum">{{ t('dataMinimum') }}</option>
+    <option value="maximum">{{ t('dataMaximum') }}</option>
+  </select>
+  <label class="check-row"
+    ><input
+      type="checkbox"
+      [ngModel]="replaceResponses()"
+      (ngModelChange)="replaceResponses.set($event)"
+    />{{ t('replaceResponses') }}</label
+  >
+  <button type="button" class="secondary-button" autofocus (click)="closeTestData()">
+    {{ t('closeSettings') }}
+  </button>
+</dialog>

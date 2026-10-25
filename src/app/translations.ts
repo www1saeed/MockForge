@@ -3,6 +3,349 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  'guide-json': ['Formular im Texteditor entwerfen', 'Design a form in a text editor'],
+  'guide-ai': ['Formular mit KI entwerfen', 'Design a form with AI'],
+  authoringNavigation: ['Anleitungen zur Formularerstellung', 'Form authoring guides'],
+  jsonGuideIntro: [
+    'Bearbeite eine vollständige UTF-8-JSON-Datei, importiere sie und verfeinere den Entwurf mit dem Product Owner. Die Beispiele verwenden das aktuelle Studio-Format.',
+    'Edit a complete UTF-8 JSON file, import it and refine the draft with the product owner. These examples and this reference use the current Studio format.',
+  ],
+  aiGuideIntro: [
+    'Gib einem KI-Chatbot das Studio-Format und einen konkreten Auftrag. Lade den Format-Anhang herunter und nutze die kopierbaren Prompts. Prüfe den fertigen Entwurf anschließend in Studio.',
+    'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
+  ],
+  studioFormatNotice: [
+    'Studio-Format 1.3.0: Andere MockForge-Editionen sind nicht kompatibel. Dieser Ablauf implementiert keine Produktionsanbindung und bestätigt keine Review.',
+    'Studio format 1.3.0: other MockForge editions use incompatible files. This workflow does not implement production integrations or establish review approval.',
+  ],
+  authoringWorkflow: [
+    'Vom Texteditor zur geprüften Vorschau',
+    'From text editor to checked preview',
+  ],
+  editorStep1: [
+    'Exportiere deinen Entwurf als Sicherung oder lade ein vollständiges Beispiel herunter. Speichere die Arbeitskopie als UTF-8-Datei mit Endung .form.json.',
+    'Export your draft as a backup or download a complete example. Save a working copy as UTF-8 with a .form.json extension.',
+  ],
+  editorStep2: [
+    'Bearbeite echte JSON-Werte. Behalte alle Pflichtschlüssel und inaktiven Übersetzungen. Keine Kommentare, abschließenden Kommas oder Markdown-Codeblöcke.',
+    'Edit actual JSON values. Keep every required key and inactive translation. Use no comments, trailing commas or Markdown fences.',
+  ],
+  editorStep3: [
+    'Öffne den Workspace und wähle JSON importieren. Der Import ersetzt erst nach deiner Bestätigung. Exportiere bei Bedarf zuerst den bisherigen Stand. Ungültige Dateien werden abgelehnt.',
+    'Open the workspace and choose Import JSON. Replacement requires confirmation; export the current draft first if needed. Invalid files are rejected.',
+  ],
+  editorStep4: [
+    'Prüfe jede aktive Sprache, Pflichtfelder, RegEx, Gruppen und mobile Darstellung. Kläre offene Fragen, führe eine neue Review durch und exportiere den überarbeiteten Stand.',
+    'Check each active language, required fields, patterns, repeat groups and mobile layout. Resolve questions, perform a new review and export the revised draft.',
+  ],
+  completeExamples: ['Vollständige importierbare Beispiele', 'Complete importable examples'],
+  examplesHint: [
+    'Diese fiktiven Beispiele enthalten alle Pflichtschlüssel. Die Kontaktanfrage zeigt Eingabetypen und Aktionen; das Gruppenbeispiel ergänzt Karten und eine optionale lückenlose Tabelle. JSON-Schlüssel bleiben Englisch.',
+    'These fictional examples contain every required key. The contact request shows controls and actions; the group example adds cards and an optional gapless table. JSON property names stay English.',
+  ],
+  starterExample: ['Kontaktanfrage: eine Seite', 'Contact request: one page'],
+  groupsExample: ['Teamkarten und Positionstabelle', 'Team cards and line-item table'],
+  downloadJson: ['JSON herunterladen', 'Download JSON'],
+  copyJson: ['JSON kopieren', 'Copy JSON'],
+  rootContract: ['Projekt: alle Pflichtschlüssel', 'Project: all required keys'],
+  fieldContract: ['Felder: Typen und Regeln', 'Fields: types and rules'],
+  groupContract: ['Wiederholbare Gruppen', 'Repeatable groups'],
+  buttonContract: ['Schaltflächen und Simulationen', 'Buttons and simulations'],
+  versionRule: [
+    'Exakter Wert für neue Studio-Dateien. Ältere Studio-Dateien werden über den bestehenden Import migriert.',
+    'Exact value for new Studio files. Older Studio files use the existing import migration.',
+  ],
+  briefRule: [
+    'Alle sieben Eigenschaften sind Strings, auch bei einem unvollständigen Entwurf. Lösche offene Fragen nicht, um die Review zu umgehen.',
+    'All seven properties are strings, including incomplete drafts. Do not erase unresolved questions to bypass review.',
+  ],
+  textRule: [
+    'Immer de, en und fa als Strings angeben. Inaktive Sprachen dürfen leer sein und bleiben gespeichert. Aktive Sprachen brauchen sinnvolle Texte für die Review.',
+    'Always provide de, en and fa strings. Inactive languages may be empty and remain stored. Active languages need meaningful copy for review.',
+  ],
+  languageRule: [
+    'Eine oder zwei unterschiedliche Sprachen aktivieren. Die Sprache der Studio-Oberfläche ist davon unabhängig.',
+    'Activate one or two distinct languages. Studio UI language is independent.',
+  ],
+  layoutRule: [
+    'Ein oder zwei Spalten. Bootstrap ist integriert; Material, Carbon und Fluent sind visuelle Annäherungen.',
+    'One or two columns. Bootstrap is integrated; Material, Carbon and Fluent are visual approximations.',
+  ],
+  arrayRule: [
+    'Arrays bleiben auch dann vorhanden, wenn sie leer sind. Höchstens 100 Felddefinitionen einschließlich Gruppen und Unterfeldern sowie 20 Buttons.',
+    'Keep arrays even when empty. At most 100 field definitions including groups and children, and 20 buttons.',
+  ],
+  reviewRule: [
+    'Fünf false-Werte, leerer reviewer und approvedAt: null für neue oder KI-bearbeitete Dateien. Importierte Bestätigungen gelten nicht als Review in diesem Workspace.',
+    'Use five false values, an empty reviewer and approvedAt: null for new or AI-edited files. Imported acknowledgements cannot certify review in this workspace.',
+  ],
+  idRule: [
+    'Feld-IDs müssen über Hauptfelder und Unterfelder hinweg eindeutig sein. Bestehende IDs beim Bearbeiten oder Verschieben erhalten.',
+    'Field IDs must be unique across root fields and children. Keep existing IDs when editing or moving fields.',
+  ],
+  typeRule: [
+    'Nur diese zehn Typen. Zusätzliche Schlüssel erzeugen keine Uploads, Assistentenseiten oder bedingten Felder.',
+    'Only these ten types. Extra keys do not add file uploads, wizard pages or conditional fields.',
+  ],
+  fieldNoteRule: [
+    'required ist ein echtes Boolean. note dokumentiert Produktionsverhalten und führt keinen Code aus. Bei Gruppen entspricht required der Bedingung minItems > 0.',
+    'required is a real boolean. note documents production behavior without executing code. For groups, required matches minItems > 0.',
+  ],
+  optionsRule: [
+    'Bis zu 100 Text-Objekte. select und radio brauchen mindestens eine Option. Keine separaten value/label-Objekte verwenden; Checkbox ist ein einzelner Boolean.',
+    'Up to 100 Text objects. select and radio need at least one option. Do not use separate value/label objects; checkbox is a single boolean.',
+  ],
+  lengthRule: [
+    '0 als Maximum bedeutet unbegrenzt. Minimum darf ein gesetztes Maximum nicht überschreiten. Längenregeln gelten für Texte, nicht als Zahlenbereich.',
+    'A maximum of 0 means unlimited. Minimum cannot exceed a nonzero maximum. Length rules apply to text, not numeric ranges.',
+  ],
+  patternRule: [
+    'Vollwert-RegEx mit Unicode-v ohne /.../-Begrenzer. Backslashes in JSON verdoppeln. Für text, email, url und textarea; ein leeres pattern deaktiviert die Regel.',
+    'Whole-value Unicode-v pattern without /.../ delimiters. Double backslashes in JSON. Applies to text, email, url and textarea; empty pattern disables the rule.',
+  ],
+  tooltipRule: [
+    'Optional: title nutzt den Feldtitel, icon den Fragekreis und info den Informationskreis. Fehlend bedeutet Fragekreis. Tooltip-Texte bleiben Klartext.',
+    'Optional: title uses the field title, icon the question circle and info the information circle. Omission means question circle. Tooltip copy stays plain text.',
+  ],
+  groupRule: [
+    'Nur bei type: group vorhanden. Unterfelder sind normale Felddefinitionen ohne weitere Gruppen.',
+    'Present only for type: group. Children are regular leaf field definitions without further groups.',
+  ],
+  groupLayoutRule: [
+    'layout ist erforderlich. Optionales gapless: true entfernt Zwischenräume in Tabellenzellen; Karten behalten ihre normale Darstellung.',
+    'layout is required. Optional gapless: true removes gaps in table cells; cards keep their normal layout.',
+  ],
+  groupBoundsRule: [
+    'Beide Grenzen sind erforderlich; minItems darf maxItems nicht überschreiten. Diese Grenzen zählen Vorschauzeilen, nicht Definitionen.',
+    'Both bounds are required; minItems cannot exceed maxItems. These bounds count preview rows, not definitions.',
+  ],
+  groupChildrenRule: [
+    '1–20 Unterfelder, global eindeutige IDs und keine Verschachtelung. Antworten werden nicht in der Projektdatei gespeichert.',
+    '1-20 children, globally unique IDs and no nesting. Answers are never stored in the project file.',
+  ],
+  buttonIdRule: [
+    'Button-IDs sind innerhalb der Button-Liste eindeutig. label ist ein vollständiges Text-Objekt.',
+    'Button IDs are unique within the button list. label is a complete Text object.',
+  ],
+  buttonVariantRule: [
+    'Legt das Aussehen fest, unabhängig von der Aktion.',
+    'Controls appearance, independently of action.',
+  ],
+  buttonActionRule: [
+    'Nur lokale Simulationen. next/back erzeugen keinen mehrseitigen Assistenten. submit bleibt als Text-Kopie des ersten Submit-Buttons erhalten, sonst leeres Text-Objekt.',
+    'Local simulations only. next/back do not create a wizard. Keep submit as the first submit-button label, or empty Text if none exists.',
+  ],
+  buttonNoteRule: [
+    'cssClass enthält nur vorhandene Klassentokens aus Buchstaben, Ziffern, Unterstrichen, Bindestrichen und Leerraum, höchstens 200 Zeichen. note dokumentiert das spätere Verhalten.',
+    'cssClass contains existing class tokens made of letters, digits, underscores, hyphens and whitespace, at most 200 characters. note documents future behavior.',
+  ],
+  authoringErrors: ['Typische Importfehler', 'Common import errors'],
+  authoringErrorsText: [
+    'Prüfe JSON-Syntax, schemaVersion, fehlende de/en/fa-Schlüssel, doppelte IDs, options als Text-Array und Gruppenlimits. Dateien über 1 MiB werden abgelehnt. Studio meldet derzeit keine detaillierten JSON-Pfade; vergleiche mit einem vollständigen Beispiel. Import setzt Review-Checks, Reviewer und Bestätigung zurück. Vorschauantworten und Testdaten gehören nicht in JSON.',
+    'Check JSON syntax, schemaVersion, missing de/en/fa keys, duplicate IDs, options as Text arrays and group limits. Files above 1 MiB are rejected. Studio currently reports no detailed JSON paths; compare against a complete example. Import resets review checks, reviewer and acknowledgement. Preview responses and test data do not belong in JSON.',
+  ],
+  aiPreparation: ['Format-Anhang zuerst bereitstellen', 'Supply the format reference first'],
+  aiPreparationText: [
+    'Lade den Anhang herunter und füge ihn dem Chat hinzu. Er enthält englische Typdefinitionen, Studio-Regeln und zwei vollständige Beispiele. Ergänze den Prompt mit Ziel, Zielgruppe, Feldern und gewünschten Sprachen.',
+    'Download and attach the kit to the chat. It contains English type declarations, Studio rules and two complete examples. Then complete a prompt with your goal, audience, fields and selected languages.',
+  ],
+  downloadAuthoringKit: ['KI-Format-Anhang herunterladen', 'Download AI authoring kit'],
+  authoringKitHint: [
+    'Die TXT-Datei ist Referenzmaterial und selbst nicht importierbar. Studio ruft keinen externen KI-Dienst automatisch auf.',
+    'The TXT file is reference material, not an importable project. Studio does not automatically contact an external AI service.',
+  ],
+  authoringKitUrl: ['Adresse des Format-Anhangs', 'Format-reference URL'],
+  copyKitUrl: ['Adresse kopieren', 'Copy URL'],
+  kitUrlHint: [
+    'Eine localhost- oder private Adresse ist für externe Chatbots meist nicht erreichbar. Hänge dann die heruntergeladene TXT-Datei an. Nutze einen Link nur, wenn die veröffentlichte Ressource erreichbar ist.',
+    'An external chatbot usually cannot reach localhost or a private URL. Attach the downloaded TXT file instead. A URL is useful only when the published resource is accessible.',
+  ],
+  copyablePrompts: ['Kopierbare Prompts', 'Copyable prompts'],
+  promptsHint: [
+    'Ersetze die Angaben in eckigen Klammern. Jeder Prompt enthält dieselben englischen Formatregeln wie der Anhang. Nutze fiktive Beispiele und prüfe das Ergebnis selbst.',
+    'Replace the bracketed brief placeholders. Each prompt includes the same English format rules as the kit. Use fictional examples and check the output yourself.',
+  ],
+  createPrompt: ['Neuen Entwurf erstellen', 'Create a new draft'],
+  createPromptText: [
+    'Erstelle einen vollständigen MockForge-Studio-Entwurf. Lies zuerst den beigefügten Format-Anhang. Ziel: [Geschäftsziel]. Zielgruppe: [Nutzende]. Umfang: [eine Formularseite]. Aktive Sprachen: [eine oder zwei aus de/en/fa]. Felder, Regeln und Optionen: [Details]. Wiederholbare Daten: [Karten oder Tabelle mit Grenzen]. Button-Verhalten: [Simulation und späteres Produktionsverhalten]. Kläre wichtige Unklarheiten zuerst. Dokumentiere offene Fragen; erfinde keine Freigabe. Gib nach der Klärung nur die vollständige JSON-Datei aus.',
+    'Create a complete MockForge Studio draft. Read the attached authoring kit first. Goal: [business goal]. Audience: [users]. Scope: [one form page]. Active languages: [one or two of de/en/fa]. Fields, rules and choices: [details]. Repeatable data: [cards/table and bounds if needed]. Button behavior: [local simulation and future production behavior]. Clarify essential ambiguities first. Preserve unresolved questions honestly and invent no approval. After clarification, output only the complete JSON file.',
+  ],
+  changePrompt: ['Vorhandenen Export gezielt ändern', 'Revise an existing export'],
+  changePromptText: [
+    'Lies den beigefügten aktuellen Studio-Export und den Format-Anhang. Änderungen: [konkrete Wünsche]. Bearbeite genau diese Datei. Erhalte nicht betroffene Eigenschaften, stabile IDs, Optionen, Entscheidungen und inaktive Übersetzungen. Ändere weder Formatversion noch Formularmodell. Neue Felder brauchen eindeutige IDs. Setze Review-Checks, Reviewer und approvedAt zurück. Dokumentiere offene Fragen. Gib die gesamte aktualisierte JSON-Datei aus, keinen Patch.',
+    'Read the attached current Studio export and authoring kit. Requested changes: [specific changes]. Edit this exact file. Preserve unaffected properties, stable IDs, options, decisions and inactive translations. Do not change format version or form model. New fields need unique IDs. Reset review checks, reviewer and approvedAt. Record new open questions. Output the complete updated JSON file, not a patch.',
+  ],
+  repairPrompt: ['Importfehler untersuchen', 'Investigate an import failure'],
+  repairPromptText: [
+    'Die beigefügte Studio-JSON-Datei lässt sich nicht wie erwartet importieren. Lies den Format-Anhang. Exakte Meldung: [tatsächlicher Wortlaut; keine erfundenen JSON-Pfade]. Beobachtung: [Verhalten]. Erwartung: [gewünschtes Ergebnis]. Prüfe Syntax und Studio-Format, insbesondere Text-Objekte, IDs, Optionen und Gruppenlimits. Repariere die Ursache mit möglichst kleiner fachlicher Änderung. Lösche Inhalte nicht einfach und erfinde keine Funktionen. Gib nach Rückfragen die gesamte korrigierte JSON-Datei aus. Behaupte keinen getesteten Import; den prüfe ich anschließend in Studio.',
+    'The attached Studio JSON does not import as expected. Read the authoring kit. Exact message: [actual wording; no invented JSON paths]. Observed behavior: [description]. Expected behavior: [desired result]. Check syntax and the full Studio contract, especially Text objects, IDs, choices and group bounds. Fix the cause with minimal semantic changes. Do not simply remove rejected content or invent features. After necessary questions, output the complete corrected JSON. Do not claim a tested import; I will check it in Studio.',
+  ],
+  copyPrompt: ['Prompt kopieren', 'Copy prompt'],
+  aiReview: ['Ergebnis importieren und gemeinsam prüfen', 'Import and review the result together'],
+  aiReviewText: [
+    'Speichere nur das vollständige JSON als UTF-8-.form.json. Exportiere den bisherigen Stand, importiere die neue Datei und bestätige die Ersetzung. Prüfe Texte, Regeln, aktive Sprachen, Gruppen, mobile Darstellung und Simulationsaktionen. Kläre Fragen mit dem Product Owner. Die KI-Ausgabe ersetzt keine Review und keine Produktionsentwicklung.',
+    'Save only the complete JSON as a UTF-8 .form.json file. Export the current draft first, import the new file and confirm replacement. Check copy, rules, active languages, groups, mobile layout and simulated actions. Resolve open questions with the product owner; AI output replaces neither review nor production development.',
+  ],
+  authoringCopied: ['In die Zwischenablage kopiert.', 'Copied to clipboard.'],
+  authoringCopyFallback: [
+    'Kopieren war nicht möglich. Der Text ist markiert; nutze die Kopierfunktion deines Geräts.',
+    "Could not copy. The text is selected; use your device's copy command.",
+  ],
+  openWorkspace: ['Workspace öffnen', 'Open workspace'],
+  guideClipboard: ['Felder kopieren und verschieben', 'Copy and move fields'],
+  guideClipboardText: [
+    'Wähle ein Feld und nutze Kopieren oder Ausschneiden unter der Feldliste. Einfügen hängt es an die Zielliste an. Kopien erhalten neue IDs; Ausschneiden verschiebt erst beim Einfügen und behält die IDs. Ganze Gruppen können kopiert, einzelne Unterfelder verschoben werden. Zwischenablage leeren bricht das Verschieben ab. Ersetzen und Neuladen leeren die Zwischenablage. Texte lassen sich weiterhin mit den normalen Tastenkürzeln bearbeiten.',
+    'Select a field and choose Copy or Cut below its list. Paste appends to the destination list. Copies get new IDs; Cut moves only when pasted and keeps IDs. You can copy complete groups and move leaf children. Clear clipboard cancels a pending move. Replacement and reload clear the clipboard. Normal text-editing shortcuts remain available.',
+  ],
+  guideTestData: ['Vorschau mit Testdaten prüfen', 'Check the preview with test data'],
+  guideTestDataText: [
+    'Blende die Vorschau ein und wähle Testdaten einfüllen. DE/EN/FA, Startwert und Bezugsdatum erzeugen zusammenhängende Namen, E-Mail und Adressen pro Hauptformular/Gruppenzeile. Eindeutige Beschriftung, Platzhalter und Hilfetext bestimmen die Bedeutung; widersprüchliche Übersetzungen verwenden neutralen Text. Der Bericht zeigt Quelle, Anpassungen sowie erwartete/beobachtete Gültigkeit. Gültige, leere, ungültige und Textgrenzfälle sind verfügbar. Gruppen nutzen bestehende/minimale/maximale Zeilen; Zeilenabbau benötigt Ersetzen. Kennungen wie DE-[A-Z]{2}\\d{4} werden begrenzt erzeugt. Andere Muster prüfen bekannte Beispielwerte isoliert mit Zeit-/Größenlimit; beliebige Synthese ist nicht enthalten. Abbrechen oder Änderungen verwerfen ausstehende Generierung ohne Teilfüllung. Auch manuelle komplexe Muster werden isoliert geprüft; ausstehende oder ungeprüfte Werte blockieren Validierung. Timeout und Prüflimits stehen im Bericht. Vorhandene Antworten werden nicht als Identität übernommen. Antworten, Einstellungen und Berichte werden nicht gespeichert oder exportiert.',
+    'Show the preview and choose Fill test data. DE/EN/FA, seed and reference date produce coherent names, email and addresses per root form/group row. Unambiguous labels, placeholders and help determine meaning; conflicting translations use generic text. Reports show sources, adjustments and expected/observed validity. Valid/empty/invalid and text-boundary cases are available. Groups use existing/minimum/maximum rows; shrinking requires replacement. Identifiers such as DE-[A-Z]{2}\\d{4} use bounded synthesis. Other patterns check known fixtures in isolation with time/size limits; arbitrary synthesis is not included. Cancellation or edits discard pending generation without partial filling. Manual complex patterns are isolated too; pending or unchecked values block validation. Timeouts and check limits appear in the report. Retained answers do not reconstruct identities. Answers, settings and reports are never saved or exported.',
+  ],
+  guideShell: [
+    'Projekt im Header und in der Navigation',
+    'Project context in the header and navigation',
+  ],
+  guideShellText: [
+    'Der Workspace-Navigationseintrag folgt dem Projektnamen. Im Header erscheinen Projektname und lokalisierter Formulartitel. Umbenennen, Sprachwechsel und Projektimport aktualisieren die Anzeige sofort. Bei leerem Projektnamen erscheint Workspace. Die Studio-Marke bleibt sichtbar.',
+    'The workspace navigation entry follows the project name. The header shows the project name and localized form title. Renaming, language switching and import update the display immediately. An empty project name uses the workspace label. Studio branding stays visible.',
+  ],
+
+  fieldClipboard: ['Feld-Zwischenablage', 'Field clipboard'],
+  copyField: ['Kopieren', 'Copy'],
+  cutField: ['Ausschneiden', 'Cut'],
+  pasteField: ['Einfügen', 'Paste'],
+  clearClipboard: ['Zwischenablage leeren', 'Clear clipboard'],
+  fieldCopied: [
+    'Feld kopiert. Beim Einfügen werden neue IDs vergeben.',
+    'Field copied. Pasting assigns fresh IDs.',
+  ],
+  fieldCut: [
+    'Feld zum Verschieben vorgemerkt. Erst Einfügen verschiebt es.',
+    'Field marked for moving. Paste completes the move.',
+  ],
+  fieldPasted: ['Feld eingefügt.', 'Field pasted.'],
+  pasteUnavailable: [
+    'Einfügen nicht möglich: Quelle, Gruppenregeln oder Feldgrenzen prüfen.',
+    'Cannot paste: check the source, group rules or field limits.',
+  ],
+  testData: ['Testdaten', 'Test data'],
+  fillTestData: ['Testdaten einfüllen', 'Fill test data'],
+  testDataSettings: ['Testdaten-Einstellungen', 'Test data settings'],
+  testDataHint: [
+    'Synthetische Antworten bleiben lokal und ungespeichert. Antworten bleiben standardmäßig erhalten; Zeilenabbau benötigt Ersetzen. Grenzwerte prüfen Textlängen und Pflichtfelder. Zahlen-/Datumsgrenzen sind nicht konfigurierbar. Nicht anwendbare Fälle und komplexe RegEx werden ausgewiesen. Gleicher Startwert, gleiche Einstellungen und Struktur ergeben gleiche Werte.',
+    'Synthetic answers remain local and unsaved. Answers are preserved by default; removing rows requires replacement. Boundaries cover text lengths and required fields. Numeric/date bounds are not configurable. Inapplicable cases and complex patterns are reported. The same seed, settings and structure reproduce the same values.',
+  ],
+  dataProfile: ['Sprache der Testinhalte', 'Test content language'],
+  dataSeed: ['Startwert (Seed)', 'Seed'],
+  dataScenario: ['Szenario', 'Scenario'],
+  dataValid: ['Gültige Beispielwerte', 'Valid sample values'],
+  dataEmpty: ['Leere Werte / Pflichtfelder prüfen', 'Empty values / check required fields'],
+  replaceResponses: ['Vorhandene Antworten ersetzen', 'Replace existing answers'],
+  closeSettings: ['Einstellungen schließen', 'Close settings'],
+  dataFilled: ['Gefüllt', 'Filled'],
+  dataPreserved: ['Beibehalten', 'Preserved'],
+  dataSkipped: ['Übersprungen', 'Skipped'],
+
+  dataInvalid: ['Gezielt ungültige Werte', 'Deliberately invalid values'],
+  dataBoundary: ['Grenzwertfall', 'Boundary case'],
+  dataMinimum: ['Genau Mindestlänge / Mindestanzahl', 'Exact minimum length / row count'],
+  dataMaximum: ['Genau Maximallänge / Höchstanzahl', 'Exact maximum length / row count'],
+  dataBelowMinimum: ['Ein Zeichen unter Mindestlänge', 'One character below minimum length'],
+  dataAboveMaximum: ['Ein Zeichen über Maximallänge', 'One character above maximum length'],
+  dataRequiredEmpty: ['Pflichtfeld leer', 'Required field empty'],
+  dataGroupRows: ['Gruppenzeilen', 'Group rows'],
+  dataExistingRows: [
+    'Bestehende Zeilen; leere Gruppen erhalten eine',
+    'Existing rows; add one to empty groups',
+  ],
+  dataDetails: ['Ergebnisse pro Feld', 'Per-field results'],
+  dataDetailsHint: [
+    'Die Gültigkeit beschreibt den geprüften Kandidaten. Bei Abweichungen wird die vorherige Antwort wiederhergestellt. Geschützte oder nicht unterstützte Werte werden nicht geprüft.',
+    'Validity describes the attempted candidate. A mismatch restores the previous answer. Protected or unsupported values are not checked.',
+  ],
+  dataDetailsLimit: [
+    'Die ersten 20 Ergebnisse werden angezeigt; die Summen enthalten alle Felder und angeforderten Gruppenprüfungen.',
+    'Showing the first 20 results; totals include all fields and requested group checks.',
+  ],
+  dataExpected: ['Erwartet', 'Expected'],
+  dataObserved: ['Beobachtet', 'Observed'],
+  dataIsValid: ['Gültig', 'Valid'],
+  dataIsInvalid: ['Ungültig', 'Invalid'],
+  dataNotChecked: ['Nicht geprüft', 'Not checked'],
+  dataApplied: ['Szenario bestätigt', 'Scenario verified'],
+  dataUnsupported: ['RegEx wird nicht unterstützt', 'Pattern is unsupported'],
+  dataUnavailable: ['Für dieses Feld nicht anwendbar', 'Not applicable to this field'],
+  dataMismatch: [
+    'Kandidat erfüllt das erwartete Ergebnis nicht; Antwort wiederhergestellt',
+    'Candidate did not match the expected result; answer restored',
+  ],
+  dataProtected: [
+    'Zeilenabbau geschützt; Ersetzen aktivieren',
+    'Row removal protected; enable replacement',
+  ],
+
+  dataFirstName: ['Vorname', 'First name'],
+  dataLastName: ['Nachname', 'Last name'],
+  dataFullName: ['Vollständiger Name', 'Full name'],
+  dataCompany: ['Firma', 'Company'],
+  dataStreet: ['Straße', 'Street'],
+  dataHouseNumber: ['Hausnummer', 'House number'],
+  dataAddress: ['Anschrift', 'Address'],
+  dataPostalCode: ['Postleitzahl', 'Postal code'],
+  dataCity: ['Stadt', 'City'],
+  dataCountry: ['Land', 'Country'],
+  dataChoice: ['Auswahl', 'Choice'],
+  dataGeneric: ['Neutraler Beispieltext', 'Generic sample text'],
+  dataFromLabel: ['Aus Beschriftung', 'From label'],
+  dataFromPlaceholder: ['Aus Platzhalter', 'From placeholder'],
+  dataFromHelp: ['Aus Hilfetext', 'From help text'],
+  dataFromType: ['Aus Feldtyp', 'From field type'],
+  dataFallback: ['Keine eindeutige Bedeutung erkannt', 'No clear meaning recognized'],
+  dataAmbiguous: [
+    'Widersprüchliche Übersetzungen; neutraler Wert',
+    'Conflicting translations; generic value',
+  ],
+  dataRecognition: ['Erkennung', 'Recognition'],
+  dataAdjusted: [
+    'Durch Längenregeln oder Szenario verändert; Zusammenhang kann abweichen.',
+    'Changed by length rules or scenario; record consistency may differ.',
+  ],
+  dataReferenceDate: ['Bezugsdatum', 'Reference date'],
+  dataReferenceHint: [
+    'Datumsfelder verwenden dieses Datum unverändert. Standard: 2026-01-01. Kein aktuelles Systemdatum und keine relativen Datumsregeln.',
+    'Date fields use this date unchanged. Default: 2026-01-01. No current system date or relative date rules.',
+  ],
+  dataReferenceInvalid: [
+    'Bitte in den Testdaten-Einstellungen ein gültiges Bezugsdatum zwischen 1000-01-01 und 9999-12-31 wählen.',
+    'Choose a valid reference date between 1000-01-01 and 9999-12-31 in test data settings.',
+  ],
+
+  dataPatternTimeout: [
+    'RegEx-Prüfung hat das Zeitlimit erreicht.',
+    'Pattern check reached its time limit.',
+  ],
+  dataPatternBudget: [
+    'RegEx-Prüflimit erreicht; Wert nicht geprüft.',
+    'Pattern check limit reached; value not checked.',
+  ],
+  dataWorkerUnavailable: [
+    'Isolierte RegEx-Prüfung nicht verfügbar; Wert nicht geprüft.',
+    'Isolated pattern checking unavailable; value not checked.',
+  ],
+  dataWorkerError: ['RegEx konnte nicht geprüft werden.', 'Pattern could not be checked.'],
+  dataRepresentation: [
+    'Browser verändert den Beispielwert; vorherige Antwort wiederhergestellt.',
+    'Browser changed the candidate; previous answer restored.',
+  ],
+  dataPatternChecking: ['Eingaben werden geprüft …', 'Checking responses …'],
+  dataGenerating: ['Testwerte werden vorbereitet …', 'Preparing sample values …'],
+  dataCancelled: [
+    'Testdaten-Vorgang abgebrochen; ausstehende Ergebnisse werden verworfen.',
+    'Test data operation cancelled; pending results are discarded.',
+  ],
+  dataCancelGeneration: ['Generierung abbrechen', 'Cancel generation'],
+
   expandFields: ['Hauptfeldliste aufklappen', 'Expand main field list'],
   collapseFields: ['Hauptfeldliste zuklappen', 'Collapse main field list'],
   editGroupFields: ['Unterfelder bearbeiten', 'Edit child fields'],

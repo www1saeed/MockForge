@@ -3,6 +3,38 @@ import { AppComponent } from './app.component';
 import { createButton, createField, example, FieldType } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('shell labels follow project identity with localized fallback', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.update({ name: '' });
+    expect(app.navigationLabel('workspace')).toBe('Workspace');
+    expect(app.navigationLabel('overview')).toBe(app.t('overview'));
+    app.update({ name: 'Current project' });
+    expect(app.navigationLabel('workspace')).toBe('Current project');
+  });
+  test('clipboard actions retain a usable selection', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.store.update({
+      name: '',
+      fields: [createField('text', 'name'), createField('group', 'team')],
+    });
+    app.selectRootField('name');
+    app.captureField('copy', true);
+    app.pasteField();
+    expect(app.selectedId()).not.toBe('name');
+    app.selectRootField('team');
+    app.openGroupFields();
+    app.captureField('copy');
+    app.pasteField(true);
+    expect(app.childEditorOpen()).toBe(true);
+    expect(app.editingGroup()?.group?.fields).toHaveLength(2);
+    app.store.clearClipboard();
+    const before = app.project();
+    app.pasteField(true);
+    expect(app.project()).toBe(before);
+    app.selectRootField('name');
+    app.pasteField(true);
+    expect(app.project()).toBe(before);
+  });
   test('full-width preview is transient and step changes or hiding restore the editor', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.togglePreviewWidth();

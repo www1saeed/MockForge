@@ -14,8 +14,8 @@
           [href]="'#' + item.view"
           [class.active]="view() === item.view"
           [attr.aria-current]="view() === item.view ? 'page' : null"
-          [attr.aria-label]="t(item.view)"
-          [title]="t(item.view)"
+          [attr.aria-label]="navigationLabel(item.view)"
+          [title]="navigationLabel(item.view)"
           (click)="navigate($event, item.view)"
           ><svg
             width="24"
@@ -55,7 +55,16 @@
       <a class="header-brand" href="#overview" (click)="navigate($event, 'overview')"
         >MockForge <span>Studio</span></a
       >
-      <div class="breadcrumb">{{ t(view()) }}</div>
+      <div class="breadcrumb" [title]="navigationLabel(view())">
+        {{ navigationLabel(view()) }}
+        @if (view() === 'workspace') {
+          <small class="shell-form-title">{{
+            project().title[
+              project().languages.includes(locale()) ? locale() : project().languages[0]
+            ]
+          }}</small>
+        }
+      </div>
       <div class="topbar-actions">
         <span class="save-status" [class.save-error]="store.storageError()"
           ><span aria-hidden="true">●</span
@@ -311,6 +320,11 @@
                       (moved)="moveField($event, true)"
                       (removed)="removeField(true)"
                       (added)="addField($event)"
+                      [clipboardAvailable]="!!store.clipboard()"
+                      (copied)="captureField('copy', true)"
+                      (cut)="captureField('cut', true)"
+                      (pasted)="pasteField()"
+                      (clipboardCleared)="store.clearClipboard()"
                     ></app-field-list>
                     <div class="inspector">
                       @if (editingGroup(); as parent) {
@@ -398,6 +412,11 @@
                                 (moved)="moveField($event)"
                                 (removed)="removeField()"
                                 (added)="addGroupField($event)"
+                                [clipboardAvailable]="!!store.clipboard()"
+                                (copied)="captureField('copy')"
+                                (cut)="captureField('cut')"
+                                (pasted)="pasteField(true)"
+                                (clipboardCleared)="store.clearClipboard()"
                               />
                             </aside>
                           }
@@ -730,11 +749,18 @@
           </div>
         </section>
       }
+      @if (view() === 'guide-json' || view() === 'guide-ai') {
+        <app-authoring-guide [locale]="locale()" [mode]="view() === 'guide-ai' ? 'ai' : 'json'" />
+      }
       @if (view() === 'guide') {
         <section id="workspace" class="content-page guide-page">
           <p class="eyebrow">THE MOCKFORGE APPROACH</p>
           <h1>{{ t('guideTitle') }}</h1>
           <p class="page-lead">{{ t('guideText') }}</p>
+          <nav class="authoring-links" [attr.aria-label]="t('authoringNavigation')">
+            <a class="secondary-button" href="#guide-json">{{ t('guide-json') }}</a>
+            <a class="secondary-button" href="#guide-ai">{{ t('guide-ai') }}</a>
+          </nav>
           <div class="guide-steps">
             @for (key of ['guide1', 'guide2', 'guide3']; track key; let index = $index) {
               <article>
@@ -744,6 +770,17 @@
                   <p>
                     {{ t(index === 0 ? 'guide1Text' : index === 1 ? 'guide2Text' : 'guide3Text') }}
                   </p>
+                </div>
+              </article>
+            }
+          </div>
+          <div class="guide-steps guide-tools">
+            @for (topic of guideTools; track topic.title; let index = $index) {
+              <article>
+                <span class="guide-number">0{{ index + 4 }}</span>
+                <div>
+                  <h2>{{ t(topic.title) }}</h2>
+                  <p>{{ t(topic.body) }}</p>
                 </div>
               </article>
             }

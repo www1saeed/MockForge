@@ -6,10 +6,12 @@ Read the [architecture](ARCHITECTURE.md) before changing behavior. Keep this pro
 
 - `project.model.ts` defines the framework-independent specification and factories.
 - `project.examples.ts`, `project.validation.ts` and `project.handoff.ts` own fictional examples, unknown-input validation and Markdown export respectively. `project.ts` is their public entry point.
-- `ProjectStore` owns immutable specification changes, persistence and review invalidation.
+- `authoring-guide.component.*` owns the read-only JSON/AI help views. `authoring-guide.reference.ts` reuses JSON examples and shared rules from `src/assets/guides`. `scripts/build-authoring-kit.mjs` derives the downloadable kit from the real model and those assets; regenerate it with `npm run authoring:build` and verify with `npm run authoring:check`.
+- `ProjectStore` owns immutable specification changes, persistence, review invalidation and the session-only field clipboard. Clipboard state must never enter project JSON.
 - `AppComponent` coordinates navigation and editing. `FieldListComponent` emits selection and structural actions; `FormPreviewComponent` owns temporary native form responses and local simulations.
 - `studio.config.ts` holds typed navigation and workflow configuration. All visible copy belongs in the typed German/English base catalog and complete Persian catalog.
 - `FeedbackService` owns deletion requests and toast timers; `FeedbackComponent` owns the native confirmation modal and live notification region. Deletion handlers capture stable ids and mutate the specification only inside the confirmed callback.
+- `preview-test-data.ts` generates bounded candidates and fills mounted responses. Test data must preserve intentional unchecked answers unless replacement is requested; generated events must not mark answers as user edits. Unsupported patterns are skipped without execution.
 - `PreviewFieldComponent` renders native leaf controls; `RepeatGroupComponent` owns transient repeat rows. Keep row identities distinct from definition ids, validate each instance and never persist responses. Group definitions support one level only.
 - `src/styles.css` imports styles by responsibility: foundation, shell, workspace, preview, presets and content. Change the owning rule rather than adding another override at the bottom.
 
@@ -28,8 +30,10 @@ Run `npm run format` after editing. CI checks formatting with `npm run format:ch
 ```sh
 npm run format:check
 npm run lint
+npx tsc --noEmit -p tsconfig.spec.json
 npm run test:coverage
 npm run extract-i18n
+npm run authoring:check
 npm run build
 npm run e2e
 ```
@@ -37,3 +41,19 @@ npm run e2e
 Tests should protect user behavior and specification boundaries. Inspect responsive screenshots after layout changes. Never persist preview responses or accept an imported acknowledgement as authenticated approval.
 `bootstrap-tooltip.directive.ts` owns Bootstrap tooltip setup and disposal for the collapsible main-field rail. Keep imported labels plain text and dispose floating nodes when a trigger changes or disappears. Group-list visibility belongs to AppComponent; saved table spacing belongs to the domain model and ProjectStore.
 `field-title.component.ts` renders the shared form title and tooltip trigger. Repeat containers determine tooltip ownership: once in each table header or only in the first current card. Preserve native label/control association, independent checkbox behavior and plain localized tooltip text when changing the markup.
+
+## Documentation and feature comparisons
+
+Keep [authoring tools](AUTHORING_TOOLS.md), [the workshop](PRODUCT_OWNER_WORKSHOP.md), [the demo](SALES_DEMO.md) and the application's DE/EN/FA guide aligned with user-facing behavior. Update README and QUALITY test counts only from completed runs. Reference-repository comparison tests are separate evidence and must never be added to Studio's test total. The [comparison report](FEATURE_COMPARISON.md) records shared behavior and deliberate differences; do not infer full parity from similarly named features.
+
+## Extending preview data
+
+Use `response-constraints.ts` for length semantics shared with native response validation. Assert expected versus observed browser validity, not only candidate strings; native tooShort/tooLong is unreliable for assigned values. Add cases to `preview-test-data.spec.ts` and `e2e/preview-test-data.spec.ts`. Preserve unchecked edits, stable group rows, rollback on mismatch and unchanged LocalStorage/review. Keep unsupported expressions outside candidate evaluation and construction bounded. Update [the tools guide](AUTHORING_TOOLS.md), [roadmap](TEST_DATA_GENERATOR_PLAN.md), [comparison](FEATURE_COMPARISON.md), current test/coverage figures and the actual HTML deck after verified changes.
+
+For coherent records, extend `preview-data-record.ts` with independently authored fixtures and conservative phrases. Keep technical email values ASCII/example.org, keep original scripts in native text, report ambiguity and preserve source precedence. Test relationships between fields and actual preview reset rather than merely matching fixture snapshots. Do not key record data by transient DOM ids, infer a new identity from manual answers or depend on the system clock. Persisted hints/examples require a separate contract change; do not silently append them to Studio 1.3.0.
+
+For pattern work, keep `preview-pattern.ts` admission conservative: static bounds must apply before native matching. Deferred expressions belong only in `assets/preview-pattern.worker.js`, through the component-scoped `PatternCheckService`. Never restore an uncertain native pattern attribute or synchronous renderer evaluation. Preserve worker cleanup, per-job late-event guards, queue/input/deadline budgets, cancellation and request/interaction snapshots. Test with real Chromium workers for catastrophic input and a controlled stalled worker for cancellation; unit doubles alone do not establish isolation. Update worker assets and source together for deployments.
+
+For batch changes, read [the API contract](TEST_DATA_BATCH_API.md). Keep native validation shared with the preview, output omission for skipped answers, bounded setup before DOM allocation, snapshots, complete-record cancellation and honest observed diversity. Do not use record IDs/seeds to manufacture diversity. Run `preview-data-batch.spec.ts` in Jest and Chromium; the latter bundles the developer API only into its test harness, without adding a debug global or API screen to the production app. Timing is a local smoke observation, not a cross-device acceptance guarantee.
+
+Preserve worker backpressure at callers: large-table Submit must pass on its first attempt without increasing queue limits. Keep pending requests stable across copy-only edits and resolve current rules/messages at completion. Do not regress single-input radio checked state, optional undefined defaults or the shared scope/reason/ID helpers. Finite matchers may be cached only after bounded admission; arbitrary expressions still belong exclusively in workers.
