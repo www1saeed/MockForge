@@ -30,7 +30,7 @@ Prepare a question relevant to the buyer: lead qualification for sales, the retu
 2. In the field editor, select a field and choose **Copy**, then **Paste**. Show the independent configuration and new identifier. Copying a group includes its child definitions.
 3. Choose **Cut** on a leaf child, close child editing and paste into the root list. Explain that the original moves only when paste succeeds and keeps its identifier. Clear clipboard cancels a pending cut. Avoid emptying a group's definition list; at least one child is required.
 4. Show the preview's **Test data settings** dialog. Close it with Escape and show that closing alone does not change answers. Fill explicitly, explain the filled/preserved/skipped summary, then try the normal response reset.
-5. Open **How it works** for the same instructions in the current UI language. See [the detailed guide](AUTHORING_TOOLS.md) for bounds and [the comparison](FEATURE_COMPARISON.md) for differences from the original edition. Do not claim its advanced generator or batch API are present in Studio.
+5. Open **How it works** for the same instructions in the current UI language. See [the detailed guide](AUTHORING_TOOLS.md) for bounds and [the comparison](FEATURE_COMPARISON.md) for differences from the original edition. Studio also has a [developer-only bounded browser batch API](TEST_DATA_BATCH_API.md); it is not a bulk screen or export feature. Do not claim the original edition's additional profiles, author examples or wizard scope are present.
 
 ## Ready-to-use copy
 

@@ -84,3 +84,7 @@ Use First name, Last name, Full name, Email and address component labels to revi
 ### Review pattern limits
 
 Try an identifier with fixed literals, uppercase letters and digits. Explain that deferred patterns verify a known fixture in isolation rather than synthesizing arbitrary strings. Inspect timeout/budget/unavailable outcomes. Cancel a pending fill and confirm that answers and group rows do not partially change. Pending or unverified manual responses cannot establish a successful validation simulation. These defensive limits may leave a legitimate long response unverified; record production validation expectations separately.
+
+### Discuss multiple samples
+
+Developers can use the [bounded browser batch API](TEST_DATA_BATCH_API.md) to inspect up to 500 synthetic records in memory. This is not a customer-facing bulk screen or export promise. Discuss repeated values, skipped answers and partial budget results explicitly; synthetic variety does not establish realistic population coverage.

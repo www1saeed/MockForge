@@ -22,9 +22,9 @@ Optional persisted semantic hints and validated author examples remain a separat
 
 Studio now synthesizes a finite concatenation subset for identifiers and checks known fixture candidates for deferred patterns in terminable workers. Manual deferred validation uses the same isolation, with native attributes limited to the bounded subset. Per-check, input/output, queue and preparation budgets, cancellation, stale-result rejection and explicit diagnostics are delivered. Generation stages data before applying answers/rows; configured validating actions wait for current checks. See the tools guide for exact limits. Groups/alternatives and arbitrary pattern synthesis remain outside Studio synthesis; additional reviewed finite syntax can be a later extension.
 
-## Finally: bounded batches
+## Fourth milestone: bounded browser batches delivered
 
-Add a session-only 1-500-record API with chunking, progress, cancellation, bounded memory/time and observed duplicate/diversity reporting. Bulk UI and download formats are separate work. Benchmark representative browsers/devices before declaring performance acceptance.
+The [session-only browser API](TEST_DATA_BATCH_API.md) now requests 1-500 records with chunked progress, per-record yielding, cancellation, snapshot ownership, control/choice/output/time budgets and observed duplicate/diversity statistics. Detached native controls reuse preview candidate validation without touching visible answers or storage. Partial runs keep complete records and report cancellation or a budget reason. Bulk UI and download formats remain separate work. Local Chromium smoke timing does not replace representative browser/device benchmarks.
 
 ## Separate model extensions
 

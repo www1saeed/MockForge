@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 149 passing automated tests: 112 unit/component tests and 37 end-to-end tests.** Verified on October 25, 2026, with **97.91% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 163 passing automated tests: 123 unit/component tests and 40 end-to-end tests.** Verified on October 25, 2026, with **97.97% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -154,7 +154,7 @@ Table groups offer **Table fields without gaps** for a continuous grid. This boo
 
 ### Preview boundary scenarios
 
-Test valid, empty and deliberately invalid responses, exact text limits, one character below/above and required-empty cases. Choose existing/minimum/maximum group rows; shrinking requires explicit replacement. Per-field results compare expected and observed candidate validity and explain skipped cases. Answers and reports stay local and transient. Numeric/date bounds and batch generation remain outside this milestone. See [authoring tools](docs/AUTHORING_TOOLS.md) and the [generator roadmap](docs/TEST_DATA_GENERATOR_PLAN.md).
+Test valid, empty and deliberately invalid responses, exact text limits, one character below/above and required-empty cases. Choose existing/minimum/maximum group rows; shrinking requires explicit replacement. Per-field results compare expected and observed candidate validity and explain skipped cases. Answers and reports stay local and transient. A separate developer-only browser batch API generates 1-500 records with progress, cancellation and observed diversity. Numeric/date bounds and bulk UI/export remain separate work. See the [batch API guide](docs/TEST_DATA_BATCH_API.md). See [authoring tools](docs/AUTHORING_TOOLS.md) and the [generator roadmap](docs/TEST_DATA_GENERATOR_PLAN.md).
 
 ### Coherent preview records
 

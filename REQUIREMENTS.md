@@ -80,7 +80,7 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Workspace navigation uses the current project name with a localized fallback; the header also exposes the active localized form title. Renaming, replacement, reload and UI-language changes refresh identity without losing the current route.
 
 - The in-app guide explains clipboard, test-data settings and dynamic project context in all three UI languages. README, workshop, demo and contributor instructions must reflect these features.
-- Feature comparisons must report differences rather than claim parity from shared names. The original edition's extra profiles, richer synthesis/batch engines and wizard flow are not fully implemented in Studio; see docs/FEATURE_COMPARISON.md.
+- Feature comparisons must report differences rather than claim parity from shared names. The original edition's extra profiles, richer synthesis and wizard flow are not fully implemented in Studio; see docs/FEATURE_COMPARISON.md.
 
 ## Text-editor and AI authoring help
 
@@ -104,3 +104,10 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Enforce 500-unit worker patterns, 512-unit inputs, a 750 ms check deadline, one active/32 queued checks, and at most 16 nonempty deferred checks within a 2.5 s generation budget. Expose timeout/budget/unavailable/error outcomes; unverified values cannot submit successfully.
 - Stage candidates without writing responses or resizing rows. Cancellation or changes to responses, rows, settings, project/language or preview lifetime invalidate pending generation. Configured validation waits for current checks and cannot apply stale success. Reset clears response validity and aborts obsolete work. Preserve existing answers and unchanged specification/review/export semantics.
 - Validate that native controls represent candidates unchanged; restore unsuitable values and report the reason. Worker/synthesis limits remain visible product boundaries.
+
+## Developer batch generation
+
+- Provide a browser-only, session-only API requesting 1-500 records with explicit locale/seed/date/scenario, configured minimum/maximum group rows and chunked progress.
+- Reuse native preview candidate validation in detached controls, without modifying the live project, responses, storage or review. Keep skipped answers explicit and omit their values.
+- Bound setup controls/choices, serialized snapshot/output, worker checks and cooperative generation time. Support cancellation and retain only complete accepted records on partial runs.
+- Report observed duplicate records and per-response diversity without asserting unique people or exhaustive coverage. Bulk UI, download formats and representative device benchmarks are separate work. See docs/TEST_DATA_BATCH_API.md.
