@@ -5,11 +5,11 @@ import { PatternCheckService } from './pattern-check.service';
 import {
   DataBoundary,
   DataScenario,
-  patternDataKey,
   PreparedPattern,
   scenarioCandidate,
   testDataCandidate,
 } from './preview-test-data';
+import { patternDataKey, previewResponseScope } from './preview-response';
 
 export interface PatternFillRequest {
   locale: Locale;
@@ -38,7 +38,7 @@ export async function preparePatternData(
       if (!supportsPattern(field) || !field.pattern || isBoundedPattern(field.pattern)) continue;
       for (let index = 0; index < count; index++) {
         if (signal.aborted) return result;
-        const scope = root.group ? `preview-${root.id}:${index + 1}` : 'root';
+        const scope = previewResponseScope(root.group ? root.id : undefined, index + 1);
         const key = patternDataKey(field.id, scope);
         if (skipped.has(key)) continue;
         const record = createDataRecord(request.locale, request.seed, scope, request.referenceDate);

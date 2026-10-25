@@ -22,7 +22,6 @@ import {
   FillReport,
   fillTestData,
   ResponseControl,
-  patternDataKey,
   PreparedPattern,
 } from './preview-test-data';
 import { responseLengthViolation } from './response-constraints';
@@ -48,8 +47,10 @@ import { PreviewFieldComponent } from './preview-field.component';
 import { RepeatGroupComponent } from './repeat-group.component';
 import { CopyKey, translate } from './translations';
 import { PatternCheckService, PatternResult } from './pattern-check.service';
-import { isBoundedPattern } from './preview-pattern';
+import { boundedPatternMatches, isBoundedPattern } from './preview-pattern';
 import { preparePatternData } from './preview-pattern-data';
+import { controlResponseScope, patternDataKey } from './preview-response';
+import { DATA_REASON_MESSAGES, patternFailureReason } from './preview-data-feedback';
 
 /** All actions are local; none of these messages represents a backend response. */
 const ACTION_MESSAGES: Record<Exclude<ButtonAction, 'none'>, CopyKey> = {
@@ -179,21 +180,23 @@ export class FormPreviewComponent implements OnDestroy {
     if (!this.referenceDateValid()) return;
     this.cancelGeneration();
     this.generationNotice.set(null);
-    const rows = new Map<string, number>();
-    for (const group of this.groups()) {
+    const plans = this.groups().map((group): { group: RepeatGroupComponent; count: number } => {
       const bounds = group.field().group!;
       const mode = this.dataGroupRows();
-      const target =
+      const count =
         mode === 'minimum'
           ? bounds.minItems
           : mode === 'maximum'
             ? bounds.maxItems
             : Math.max(1, group.rows().length);
-      rows.set(
+      return { group, count };
+    });
+    const rows = new Map(
+      plans.map(({ group, count }): [string, number] => [
         group.field().id,
-        target < group.rows().length && !this.replaceResponses() ? group.rows().length : target,
-      );
-    }
+        count < group.rows().length && !this.replaceResponses() ? group.rows().length : count,
+      ]),
+    );
     let prepared = new Map<string, PreparedPattern>();
     const deferred = allFields(this.project().fields).some(
       (field): boolean =>
@@ -211,9 +214,7 @@ export class FormPreviewComponent implements OnDestroy {
           for (const control of form.querySelectorAll<ResponseControl>(
             `[data-field-id="${field.id}"]`,
           )) {
-            const scope = control.name.includes(':')
-              ? `${control.name.split(':')[0]}:${++index}`
-              : 'root';
+            const scope = controlResponseScope(control.name, ++index);
             if (control.value) skipped.add(patternDataKey(field.id, scope));
           }
         }
@@ -252,16 +253,9 @@ export class FormPreviewComponent implements OnDestroy {
       this.generating.set(false);
     }
     const groupDiagnostics: DataDiagnostic[] = [];
-    for (const group of this.groups()) {
+    for (const { group, count } of plans) {
       const mode = this.dataGroupRows();
       const definition = group.field();
-      const bounds = definition.group!;
-      const count =
-        mode === 'minimum'
-          ? bounds.minItems
-          : mode === 'maximum'
-            ? bounds.maxItems
-            : Math.max(1, group.rows().length);
       const applied = group.resizeForTestData(count, this.replaceResponses());
       if (mode !== 'existing')
         groupDiagnostics.push({
@@ -323,20 +317,7 @@ export class FormPreviewComponent implements OnDestroy {
   }
 
   diagnosticReason(reason: DataReason): string {
-    const keys: Record<DataReason, CopyKey> = {
-      applied: 'dataApplied',
-      preserved: 'dataPreserved',
-      unsupported: 'dataUnsupported',
-      unavailable: 'dataUnavailable',
-      mismatch: 'dataMismatch',
-      protected: 'dataProtected',
-      timeout: 'dataPatternTimeout',
-      budget: 'dataPatternBudget',
-      workerUnavailable: 'dataWorkerUnavailable',
-      workerError: 'dataWorkerError',
-      representation: 'dataRepresentation',
-    };
-    return this.t(keys[reason]);
+    return this.t(DATA_REASON_MESSAGES[reason]);
   }
 
   diagnosticRule(rule: DataRule): string {
@@ -420,10 +401,13 @@ export class FormPreviewComponent implements OnDestroy {
       this.uiLocale();
       this.simulated.set(false);
       this.dataReport.set(null);
-      for (const request of this.pendingChecks.values()) request.controller.abort();
       const fields = new Map(
         allFields(this.project().fields).map((field): [string, Field] => [field.id, field]),
       );
+      for (const [control, request] of this.pendingChecks) {
+        if (!fields.has(control.dataset['fieldId']!) || !this.host.nativeElement.contains(control))
+          request.controller.abort();
+      }
       for (const control of this.host.nativeElement.querySelectorAll<
         HTMLInputElement | HTMLTextAreaElement
       >('input[data-field-id], textarea[data-field-id]')) {
@@ -463,20 +447,26 @@ export class FormPreviewComponent implements OnDestroy {
       this.afterValidation(button, form);
       return;
     }
-    const tasks: Promise<void>[] = [];
+    const interaction = this.interaction,
+      signature = this.signature(),
+      project = this.project();
+    let task: Promise<void> | void = undefined;
     for (const field of allFields(this.project().fields).filter(supportsPattern)) {
       const controls = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
         `[data-field-id="${field.id}"]`,
       );
       for (const control of Array.from(controls)) {
-        const task = this.applyPatternValidity(control, field);
-        if (task) tasks.push(task);
+        // Keep service backpressure: a large table must not enqueue every response at once.
+        if (task)
+          task = task.then((): Promise<void> | void => {
+            if (interaction === this.interaction && project === this.project())
+              return this.applyPatternValidity(control, field);
+          });
+        else task = this.applyPatternValidity(control, field);
       }
     }
-    if (tasks.length) {
-      const interaction = this.interaction,
-        signature = this.signature();
-      void Promise.all(tasks).then((): void => {
+    if (task) {
+      void task.then((): void => {
         if (interaction === this.interaction && signature === this.signature())
           this.afterValidation(button, form);
       });
@@ -542,9 +532,16 @@ export class FormPreviewComponent implements OnDestroy {
     field: Field,
   ): Promise<void> | void {
     const pending = this.pendingChecks.get(control);
-    if (pending && (pending.value !== control.value || pending.pattern !== field.pattern))
-      pending.controller.abort();
     const length = responseLengthViolation(field, control.value);
+    if (
+      pending &&
+      (pending.value !== control.value ||
+        pending.pattern !== field.pattern ||
+        !supportsPattern(field) ||
+        !control.value ||
+        length)
+    )
+      pending.controller.abort();
     if (length) {
       control.setCustomValidity(
         `${this.formCopy(length === 'minimum' ? 'minLength' : 'maxLength')}: ${length === 'minimum' ? field.minLength : field.maxLength}`,
@@ -572,8 +569,10 @@ export class FormPreviewComponent implements OnDestroy {
         !pending.controller.signal.aborted &&
         pending.value === control.value &&
         pending.pattern === field.pattern
-      )
+      ) {
+        control.setCustomValidity(this.formCopy('dataPatternChecking'));
         return pending.promise;
+      }
       const controller = new AbortController(),
         value = control.value,
         pattern = field.pattern;
@@ -587,17 +586,20 @@ export class FormPreviewComponent implements OnDestroy {
           if (this.pendingChecks.get(control) !== request) return;
           this.pendingChecks.delete(control);
           this.checkingPatterns.set(this.pendingChecks.size);
+          const currentField = allFields(this.project().fields).find(
+            (entry): boolean => entry.id === field.id && entry.pattern === pattern,
+          );
           if (
             controller.signal.aborted ||
             control.value !== value ||
             !this.host.nativeElement.contains(control) ||
-            !allFields(this.project().fields).some(
-              (entry): boolean => entry.id === field.id && entry.pattern === pattern,
-            )
+            !currentField
           )
             return;
           this.verdicts.set(control, { pattern, value, result });
-          this.patternVerdict(control, field, result);
+          // Copy, locale and length rules may have changed while this same check was running.
+          if (result.status === 'checked') this.applyPatternValidity(control, currentField);
+          else this.patternVerdict(control, currentField, result);
         });
       return request.promise;
     }
@@ -605,29 +607,18 @@ export class FormPreviewComponent implements OnDestroy {
       !supportsPattern(field) ||
       !field.pattern ||
       !control.value ||
-      new RegExp(`^(?:${field.pattern})$`, 'v').test(control.value);
+      boundedPatternMatches(field.pattern, control.value);
     control.setCustomValidity(
       matches ? '' : this.text(field.patternMessage) || this.formCopy('patternMismatch'),
     );
   }
 
   private patternVerdict(control: ResponseControl, field: Field, result: PatternResult): void {
-    const message =
-      result.status === 'checked'
-        ? result.matches
-          ? ''
-          : this.text(field.patternMessage) || this.formCopy('patternMismatch')
-        : this.formCopy(
-            result.status === 'timeout'
-              ? 'dataPatternTimeout'
-              : result.status === 'budget'
-                ? 'dataPatternBudget'
-                : result.status === 'unavailable'
-                  ? 'dataWorkerUnavailable'
-                  : result.status === 'cancelled'
-                    ? 'dataCancelled'
-                    : 'dataWorkerError',
-          );
-    control.setCustomValidity(message);
+    if (result.status === 'checked') {
+      control.setCustomValidity(
+        result.matches ? '' : this.text(field.patternMessage) || this.formCopy('patternMismatch'),
+      );
+    } else
+      control.setCustomValidity(this.formCopy(DATA_REASON_MESSAGES[patternFailureReason(result)]));
   }
 }

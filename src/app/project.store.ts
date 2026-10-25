@@ -1,5 +1,13 @@
 import { Injectable, signal } from '@angular/core';
-import { allFields, Field, example, parseProject, Project, STORAGE_KEY } from './project';
+import {
+  allFields,
+  allocateFieldId,
+  Field,
+  example,
+  parseProject,
+  Project,
+  STORAGE_KEY,
+} from './project';
 
 /**
  * Owns the single working specification and its local persistence boundary.
@@ -45,10 +53,7 @@ export class ProjectStore {
     if (clip.mode === 'copy') {
       const ids = new Set(allFields(project.fields).map((item): string => item.id));
       for (const item of allFields([pasted])) {
-        let suffix = 1;
-        while (ids.has(`field-${suffix}`)) suffix++;
-        item.id = `field-${suffix}`;
-        ids.add(item.id);
+        item.id = allocateFieldId(ids);
       }
     }
     let fields = project.fields;

@@ -2,6 +2,8 @@ import { Field, Locale } from './project.model';
 import { responseLengthViolation } from './response-constraints';
 import { boundedPatternCandidate } from './preview-pattern';
 import type { PatternResult } from './pattern-check.service';
+import { controlResponseScope, patternDataKey } from './preview-response';
+import { patternFailureReason } from './preview-data-feedback';
 import {
   createDataRecord,
   DataMeaningMatch,
@@ -26,7 +28,8 @@ export type DataReason =
   | 'budget'
   | 'workerUnavailable'
   | 'workerError'
-  | 'representation';
+  | 'representation'
+  | 'cancelled';
 export interface DataDiagnostic {
   fieldId: string;
   response: string;
@@ -79,9 +82,6 @@ export interface PreparedPattern {
 export interface PatternData {
   entries: ReadonlyMap<string, PreparedPattern>;
   apply: (control: ResponseControl, field: Field, result: PatternResult) => void;
-}
-export function patternDataKey(id: string, scope: string): string {
-  return `${id}|${scope}`;
 }
 
 /** Bound construction before allocation, including imported 10,000-unit length limits. */
@@ -161,9 +161,7 @@ export function fillTestData(
     for (const group of groups.values()) {
       const control = group[0];
       // Physical row positions reproduce the same request after reset/reload; DOM ids stay private.
-      const scope = control.name.includes(':')
-        ? `${control.name.split(':')[0]}:${instance + 1}`
-        : 'root';
+      const scope = controlResponseScope(control.name, instance + 1);
       if (!records.has(scope))
         records.set(scope, createDataRecord(locale, seed, scope, referenceDate));
       const record = records.get(scope)!;
@@ -204,17 +202,8 @@ export function fillTestData(
           // Candidate verdict is installed before renderer events; deferred patterns have no native attribute.
         } else {
           report.skipped++;
-          const status = prepared?.result.status;
           diagnostic.reason =
-            prepared?.candidate === null
-              ? 'unavailable'
-              : status === 'timeout' || status === 'budget'
-                ? status
-                : status === 'unavailable'
-                  ? 'workerUnavailable'
-                  : status === 'error'
-                    ? 'workerError'
-                    : 'unsupported';
+            prepared?.candidate === null ? 'unavailable' : patternFailureReason(prepared?.result);
           diagnostic.rule = 'pattern';
           continue;
         }

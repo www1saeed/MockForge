@@ -7,6 +7,7 @@ interface PatternPlan {
   atoms: PatternAtom[];
   min: number;
   max: number;
+  matcher: RegExp;
 }
 const DIGITS = '0123456789';
 const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
@@ -74,7 +75,12 @@ function parsePattern(pattern: string): PatternPlan | null {
   }
   const min = atoms.reduce((sum, atom): number => sum + atom.min, 0);
   const max = atoms.reduce((sum, atom): number => sum + atom.max, 0);
-  return atoms.length && max <= 512 ? { atoms, min, max } : null;
+  if (!atoms.length || max > 512) return null;
+  try {
+    return { atoms, min, max, matcher: new RegExp(`^(?:${pattern})$`, 'v') };
+  } catch {
+    return null;
+  }
 }
 
 function plan(pattern: string): PatternPlan | null {
@@ -87,6 +93,11 @@ function plan(pattern: string): PatternPlan | null {
 
 export function isBoundedPattern(pattern: string): boolean {
   return plan(pattern) !== null;
+}
+
+/** Reuse the admitted plan's matcher; no arbitrary expression is ever compiled here. */
+export function boundedPatternMatches(pattern: string, value: string): boolean | null {
+  return plan(pattern)?.matcher.test(value) ?? null;
 }
 
 /** At most one variable atom makes both construction and native matching predictably bounded. */

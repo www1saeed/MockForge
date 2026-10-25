@@ -75,6 +75,78 @@ test('a catastrophic manual pattern times out in a real worker while the UI stay
   await expect(page.locator('.simulation-result')).toBeVisible();
 });
 
+test('first Submit validates all 36 deferred table responses without queue rejection', async ({
+  page,
+}): Promise<void> => {
+  const group = createField('group', 'people');
+  group.group = {
+    layout: 'table',
+    minItems: 12,
+    maxItems: 12,
+    fields: ['one', 'two', 'three'].map((id) => ({
+      ...createField('text', id),
+      required: true,
+      pattern: '(ok|yes)',
+    })),
+  };
+  const before = await open(page, [group]);
+  const controls = page.locator('app-form-preview input[data-field-id]');
+  await expect(controls).toHaveCount(36);
+  // Native values are valid but uncached: the first action must schedule the whole table.
+  await controls.evaluateAll((elements) =>
+    elements.forEach((element) => {
+      (element as HTMLInputElement).value = 'ok';
+    }),
+  );
+  await page.locator('.preview-buttons button').first().click();
+  await expect(page.locator('.simulation-result')).toBeVisible({ timeout: 15000 });
+  expect(
+    await controls.evaluateAll((elements) =>
+      elements.every((element) => (element as HTMLInputElement).checkValidity()),
+    ),
+  ).toBe(true);
+  expect(await page.evaluate(() => localStorage.getItem('mockforge-studio-v1'))).toBe(before);
+});
+
+test('editing label copy keeps an active worker alive and uses the updated error text', async ({
+  page,
+}): Promise<void> => {
+  let started = 0;
+  await page.exposeFunction('workerStarted', () => {
+    started++;
+  });
+  await page.addInitScript(() => {
+    const NativeWorker = window.Worker;
+    window.Worker = class extends NativeWorker {
+      constructor(url: string | URL, options?: WorkerOptions) {
+        super(url, options);
+        void (window as unknown as { workerStarted: () => Promise<void> }).workerStarted();
+      }
+    };
+  });
+  await page.route('**/assets/preview-pattern.worker.js', async (route): Promise<void> => {
+    await route.fulfill({
+      contentType: 'application/javascript',
+      body: 'self.addEventListener("message", () => setTimeout(() => self.postMessage({ status: "checked", matches: false }), 500));',
+    });
+  });
+  await open(page, [
+    {
+      ...createField('text', 'name'),
+      pattern: '(ok|yes)',
+      patternMessage: text('Old error', 'Old error'),
+    },
+  ]);
+  await page.locator('.workflow button').nth(3).click();
+  await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
+  const control = page.locator('#preview-name');
+  await control.fill('bad');
+  await page.locator('#field-label-de').pressSequentially(' Updated', { delay: 20 });
+  await page.locator('#field-pattern-message-de').fill('Latest error');
+  await expect(control).toHaveJSProperty('validationMessage', 'Latest error');
+  expect(started).toBe(1);
+});
+
 test('cancel and edit discard pending generation without partial answers and report worker failure accessibly', async ({
   page,
 }): Promise<void> => {

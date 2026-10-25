@@ -1,7 +1,7 @@
 import { allFields, Field, Locale, LOCALES, Project, supportsPattern } from './project.model';
 import { validateProject } from './project.validation';
 import { DEFAULT_REFERENCE_DATE, isReferenceDate, normalizeDataSeed } from './preview-data-record';
-import { isBoundedPattern } from './preview-pattern';
+import { boundedPatternMatches } from './preview-pattern';
 import { preparePatternData } from './preview-pattern-data';
 import type { PatternCheckService } from './pattern-check.service';
 import {
@@ -71,12 +71,13 @@ export async function generateTestDataBatch(
     throw new RangeError('Batch project is too large');
   const snapshot: Project = JSON.parse(serialized);
   const settings = {
-    referenceDate: DEFAULT_REFERENCE_DATE,
-    scenario: 'valid' as DataScenario,
-    boundary: 'minimum' as DataBoundary,
-    rows: 'minimum' as const,
-    chunkSize: 10,
     ...request,
+    referenceDate:
+      request.referenceDate === undefined ? DEFAULT_REFERENCE_DATE : request.referenceDate,
+    scenario: request.scenario === undefined ? ('valid' as const) : request.scenario,
+    boundary: request.boundary === undefined ? ('minimum' as const) : request.boundary,
+    rows: request.rows === undefined ? ('minimum' as const) : request.rows,
+    chunkSize: request.chunkSize === undefined ? 10 : request.chunkSize,
   };
   if (
     !validateProject(snapshot) ||
@@ -277,12 +278,11 @@ function batchForm(fields: readonly Field[], rows: ReadonlyMap<string, number>):
           control.addEventListener('input', () => {
             const length = responseLengthViolation(field, control.value);
             if (length) control.setCustomValidity(length);
-            else if (supportsPattern(field) && isBoundedPattern(field.pattern))
-              control.setCustomValidity(
-                control.value && !new RegExp(`^(?:${field.pattern})$`, 'v').test(control.value)
-                  ? 'Pattern mismatch'
-                  : '',
-              );
+            else if (supportsPattern(field)) {
+              const matches = boundedPatternMatches(field.pattern, control.value);
+              if (matches !== null)
+                control.setCustomValidity(control.value && !matches ? 'Pattern mismatch' : '');
+            }
           });
           form.append(control);
         }
@@ -292,9 +292,11 @@ function batchForm(fields: readonly Field[], rows: ReadonlyMap<string, number>):
 }
 
 function readResponse(control: Element | RadioNodeList | null): string | boolean {
-  return control instanceof HTMLInputElement && control.type === 'checkbox'
-    ? control.checked
-    : ((control as ResponseControl | RadioNodeList | null)?.value ?? '');
+  if (control instanceof HTMLInputElement) {
+    if (control.type === 'checkbox') return control.checked;
+    if (control.type === 'radio') return control.checked ? control.value : '';
+  }
+  return (control as ResponseControl | RadioNodeList | null)?.value ?? '';
 }
 
 function batchValues(

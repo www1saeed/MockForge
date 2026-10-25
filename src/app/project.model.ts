@@ -111,6 +111,15 @@ export const LEAF_FIELD_TYPES = FIELD_TYPES.filter(
 export function allFields(fields: readonly Field[]): Field[] {
   return fields.flatMap((field): Field[] => [field, ...(field.group?.fields ?? [])]);
 }
+
+/** Reserve the first free ID across root/child definitions and any earlier allocations. */
+export function allocateFieldId(ids: Set<string>): string {
+  let suffix = 1;
+  while (ids.has(`field-${suffix}`)) suffix++;
+  const id = `field-${suffix}`;
+  ids.add(id);
+  return id;
+}
 export const THEMES: readonly Theme[] = ['bootstrap', 'material', 'carbon', 'fluent'];
 export const STORAGE_KEY = 'mockforge-studio-v1';
 export const text = (de: string, en: string, fa = ''): Text => ({ de, en, fa });

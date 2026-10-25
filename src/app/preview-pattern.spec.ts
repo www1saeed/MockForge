@@ -1,7 +1,11 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
-import { boundedPatternCandidate, isBoundedPattern } from './preview-pattern';
+import {
+  boundedPatternCandidate,
+  boundedPatternMatches,
+  isBoundedPattern,
+} from './preview-pattern';
 import { PatternCheckService, PATTERN_WORKER_FACTORY } from './pattern-check.service';
 import { FormPreviewComponent } from './form-preview.component';
 import { createField, text } from './project.model';
@@ -87,6 +91,14 @@ describe('Bounded patterns and isolated checks', (): void => {
     }
     for (let index = 0; index < 110; index++) expect(isBoundedPattern(`CODE${index}`)).toBe(true);
     expect(isBoundedPattern('[A-Z]{3}')).toBe(true);
+  });
+
+  it('reuses compiled admitted matchers and never compiles deferred expressions', (): void => {
+    const compile = jest.spyOn(globalThis, 'RegExp');
+    expect(boundedPatternMatches('CACHE-[A-Z]{3}', 'CACHE-ABC')).toBe(true);
+    expect(boundedPatternMatches('CACHE-[A-Z]{3}', 'CACHE-ab')).toBe(false);
+    expect(boundedPatternMatches('(a+)+$', 'a!')).toBeNull();
+    expect(compile).toHaveBeenCalledTimes(1);
   });
 
   it('checks the actual worker protocol, full-value matches and malformed/bounded messages', (): void => {
@@ -252,6 +264,7 @@ describe('Bounded patterns and isolated checks', (): void => {
   });
 
   function preview(grouped = false): {
+    fixture: ComponentFixture<FormPreviewComponent>;
     component: FormPreviewComponent;
     form: HTMLFormElement;
     workers: WorkerDouble[];
@@ -274,12 +287,102 @@ describe('Bounded patterns and isolated checks', (): void => {
     });
     fixture.detectChanges();
     return {
+      fixture,
       component: fixture.componentInstance,
       form: fixture.nativeElement.querySelector('form'),
       control: fixture.nativeElement.querySelector('input[data-field-id]'),
       workers,
     };
   }
+
+  it('submits 36 valid deferred table responses on the first attempt without overflowing the queue', async (): Promise<void> => {
+    const { workers } = serviceSetup();
+    const fixture = TestBed.createComponent(FormPreviewComponent);
+    const group = createField('group', 'table');
+    group.group = {
+      layout: 'table',
+      minItems: 12,
+      maxItems: 12,
+      fields: ['one', 'two', 'three'].map((id) => ({
+        ...createField('text', id),
+        required: true,
+        pattern: '(ok|yes)',
+      })),
+    };
+    fixture.componentRef.setInput('project', { ...example('saas'), fields: [group] });
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const form: HTMLFormElement = fixture.nativeElement.querySelector('form');
+    form.querySelectorAll('input').forEach((control) => {
+      control.value = 'ok';
+    });
+    component.runButton(component.project().buttons[0], form);
+    expect(workers).toHaveLength(1);
+    for (let index = 0; index < 36; index++) {
+      expect(workers[index].postMessage).toHaveBeenCalledWith({ pattern: '(ok|yes)', value: 'ok' });
+      workers[index].reply({ status: 'checked', matches: true });
+      await settle();
+    }
+    expect(workers).toHaveLength(36);
+    expect(form.checkValidity()).toBe(true);
+    expect(component.simulated()).toBe(true);
+  });
+
+  it('keeps pending checks across copy edits and applies the latest localized error message', async (): Promise<void> => {
+    const { fixture, component, control, workers } = preview();
+    control.value = 'Other';
+    component.validatePattern(
+      { target: control } as unknown as Event,
+      component.project().fields[0],
+    );
+    for (const name of ['A', 'Ab', 'Abc']) {
+      const project = component.project();
+      fixture.componentRef.setInput('project', {
+        ...project,
+        name,
+        fields: [
+          {
+            ...project.fields[0],
+            label: text(name, name),
+            patternMessage: text('Aktuell', 'Latest error'),
+          },
+        ],
+      });
+      fixture.detectChanges();
+      expect(workers).toHaveLength(1);
+      expect(workers[0].terminate).not.toHaveBeenCalled();
+    }
+    fixture.componentRef.setInput('uiLocale', 'en');
+    fixture.componentRef.setInput('locale', 'en');
+    fixture.detectChanges();
+    expect(workers).toHaveLength(1);
+    expect(control.validationMessage).toBe('Checking responses …');
+    workers[0].reply({ status: 'checked', matches: false });
+    await settle();
+    expect(control.validationMessage).toBe('Latest error');
+    expect(component.checkingPatterns()).toBe(0);
+  });
+
+  it('cancels obsolete rule checks, retains length errors and blocks stale submit completion', async (): Promise<void> => {
+    const { fixture, component, form, control, workers } = preview();
+    control.value = 'Jonas Muster';
+    component.runButton(component.project().buttons[0], form);
+    const project = component.project();
+    fixture.componentRef.setInput('project', {
+      ...project,
+      fields: [{ ...project.fields[0], minLength: 20 }],
+    });
+    fixture.detectChanges();
+    expect(workers[0].terminate).toHaveBeenCalled();
+    workers[0].reply({ status: 'checked', matches: true });
+    await settle();
+    expect(control.checkValidity()).toBe(false);
+    expect(control.validationMessage).toContain('20');
+    expect(component.simulated()).toBe(false);
+    fixture.componentRef.setInput('project', { ...project, fields: [] });
+    fixture.detectChanges();
+    expect(component.checkingPatterns()).toBe(0);
+  });
 
   it('stages deferred fixture data atomically and installs a verified verdict before renderer events', async (): Promise<void> => {
     const { component, form, control, workers } = preview();

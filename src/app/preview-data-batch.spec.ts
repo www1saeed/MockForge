@@ -7,6 +7,59 @@ describe('Bounded browser batch API', () => {
   const request: BatchRequest = { count: 3, locale: 'en', seed: 7 };
   const project = (fields: Field[]): Project => ({ ...example('saas'), fields });
 
+  it('uses defaults for explicitly undefined optional settings and still rejects nulls', async () => {
+    const source = project([createField('email', 'email')]);
+    const baseline = await generateTestDataBatch(source, request);
+    expect(
+      await generateTestDataBatch(source, {
+        ...request,
+        referenceDate: undefined,
+        scenario: undefined,
+        boundary: undefined,
+        rows: undefined,
+        chunkSize: undefined,
+      }),
+    ).toEqual(baseline);
+    for (const key of ['referenceDate', 'scenario', 'boundary', 'rows', 'chunkSize'])
+      await expect(
+        generateTestDataBatch(source, { ...request, [key]: null } as BatchRequest),
+      ).rejects.toThrow(RangeError);
+  });
+
+  it('reads checked state for single-option radios in records and observed statistics', async () => {
+    for (const options of [1, 2])
+      for (const required of [false, true]) {
+        const field = {
+          ...createField('radio', 'choice'),
+          required,
+          options: Array.from({ length: options }, () => text('Choice', 'Choice')),
+        };
+        for (const scenario of ['valid', 'empty', 'invalid'] as const) {
+          const batch = await generateTestDataBatch(project([field]), {
+            ...request,
+            count: 2,
+            scenario,
+          });
+          const applied = scenario !== 'invalid' || required;
+          expect(batch.records.map((item) => item.values['choice'])).toEqual(
+            !applied
+              ? [undefined, undefined]
+              : scenario === 'valid'
+                ? [String(7 % options), String(8 % options)]
+                : ['', ''],
+          );
+          expect(batch.statistics.responses['preview-choice']).toEqual(
+            applied
+              ? {
+                  observed: 2,
+                  distinct: scenario === 'valid' ? options : 1,
+                }
+              : undefined,
+          );
+        }
+      }
+  });
+
   it('reproduces coherent records and snapshots live configuration before yielding', async () => {
     const source = project([
       { ...createField('text', 'name'), label: text('Vollständiger Name', 'Full name') },

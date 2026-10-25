@@ -30,6 +30,7 @@ import {
   validPattern,
   supportsPattern,
   allFields,
+  allocateFieldId,
   LEAF_FIELD_TYPES,
   RepeatGroup,
   ExampleKind,
@@ -612,9 +613,7 @@ export class AppComponent implements OnInit {
       ...allFields(this.project().fields).map((field): string => field.id),
       ...reserved,
     ]);
-    let suffix = 1;
-    while (ids.has(`field-${suffix}`)) suffix++;
-    return `field-${suffix}`;
+    return allocateFieldId(ids);
   }
 
   /** A deleted id may be reused; its transient RegEx draft must not attach to a new field. */

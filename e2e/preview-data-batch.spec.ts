@@ -37,6 +37,42 @@ async function open(page: Page): Promise<void> {
   await page.addScriptTag({ content: bundle });
 }
 
+test('explicit undefined defaults and unselected one-option radios match real browser state', async ({
+  page,
+}): Promise<void> => {
+  await open(page);
+  const result = await page.evaluate(async () => {
+    const { generateTestDataBatch, createField, example } = window.batch;
+    const radio = createField('radio', 'single');
+    radio.options = radio.options.slice(0, 1);
+    const source = { ...example('saas'), fields: [radio] };
+    const defaults = { count: 1, locale: 'en' as const, seed: 7 };
+    const baseline = await generateTestDataBatch(source, defaults);
+    const explicit = await generateTestDataBatch(source, {
+      ...defaults,
+      referenceDate: undefined,
+      scenario: undefined,
+      boundary: undefined,
+      rows: undefined,
+      chunkSize: undefined,
+    });
+    const empty = await generateTestDataBatch(source, { ...defaults, count: 2, scenario: 'empty' });
+    const required = await generateTestDataBatch(
+      { ...source, fields: [{ ...radio, required: true }] },
+      { ...defaults, scenario: 'invalid' },
+    );
+    return { same: JSON.stringify(baseline) === JSON.stringify(explicit), empty, required };
+  });
+  expect(result.same).toBe(true);
+  expect(result.empty.records.map((record) => record.values['single'])).toEqual(['', '']);
+  expect(result.empty.statistics.responses['preview-single']).toEqual({ observed: 2, distinct: 1 });
+  expect(result.required.records[0].values['single']).toBe('');
+  expect(result.required.records[0].diagnostics[0]).toMatchObject({
+    outcome: 'filled',
+    actualValid: false,
+  });
+});
+
 test('batch records pass real native type/group/pattern checks without changing the workspace', async ({
   page,
 }): Promise<void> => {
