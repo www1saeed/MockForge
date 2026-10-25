@@ -68,3 +68,7 @@ All worker code is served locally from `assets/preview-pattern.worker.js`, resol
 ## Developer batch API
 
 The separate [browser batch API](TEST_DATA_BATCH_API.md) generates 1-500 session-only records with progress, cancellation and observed duplicate/diversity statistics. It reuses candidate validation in a detached native form and never changes visible preview answers. Minimum/maximum group rows, DE/EN/FA, seed/date and existing scenarios are supported, subject to setup, output and time budgets. Skipped values are omitted and partial runs remain explicit. This API does not add a bulk-list screen, export button or persisted data. See the linked guide for integration, representations, exact limits and partial-result handling.
+
+## Validation during editing
+
+Configured validating actions request deferred checks sequentially, so a large repeat table does not overflow the unchanged 32-waiting-job queue merely because Submit was clicked. Already pending checks are reused. Label/help/error-message and locale edits retain a check while its control, answer and pattern remain current; completion uses the latest messages and rules. Changed answers/patterns, newly violated length rules, removed controls, reset and disposal cancel obsolete checks. Edits still invalidate an in-progress submission/generation snapshot. The finite-pattern cache also reuses compiled matchers, with the existing 100-entry cap.

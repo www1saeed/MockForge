@@ -27,9 +27,9 @@ Historical baseline: inspected/tested on October 21, 2026, against original Mock
 
 ## Executed evidence
 
-Studio (updated October 25, 2026): **123 unit/component tests across 14 suites**, **40 Chromium end-to-end tests**, **381 DE/EN/FA catalog entries** and **97.97% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 833.72 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
+Studio (updated October 25, 2026): **129 unit/component tests across 14 suites**, **43 Chromium end-to-end tests**, **381 DE/EN/FA catalog entries** and **98.22% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 833.98 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
 
-Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 163 tests.
+Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 172 tests.
 
 The comparison found one actionable shared-behavior gap: Studio initially treated every unchecked checkbox as empty. Studio now records user answer edits separately from generated events and preserves an intentional unchecked answer unless replacement is requested. A regression test protects this behavior.
 
@@ -101,3 +101,7 @@ Reproduce the current batch comparison from the original repository root:
 ```sh
 node node_modules/jest/bin/jest.js --selectProjects renderer --runInBand --coverage=false --cacheDirectory C:/git/mockforge-studio/reports/reference-jest-cache --testPathPatterns="test-data-batch.spec|preview-test-data-batch.spec|test-data-batch.performance.spec"
 ```
+
+## PR review corrections - October 25, 2026
+
+Studio now sequences deferred Submit checks under the existing queue limit, preserves current manual checks across copy edits and reads current rules/messages on completion. Single-option batch radios preserve empty checked state, and explicit undefined optional settings use defaults. Shared row/ID/scope/reason helpers and cached bounded matchers address the five cleanup findings. Studio regression tests exercise these cases; the earlier original-edition comparison evidence remains unchanged and does not establish full parity.
