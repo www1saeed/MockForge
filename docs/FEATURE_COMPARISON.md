@@ -27,9 +27,9 @@ Historical baseline: inspected/tested on October 21, 2026, against original Mock
 
 ## Executed evidence
 
-Studio (updated October 25, 2026): **129 unit/component tests across 14 suites**, **43 Chromium end-to-end tests**, **381 DE/EN/FA catalog entries** and **98.22% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 833.98 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
+Studio (updated October 25, 2026): **131 unit/component tests across 14 suites**, **44 Chromium end-to-end tests**, **381 DE/EN/FA catalog entries** and **98.24% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 834.58 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
 
-Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 172 tests.
+Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 175 tests.
 
 The comparison found one actionable shared-behavior gap: Studio initially treated every unchecked checkbox as empty. Studio now records user answer edits separately from generated events and preserves an intentional unchecked answer unless replacement is requested. A regression test protects this behavior.
 

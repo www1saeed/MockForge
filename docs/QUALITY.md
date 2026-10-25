@@ -1,6 +1,6 @@
 # Code quality and test evidence
 
-**172 passing automated tests. 98.22% line coverage. All configured quality gates pass.**
+**175 passing automated tests. 98.24% line coverage. All configured quality gates pass.**
 
 MockForge Studio is developed with documented Clean Code practices and substantial automated regression coverage for its current feature set. Complete local verification passed on **October 25, 2026**. Counts describe this checkpoint; rerun the commands after changes.
 
@@ -8,13 +8,13 @@ MockForge Studio is developed with documented Clean Code practices and substanti
 
 | Check                       | Verified result                                  |
 | --------------------------- | ------------------------------------------------ |
-| Jest unit/component tests   | **129 passed** across **14 suites**               |
-| Playwright end-to-end tests | **43 passed**, running in Chromium               |
-| Total automated tests       | **172 passed**                                   |
-| Statement coverage          | **96.61%**; required minimum 80%                 |
-| Branch coverage             | **91.48%**; required minimum 75%                 |
-| Function coverage           | **97.64%**; required minimum 80%                 |
-| Line coverage               | **98.22%**; required minimum 80%                 |
+| Jest unit/component tests   | **131 passed** across **14 suites**               |
+| Playwright end-to-end tests | **44 passed**, running in Chromium               |
+| Total automated tests       | **175 passed**                                   |
+| Statement coverage          | **96.71%**; required minimum 80%                 |
+| Branch coverage             | **91.67%**; required minimum 75%                 |
+| Function coverage           | **97.66%**; required minimum 80%                 |
+| Line coverage               | **98.24%**; required minimum 80%                 |
 | ESLint                      | Passed without reported violations               |
 | Prettier style check        | All matched files pass                           |
 | Runtime translations        | **381 German/English/Persian entries** validated |
@@ -22,11 +22,11 @@ MockForge Studio is developed with documented Clean Code practices and substanti
 
 The spec TypeScript check (`npx tsc --noEmit -p tsconfig.spec.json`) also passes. It exposed a pre-existing timer-cleanup callback returning the Jest object despite declaring `void`; the callback now uses a block body.
 
-The production build succeeds with a bundle-size warning: the initial bundle is 833.98 kB against the existing 700 kB warning budget (the 1 MB failure limit is unchanged). No budget was raised. Browser development runs also retain Angular's existing oversized-logo advisory.
+The production build succeeds with a bundle-size warning: the initial bundle is 834.58 kB against the existing 700 kB warning budget (the 1 MB failure limit is unchanged). No budget was raised. Browser development runs also retain Angular's existing oversized-logo advisory.
 
-New coverage includes session clipboard copying/moving across root/group lists, definition limits, deferred-cut cancellation, seeded native preview filling, unsupported-pattern reporting, answer preservation, localized settings dialogs and live shell identity. The new desktop and Persian mobile screenshots were visually inspected. The complete 43-test Chromium suite passed, including DE/EN/FA guide content, mobile bounds and accessibility scans.
+New coverage includes session clipboard copying/moving across root/group lists, definition limits, deferred-cut cancellation, seeded native preview filling, unsupported-pattern reporting, answer preservation, localized settings dialogs and live shell identity. The new desktop and Persian mobile screenshots were visually inspected. The complete 44-test Chromium suite passed, including DE/EN/FA guide content, mobile bounds and accessibility scans.
 
-The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio's 172 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
+The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio's 175 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
 
 Coverage percentages come from Jest's instrumented application source, not E2E coverage. Browser tests include desktop/mobile layout, Persian RTL direction and font loading, the presentation, repeat groups, tooltip behavior, full-width response retention, import/export, persistence, native validation, confirmation and accessibility scans. The total counts executed tests, not assertions or accessibility rules. The suite exceeds every configured coverage threshold and provides extensive regression protection for the implemented scope.
 
@@ -92,3 +92,7 @@ Eleven new unit cases and three Chromium journeys bring Studio to 123 tests in f
 ## PR review corrections - October 25, 2026
 
 All nine reported source findings are addressed. Six additional Jest cases and three Chromium journeys bring Studio to 129 unit/component plus 43 browser tests, 172 total. Regression coverage exercises first-submit validation of a 12-row, three-pattern table without overflowing the unchanged worker queue, preservation of pending checks across copy/locale edits with current error messages, cancellation on changed constraints and stale submit suppression, single-option radio checked state in output/statistics, explicitly undefined optional defaults and cached bounded matchers. Existing clipboard/group tests cover shared ID allocation and row planning. Shared response scopes and worker reason/message mappings remove duplicated logic. This is targeted correction and automated verification, not a claim of a complete audit of every documentation, translation or asset change in the PR.
+
+## Reactive refresh backpressure - October 25, 2026
+
+Two additional unit cases and one Chromium journey bring Studio to 131 unit/component tests in fourteen suites plus 44 E2E cases, 175 total. Locale/project refreshes of 36 pending responses now share one manual dispatch sequence instead of exhausting the service queue. Tests verify pending validity without transient limit errors, current verdicts, stale-action suppression, cache reuse and reset cancellation before queued jobs create workers. The browser case records every custom-validity assignment, changes UI language and project identity while workers are pending, and completes all 36 checks without a retry. The existing service queue/input/deadline limits remain unchanged.
