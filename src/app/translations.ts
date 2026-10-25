@@ -199,8 +199,8 @@ export const copy = {
   ],
   guideTestData: ['Vorschau mit Testdaten prüfen', 'Check the preview with test data'],
   guideTestDataText: [
-    'Blende die Vorschau ein und wähle Testdaten einfüllen. Einstellungen bieten DE/EN/FA, Startwert, Bezugsdatum sowie gültige, leere, ungültige und Grenzwertfälle. Vorname, Nachname, E-Mail und Adresse gehören pro Hauptformular und Gruppenzeile zu einem synthetischen Datensatz. Die Erkennung nutzt eindeutige Beschriftungen, danach exakte Platzhalter oder Hilfetexte; widersprüchliche Übersetzungen führen zu neutralem Text. Datumsfelder verwenden das Bezugsdatum unverändert. Längenregeln und Szenarien können Zusammenhänge verändern; der Bericht kennzeichnet dies und zeigt die Erkennungsquelle. Vorhandene Antworten werden nicht in neue Identitäten übernommen. Gruppenzeilen können bestehend, minimal oder maximal sein; Zeilenabbau benötigt Ersetzen. Prüfe exakte Textlängen, ein Zeichen darunter/darüber und leere Pflichtfelder anhand erwarteter/beobachteter Gültigkeit. Nicht anwendbare Fälle und komplexe RegEx werden ausgewiesen. Antworten, Einstellungen und Berichte werden nicht gespeichert oder exportiert.',
-    'Show the preview and choose Fill test data. Settings offer DE/EN/FA, a seed, reference date and valid/empty/invalid/boundary cases. First name, last name, email and address belong to one synthetic record per root form and group row. Recognition uses unambiguous labels, then exact placeholder/help phrases; conflicting translations use generic text. Date fields use the reference date unchanged. Length rules and scenarios may change record consistency; the report flags this and shows the recognition source. Retained answers are not used to reconstruct new identities. Group rows can stay mounted or use minimum/maximum; shrinking requires replacement. Check exact text lengths, one below/above and required-empty using expected/observed validity. Inapplicable cases and complex patterns are reported. Answers, settings and reports are never saved or exported.',
+    'Blende die Vorschau ein und wähle Testdaten einfüllen. DE/EN/FA, Startwert und Bezugsdatum erzeugen zusammenhängende Namen, E-Mail und Adressen pro Hauptformular/Gruppenzeile. Eindeutige Beschriftung, Platzhalter und Hilfetext bestimmen die Bedeutung; widersprüchliche Übersetzungen verwenden neutralen Text. Der Bericht zeigt Quelle, Anpassungen sowie erwartete/beobachtete Gültigkeit. Gültige, leere, ungültige und Textgrenzfälle sind verfügbar. Gruppen nutzen bestehende/minimale/maximale Zeilen; Zeilenabbau benötigt Ersetzen. Kennungen wie DE-[A-Z]{2}\\d{4} werden begrenzt erzeugt. Andere Muster prüfen bekannte Beispielwerte isoliert mit Zeit-/Größenlimit; beliebige Synthese ist nicht enthalten. Abbrechen oder Änderungen verwerfen ausstehende Generierung ohne Teilfüllung. Auch manuelle komplexe Muster werden isoliert geprüft; ausstehende oder ungeprüfte Werte blockieren Validierung. Timeout und Prüflimits stehen im Bericht. Vorhandene Antworten werden nicht als Identität übernommen. Antworten, Einstellungen und Berichte werden nicht gespeichert oder exportiert.',
+    'Show the preview and choose Fill test data. DE/EN/FA, seed and reference date produce coherent names, email and addresses per root form/group row. Unambiguous labels, placeholders and help determine meaning; conflicting translations use generic text. Reports show sources, adjustments and expected/observed validity. Valid/empty/invalid and text-boundary cases are available. Groups use existing/minimum/maximum rows; shrinking requires replacement. Identifiers such as DE-[A-Z]{2}\\d{4} use bounded synthesis. Other patterns check known fixtures in isolation with time/size limits; arbitrary synthesis is not included. Cancellation or edits discard pending generation without partial filling. Manual complex patterns are isolated too; pending or unchecked values block validation. Timeouts and check limits appear in the report. Retained answers do not reconstruct identities. Answers, settings and reports are never saved or exported.',
   ],
   guideShell: [
     'Projekt im Header und in der Navigation',
@@ -320,6 +320,31 @@ export const copy = {
     'Bitte in den Testdaten-Einstellungen ein gültiges Bezugsdatum zwischen 1000-01-01 und 9999-12-31 wählen.',
     'Choose a valid reference date between 1000-01-01 and 9999-12-31 in test data settings.',
   ],
+
+  dataPatternTimeout: [
+    'RegEx-Prüfung hat das Zeitlimit erreicht.',
+    'Pattern check reached its time limit.',
+  ],
+  dataPatternBudget: [
+    'RegEx-Prüflimit erreicht; Wert nicht geprüft.',
+    'Pattern check limit reached; value not checked.',
+  ],
+  dataWorkerUnavailable: [
+    'Isolierte RegEx-Prüfung nicht verfügbar; Wert nicht geprüft.',
+    'Isolated pattern checking unavailable; value not checked.',
+  ],
+  dataWorkerError: ['RegEx konnte nicht geprüft werden.', 'Pattern could not be checked.'],
+  dataRepresentation: [
+    'Browser verändert den Beispielwert; vorherige Antwort wiederhergestellt.',
+    'Browser changed the candidate; previous answer restored.',
+  ],
+  dataPatternChecking: ['Eingaben werden geprüft …', 'Checking responses …'],
+  dataGenerating: ['Testwerte werden vorbereitet …', 'Preparing sample values …'],
+  dataCancelled: [
+    'Testdaten-Vorgang abgebrochen; ausstehende Ergebnisse werden verworfen.',
+    'Test data operation cancelled; pending results are discarded.',
+  ],
+  dataCancelGeneration: ['Generierung abbrechen', 'Cancel generation'],
 
   expandFields: ['Hauptfeldliste aufklappen', 'Expand main field list'],
   collapseFields: ['Hauptfeldliste zuklappen', 'Collapse main field list'],

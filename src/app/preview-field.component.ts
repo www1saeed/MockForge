@@ -2,6 +2,7 @@ import { Component, input, output, ChangeDetectionStrategy } from '@angular/core
 import { Field, Locale, supportsPattern, Text } from './project.model';
 import { CopyKey, translate } from './translations';
 import { FieldTitleComponent } from './field-title.component';
+import { isBoundedPattern } from './preview-pattern';
 
 export interface PatternInput {
   event: Event;
@@ -28,6 +29,7 @@ export class PreviewFieldComponent {
   readonly showTooltip = input(true);
   readonly patternInput = output<PatternInput>();
   readonly supportsPattern = supportsPattern;
+  readonly isBoundedPattern = isBoundedPattern;
   text(value: Text): string {
     return value[this.locale()];
   }

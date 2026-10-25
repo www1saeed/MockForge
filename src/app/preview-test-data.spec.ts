@@ -73,17 +73,19 @@ describe('Preview test data', (): void => {
     expect(checkbox.checked).toBe(true);
   });
 
-  it('generates bounded patterns and reports unsupported patterns or impossible email lengths', (): void => {
+  it('generates bounded patterns and reports unsupported patterns or impossible email lengths', async (): Promise<void> => {
     const code = { ...createField('text', 'code'), pattern: '[A-Z]{3}' };
     const uncertain = { ...createField('textarea', 'uncertain'), pattern: '(a+)+$' };
     const email = { ...createField('email', 'email'), maxLength: 2 };
-    const { component, form } = setup([code, uncertain, email]);
+    const whitespace = { ...createField('email', 'whitespace'), pattern: '\\s{2}' };
+    const { component, form } = setup([code, uncertain, email, whitespace]);
     const control = form.querySelector<HTMLInputElement>('#preview-code')!;
     control.setCustomValidity('Old error');
-    component.fillResponses(form);
+    await component.fillResponses(form);
     expect(control.value).toMatch(/^[A-Z]{3}$/);
     expect(control.validationMessage).toBe('');
-    expect(component.dataReport()).toMatchObject({ filled: 1, preserved: 0, skipped: 2 });
+    expect(component.dataReport()).toMatchObject({ filled: 1, preserved: 0, skipped: 3 });
+    expect(component.dataReport()?.diagnostics.at(-1)?.reason).toBe('representation');
     expect(form.querySelector('textarea')!.value).toBe('');
     expect(testDataCandidate({ ...code, pattern: '[Z-A]{3}' }, 'en', 0)).toBeNull();
     expect(testDataCandidate({ ...code, pattern: '[a-z]{101}' }, 'en', 0)).toBeNull();
@@ -135,7 +137,7 @@ describe('Preview test data', (): void => {
     expect(form.checkValidity()).toBe(valid);
   });
 
-  it('distinguishes unavailable cases, safe-pattern skips and failed candidate attempts', (): void => {
+  it('distinguishes unavailable cases, safe-pattern skips and failed candidate attempts', async (): Promise<void> => {
     const fields = [
       { ...createField('text', 'optional'), required: false, minLength: 1 },
       { ...createField('text', 'pattern'), pattern: '[A-Z]{3}', minLength: 2, maxLength: 4 },
@@ -148,17 +150,17 @@ describe('Preview test data', (): void => {
     component.replaceResponses.set(true);
     component.dataScenario.set('boundary');
     component.dataBoundary.set('minimum');
-    component.fillResponses(form);
+    await component.fillResponses(form);
     expect(component.dataReport()?.diagnostics.map((item): string => item.reason)).toEqual([
       'applied',
       'mismatch',
-      'unsupported',
+      'unavailable',
       'unavailable',
     ]);
     expect(patterned.value).toBe('ABC');
     expect(patterned.checkValidity()).toBe(true);
     component.dataBoundary.set('belowMinimum');
-    component.fillResponses(form);
+    await component.fillResponses(form);
     expect(component.dataReport()?.diagnostics[0].reason).toBe('unavailable');
   });
 

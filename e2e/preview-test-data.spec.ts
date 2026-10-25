@@ -239,7 +239,9 @@ test('invalid scenarios expose real required and type errors with accessible Per
   await page.locator('.test-data-toolbar .secondary-button').click();
   await page.locator('.test-data-diagnostics summary').click();
   await expect(page.locator('.test-data-diagnostics li')).toHaveCount(4);
-  await expect(page.locator('.test-data-diagnostics')).toContainText('الگوی پشتیبانی‌نشده');
+  await expect(page.locator('.test-data-diagnostics')).toContainText(
+    'برای این فیلد قابل اعمال نیست',
+  );
   await page.screenshot({ path: 'reports/test-data-boundary-mobile-fa.png', fullPage: true });
   expect(
     (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())

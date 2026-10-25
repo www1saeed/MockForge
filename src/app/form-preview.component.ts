@@ -11,6 +11,7 @@ import {
   output,
   signal,
   ChangeDetectionStrategy,
+  OnDestroy,
 } from '@angular/core';
 import {
   DataBoundary,
@@ -21,6 +22,8 @@ import {
   FillReport,
   fillTestData,
   ResponseControl,
+  patternDataKey,
+  PreparedPattern,
 } from './preview-test-data';
 import { responseLengthViolation } from './response-constraints';
 import {
@@ -44,6 +47,9 @@ import {
 import { PreviewFieldComponent } from './preview-field.component';
 import { RepeatGroupComponent } from './repeat-group.component';
 import { CopyKey, translate } from './translations';
+import { PatternCheckService, PatternResult } from './pattern-check.service';
+import { isBoundedPattern } from './preview-pattern';
+import { preparePatternData } from './preview-pattern-data';
 
 /** All actions are local; none of these messages represents a backend response. */
 const ACTION_MESSAGES: Record<Exclude<ButtonAction, 'none'>, CopyKey> = {
@@ -75,6 +81,7 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
   selector: 'app-form-preview',
   standalone: true,
   imports: [FormsModule, PreviewFieldComponent, RepeatGroupComponent],
+  providers: [PatternCheckService],
   templateUrl: './form-preview.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   host: {
@@ -84,7 +91,7 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
     '[attr.aria-label]': "t('preview')",
   },
 })
-export class FormPreviewComponent {
+export class FormPreviewComponent implements OnDestroy {
   @ViewChild('testDataDialog') testDataDialog!: ElementRef<HTMLDialogElement>;
   private readonly detector = inject(ChangeDetectorRef);
   readonly groups = viewChildren(RepeatGroupComponent);
@@ -99,10 +106,64 @@ export class FormPreviewComponent {
   readonly dataReport = signal<FillReport | null>(null);
   private answered = new WeakSet<ResponseControl>();
   private filling = false;
+  private readonly checker = inject(PatternCheckService);
+  private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
+  readonly generating = signal(false);
+  readonly checkingPatterns = signal(0);
+  readonly generationNotice = signal<CopyKey | null>(null);
+  private generation: AbortController | null = null;
+  private generationSignature = '';
+  private interaction = 0;
+  private readonly verdicts = new WeakMap<
+    ResponseControl,
+    { pattern: string; value: string; result: PatternResult }
+  >();
+  private readonly pendingChecks = new Map<
+    ResponseControl,
+    { controller: AbortController; pattern: string; value: string; promise: Promise<void> }
+  >();
+
+  private signature(): string {
+    return JSON.stringify([
+      this.project(),
+      this.uiLocale(),
+      this.locale(),
+      this.dataLocale(),
+      this.dataSeed(),
+      this.dataReferenceDate(),
+      this.replaceResponses(),
+      this.dataScenario(),
+      this.dataBoundary(),
+      this.dataGroupRows(),
+    ]);
+  }
+
+  cancelGeneration(): void {
+    if (!this.generation) return;
+    this.generation.abort();
+    this.generation = null;
+    this.generating.set(false);
+    this.generationNotice.set('dataCancelled');
+  }
+
+  rowsEdited(): void {
+    this.interaction++;
+    this.cancelGeneration();
+    this.simulated.set(false);
+    this.dataReport.set(null);
+  }
+
+  ngOnDestroy(): void {
+    this.interaction++;
+    this.cancelGeneration();
+    for (const request of this.pendingChecks.values()) request.controller.abort();
+  }
 
   /** Preserve intentional unchecked answers, while generated events stay unmarked. */
   responseEdited(event: Event): void {
     if (this.filling) return;
+    this.interaction++;
+    this.cancelGeneration();
     const control = event.target;
     if (
       control instanceof HTMLInputElement ||
@@ -114,8 +175,82 @@ export class FormPreviewComponent {
     this.simulated.set(false);
   }
 
-  fillResponses(form: HTMLFormElement): void {
+  async fillResponses(form: HTMLFormElement): Promise<void> {
     if (!this.referenceDateValid()) return;
+    this.cancelGeneration();
+    this.generationNotice.set(null);
+    const rows = new Map<string, number>();
+    for (const group of this.groups()) {
+      const bounds = group.field().group!;
+      const mode = this.dataGroupRows();
+      const target =
+        mode === 'minimum'
+          ? bounds.minItems
+          : mode === 'maximum'
+            ? bounds.maxItems
+            : Math.max(1, group.rows().length);
+      rows.set(
+        group.field().id,
+        target < group.rows().length && !this.replaceResponses() ? group.rows().length : target,
+      );
+    }
+    let prepared = new Map<string, PreparedPattern>();
+    const deferred = allFields(this.project().fields).some(
+      (field): boolean =>
+        supportsPattern(field) && !!field.pattern && !isBoundedPattern(field.pattern),
+    );
+    if (
+      deferred &&
+      this.dataScenario() !== 'empty' &&
+      !(this.dataScenario() === 'boundary' && this.dataBoundary() === 'requiredEmpty')
+    ) {
+      const skipped = new Set<string>();
+      if (!this.replaceResponses()) {
+        for (const field of allFields(this.project().fields)) {
+          let index = 0;
+          for (const control of form.querySelectorAll<ResponseControl>(
+            `[data-field-id="${field.id}"]`,
+          )) {
+            const scope = control.name.includes(':')
+              ? `${control.name.split(':')[0]}:${++index}`
+              : 'root';
+            if (control.value) skipped.add(patternDataKey(field.id, scope));
+          }
+        }
+      }
+      const controller = new AbortController();
+      this.generation = controller;
+      const signature = this.signature();
+      this.generationSignature = signature;
+      const interaction = this.interaction;
+      this.generating.set(true);
+      this.dataReport.set(null);
+      prepared = await preparePatternData(
+        this.project().fields,
+        rows,
+        skipped,
+        {
+          locale: this.dataLocale(),
+          seed: this.dataSeed(),
+          referenceDate: this.dataReferenceDate(),
+          scenario: this.dataScenario(),
+          boundary: this.dataBoundary(),
+        },
+        this.checker,
+        controller.signal,
+      );
+      if (
+        controller.signal.aborted ||
+        this.generation !== controller ||
+        signature !== this.signature() ||
+        interaction !== this.interaction
+      ) {
+        if (this.generation === controller) this.cancelGeneration();
+        return;
+      }
+      this.generation = null;
+      this.generating.set(false);
+    }
     const groupDiagnostics: DataDiagnostic[] = [];
     for (const group of this.groups()) {
       const mode = this.dataGroupRows();
@@ -153,6 +288,12 @@ export class FormPreviewComponent {
         this.answered,
         this.dataBoundary(),
         this.dataReferenceDate(),
+        {
+          entries: prepared,
+          apply: (control, field, result): void => {
+            this.verdicts.set(control, { pattern: field.pattern, value: control.value, result });
+          },
+        },
       );
       for (const item of groupDiagnostics) report[item.outcome]++;
       report.diagnostics.unshift(...groupDiagnostics);
@@ -189,6 +330,11 @@ export class FormPreviewComponent {
       unavailable: 'dataUnavailable',
       mismatch: 'dataMismatch',
       protected: 'dataProtected',
+      timeout: 'dataPatternTimeout',
+      budget: 'dataPatternBudget',
+      workerUnavailable: 'dataWorkerUnavailable',
+      workerError: 'dataWorkerError',
+      representation: 'dataRepresentation',
     };
     return this.t(keys[reason]);
   }
@@ -265,11 +411,25 @@ export class FormPreviewComponent {
 
   constructor() {
     effect((): void => {
+      const signature = this.signature();
+      if (this.generation && signature !== this.generationSignature) this.cancelGeneration();
+    });
+    effect((): void => {
       this.project();
       this.locale();
       this.uiLocale();
       this.simulated.set(false);
       this.dataReport.set(null);
+      for (const request of this.pendingChecks.values()) request.controller.abort();
+      const fields = new Map(
+        allFields(this.project().fields).map((field): [string, Field] => [field.id, field]),
+      );
+      for (const control of this.host.nativeElement.querySelectorAll<
+        HTMLInputElement | HTMLTextAreaElement
+      >('input[data-field-id], textarea[data-field-id]')) {
+        const field = fields.get(control.dataset['fieldId']!);
+        if (field) this.applyPatternValidity(control, field);
+      }
     });
   }
 
@@ -298,13 +458,32 @@ export class FormPreviewComponent {
    * Reset is intentionally limited to response controls and their custom validity.
    */
   runButton(button: FormButton, form: HTMLFormElement): void {
+    this.cancelGeneration();
+    if (!VALIDATING_ACTIONS.includes(button.action)) {
+      this.afterValidation(button, form);
+      return;
+    }
+    const tasks: Promise<void>[] = [];
     for (const field of allFields(this.project().fields).filter(supportsPattern)) {
       const controls = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
         `[data-field-id="${field.id}"]`,
       );
-      for (const control of Array.from(controls)) this.applyPatternValidity(control, field);
+      for (const control of Array.from(controls)) {
+        const task = this.applyPatternValidity(control, field);
+        if (task) tasks.push(task);
+      }
     }
+    if (tasks.length) {
+      const interaction = this.interaction,
+        signature = this.signature();
+      void Promise.all(tasks).then((): void => {
+        if (interaction === this.interaction && signature === this.signature())
+          this.afterValidation(button, form);
+      });
+    } else this.afterValidation(button, form);
+  }
 
+  private afterValidation(button: FormButton, form: HTMLFormElement): void {
     if (VALIDATING_ACTIONS.includes(button.action) && !form.reportValidity()) {
       this.feedback.notify('previewInvalid', 'warning');
       return;
@@ -327,6 +506,8 @@ export class FormPreviewComponent {
     if (button.action === 'none') return;
 
     if (button.action === 'reset') {
+      this.interaction++;
+      for (const request of this.pendingChecks.values()) request.controller.abort();
       this.answered = new WeakSet<ResponseControl>();
       this.dataReport.set(null);
       this.resetToken.update((token): number => token + 1);
@@ -359,13 +540,66 @@ export class FormPreviewComponent {
   private applyPatternValidity(
     control: HTMLInputElement | HTMLTextAreaElement,
     field: Field,
-  ): void {
+  ): Promise<void> | void {
+    const pending = this.pendingChecks.get(control);
+    if (pending && (pending.value !== control.value || pending.pattern !== field.pattern))
+      pending.controller.abort();
     const length = responseLengthViolation(field, control.value);
     if (length) {
       control.setCustomValidity(
         `${this.formCopy(length === 'minimum' ? 'minLength' : 'maxLength')}: ${length === 'minimum' ? field.minLength : field.maxLength}`,
       );
       return;
+    }
+    if (
+      supportsPattern(field) &&
+      field.pattern &&
+      control.value &&
+      !isBoundedPattern(field.pattern)
+    ) {
+      control.removeAttribute('pattern');
+      const cached = this.verdicts.get(control);
+      if (
+        cached?.pattern === field.pattern &&
+        cached.value === control.value &&
+        cached.result.status === 'checked'
+      ) {
+        this.patternVerdict(control, field, cached.result);
+        return;
+      }
+      if (
+        pending &&
+        !pending.controller.signal.aborted &&
+        pending.value === control.value &&
+        pending.pattern === field.pattern
+      )
+        return pending.promise;
+      const controller = new AbortController(),
+        value = control.value,
+        pattern = field.pattern;
+      control.setCustomValidity(this.formCopy('dataPatternChecking'));
+      const request = { controller, value, pattern, promise: Promise.resolve() };
+      this.pendingChecks.set(control, request);
+      this.checkingPatterns.set(this.pendingChecks.size);
+      request.promise = this.checker
+        .check(pattern, value, controller.signal)
+        .then((result): void => {
+          if (this.pendingChecks.get(control) !== request) return;
+          this.pendingChecks.delete(control);
+          this.checkingPatterns.set(this.pendingChecks.size);
+          if (
+            controller.signal.aborted ||
+            control.value !== value ||
+            !this.host.nativeElement.contains(control) ||
+            !allFields(this.project().fields).some(
+              (entry): boolean => entry.id === field.id && entry.pattern === pattern,
+            )
+          )
+            return;
+          this.verdicts.set(control, { pattern, value, result });
+          this.patternVerdict(control, field, result);
+        });
+      return request.promise;
     }
     const matches =
       !supportsPattern(field) ||
@@ -375,5 +609,25 @@ export class FormPreviewComponent {
     control.setCustomValidity(
       matches ? '' : this.text(field.patternMessage) || this.formCopy('patternMismatch'),
     );
+  }
+
+  private patternVerdict(control: ResponseControl, field: Field, result: PatternResult): void {
+    const message =
+      result.status === 'checked'
+        ? result.matches
+          ? ''
+          : this.text(field.patternMessage) || this.formCopy('patternMismatch')
+        : this.formCopy(
+            result.status === 'timeout'
+              ? 'dataPatternTimeout'
+              : result.status === 'budget'
+                ? 'dataPatternBudget'
+                : result.status === 'unavailable'
+                  ? 'dataWorkerUnavailable'
+                  : result.status === 'cancelled'
+                    ? 'dataCancelled'
+                    : 'dataWorkerError',
+          );
+    control.setCustomValidity(message);
   }
 }

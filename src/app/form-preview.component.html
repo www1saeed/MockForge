@@ -33,11 +33,23 @@
   <button
     type="button"
     class="secondary-button"
-    [disabled]="!referenceDateValid()"
+    [disabled]="!referenceDateValid() || generating()"
     (click)="fillResponses(previewForm)"
   >
     {{ t('fillTestData') }}
   </button>
+  @if (generating()) {
+    <button type="button" class="text-button" (click)="cancelGeneration()">
+      {{ t('dataCancelGeneration') }}
+    </button>
+    <p role="status">{{ t('dataGenerating') }}</p>
+  }
+  @if (checkingPatterns()) {
+    <p role="status">{{ t('dataPatternChecking') }}</p>
+  }
+  @if (generationNotice(); as notice) {
+    <p role="status">{{ t(notice) }}</p>
+  }
   <button type="button" class="text-button" (click)="openTestData()">
     {{ t('testDataSettings') }}
   </button>
@@ -111,7 +123,7 @@
               [locale]="language()"
               [resetToken]="resetToken()"
               (patternInput)="validatePattern($event.event, $event.field)"
-              (responsesChanged)="simulated.set(false); dataReport.set(null)"
+              (responsesChanged)="rowsEdited()"
             />
           } @else {
             <app-preview-field

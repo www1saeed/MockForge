@@ -1,5 +1,7 @@
 import { Field, Locale } from './project.model';
 import { responseLengthViolation } from './response-constraints';
+import { boundedPatternCandidate } from './preview-pattern';
+import type { PatternResult } from './pattern-check.service';
 import {
   createDataRecord,
   DataMeaningMatch,
@@ -14,7 +16,17 @@ export type DataBoundary =
   'minimum' | 'maximum' | 'belowMinimum' | 'aboveMaximum' | 'requiredEmpty';
 export type DataRule = 'none' | 'required' | 'type' | 'minimum' | 'maximum' | 'pattern' | 'group';
 export type DataReason =
-  'applied' | 'preserved' | 'unsupported' | 'unavailable' | 'mismatch' | 'protected';
+  | 'applied'
+  | 'preserved'
+  | 'unsupported'
+  | 'unavailable'
+  | 'mismatch'
+  | 'protected'
+  | 'timeout'
+  | 'budget'
+  | 'workerUnavailable'
+  | 'workerError'
+  | 'representation';
 export interface DataDiagnostic {
   fieldId: string;
   response: string;
@@ -29,23 +41,6 @@ export interface DataDiagnostic {
 }
 export type ResponseControl = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
-/** Only a small, bounded character-class subset is synthesized; arbitrary RegEx is skipped. */
-function patternCandidate(pattern: string, ordinal: number): string | null {
-  const match = /^(?:\^)?\[([A-Za-z0-9-]+)\]\{(\d{1,3})(?:,(\d{1,3}))?\}(?:\$)?$/.exec(pattern);
-  if (!match) return null;
-  const count = Number(match[2]);
-  if (count > 100 || (match[3] && Number(match[3]) < count)) return null;
-  const alphabet = match[1]
-    .replace(/A-Z/g, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-    .replace(/a-z/g, 'abcdefghijklmnopqrstuvwxyz')
-    .replace(/0-9/g, '0123456789');
-  if (alphabet.includes('-')) return null;
-  return Array.from(
-    { length: count },
-    (_, index): string => alphabet[(ordinal + index) % alphabet.length],
-  ).join('');
-}
-
 /** No arbitrary-pattern evaluation: the caller reports unsupported constraints explicitly. */
 export function testDataCandidate(
   field: Field,
@@ -55,7 +50,7 @@ export function testDataCandidate(
 ): string | null {
   const meaning = resolveDataMeaning(field).meaning;
   if (meaning === 'pattern') {
-    return patternCandidate(field.pattern, ordinal);
+    return boundedPatternCandidate(field.pattern, ordinal, field.minLength);
   }
   let value = record[meaning];
   // Technical types retain their representation; incompatible lengths are reported by validation.
@@ -72,22 +67,34 @@ export interface FillReport {
   diagnostics: DataDiagnostic[];
 }
 
-interface Candidate {
+export interface Candidate {
   value: string;
   rule: DataRule;
   expected: boolean | null;
+}
+export interface PreparedPattern {
+  candidate: Candidate | null;
+  result: PatternResult;
+}
+export interface PatternData {
+  entries: ReadonlyMap<string, PreparedPattern>;
+  apply: (control: ResponseControl, field: Field, result: PatternResult) => void;
+}
+export function patternDataKey(id: string, scope: string): string {
+  return `${id}|${scope}`;
 }
 
 /** Bound construction before allocation, including imported 10,000-unit length limits. */
 const MAX_GENERATED_LENGTH = 10001;
 
-function scenarioCandidate(
+export function scenarioCandidate(
   field: Field,
   locale: Locale,
   ordinal: number,
   scenario: DataScenario,
   boundary: DataBoundary,
   record: PreviewDataRecord,
+  fallback?: string,
 ): Candidate | null {
   if (scenario === 'empty') return { value: '', rule: 'required', expected: !field.required };
   if (scenario === 'invalid') {
@@ -109,7 +116,13 @@ function scenarioCandidate(
     // Empty optional values are valid despite minlength; they are not an underflow failure.
     if (!length && !field.required) return null;
     if (length > MAX_GENERATED_LENGTH) return null;
-    const base = testDataCandidate(field, locale, ordinal, record);
+    const base =
+      (field.pattern && (boundary === 'minimum' || boundary === 'maximum')
+        ? boundedPatternCandidate(field.pattern, ordinal, length)
+        : null) ??
+      testDataCandidate(field, locale, ordinal, record) ??
+      fallback ??
+      null;
     if (base === null) return null;
     return {
       value: base.slice(0, length).padEnd(length, 'x'),
@@ -117,7 +130,7 @@ function scenarioCandidate(
       expected: boundary === 'minimum' || boundary === 'maximum',
     };
   }
-  const value = testDataCandidate(field, locale, ordinal, record);
+  const value = testDataCandidate(field, locale, ordinal, record) ?? fallback ?? null;
   return value === null ? null : { value, rule: 'none', expected: true };
 }
 
@@ -132,6 +145,7 @@ export function fillTestData(
   answered = new WeakSet<ResponseControl>(),
   boundary: DataBoundary = 'minimum',
   referenceDate = DEFAULT_REFERENCE_DATE,
+  patternData?: PatternData,
 ): FillReport {
   const report: FillReport = { filled: 0, preserved: 0, skipped: 0, diagnostics: [] };
   let ordinal = normalizeDataSeed(seed);
@@ -153,6 +167,7 @@ export function fillTestData(
       if (!records.has(scope))
         records.set(scope, createDataRecord(locale, seed, scope, referenceDate));
       const record = records.get(scope)!;
+      const prepared = patternData?.entries.get(patternDataKey(field.id, scope));
       const diagnostic: DataDiagnostic = {
         fieldId: field.id,
         response: control.name,
@@ -185,12 +200,28 @@ export function fillTestData(
           (scenario === 'invalid' || (scenario === 'boundary' && boundary === 'requiredEmpty'))
         )
       ) {
-        report.skipped++;
-        diagnostic.reason = 'unsupported';
-        diagnostic.rule = 'pattern';
-        continue;
+        if (prepared?.result.status === 'checked' && prepared.candidate) {
+          // Candidate verdict is installed before renderer events; deferred patterns have no native attribute.
+        } else {
+          report.skipped++;
+          const status = prepared?.result.status;
+          diagnostic.reason =
+            prepared?.candidate === null
+              ? 'unavailable'
+              : status === 'timeout' || status === 'budget'
+                ? status
+                : status === 'unavailable'
+                  ? 'workerUnavailable'
+                  : status === 'error'
+                    ? 'workerError'
+                    : 'unsupported';
+          diagnostic.rule = 'pattern';
+          continue;
+        }
       }
-      const candidate = scenarioCandidate(field, locale, ordinal, scenario, boundary, record);
+      const candidate =
+        prepared?.candidate ??
+        scenarioCandidate(field, locale, ordinal, scenario, boundary, record);
       if (!candidate) {
         report.skipped++;
         continue;
@@ -219,6 +250,13 @@ export function fillTestData(
             : candidate.value;
       }
       control.setCustomValidity('');
+      if (prepared?.result.status === 'checked') {
+        control.removeAttribute('pattern');
+        control.setCustomValidity(
+          prepared.result.matches ? '' : field.patternMessage[locale] || 'Pattern mismatch',
+        );
+        patternData?.apply(control, field, prepared.result);
+      }
       // Renderer input handlers apply the same explicit length rules as user edits.
       const notify = (): void =>
         group.forEach((item): void => {
@@ -236,14 +274,15 @@ export function fillTestData(
           : candidate.rule === 'type'
             ? control.validity.typeMismatch
             : lengthViolation === candidate.rule || (!control.value && field.required);
-      if (actual !== candidate.expected || !targetObserved) {
+      const represented = checks || field.type === 'select' || control.value === candidate.value;
+      if (!represented || actual !== candidate.expected || !targetObserved) {
         group.forEach((item, index): void => {
           if (checks) (item as HTMLInputElement).checked = previous[index].checked;
           else item.value = previous[index].value;
         });
         notify();
         report.skipped++;
-        diagnostic.reason = 'mismatch';
+        diagnostic.reason = represented ? 'mismatch' : 'representation';
       } else {
         report.filled++;
         diagnostic.outcome = 'filled';
