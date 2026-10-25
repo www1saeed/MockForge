@@ -25,7 +25,7 @@ export async function preparePatternData(
   rows: ReadonlyMap<string, number>,
   skipped: ReadonlySet<string>,
   request: PatternFillRequest,
-  checker: PatternCheckService,
+  checker: Pick<PatternCheckService, 'check'>,
   signal: AbortSignal,
 ): Promise<Map<string, PreparedPattern>> {
   const result = new Map<string, PreparedPattern>();
@@ -80,7 +80,7 @@ export async function preparePatternData(
 }
 
 async function checkWithinBudget(
-  checker: PatternCheckService,
+  checker: Pick<PatternCheckService, 'check'>,
   pattern: string,
   value: string,
   signal: AbortSignal,
