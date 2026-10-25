@@ -80,3 +80,7 @@ Do not promise a fixed saving. Evaluate the session by the decisions it resolves
 ### Review a coherent example
 
 Use First name, Last name, Full name, Email and address component labels to review a consistent fictional record. Choose DE/EN/FA content, seed and reference date explicitly; each group row gets its own record. Inspect the recognition source and any adjustment flags. Preserved manual responses may describe another person, and length/invalid scenarios can break a relationship. Discuss whether the real form needs these fields and limits; illustrative postal/address fixtures are not production address validation.
+
+### Review pattern limits
+
+Try an identifier with fixed literals, uppercase letters and digits. Explain that deferred patterns verify a known fixture in isolation rather than synthesizing arbitrary strings. Inspect timeout/budget/unavailable outcomes. Cancel a pending fill and confirm that answers and group rows do not partially change. Pending or unverified manual responses cannot establish a successful validation simulation. These defensive limits may leave a legitimate long response unverified; record production validation expectations separately.

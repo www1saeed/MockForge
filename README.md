@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 134 passing automated tests: 100 unit/component tests and 34 end-to-end tests.** Verified on October 25, 2026, with **98.60% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 149 passing automated tests: 112 unit/component tests and 37 end-to-end tests.** Verified on October 25, 2026, with **97.91% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -159,3 +159,7 @@ Test valid, empty and deliberately invalid responses, exact text limits, one cha
 ### Coherent preview records
 
 First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. Studio JSON stays at 1.3.0; persisted semantic hints/examples are future work. See [the tools guide](docs/AUTHORING_TOOLS.md).
+
+### Bounded pattern examples and isolated checks
+
+Generate finite identifier patterns, or verify a known fixture against a deferred pattern in a disposable local worker. Manual uncertain patterns use the same isolation. Time/size limits stay visible; pending or failed checks cannot submit successfully. Cancel or edit to discard pending generation before answers/rows change. No arbitrary pattern synthesis or schema change is introduced. See [the exact limits](docs/AUTHORING_TOOLS.md).

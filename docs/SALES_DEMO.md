@@ -79,3 +79,7 @@ Configure a text field with minimum 3 and maximum 6 characters. In test-data set
 ### Demonstrate a coherent record
 
 Use text fields labeled First name, Last name, Full name, Company, Street, House number, Postal code, City and Country, plus native Email and Date fields. Select a profile, seed and reference date, enable replacement and fill. Show the combined name/address and ASCII example.org email. Add the same identity fields inside a group to demonstrate independent row records. Expand diagnostics to explain label versus placeholder/help recognition and any length adjustments. Reset and fill again to reproduce the walkthrough. Preserve a manual answer once to explain that the generator does not infer an identity from it.
+
+### Demonstrate isolated pattern checking
+
+Use a field with `DE-[A-Z]{2}\d{4}` to show bounded synthesis. Then use a name field with a finite alternative that includes an actual fictional profile name to demonstrate known-fixture worker verification. Inspect the report rather than implying every expression can be generated. Cancellation discards pending fill before answers or rows change. Manual deferred input is isolated as well; timeouts and unverified responses cannot simulate a successful submit. Keep the customer walkthrough focused on the intended validation rule, not a claim of arbitrary RegEx coverage.

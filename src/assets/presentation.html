@@ -831,7 +831,7 @@
       <section
         class="slide"
         aria-labelledby="title-12"
-        data-narration="Synthetic preview data makes the alignment conversation easier to try with populated controls. Choose German, English or Persian content, a repeatable seed and an explicit reference date. First name, last name, full name, email and address belong to a coherent synthetic record for the root form and each group row. Recognition uses native types and conservative label phrases, followed by weaker placeholder or help phrases. Conflicting translations use neutral text. Per-field results show recognition sources, expected versus observed validity and constraint adjustments. Length rules and deliberately invalid or boundary cases can break a record relationship, and preserved manual answers are not used to reconstruct identities. Text boundaries include exact limits, one character below or above and required-empty values. Repeat groups support minimum and maximum rows; shrinking needs explicit replacement. The selected date is used unchanged and does not depend on the system clock. These are small fictional fixtures, not representative population data. Answers and reports stay unsaved. Numeric and date bounds, additional profiles, worker isolation and batch generation remain follow-up work."
+        data-narration="Synthetic preview data makes the alignment conversation easier to try with populated controls. Choose German, English or Persian content, a repeatable seed and a reference date. Names, email and address belong to a coherent fictional record for the root form and each group row. Recognition sources and constraint adjustments stay visible in the report. Valid, invalid and text-boundary cases check expected versus observed validity. Bounded identifier patterns now combine literals, classes, escapes and finite repetition. Other patterns can verify a known fixture in an isolated local worker, without attempting arbitrary synthesis. Manual uncertain patterns use the same isolation so a slow expression cannot block the interface. Explicit time, input and queue limits produce visible unverified outcomes. Configured validating actions wait for current checks and never treat pending or failed verification as success. Generation stages candidates before changing answers or rows. Cancel, edit or change the request to discard pending results without partial filling. Preserved manual responses and constraint adjustments can break record relationships. Numeric and date bounds, additional profiles and batch generation remain future work. No generated answers or reports enter storage, exports or review."
       >
         <p class="eyebrow">11 / Trying the form with synthetic answers</p>
         <h2 id="title-12">Preview data makes<br /><span>the experience easier to check</span></h2>
@@ -845,13 +845,14 @@
             replacement explicitly, including before shrinking repeat groups.
           </li>
           <li>
-            <strong>Inspect the result.</strong> Valid/invalid and text-boundary cases show
-            expected/observed validity, recognition sources and constraint adjustments.
+            <strong>Verify each case.</strong> Valid/invalid and text boundaries show
+            expected/observed validity. Bounded samples and isolated pattern checks keep limits
+            visible.
           </li>
         </ul>
         <p class="note">
-          Groups support minimum/maximum rows. Numeric/date bounds, worker isolation and batch
-          generation are not included. Unsupported patterns need manual input; answers stay unsaved.
+          Cancel discards pending changes. Unverified patterns cannot submit successfully.
+          Numeric/date bounds and batch generation are not included; answers stay unsaved.
         </p>
       </section>
       <section
@@ -890,18 +891,20 @@
       <section
         class="slide"
         aria-labelledby="title-14"
-        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-fifth, 2026 quality checkpoint, all 100 unit and component tests across twelve suites and all 34 Chromium end to end tests passed. That is 134 Studio tests. Line coverage was 98.60 percent. The catalog check verified 372 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-fifth, 2026 quality checkpoint, all 112 unit and component tests across thirteen suites and all 37 Chromium end to end tests passed. That is 149 Studio tests. Line coverage was 97.91 percent. The catalog check verified 381 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
       >
         <p class="eyebrow">13 / Engineering evidence</p>
         <h2 id="title-14">A tested foundation<br /><span>for the alignment conversation</span></h2>
         <div class="split">
           <div>
-            <div class="metric">134</div>
+            <div class="metric">149</div>
             <h3>Passing automated tests</h3>
-            <p>100 unit/component tests across twelve suites.<br />34 Chromium end-to-end tests.</p>
+            <p>
+              112 unit/component tests across thirteen suites.<br />37 Chromium end-to-end tests.
+            </p>
           </div>
           <div>
-            <div class="metric">98.60%</div>
+            <div class="metric">97.91%</div>
             <h3>Line coverage</h3>
             <p>
               Strict TypeScript, separated responsibilities, immutable state and validated imports.
@@ -912,7 +915,7 @@
           Formatting, ESLint, translation validation and the production build also pass.
         </p>
         <p class="note">
-          Verified October 25, 2026. Jest line coverage. 372 DE/EN/FA catalog entries. Build passes
+          Verified October 25, 2026. Jest line coverage. 381 DE/EN/FA catalog entries. Build passes
           with a size warning. Sonar analysis is not configured. Details: docs/QUALITY.md.
         </p>
       </section>

@@ -18,7 +18,7 @@ Historical baseline: inspected/tested on October 21, 2026, against original Mock
 | Seed and reference date | Generation is deterministic for the same full request. | Studio now exposes both seed and reference date (fixed default 2026-01-01); date fields receive the date unchanged. Original preview advances an internal seed and uses today. The original API also accepts an explicit reference date. Relative-date behavior and generated values differ. |
 | Scenarios | Both support valid, invalid and text-boundary modes with exact minimum/maximum, below/above and required-empty cases. | Shared basic cases now exist in Studio. Candidate selection, pattern support and diagnostics differ; no identical-output or exhaustive parity claim. Studio also retains an explicit empty mode. |
 | Repeat groups | Independently addressed child responses, configured bounds and preservation by default. | Studio now offers existing/minimum/maximum rows and protects shrinking unless replacement is enabled. Original has a requested count and wizard scope; Studio remains single-page with a 20-row limit. Neither synthesizes illegal group counts. |
-| Pattern validation       | Do not silently claim a usable candidate when constraints cannot be satisfied.                                                                                      | Not equal: original worker-isolated validation, bounded synthesis, known-example fallback, timeout and cancellation; Studio synthesizes only bounded character classes and skips complex expressions. Studio's existing manual pattern validator remains separate. |
+| Pattern validation | Bounded synthesis, isolated known-candidate checks, deadlines, cancellation and explicit unverified outcomes. | Studio now also isolates deferred manual input, stages generation and waits before configured validating actions. Its synthesis is concatenation-only with one variable atom; original also supports finite groups/alternatives, more candidates and author examples. Limits, caches and diagnostics differ. |
 | Diagnostics | Per-field expected/observed candidate validity and explicit unavailable cases. | Studio now reports response/group context and reasons, displays the first 20 entries and counts all entries. Original also has semantic/profile/worker/batch diagnostics. Reports and selection policies differ. |
 | Unicode                  | Support non-Latin text and suitable native text direction.                                                                                                          | Not equal: original NFC/NFD selection and international/mixed profile diagnostics; Studio has Persian content and auto text direction but no normalization setting or mix mode.                                                                                    |
 | Batch API                | No generated answers are persisted as specification data.                                                                                                           | Not equal: original has a bounded 1–500-record API with progress/cancellation and diagnostics; Studio has no batch API or bulk export. The original batch API is not a bulk-list/export UI either.                                                                 |
@@ -27,9 +27,9 @@ Historical baseline: inspected/tested on October 21, 2026, against original Mock
 
 ## Executed evidence
 
-Studio (updated October 25, 2026): **100 unit/component tests across 12 suites**, **34 Chromium end-to-end tests**, **372 DE/EN/FA catalog entries** and **98.60% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 820.12 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
+Studio (updated October 25, 2026): **112 unit/component tests across 13 suites**, **37 Chromium end-to-end tests**, **381 DE/EN/FA catalog entries** and **97.91% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 833.72 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
 
-Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 134 tests.
+Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 149 tests.
 
 The comparison found one actionable shared-behavior gap: Studio initially treated every unchecked checkbox as empty. Studio now records user answer edits separately from generated events and preserves an intentional unchecked answer unless replacement is requested. A regression test protects this behavior.
 
@@ -56,7 +56,7 @@ Ignored local evidence from this run is under `reports/reference-feature-tests.j
 
 ## Work required for full generator parity
 
-Full parity would require the missing profiles/mix and normalization settings, persisted semantic hints/examples and richer context, arbitrary requested group counts and wizard page scope, worker-backed validation/cancellation and richer semantic/profile diagnostics, followed by the separate batch API. It would also require an explicit decision on Studio's Persian support, public JSON schema, fixed-seed behavior and single-page boundary. These capabilities were not silently added to Studio or described as implemented.
+Full parity would require the missing profiles/mix and normalization settings, persisted semantic hints/examples and richer context, arbitrary requested group counts and wizard page scope, broader finite synthesis and richer semantic/profile diagnostics, followed by the separate batch API. It would also require an explicit decision on Studio's Persian support, public JSON schema, fixed-seed behavior and single-page boundary. These capabilities were not silently added to Studio or described as implemented.
 
 ## Text-editor and AI authoring adaptation - October 22, 2026
 
@@ -82,4 +82,12 @@ Reproduce from the reference root with Studio-hosted ignored cache output:
 
 ```sh
 node node_modules/jest/bin/jest.js --selectProjects renderer --runInBand --coverage=false --cacheDirectory C:/git/mockforge-studio/reports/reference-jest-cache --testPathPatterns="test-data-profiles.spec|test-data-scenarios.spec|preview-test-data.spec"
+```
+
+## Bounded-pattern milestone - October 25, 2026
+
+At the unchanged reference commit cf500304e4b919a7359218bbfc6ee900011596e2, 75 targeted bounded-pattern/evaluation/worker/preview-generator tests pass across four renderer suites. Studio now shares the main isolation/cancellation behavior and adds it to manual deferred preview input. Studio has its own local worker, serial queue, 750 ms per-check deadline, 512-unit candidate/input limit and 2.5 s / 16-check preparation limits. Its finite parser omits groups/alternatives and arbitrary synthesis. Persisted hints/examples, additional profiles and batch APIs remain absent; full parity is not established. Original source and working tree remain unchanged. These targeted reference tests are excluded from Studio totals.
+
+```sh
+node node_modules/jest/bin/jest.js --selectProjects renderer --runInBand --coverage=false --cacheDirectory C:/git/mockforge-studio/reports/reference-jest-cache --testPathPatterns="bounded-pattern.spec|pattern-evaluation.spec|pattern-worker.service.spec|preview-test-data-generator.spec"
 ```

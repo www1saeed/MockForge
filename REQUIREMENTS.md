@@ -80,7 +80,7 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Workspace navigation uses the current project name with a localized fallback; the header also exposes the active localized form title. Renaming, replacement, reload and UI-language changes refresh identity without losing the current route.
 
 - The in-app guide explains clipboard, test-data settings and dynamic project context in all three UI languages. README, workshop, demo and contributor instructions must reflect these features.
-- Feature comparisons must report differences rather than claim parity from shared names. The original edition's extra profiles, scenario/worker/batch engines and wizard flow are not implemented in Studio; see docs/FEATURE_COMPARISON.md.
+- Feature comparisons must report differences rather than claim parity from shared names. The original edition's extra profiles, richer synthesis/batch engines and wizard flow are not fully implemented in Studio; see docs/FEATURE_COMPARISON.md.
 
 ## Text-editor and AI authoring help
 
@@ -97,3 +97,10 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Seed/profile/reference date and physical response structure reproduce data, including after reset/reload. Reordering definitions or preserving unrelated responses must not change identity values. Do not reconstruct generated identities from manual responses.
 - Expose a strict calendar reference date from 1000-01-01 to 9999-12-31, default 2026-01-01. Date fields receive it unchanged; no system-clock or relative-date dependency. Invalid settings block filling. Settings and diagnostics remain transient; schema remains 1.3.0.
 - Do not imply population realism, unique identities, real-world address correctness, persisted hints/examples or complete original-edition parity. Existing length/pattern and native validation rules still take precedence over record relationships.
+
+### Bounded patterns and worker isolation
+
+- Generate a documented finite concatenation subset. Only admitted patterns may use native pattern attributes; uncertain matching must run in disposable workers for both generation and manual input. Never claim arbitrary pattern synthesis.
+- Enforce 500-unit worker patterns, 512-unit inputs, a 750 ms check deadline, one active/32 queued checks, and at most 16 nonempty deferred checks within a 2.5 s generation budget. Expose timeout/budget/unavailable/error outcomes; unverified values cannot submit successfully.
+- Stage candidates without writing responses or resizing rows. Cancellation or changes to responses, rows, settings, project/language or preview lifetime invalidate pending generation. Configured validation waits for current checks and cannot apply stale success. Reset clears response validity and aborts obsolete work. Preserve existing answers and unchanged specification/review/export semantics.
+- Validate that native controls represent candidates unchanged; restore unsuitable values and report the reason. Worker/synthesis limits remain visible product boundaries.

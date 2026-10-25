@@ -18,9 +18,9 @@ Studio now generates coherent first/last/full names, ASCII email, company and ad
 
 Optional persisted semantic hints and validated author examples remain a separate backward-compatible model/editor/import/export milestone. Additional profiles, mixed/normalization settings and relative-date fixtures also remain follow-up work. Manual preserved answers and constraint-mutated samples do not guarantee record consistency; the report and tools guide explain these boundaries.
 
-## Then: bounded pattern support
+## Third milestone: bounded patterns and isolated checks delivered
 
-Extend a documented finite subset for common identifiers. Uncertain pattern checks need worker isolation, input/output/time budgets, cancellation and stale-result rejection. Known valid examples can help but do not enable arbitrary pattern synthesis. Keep unsupported/timeout outcomes visible. The current renderer still uses its existing synchronous manual pattern validation.
+Studio now synthesizes a finite concatenation subset for identifiers and checks known fixture candidates for deferred patterns in terminable workers. Manual deferred validation uses the same isolation, with native attributes limited to the bounded subset. Per-check, input/output, queue and preparation budgets, cancellation, stale-result rejection and explicit diagnostics are delivered. Generation stages data before applying answers/rows; configured validating actions wait for current checks. See the tools guide for exact limits. Groups/alternatives and arbitrary pattern synthesis remain outside Studio synthesis; additional reviewed finite syntax can be a later extension.
 
 ## Finally: bounded batches
 
