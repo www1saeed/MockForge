@@ -115,6 +115,9 @@ export class FormPreviewComponent implements OnDestroy {
   private generation: AbortController | null = null;
   private generationSignature = '';
   private interaction = 0;
+  private manualCheckTail: Promise<void> | null = null;
+  /** Invalidate every waiting job before an abort callback can release the next dispatch. */
+  private manualCheckEpoch = 0;
   private readonly verdicts = new WeakMap<
     ResponseControl,
     { pattern: string; value: string; result: PatternResult }
@@ -156,6 +159,7 @@ export class FormPreviewComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.interaction++;
+    this.manualCheckEpoch++;
     this.cancelGeneration();
     for (const request of this.pendingChecks.values()) request.controller.abort();
   }
@@ -497,6 +501,7 @@ export class FormPreviewComponent implements OnDestroy {
 
     if (button.action === 'reset') {
       this.interaction++;
+      this.manualCheckEpoch++;
       for (const request of this.pendingChecks.values()) request.controller.abort();
       this.answered = new WeakSet<ResponseControl>();
       this.dataReport.set(null);
@@ -580,27 +585,32 @@ export class FormPreviewComponent implements OnDestroy {
       const request = { controller, value, pattern, promise: Promise.resolve() };
       this.pendingChecks.set(control, request);
       this.checkingPatterns.set(this.pendingChecks.size);
-      request.promise = this.checker
-        .check(pattern, value, controller.signal)
-        .then((result): void => {
-          if (this.pendingChecks.get(control) !== request) return;
-          this.pendingChecks.delete(control);
-          this.checkingPatterns.set(this.pendingChecks.size);
-          const currentField = allFields(this.project().fields).find(
-            (entry): boolean => entry.id === field.id && entry.pattern === pattern,
-          );
-          if (
-            controller.signal.aborted ||
-            control.value !== value ||
-            !this.host.nativeElement.contains(control) ||
-            !currentField
-          )
-            return;
-          this.verdicts.set(control, { pattern, value, result });
-          // Copy, locale and length rules may have changed while this same check was running.
-          if (result.status === 'checked') this.applyPatternValidity(control, currentField);
-          else this.patternVerdict(control, currentField, result);
-        });
+      request.promise = this.queueManualCheck(
+        control,
+        field.id,
+        pattern,
+        value,
+        controller.signal,
+      ).then((result): void => {
+        if (this.pendingChecks.get(control) !== request) return;
+        this.pendingChecks.delete(control);
+        this.checkingPatterns.set(this.pendingChecks.size);
+        const currentField = allFields(this.project().fields).find(
+          (entry): boolean => entry.id === field.id && entry.pattern === pattern,
+        );
+        if (
+          controller.signal.aborted ||
+          result.status === 'cancelled' ||
+          control.value !== value ||
+          !this.host.nativeElement.contains(control) ||
+          !currentField
+        )
+          return;
+        this.verdicts.set(control, { pattern, value, result });
+        // Copy, locale and length rules may have changed while this same check was running.
+        if (result.status === 'checked') this.applyPatternValidity(control, currentField);
+        else this.patternVerdict(control, currentField, result);
+      });
       return request.promise;
     }
     const matches =
@@ -611,6 +621,41 @@ export class FormPreviewComponent implements OnDestroy {
     control.setCustomValidity(
       matches ? '' : this.text(field.patternMessage) || this.formCopy('patternMismatch'),
     );
+  }
+
+  /** Every manual caller, including reactive refreshes, shares the same worker backpressure. */
+  private queueManualCheck(
+    control: ResponseControl,
+    fieldId: string,
+    pattern: string,
+    value: string,
+    signal: AbortSignal,
+  ): Promise<PatternResult> {
+    const epoch = this.manualCheckEpoch;
+    const run = (): Promise<PatternResult> => {
+      const current = allFields(this.project().fields).find(
+        (field): boolean => field.id === fieldId,
+      );
+      if (
+        signal.aborted ||
+        epoch !== this.manualCheckEpoch ||
+        !this.host.nativeElement.contains(control) ||
+        control.value !== value ||
+        !current ||
+        current.pattern !== pattern ||
+        !supportsPattern(current) ||
+        responseLengthViolation(current, value)
+      )
+        return Promise.resolve({ status: 'cancelled' });
+      return this.checker.check(pattern, value, signal);
+    };
+    const result = this.manualCheckTail ? this.manualCheckTail.then(run) : run();
+    const release = (): void => {
+      if (this.manualCheckTail === tail) this.manualCheckTail = null;
+    };
+    const tail = result.then(release, release);
+    this.manualCheckTail = tail;
+    return result;
   }
 
   private patternVerdict(control: ResponseControl, field: Field, result: PatternResult): void {

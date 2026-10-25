@@ -363,6 +363,73 @@ describe('Bounded patterns and isolated checks', (): void => {
     expect(component.checkingPatterns()).toBe(0);
   });
 
+  it.each(['locale', 'project'] as const)(
+    'queues a %s refresh of 36 pending responses without budget errors and cancels waiting jobs on reset',
+    async (mode): Promise<void> => {
+      const { workers } = serviceSetup();
+      const fixture = TestBed.createComponent(FormPreviewComponent);
+      const group = createField('group', 'table');
+      group.group = {
+        layout: 'table',
+        minItems: 12,
+        maxItems: 12,
+        fields: ['one', 'two', 'three'].map((id) => ({
+          ...createField('text', id),
+          required: true,
+          pattern: '(ok|yes)',
+        })),
+      };
+      fixture.componentRef.setInput('project', { ...example('saas'), fields: [group] });
+      fixture.detectChanges();
+      const component = fixture.componentInstance;
+      const form: HTMLFormElement = fixture.nativeElement.querySelector('form');
+      const controls = Array.from(form.querySelectorAll('input'));
+      controls.forEach((control) => {
+        control.value = 'ok';
+      });
+      component.runButton(component.project().buttons[0], form);
+      if (mode === 'locale') fixture.componentRef.setInput('locale', 'en');
+      else
+        fixture.componentRef.setInput('project', { ...component.project(), name: 'Updated name' });
+      fixture.detectChanges();
+      await settle();
+      expect(component.checkingPatterns()).toBe(36);
+      expect(
+        controls.every(
+          (control) => control.validationMessage === component.formCopy('dataPatternChecking'),
+        ),
+      ).toBe(true);
+      for (let index = 0; index < 36; index++) {
+        expect(workers).toHaveLength(index + 1);
+        workers[index].reply({ status: 'checked', matches: true });
+        await settle();
+      }
+      expect(component.checkingPatterns()).toBe(0);
+      expect(form.checkValidity()).toBe(true);
+      expect(component.simulated()).toBe(false);
+      component.runButton(component.project().buttons[0], form);
+      expect(component.simulated()).toBe(true);
+      expect(workers).toHaveLength(36);
+
+      controls.forEach((control) => {
+        control.value = 'yes';
+      });
+      fixture.componentRef.setInput('project', { ...component.project(), name: 'Changed again' });
+      fixture.detectChanges();
+      expect(component.checkingPatterns()).toBe(36);
+      expect(workers).toHaveLength(37);
+      component.runButton({ ...component.project().buttons[0], action: 'reset' }, form);
+      fixture.detectChanges();
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      expect(component.checkingPatterns()).toBe(0);
+      expect(workers).toHaveLength(37);
+      expect(workers[36].terminate).toHaveBeenCalled();
+      expect([...form.querySelectorAll('input')].every((control) => control.value === '')).toBe(
+        true,
+      );
+    },
+  );
+
   it('cancels obsolete rule checks, retains length errors and blocks stale submit completion', async (): Promise<void> => {
     const { fixture, component, form, control, workers } = preview();
     control.value = 'Jonas Muster';

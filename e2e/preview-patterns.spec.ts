@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { example } from '../src/app/project.examples';
 import { createButton, createField, Field, text } from '../src/app/project.model';
+import { translate } from '../src/app/translations';
 
 async function open(page: Page, fields: Field[]): Promise<string> {
   const project = {
@@ -145,6 +146,75 @@ test('editing label copy keeps an active worker alive and uses the updated error
   await page.locator('#field-pattern-message-de').fill('Latest error');
   await expect(control).toHaveJSProperty('validationMessage', 'Latest error');
   expect(started).toBe(1);
+});
+
+test('locale and project refreshes finish 36 pending checks without transient queue-limit errors', async ({
+  page,
+}): Promise<void> => {
+  await page.addInitScript(() => {
+    const messages: string[] = [];
+    (window as unknown as { patternMessages: string[] }).patternMessages = messages;
+    const setValidity = HTMLInputElement.prototype.setCustomValidity;
+    HTMLInputElement.prototype.setCustomValidity = function (
+      this: HTMLInputElement,
+      message: string,
+    ): void {
+      if (this.dataset['fieldId']) messages.push(message);
+      setValidity.call(this, message);
+    };
+  });
+  let workers = 0;
+  await page.route('**/assets/preview-pattern.worker.js', async (route): Promise<void> => {
+    workers++;
+    await route.fulfill({
+      contentType: 'application/javascript',
+      body: 'self.addEventListener("message", () => setTimeout(() => self.postMessage({ status: "checked", matches: true }), 80));',
+    });
+  });
+  const group = createField('group', 'people');
+  group.group = {
+    layout: 'table',
+    minItems: 12,
+    maxItems: 12,
+    fields: ['one', 'two', 'three'].map((id) => ({
+      ...createField('text', id),
+      required: true,
+      pattern: '(ok|yes)',
+    })),
+  };
+  await open(page, [group]);
+  await page.locator('.workflow button').nth(0).click();
+  await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
+  const controls = page.locator('app-form-preview input[data-field-id]');
+  await expect(controls).toHaveCount(36);
+  await controls.evaluateAll((elements) =>
+    elements.forEach((element) => {
+      (element as HTMLInputElement).value = 'ok';
+    }),
+  );
+  await page.locator('.preview-buttons button').first().click();
+  await page
+    .locator('.topbar .locale-toggle')
+    .getByRole('button', { name: 'EN', exact: true })
+    .click();
+  await page.locator('#project-name').fill('Changed while pending');
+  await expect
+    .poll(
+      () =>
+        controls.evaluateAll((elements) =>
+          elements.every((element) => (element as HTMLInputElement).checkValidity()),
+        ),
+      { timeout: 15000 },
+    )
+    .toBe(true);
+  const messages = await page.evaluate(
+    () => (window as unknown as { patternMessages: string[] }).patternMessages,
+  );
+  expect(messages).not.toContain(translate('dataPatternBudget', 'de'));
+  expect(messages).not.toContain(translate('dataPatternBudget', 'en'));
+  expect(workers).toBe(36);
+  await page.locator('.preview-buttons button').first().click();
+  await expect(page.locator('.simulation-result')).toBeVisible();
 });
 
 test('cancel and edit discard pending generation without partial answers and report worker failure accessibly', async ({
