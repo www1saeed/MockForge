@@ -23,6 +23,12 @@ import {
   ResponseControl,
 } from './preview-test-data';
 import { responseLengthViolation } from './response-constraints';
+import {
+  DataMeaning,
+  DEFAULT_REFERENCE_DATE,
+  isReferenceDate,
+  MeaningSource,
+} from './preview-data-record';
 import { FeedbackService } from './feedback.service';
 import { FormsModule } from '@angular/forms';
 import {
@@ -84,6 +90,8 @@ export class FormPreviewComponent {
   readonly groups = viewChildren(RepeatGroupComponent);
   readonly dataLocale = signal<Locale>('de');
   readonly dataSeed = signal(1);
+  readonly dataReferenceDate = signal(DEFAULT_REFERENCE_DATE);
+  readonly referenceDateValid = computed((): boolean => isReferenceDate(this.dataReferenceDate()));
   readonly replaceResponses = signal(false);
   readonly dataScenario = signal<DataScenario>('valid');
   readonly dataBoundary = signal<DataBoundary>('minimum');
@@ -107,6 +115,7 @@ export class FormPreviewComponent {
   }
 
   fillResponses(form: HTMLFormElement): void {
+    if (!this.referenceDateValid()) return;
     const groupDiagnostics: DataDiagnostic[] = [];
     for (const group of this.groups()) {
       const mode = this.dataGroupRows();
@@ -143,6 +152,7 @@ export class FormPreviewComponent {
         this.dataScenario(),
         this.answered,
         this.dataBoundary(),
+        this.dataReferenceDate(),
       );
       for (const item of groupDiagnostics) report[item.outcome]++;
       report.diagnostics.unshift(...groupDiagnostics);
@@ -198,6 +208,43 @@ export class FormPreviewComponent {
 
   diagnosticValidity(value: boolean | null): string {
     return this.t(value === null ? 'dataNotChecked' : value ? 'dataIsValid' : 'dataIsInvalid');
+  }
+
+  semanticMeaning(meaning: DataMeaning): string {
+    const keys: Record<DataMeaning, CopyKey> = {
+      firstName: 'dataFirstName',
+      lastName: 'dataLastName',
+      fullName: 'dataFullName',
+      company: 'dataCompany',
+      street: 'dataStreet',
+      houseNumber: 'dataHouseNumber',
+      address: 'dataAddress',
+      postalCode: 'dataPostalCode',
+      city: 'dataCity',
+      country: 'dataCountry',
+      email: 'email',
+      url: 'url',
+      date: 'date',
+      number: 'number',
+      choice: 'dataChoice',
+      boolean: 'checkbox',
+      generic: 'dataGeneric',
+      pattern: 'pattern',
+    };
+    return this.t(keys[meaning]);
+  }
+
+  semanticSource(source: MeaningSource): string {
+    const keys: Record<MeaningSource, CopyKey> = {
+      label: 'dataFromLabel',
+      placeholder: 'dataFromPlaceholder',
+      help: 'dataFromHelp',
+      type: 'dataFromType',
+      fallback: 'dataFallback',
+      pattern: 'pattern',
+      ambiguous: 'dataAmbiguous',
+    };
+    return this.t(keys[source]);
   }
 
   readonly feedback = inject(FeedbackService);

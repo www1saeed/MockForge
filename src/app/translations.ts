@@ -199,8 +199,8 @@ export const copy = {
   ],
   guideTestData: ['Vorschau mit Testdaten prüfen', 'Check the preview with test data'],
   guideTestDataText: [
-    'Blende die Vorschau ein und wähle Testdaten einfüllen. Einstellungen bieten DE/EN/FA, einen Startwert sowie gültige, leere, ungültige und Grenzwertfälle. Prüfe exakte Textlängen, ein Zeichen darunter/darüber oder leere Pflichtfelder. Gruppenzeilen können bestehend, minimal oder maximal sein. Ersetzen muss ausdrücklich aktiviert werden; Zeilenabbau ist sonst geschützt. Ergebnisse pro Feld zeigen Regel und erwartete/beobachtete Gültigkeit. Summen zählen Antworten und angeforderte Gruppenprüfungen. Nicht anwendbare Fälle und komplexe RegEx werden ausgewiesen. Antworten, Einstellungen und Berichte werden nicht gespeichert oder exportiert.',
-    'Show the preview and choose Fill test data. Settings offer DE/EN/FA, a seed, valid, empty, invalid and boundary cases. Check exact text lengths, one character below/above or required-empty values. Group rows can stay as mounted or use their minimum/maximum. Enable replacement explicitly; otherwise row removal is protected. Per-field results show the rule and expected/observed validity. Totals count responses and requested group checks. Inapplicable cases and complex patterns are reported. Answers, settings and reports are never saved or exported.',
+    'Blende die Vorschau ein und wähle Testdaten einfüllen. Einstellungen bieten DE/EN/FA, Startwert, Bezugsdatum sowie gültige, leere, ungültige und Grenzwertfälle. Vorname, Nachname, E-Mail und Adresse gehören pro Hauptformular und Gruppenzeile zu einem synthetischen Datensatz. Die Erkennung nutzt eindeutige Beschriftungen, danach exakte Platzhalter oder Hilfetexte; widersprüchliche Übersetzungen führen zu neutralem Text. Datumsfelder verwenden das Bezugsdatum unverändert. Längenregeln und Szenarien können Zusammenhänge verändern; der Bericht kennzeichnet dies und zeigt die Erkennungsquelle. Vorhandene Antworten werden nicht in neue Identitäten übernommen. Gruppenzeilen können bestehend, minimal oder maximal sein; Zeilenabbau benötigt Ersetzen. Prüfe exakte Textlängen, ein Zeichen darunter/darüber und leere Pflichtfelder anhand erwarteter/beobachteter Gültigkeit. Nicht anwendbare Fälle und komplexe RegEx werden ausgewiesen. Antworten, Einstellungen und Berichte werden nicht gespeichert oder exportiert.',
+    'Show the preview and choose Fill test data. Settings offer DE/EN/FA, a seed, reference date and valid/empty/invalid/boundary cases. First name, last name, email and address belong to one synthetic record per root form and group row. Recognition uses unambiguous labels, then exact placeholder/help phrases; conflicting translations use generic text. Date fields use the reference date unchanged. Length rules and scenarios may change record consistency; the report flags this and shows the recognition source. Retained answers are not used to reconstruct new identities. Group rows can stay mounted or use minimum/maximum; shrinking requires replacement. Check exact text lengths, one below/above and required-empty using expected/observed validity. Inapplicable cases and complex patterns are reported. Answers, settings and reports are never saved or exported.',
   ],
   guideShell: [
     'Projekt im Header und in der Navigation',
@@ -283,6 +283,42 @@ export const copy = {
   dataProtected: [
     'Zeilenabbau geschützt; Ersetzen aktivieren',
     'Row removal protected; enable replacement',
+  ],
+
+  dataFirstName: ['Vorname', 'First name'],
+  dataLastName: ['Nachname', 'Last name'],
+  dataFullName: ['Vollständiger Name', 'Full name'],
+  dataCompany: ['Firma', 'Company'],
+  dataStreet: ['Straße', 'Street'],
+  dataHouseNumber: ['Hausnummer', 'House number'],
+  dataAddress: ['Anschrift', 'Address'],
+  dataPostalCode: ['Postleitzahl', 'Postal code'],
+  dataCity: ['Stadt', 'City'],
+  dataCountry: ['Land', 'Country'],
+  dataChoice: ['Auswahl', 'Choice'],
+  dataGeneric: ['Neutraler Beispieltext', 'Generic sample text'],
+  dataFromLabel: ['Aus Beschriftung', 'From label'],
+  dataFromPlaceholder: ['Aus Platzhalter', 'From placeholder'],
+  dataFromHelp: ['Aus Hilfetext', 'From help text'],
+  dataFromType: ['Aus Feldtyp', 'From field type'],
+  dataFallback: ['Keine eindeutige Bedeutung erkannt', 'No clear meaning recognized'],
+  dataAmbiguous: [
+    'Widersprüchliche Übersetzungen; neutraler Wert',
+    'Conflicting translations; generic value',
+  ],
+  dataRecognition: ['Erkennung', 'Recognition'],
+  dataAdjusted: [
+    'Durch Längenregeln oder Szenario verändert; Zusammenhang kann abweichen.',
+    'Changed by length rules or scenario; record consistency may differ.',
+  ],
+  dataReferenceDate: ['Bezugsdatum', 'Reference date'],
+  dataReferenceHint: [
+    'Datumsfelder verwenden dieses Datum unverändert. Standard: 2026-01-01. Kein aktuelles Systemdatum und keine relativen Datumsregeln.',
+    'Date fields use this date unchanged. Default: 2026-01-01. No current system date or relative date rules.',
+  ],
+  dataReferenceInvalid: [
+    'Bitte in den Testdaten-Einstellungen ein gültiges Bezugsdatum zwischen 1000-01-01 und 9999-12-31 wählen.',
+    'Choose a valid reference date between 1000-01-01 and 9999-12-31 in test data settings.',
   ],
 
   expandFields: ['Hauptfeldliste aufklappen', 'Expand main field list'],

@@ -101,7 +101,9 @@ describe('Preview test data', (): void => {
     const field = { ...createField('text', 'text'), minLength: 30, maxLength: 30 };
     expect(testDataCandidate(field, 'en', 0)).toHaveLength(30);
     expect(testDataCandidate({ ...field, minLength: 0, maxLength: 3 }, 'de', 0)).toHaveLength(3);
-    expect(testDataCandidate(createField('email', 'email'), 'fa', 2)).toBe('sample3@example.org');
+    expect(testDataCandidate(createField('email', 'email'), 'fa', 2)).toBe(
+      'sara.nemune.3@example.org',
+    );
     expect(fillTestData(form, allFields([group]), 'en', Infinity, true, 'valid').filled).toBe(1);
   });
 
@@ -252,5 +254,81 @@ describe('Preview test data', (): void => {
     component.runButton({ ...component.project().buttons[0], action: 'reset' }, form);
     expect(control.value).toBe('');
     expect(control.checkValidity()).toBe(true);
+  });
+
+  it('keeps root identity stable across field order and preserved answers', (): void => {
+    const fields = ['First name', 'Last name', 'Full name'].map((label, index): Field => ({
+      ...createField('text', 'identity-' + index),
+      label: text(label, label, label),
+    }));
+    fields.push(createField('email', 'email'));
+    const { component, form } = setup(fields);
+    component.dataLocale.set('en');
+    component.fillResponses(form);
+    const values = Array.from(form.querySelectorAll('input')).map(
+      (control): string => control.value,
+    );
+    expect(values[2]).toBe(values[0] + ' ' + values[1]);
+    expect(values[3]).toContain(values[0].toLowerCase() + '.' + values[1].toLowerCase());
+    const reversed = fillTestData(form, [...fields].reverse(), 'en', 1, true, 'valid');
+    expect(reversed.filled).toBe(4);
+    expect(
+      Array.from(form.querySelectorAll('input')).map((control): string => control.value),
+    ).toEqual(values);
+    const first = form.querySelector<HTMLInputElement>('#preview-identity-0')!;
+    first.value = 'Manual';
+    component.fillResponses(form);
+    expect(first.value).toBe('Manual');
+    expect(form.querySelector<HTMLInputElement>('#preview-email')!.value).toBe(values[3]);
+    expect(component.dataReport()?.diagnostics[0].outcome).toBe('preserved');
+  });
+
+  it('gives each repeated record a coherent identity and leaves the specification unchanged', (): void => {
+    const field = createField('group', 'people');
+    field.group!.minItems = 2;
+    field.group!.fields = ['First name', 'Last name', 'Full name'].map((label, index): Field => ({
+      ...createField('text', 'person-' + index),
+      label: text(label, label, label),
+    }));
+    field.group!.fields.push(createField('email', 'person-email'));
+    const { component, form } = setup([field]);
+    const before = JSON.stringify(component.project());
+    component.fillResponses(form);
+    const columns = field.group!.fields.map((child): HTMLInputElement[] =>
+      Array.from(form.querySelectorAll<HTMLInputElement>(`[data-field-id="${child.id}"]`)),
+    );
+    for (let index = 0; index < 2; index++)
+      expect(columns[2][index].value).toBe(columns[0][index].value + ' ' + columns[1][index].value);
+    expect(columns[3][0].value).not.toBe(columns[3][1].value);
+    const row = component.groups()[0].rows()[0].id;
+    const email = columns[3][0].value;
+    component.dataGroupRows.set('maximum');
+    component.replaceResponses.set(true);
+    component.fillResponses(form);
+    expect(component.groups()[0].rows()[0].id).toBe(row);
+    expect(columns[3][0].value).toBe(email);
+    expect(JSON.stringify(component.project())).toBe(before);
+  });
+
+  it('reports semantic adjustments and rejects invalid reference dates without changing responses', (): void => {
+    const field = {
+      ...createField('text', 'name'),
+      label: text('Vorname', 'First name', 'نام کوچک'),
+      maxLength: 2,
+    };
+    const { component, form } = setup([field, createField('date', 'date')]);
+    component.dataReferenceDate.set('2028-02-29');
+    component.fillResponses(form);
+    expect(form.querySelector<HTMLInputElement>('#preview-date')!.value).toBe('2028-02-29');
+    expect(component.dataReport()?.diagnostics[0]).toMatchObject({
+      adjusted: true,
+      semantic: { meaning: 'firstName', source: 'label' },
+    });
+    const before = form.querySelector('input')!.value;
+    component.dataReferenceDate.set('2026-02-29');
+    component.replaceResponses.set(true);
+    component.fillResponses(form);
+    expect(component.referenceDateValid()).toBe(false);
+    expect(form.querySelector('input')!.value).toBe(before);
   });
 });

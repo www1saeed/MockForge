@@ -1,14 +1,21 @@
 import { expect, Page, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { example } from '../src/app/project.examples';
-import { createField, Field } from '../src/app/project.model';
+import { createButton, createField, Field, text } from '../src/app/project.model';
 
 async function openFields(page: Page, fields: Field[]): Promise<string> {
   await page.addInitScript(
     (project): void => {
       localStorage.setItem('mockforge-studio-v1', JSON.stringify(project));
     },
-    { ...example('saas'), fields },
+    {
+      ...example('saas'),
+      fields,
+      buttons: [
+        ...example('saas').buttons,
+        { ...createButton('reset-preview', text('Reset', 'Reset', 'Reset')), action: 'reset' },
+      ],
+    },
   );
   await page.goto('/#workspace');
   await page.locator('.workflow button').nth(2).click();
@@ -22,6 +29,151 @@ async function configure(page: Page, scenario: string, boundary?: string): Promi
   await page.locator('.test-data-dialog input[type="checkbox"]').check();
   await page.locator('.test-data-dialog button').click();
 }
+
+test('coherent DE/EN/FA records keep root and row identities aligned and reproduce after reset', async ({
+  page,
+}): Promise<void> => {
+  const root = [
+    'First name',
+    'Last name',
+    'Full name',
+    'Company',
+    'City',
+    'Street',
+    'House number',
+    'Address',
+    'Postal code',
+  ].map((label, index): Field => ({
+    ...createField('text', 'record-' + index),
+    label: text(label, label, label),
+  }));
+  root.push(createField('email', 'record-email'), createField('date', 'record-date'));
+  const group = createField('group', 'team');
+  group.group!.minItems = 2;
+  group.group!.maxItems = 3;
+  group.group!.fields = ['First name', 'Last name', 'Full name'].map((label, index): Field => ({
+    ...createField('text', 'member-' + index),
+    label: text(label, label, label),
+  }));
+  group.group!.fields.push(createField('email', 'member-email'));
+  const before = await openFields(page, [...root, group]);
+  const fill = page.locator('.test-data-toolbar .secondary-button');
+  for (const locale of ['de', 'en', 'fa']) {
+    await configure(page, 'valid');
+    await page.locator('.test-data-toolbar .text-button').click();
+    await page.locator('#data-locale').selectOption(locale);
+    await page.locator('#data-seed').fill('13');
+    await page.locator('#data-reference-date').fill('2028-02-29');
+    await page.locator('.test-data-dialog button').click();
+    await fill.click();
+    const first = await page.locator('#preview-record-0').inputValue();
+    const last = await page.locator('#preview-record-1').inputValue();
+    await expect(page.locator('#preview-record-2')).toHaveValue(first + ' ' + last);
+    await expect(page.locator('#preview-record-date')).toHaveValue('2028-02-29');
+    const address = await page.locator('#preview-record-7').inputValue();
+    expect(address).toContain(await page.locator('#preview-record-5').inputValue());
+    expect(address).toContain(await page.locator('#preview-record-6').inputValue());
+    for (let row = 0; row < 2; row++) {
+      const value = async (id: string): Promise<string> =>
+        page.locator(`[data-field-id="member-${id}"]`).nth(row).inputValue();
+      expect(await value('2')).toBe((await value('0')) + ' ' + (await value('1')));
+    }
+    const emails = await page
+      .locator('[data-field-id="member-email"]')
+      .evaluateAll((controls): string[] =>
+        controls.map((control): string => (control as HTMLInputElement).value),
+      );
+    expect(emails[0]).not.toBe(emails[1]);
+    const values = await page
+      .locator('app-form-preview form input')
+      .evaluateAll((controls): string[] =>
+        controls.map((control): string => (control as HTMLInputElement).value),
+      );
+    await fill.click();
+    expect(
+      await page
+        .locator('app-form-preview form input')
+        .evaluateAll((controls): string[] =>
+          controls.map((control): string => (control as HTMLInputElement).value),
+        ),
+    ).toEqual(values);
+    if (locale === 'en') {
+      await page.locator('.test-data-diagnostics summary').click();
+      await expect(page.locator('.test-data-diagnostics')).toContainText('Aus Beschriftung');
+      await page.screenshot({ path: 'reports/semantic-data-desktop.png', fullPage: true });
+      await page.locator('.test-data-diagnostics summary').click();
+    }
+  }
+  // Reset recreates DOM row ids, but the same physical rows reproduce the same dataset.
+  const beforeReset = await page
+    .locator('[data-field-id="member-email"]')
+    .evaluateAll((controls): string[] =>
+      controls.map((control): string => (control as HTMLInputElement).value),
+    );
+  const oldId = await page.locator('[data-field-id="member-email"]').first().getAttribute('id');
+  await page
+    .locator('.preview-buttons')
+    .getByRole('button', { name: 'Reset', exact: true })
+    .click();
+  expect(await page.locator('[data-field-id="member-email"]').first().getAttribute('id')).not.toBe(
+    oldId,
+  );
+  await fill.click();
+  expect(
+    await page
+      .locator('[data-field-id="member-email"]')
+      .evaluateAll((controls): string[] =>
+        controls.map((control): string => (control as HTMLInputElement).value),
+      ),
+  ).toEqual(beforeReset);
+  expect(await page.evaluate((): string => localStorage.getItem('mockforge-studio-v1')!)).toBe(
+    before,
+  );
+});
+
+test('reference-date errors and semantic adjustments are accessible in Persian mobile settings', async ({
+  page,
+}): Promise<void> => {
+  await openFields(page, [
+    {
+      ...createField('text', 'short-name'),
+      label: text('Vorname', 'First name', 'نام کوچک'),
+      maxLength: 2,
+    },
+    { ...createField('text', 'weak'), placeholder: text('', 'Company', '') },
+  ]);
+  await page
+    .locator('.topbar .locale-toggle')
+    .getByRole('button', { name: 'FA', exact: true })
+    .click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await configure(page, 'valid');
+  await page.locator('.test-data-toolbar .text-button').click();
+  await page.locator('#data-reference-date').fill('');
+  await page.locator('.test-data-dialog button').click();
+  await expect(page.locator('.test-data-toolbar .secondary-button')).toBeDisabled();
+  await expect(page.locator('.test-data-toolbar [role="alert"]')).toContainText('تاریخ');
+  await page.locator('.test-data-toolbar .text-button').click();
+  await page.locator('#data-reference-date').fill('2028-02-29');
+  await expect(page.locator('#data-reference-date')).toHaveAttribute('aria-invalid', 'false');
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({ path: 'reports/semantic-settings-mobile-fa.png', fullPage: true });
+  await page.locator('.test-data-dialog button').click();
+  await page.locator('.test-data-toolbar .secondary-button').click();
+  await page.locator('.test-data-diagnostics summary').click();
+  await expect(page.locator('.test-data-diagnostics')).toContainText('قوانین طول');
+  await expect(page.locator('.test-data-diagnostics')).toContainText('از متن راهنما');
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([]);
+  expect(
+    await page.evaluate((): boolean => document.documentElement.scrollWidth <= innerWidth),
+  ).toBe(true);
+});
 
 test('all four text boundaries are observed by the native form and correction clears generated errors', async ({
   page,

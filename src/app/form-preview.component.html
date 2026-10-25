@@ -30,12 +30,20 @@
   </div>
 </div>
 <div class="test-data-toolbar" role="group" [attr.aria-label]="t('testData')">
-  <button type="button" class="secondary-button" (click)="fillResponses(previewForm)">
+  <button
+    type="button"
+    class="secondary-button"
+    [disabled]="!referenceDateValid()"
+    (click)="fillResponses(previewForm)"
+  >
     {{ t('fillTestData') }}
   </button>
   <button type="button" class="text-button" (click)="openTestData()">
     {{ t('testDataSettings') }}
   </button>
+  @if (!referenceDateValid()) {
+    <p role="alert">{{ t('dataReferenceInvalid') }}</p>
+  }
   @if (dataReport(); as report) {
     <p role="status">
       {{ t('dataFilled') }}: {{ report.filled }} · {{ t('dataPreserved') }}:
@@ -52,6 +60,15 @@
         <li>
           <strong>{{ diagnosticLabel(item) }}</strong>
           <span>{{ diagnosticReason(item.reason) }} · {{ diagnosticRule(item.rule) }}</span>
+          @if (item.semantic; as semantic) {
+            <span
+              >{{ t('dataRecognition') }}: {{ semanticMeaning(semantic.meaning) }} ·
+              {{ semanticSource(semantic.source) }}</span
+            >
+          }
+          @if (item.adjusted) {
+            <span>{{ t('dataAdjusted') }}</span>
+          }
           <span
             >{{ t('dataExpected') }}: {{ diagnosticValidity(item.expectedValid) }} ·
             {{ t('dataObserved') }}: {{ diagnosticValidity(item.actualValid) }}</span
@@ -152,6 +169,19 @@
     [ngModel]="dataSeed()"
     (ngModelChange)="dataSeed.set($event)"
   />
+  <label for="data-reference-date">{{ t('dataReferenceDate') }}</label>
+  <input
+    class="form-control"
+    id="data-reference-date"
+    type="date"
+    min="1000-01-01"
+    max="9999-12-31"
+    [ngModel]="dataReferenceDate()"
+    (ngModelChange)="dataReferenceDate.set($event)"
+    [attr.aria-invalid]="!referenceDateValid()"
+    aria-describedby="data-reference-hint"
+  />
+  <p id="data-reference-hint">{{ t('dataReferenceHint') }}</p>
   <label for="data-scenario">{{ t('dataScenario') }}</label>
   <select
     class="form-select"

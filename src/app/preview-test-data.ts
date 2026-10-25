@@ -1,5 +1,13 @@
 import { Field, Locale } from './project.model';
 import { responseLengthViolation } from './response-constraints';
+import {
+  createDataRecord,
+  DataMeaningMatch,
+  DEFAULT_REFERENCE_DATE,
+  normalizeDataSeed,
+  PreviewDataRecord,
+  resolveDataMeaning,
+} from './preview-data-record';
 
 export type DataScenario = 'valid' | 'empty' | 'invalid' | 'boundary';
 export type DataBoundary =
@@ -16,15 +24,10 @@ export interface DataDiagnostic {
   rule: DataRule;
   expectedValid: boolean | null;
   actualValid: boolean | null;
+  semantic?: DataMeaningMatch;
+  adjusted?: boolean;
 }
 export type ResponseControl = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-
-/** Small original synthetic catalogue. Profiles are independent of the Studio language. */
-const PEOPLE: Record<Locale, readonly string[]> = {
-  de: ['Mira Beispiel', 'Jonas Muster', 'Lea Beispiel'],
-  en: ['Alex Sample', 'Robin Example', 'Taylor Sample'],
-  fa: ['مینا نمونه', 'آرمان نمونه', 'سارا نمونه'],
-};
 
 /** Only a small, bounded character-class subset is synthesized; arbitrary RegEx is skipped. */
 function patternCandidate(pattern: string, ordinal: number): string | null {
@@ -44,27 +47,19 @@ function patternCandidate(pattern: string, ordinal: number): string | null {
 }
 
 /** No arbitrary-pattern evaluation: the caller reports unsupported constraints explicitly. */
-export function testDataCandidate(field: Field, locale: Locale, ordinal: number): string | null {
-  if (field.pattern && ['text', 'textarea', 'email', 'url'].includes(field.type)) {
+export function testDataCandidate(
+  field: Field,
+  locale: Locale,
+  ordinal: number,
+  record = createDataRecord(locale, ordinal),
+): string | null {
+  const meaning = resolveDataMeaning(field).meaning;
+  if (meaning === 'pattern') {
     return patternCandidate(field.pattern, ordinal);
   }
-  if (field.type === 'email') return `sample${ordinal + 1}@example.org`;
-  if (field.type === 'url') return `https://example.org/sample/${ordinal + 1}`;
-  if (field.type === 'date') return `2026-01-${String((ordinal % 28) + 1).padStart(2, '0')}`;
-  if (field.type === 'number') return String((ordinal % 99) + 1);
-  const label = `${field.label.de} ${field.label.en} ${field.label.fa}`.toLowerCase();
-  const name = PEOPLE[locale][ordinal % PEOPLE[locale].length];
-  let value = /name|نام/.test(label)
-    ? name
-    : /stadt|city|شهر/.test(label)
-      ? { de: 'Berlin', en: 'Bristol', fa: 'تهران' }[locale]
-      : /straße|strasse|street|address|adresse|نشانی/.test(label)
-        ? { de: 'Beispielweg 12', en: '12 Sample Lane', fa: 'خیابان نمونه ۱۲' }[locale]
-        : {
-            de: 'Synthetischer Beispieltext',
-            en: 'Synthetic sample text',
-            fa: 'متن نمونه آزمایشی',
-          }[locale];
+  let value = record[meaning];
+  // Technical types retain their representation; incompatible lengths are reported by validation.
+  if (!['text', 'textarea'].includes(field.type)) return value;
   if (field.maxLength) value = value.slice(0, field.maxLength);
   if (value.length < field.minLength) value = value.padEnd(field.minLength, 'x');
   return value;
@@ -92,6 +87,7 @@ function scenarioCandidate(
   ordinal: number,
   scenario: DataScenario,
   boundary: DataBoundary,
+  record: PreviewDataRecord,
 ): Candidate | null {
   if (scenario === 'empty') return { value: '', rule: 'required', expected: !field.required };
   if (scenario === 'invalid') {
@@ -113,7 +109,7 @@ function scenarioCandidate(
     // Empty optional values are valid despite minlength; they are not an underflow failure.
     if (!length && !field.required) return null;
     if (length > MAX_GENERATED_LENGTH) return null;
-    const base = testDataCandidate(field, locale, ordinal);
+    const base = testDataCandidate(field, locale, ordinal, record);
     if (base === null) return null;
     return {
       value: base.slice(0, length).padEnd(length, 'x'),
@@ -121,7 +117,7 @@ function scenarioCandidate(
       expected: boundary === 'minimum' || boundary === 'maximum',
     };
   }
-  const value = testDataCandidate(field, locale, ordinal);
+  const value = testDataCandidate(field, locale, ordinal, record);
   return value === null ? null : { value, rule: 'none', expected: true };
 }
 
@@ -135,9 +131,11 @@ export function fillTestData(
   scenario: DataScenario,
   answered = new WeakSet<ResponseControl>(),
   boundary: DataBoundary = 'minimum',
+  referenceDate = DEFAULT_REFERENCE_DATE,
 ): FillReport {
   const report: FillReport = { filled: 0, preserved: 0, skipped: 0, diagnostics: [] };
-  let ordinal = Math.abs(Math.trunc(Number.isFinite(seed) ? seed : 0)) % 1000000;
+  let ordinal = normalizeDataSeed(seed);
+  const records = new Map<string, PreviewDataRecord>();
   for (const field of fields) {
     const controls = Array.from(
       form.querySelectorAll<ResponseControl>(`[data-field-id="${field.id}"]`),
@@ -148,6 +146,13 @@ export function fillTestData(
     let instance = 0;
     for (const group of groups.values()) {
       const control = group[0];
+      // Physical row positions reproduce the same request after reset/reload; DOM ids stay private.
+      const scope = control.name.includes(':')
+        ? `${control.name.split(':')[0]}:${instance + 1}`
+        : 'root';
+      if (!records.has(scope))
+        records.set(scope, createDataRecord(locale, seed, scope, referenceDate));
+      const record = records.get(scope)!;
       const diagnostic: DataDiagnostic = {
         fieldId: field.id,
         response: control.name,
@@ -157,6 +162,7 @@ export function fillTestData(
         rule: 'none',
         expectedValid: null,
         actualValid: null,
+        semantic: resolveDataMeaning(field),
       };
       report.diagnostics.push(diagnostic);
       const checks = field.type === 'radio' || field.type === 'checkbox';
@@ -172,7 +178,7 @@ export function fillTestData(
       // Avoid evaluating imported arbitrary patterns, even through native checkValidity.
       if (
         field.pattern &&
-        testDataCandidate(field, locale, ordinal) === null &&
+        testDataCandidate(field, locale, ordinal, record) === null &&
         scenario !== 'empty' &&
         !(
           field.required &&
@@ -184,13 +190,18 @@ export function fillTestData(
         diagnostic.rule = 'pattern';
         continue;
       }
-      const candidate = scenarioCandidate(field, locale, ordinal, scenario, boundary);
+      const candidate = scenarioCandidate(field, locale, ordinal, scenario, boundary, record);
       if (!candidate) {
         report.skipped++;
         continue;
       }
       diagnostic.rule = candidate.rule;
       diagnostic.expectedValid = candidate.expected;
+      const semantic = diagnostic.semantic!.meaning;
+      diagnostic.adjusted =
+        semantic !== 'pattern' &&
+        ['text', 'textarea', 'email', 'url'].includes(field.type) &&
+        candidate.value !== record[semantic];
       const previous = group.map((item): { value: string; checked: boolean } => ({
         value: item.value,
         checked: (item as HTMLInputElement).checked,
