@@ -45,3 +45,7 @@ Tests should protect user behavior and specification boundaries. Inspect respons
 ## Documentation and feature comparisons
 
 Keep [authoring tools](AUTHORING_TOOLS.md), [the workshop](PRODUCT_OWNER_WORKSHOP.md), [the demo](SALES_DEMO.md) and the application's DE/EN/FA guide aligned with user-facing behavior. Update README and QUALITY test counts only from completed runs. Reference-repository comparison tests are separate evidence and must never be added to Studio's test total. The [comparison report](FEATURE_COMPARISON.md) records shared behavior and deliberate differences; do not infer full parity from similarly named features.
+
+## Extending preview data
+
+Use `response-constraints.ts` for length semantics shared with native response validation. Assert expected versus observed browser validity, not only candidate strings; native tooShort/tooLong is unreliable for assigned values. Add cases to `preview-test-data.spec.ts` and `e2e/preview-test-data.spec.ts`. Preserve unchecked edits, stable group rows, rollback on mismatch and unchanged LocalStorage/review. Keep unsupported expressions outside candidate evaluation and construction bounded. Update [the tools guide](AUTHORING_TOOLS.md), [roadmap](TEST_DATA_GENERATOR_PLAN.md), [comparison](FEATURE_COMPARISON.md), current test/coverage figures and the actual HTML deck after verified changes.

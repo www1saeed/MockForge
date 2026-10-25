@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 112 passing automated tests: 83 unit/component tests and 29 end-to-end tests.** Verified on October 22, 2026, with **98.40% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 124 passing automated tests: 92 unit/component tests and 32 end-to-end tests.** Verified on October 25, 2026, with **98.54% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -151,3 +151,7 @@ Form tooltips use Bootstrap. Each field can place its tooltip on the title or on
 Open **Edit child fields** to work with a child list beside its properties. The main field list becomes a narrow type-icon rail with Bootstrap tooltips showing each field's index, name and type. Closing child editing or selecting a main field restores the full list. The main list can also be collapsed or expanded manually; these view choices do not alter the specification.
 
 Table groups offer **Table fields without gaps** for a continuous grid. This boolean setting is saved and exported, participates in review invalidation and appears in the Markdown handoff. Migrated schema 1.2.0 files without the optional `group.gapless` property retain comfortable spacing.
+
+### Preview boundary scenarios
+
+Test valid, empty and deliberately invalid responses, exact text limits, one character below/above and required-empty cases. Choose existing/minimum/maximum group rows; shrinking requires explicit replacement. Per-field results compare expected and observed candidate validity and explain skipped cases. Answers and reports stay local and transient. Numeric/date bounds and batch generation remain outside this milestone. See [authoring tools](docs/AUTHORING_TOOLS.md) and the [generator roadmap](docs/TEST_DATA_GENERATOR_PLAN.md).

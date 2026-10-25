@@ -831,27 +831,28 @@
       <section
         class="slide"
         aria-labelledby="title-12"
-        data-narration="Synthetic preview data makes the alignment conversation easier to try with populated controls. The fill action sits above the mockup. Open settings to choose German, English or Persian content independently of the form language, and set a seed for repeatable values. Valid samples check supported field constraints. The empty scenario, with replacement enabled, helps you inspect required-field feedback. Existing answers remain by default, including a deliberately unchecked checkbox. The report counts filled, preserved and skipped response fields. Repeat rows receive independent answers, and an optional empty group receives one row. Complex patterns are skipped rather than guessed, so missing answers still need manual input. Generated responses and settings never enter storage, exports or review. Advanced boundary scenarios and a batch API are not part of this Studio generator."
+        data-narration="Synthetic preview data makes the alignment conversation easier to try with populated controls. Choose German, English or Persian content and an explicit repeatable seed. Valid, empty, deliberately invalid and boundary scenarios let the owner inspect both normal answers and error cases. Text boundaries include exact minimum and maximum length, one character below or above, and required-empty values. The native form observes programmatic length errors through the same explicit check used by the generator. Per-field results identify the rule and expected versus observed candidate validity; a mismatch restores the previous response. Groups can use existing, minimum or maximum rows within their configured bounds. Shrinking requires explicit replacement, so an owner's responses stay protected. Complex patterns are reported as unsupported. Generated answers and reports never enter storage, exports or review. Numeric and date bounds, advanced profiles, worker isolation and batch generation remain follow-up work."
       >
         <p class="eyebrow">11 / Trying the form with synthetic answers</p>
         <h2 id="title-12">Preview data makes<br /><span>the experience easier to check</span></h2>
         <ul class="list">
           <li>
-            <strong>Choose the sample.</strong> DE/EN/FA content, a repeatable seed and valid or
-            empty values. Form language stays independent.
+            <strong>Choose the case.</strong> DE/EN/FA, a repeatable seed, valid/invalid values and
+            text boundaries: exact limits, one below/above or required-empty.
           </li>
           <li>
             <strong>Keep the owner's input.</strong> Preserve existing answers by default. Enable
-            replacement explicitly. Inspect filled, preserved and skipped counts.
+            replacement explicitly, including before shrinking repeat groups.
           </li>
           <li>
-            <strong>Check the gaps.</strong> Repeated entries fill independently. Unsupported
-            patterns need manual input. Test answers never enter storage or exports.
+            <strong>Inspect the result.</strong> Per-field rules show expected and observed
+            validity. Groups support minimum/maximum rows; mismatched candidates restore prior
+            answers.
           </li>
         </ul>
         <p class="note">
-          Use empty values with replacement to check required fields. Studio supports bounded simple
-          RegEx samples; advanced boundary scenarios and batch generation are not included.
+          Unsupported patterns need manual input. Numeric/date bounds, worker isolation and batch
+          generation are not included. Answers and reports stay unsaved.
         </p>
       </section>
       <section
@@ -890,18 +891,18 @@
       <section
         class="slide"
         aria-labelledby="title-14"
-        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-second, 2026 quality checkpoint, all 83 unit and component tests across eleven suites and all 29 Chromium end to end tests passed. That is 112 Studio tests. Line coverage was 98.40 percent. The catalog check verified 327 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-fifth, 2026 quality checkpoint, all 92 unit and component tests across eleven suites and all 32 Chromium end to end tests passed. That is 124 Studio tests. Line coverage was 98.54 percent. The catalog check verified 349 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
       >
         <p class="eyebrow">13 / Engineering evidence</p>
         <h2 id="title-14">A tested foundation<br /><span>for the alignment conversation</span></h2>
         <div class="split">
           <div>
-            <div class="metric">112</div>
+            <div class="metric">124</div>
             <h3>Passing automated tests</h3>
-            <p>83 unit/component tests across eleven suites.<br />29 Chromium end-to-end tests.</p>
+            <p>92 unit/component tests across eleven suites.<br />32 Chromium end-to-end tests.</p>
           </div>
           <div>
-            <div class="metric">98.40%</div>
+            <div class="metric">98.54%</div>
             <h3>Line coverage</h3>
             <p>
               Strict TypeScript, separated responsibilities, immutable state and validated imports.
@@ -912,7 +913,7 @@
           Formatting, ESLint, translation validation and the production build also pass.
         </p>
         <p class="note">
-          Verified October 22, 2026. Jest line coverage. 327 DE/EN/FA catalog entries. Build passes
+          Verified October 25, 2026. Jest line coverage. 349 DE/EN/FA catalog entries. Build passes
           with a size warning. Sonar analysis is not configured. Details: docs/QUALITY.md.
         </p>
       </section>

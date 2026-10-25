@@ -71,3 +71,7 @@ Show the separate text-editor and AI guide entries. Download a complete JSON exa
 ## After the conversation
 
 Share JSON, brief and the implementation agreement through the actual communication channel when authorized. Include decisions and unresolved technical assumptions. Confirm agreement before scheduling production development. Later requests should identify the baseline requirement affected and the impact to discuss.
+
+### Demonstrate a boundary decision
+
+Configure a text field with minimum 3 and maximum 6 characters. In test-data settings enable replacement, choose Boundary and try minimum, maximum, below minimum and above maximum. Open per-field results and compare expected/observed validity. Correct the response manually to show the error clears. For a group, choose maximum rows, then minimum without replacement to demonstrate protected responses. Discuss the real business limit; these scenarios do not implement numeric/date range rules or production validation.
