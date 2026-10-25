@@ -75,3 +75,7 @@ Share JSON, brief and the implementation agreement through the actual communicat
 ### Demonstrate a boundary decision
 
 Configure a text field with minimum 3 and maximum 6 characters. In test-data settings enable replacement, choose Boundary and try minimum, maximum, below minimum and above maximum. Open per-field results and compare expected/observed validity. Correct the response manually to show the error clears. For a group, choose maximum rows, then minimum without replacement to demonstrate protected responses. Discuss the real business limit; these scenarios do not implement numeric/date range rules or production validation.
+
+### Demonstrate a coherent record
+
+Use text fields labeled First name, Last name, Full name, Company, Street, House number, Postal code, City and Country, plus native Email and Date fields. Select a profile, seed and reference date, enable replacement and fill. Show the combined name/address and ASCII example.org email. Add the same identity fields inside a group to demonstrate independent row records. Expand diagnostics to explain label versus placeholder/help recognition and any length adjustments. Reset and fill again to reproduce the walkthrough. Preserve a manual answer once to explain that the generator does not infer an identity from it.

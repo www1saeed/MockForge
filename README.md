@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 124 passing automated tests: 92 unit/component tests and 32 end-to-end tests.** Verified on October 25, 2026, with **98.54% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 134 passing automated tests: 100 unit/component tests and 34 end-to-end tests.** Verified on October 25, 2026, with **98.60% line coverage**. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -155,3 +155,7 @@ Table groups offer **Table fields without gaps** for a continuous grid. This boo
 ### Preview boundary scenarios
 
 Test valid, empty and deliberately invalid responses, exact text limits, one character below/above and required-empty cases. Choose existing/minimum/maximum group rows; shrinking requires explicit replacement. Per-field results compare expected and observed candidate validity and explain skipped cases. Answers and reports stay local and transient. Numeric/date bounds and batch generation remain outside this milestone. See [authoring tools](docs/AUTHORING_TOOLS.md) and the [generator roadmap](docs/TEST_DATA_GENERATOR_PLAN.md).
+
+### Coherent preview records
+
+First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. Studio JSON stays at 1.3.0; persisted semantic hints/examples are future work. See [the tools guide](docs/AUTHORING_TOOLS.md).

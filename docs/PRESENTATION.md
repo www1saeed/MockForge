@@ -10,9 +10,9 @@ The example illustrates avoidable correction work. It does not represent a real 
 
 ## New feature slides and quality evidence
 
-Slides 11-13 demonstrate field copy/cut/paste, seeded preview data and dynamic project context. Each slide includes an extended spoken explanation and the same readable transcript. The deck explains deferred cut, fresh copy IDs, preserving answers, explicit replacement, skipped patterns and transient data. Slide 12 now explains valid/invalid/text-boundary scenarios, expected/observed per-field results and protected group resizing. Numeric/date bounds, worker isolation and batch generation remain outside this milestone.
+Slides 11-13 demonstrate field copy/cut/paste, seeded preview data and dynamic project context. Each slide includes an extended spoken explanation and the same readable transcript. The deck explains deferred cut, fresh copy IDs, preserving answers, explicit replacement, skipped patterns and transient data. Slide 12 now explains coherent DE/EN/FA records, explicit seed/reference date, semantic-source and adjustment diagnostics, valid/invalid/text-boundary scenarios and protected group resizing. Numeric/date bounds, worker isolation and batch generation remain outside this milestone.
 
-Slide 14 records the October 25, 2026 checkpoint: 124 Studio tests (92 unit/component and 32 Chromium E2E), 98.54% Jest line coverage and 349 DE/EN/FA catalog entries. It also identifies the existing bundle-size warning. These are dated engineering results, not customer savings. Slide 15 closes with the first alignment session.
+Slide 14 records the October 25, 2026 checkpoint: 134 Studio tests (100 unit/component and 34 Chromium E2E), 98.60% Jest line coverage and 372 DE/EN/FA catalog entries. It also identifies the existing bundle-size warning. These are dated engineering results, not customer savings. Slide 15 closes with the first alignment session.
 
 The shell-context slide also points to the dedicated text-editor reference and copyable AI briefs. See [manual JSON authoring](JSON_AUTHORING.md) and [AI authoring](AI_AUTHORING.md) for the downloadable kit and complete examples.
 

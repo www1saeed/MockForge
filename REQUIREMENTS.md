@@ -90,3 +90,10 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 - Supply a downloadable UTF-8 authoring kit with the actual type contract, shared rules and both complete examples. Generate it from maintained sources and reject stale output in CI. Explain attachment versus publicly accessible URL and localhost restrictions.
 - Offer localized creation, targeted revision and repair briefs with shared format constraints. Do not automatically invoke an external model. Copy failures select text for manual copying; help never changes the current draft.
 - Generated JSON still requires actual import and product-owner review. Never invent reviewer identity, approval, production integrations, test-data persistence or unsupported schema features.
+
+### Coherent synthetic records
+
+- Recognized root identity/address fields share one synthetic record; each repeat row has its own DE/EN/FA record. Native technical types precede exact normalized label, placeholder and help phrases. Conflicting recognized translations use generic text and report ambiguity. Report meaning/source and constraint/scenario adjustments.
+- Seed/profile/reference date and physical response structure reproduce data, including after reset/reload. Reordering definitions or preserving unrelated responses must not change identity values. Do not reconstruct generated identities from manual responses.
+- Expose a strict calendar reference date from 1000-01-01 to 9999-12-31, default 2026-01-01. Date fields receive it unchanged; no system-clock or relative-date dependency. Invalid settings block filling. Settings and diagnostics remain transient; schema remains 1.3.0.
+- Do not imply population realism, unique identities, real-world address correctness, persisted hints/examples or complete original-edition parity. Existing length/pattern and native validation rules still take precedence over record relationships.

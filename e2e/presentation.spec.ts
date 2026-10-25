@@ -14,12 +14,14 @@ test('presentation navigation and readable desktop/mobile slides', async ({
   const quality = page.locator('section[aria-labelledby="title-14"]');
   await expect(clipboard).toContainText('Cut waits for a valid destination');
   await expect(data).toContainText('DE/EN/FA');
+  await expect(data).toContainText('reference date');
+  await expect(data).toContainText('coherent per root form and group row');
   await expect(data).toContainText('batch generation are not included');
   await expect(shell).toContainText('The project name identifies the draft');
-  await expect(quality).toContainText('124');
-  await expect(quality).toContainText('92 unit/component tests');
-  await expect(quality).toContainText('32 Chromium end-to-end tests');
-  await expect(quality).toContainText('98.54%');
+  await expect(quality).toContainText('134');
+  await expect(quality).toContainText('100 unit/component tests');
+  await expect(quality).toContainText('34 Chromium end-to-end tests');
+  await expect(quality).toContainText('98.60%');
   for (const slide of await page.locator('main section').all()) {
     const narration = await slide.getAttribute('data-narration');
     expect(narration!.length).toBeGreaterThan(200);
@@ -136,7 +138,7 @@ test('presentation remains readable without speech and downloads a standalone HT
   const html = await readFile(path, 'utf8');
   expect(html).toContain('data:image/png;base64,');
   expect(html).toContain('Cut waits for a valid destination');
-  expect(html).toContain('98.54%');
+  expect(html).toContain('98.60%');
   const { resolve } = await import('node:path');
   const { pathToFileURL } = await import('node:url');
   const savedPath = resolve('reports/saved-presentation.html');

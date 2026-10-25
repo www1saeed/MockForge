@@ -14,8 +14,8 @@ Historical baseline: inspected/tested on October 21, 2026, against original Mock
 | Review after paste       | A successful paste changes the specification.                                                                                                                       | Studio automatically invalidates checks and acknowledgement. The original edition's review model differs; review records and schemas are not interchangeable.                                                                                                      |
 | Fill action and settings | Explicit fill outside the mockup; native accessible settings dialog; preserve populated answers unless replacement is selected; generated answers remain transient. | Equivalent central interaction, with different settings and reporting depth. Studio now also preserves a deliberately unchecked checkbox.                                                                                                                          |
 | Content profiles         | Content language is independent of UI/form locale. Emails/URLs use illustrative example domains.                                                                    | Not equal: original DE/EN/PL/UK/AR/JA/ZH/KO plus international mix; Studio DE/EN/FA. The small catalogues and generated values differ.                                                                                                                             |
-| Semantic values          | Generate examples for native field types and selected recognized labels.                                                                                            | Not equal: original explicit hints/examples, richer bilingual semantic detection and coherent profile identities; Studio uses a small label-based candidate catalogue without persisted hints/examples.                                                            |
-| Seed and reference date  | Generation is deterministic for the same full request.                                                                                                              | Not equal in UI: original advances an internal seed per fill and uses today's reference date; Studio exposes a seed, reuses it until edited and uses fixed illustrative January 2026 dates.                                                                        |
+| Semantic values | Coherent names, email, company and address fields per record, with semantic recognition and diagnostics. | Studio now uses DE/EN/FA native-type and conservative exact label/placeholder/help recognition, reports conflicting translations and adjustments, and scopes records by physical row. Original also has persisted hints/examples, richer context and more profiles. Fixture values and detection policies differ. |
+| Seed and reference date | Generation is deterministic for the same full request. | Studio now exposes both seed and reference date (fixed default 2026-01-01); date fields receive the date unchanged. Original preview advances an internal seed and uses today. The original API also accepts an explicit reference date. Relative-date behavior and generated values differ. |
 | Scenarios | Both support valid, invalid and text-boundary modes with exact minimum/maximum, below/above and required-empty cases. | Shared basic cases now exist in Studio. Candidate selection, pattern support and diagnostics differ; no identical-output or exhaustive parity claim. Studio also retains an explicit empty mode. |
 | Repeat groups | Independently addressed child responses, configured bounds and preservation by default. | Studio now offers existing/minimum/maximum rows and protects shrinking unless replacement is enabled. Original has a requested count and wizard scope; Studio remains single-page with a 20-row limit. Neither synthesizes illegal group counts. |
 | Pattern validation       | Do not silently claim a usable candidate when constraints cannot be satisfied.                                                                                      | Not equal: original worker-isolated validation, bounded synthesis, known-example fallback, timeout and cancellation; Studio synthesizes only bounded character classes and skips complex expressions. Studio's existing manual pattern validator remains separate. |
@@ -27,9 +27,9 @@ Historical baseline: inspected/tested on October 21, 2026, against original Mock
 
 ## Executed evidence
 
-Studio (updated October 25, 2026): **92 unit/component tests across 11 suites**, **32 Chromium end-to-end tests**, **349 DE/EN/FA catalog entries** and **98.54% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 808.26 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
+Studio (updated October 25, 2026): **100 unit/component tests across 12 suites**, **34 Chromium end-to-end tests**, **372 DE/EN/FA catalog entries** and **98.60% line coverage**. Formatting, ESLint, spec TypeScript checking and the production build pass. The initial bundle is 820.12 kB, above the unchanged 700 kB warning budget and below the 1 MB failure limit. [QUALITY.md](QUALITY.md) records the full checkpoint.
 
-Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 124 tests.
+Original repository: **337 targeted unit/component tests across 18 suites** passed. The selection covers the form store, banner/header/menu, candidate generation, semantic profiles, scenarios, pattern isolation and batch APIs. An additional **four Chromium E2E tests** passed: DE/EN copy/move/persistence journeys and DE/EN preservation/valid/invalid/boundary-generation journeys. These are targeted comparison runs, not a fresh full-suite or full-browser certification. They are excluded from Studio's total of 134 tests.
 
 The comparison found one actionable shared-behavior gap: Studio initially treated every unchecked checkbox as empty. Studio now records user answer edits separately from generated events and preserves an intentional unchecked answer unless replacement is requested. A regression test protects this behavior.
 
@@ -56,7 +56,7 @@ Ignored local evidence from this run is under `reports/reference-feature-tests.j
 
 ## Work required for full generator parity
 
-Full parity would require the missing profiles/mix and normalization settings, richer semantic hints/examples, coherent record identity, arbitrary requested group counts and wizard page scope, worker-backed validation/cancellation and richer semantic/profile diagnostics, followed by the separate batch API. It would also require an explicit decision on Studio's Persian support, public JSON schema, fixed-seed behavior and single-page boundary. These capabilities were not silently added to Studio or described as implemented.
+Full parity would require the missing profiles/mix and normalization settings, persisted semantic hints/examples and richer context, arbitrary requested group counts and wizard page scope, worker-backed validation/cancellation and richer semantic/profile diagnostics, followed by the separate batch API. It would also require an explicit decision on Studio's Persian support, public JSON schema, fixed-seed behavior and single-page boundary. These capabilities were not silently added to Studio or described as implemented.
 
 ## Text-editor and AI authoring adaptation - October 22, 2026
 
@@ -72,4 +72,14 @@ Reproduce the current targeted reference check from its root (cache output stays
 
 ```sh
 node node_modules/jest/bin/jest.js --selectProjects renderer --runInBand --coverage=false --cacheDirectory C:/git/mockforge-studio/reports/reference-jest-cache --testPathPatterns="test-data-scenarios.spec|preview-test-data.spec"
+```
+
+## Coherent records milestone - October 25, 2026
+
+Current reference commit cf500304e4b919a7359218bbfc6ee900011596e2 passes 44 targeted profile/scenario/preview tests across three renderer suites. Studio now shares the basic coherent-record behavior but retains its own fixtures, exact-phrase recognition, physical-row scopes and explicit seed/date UI. Existing manual answers and constraint-adjusted values can differ from the synthetic record. No extra international profiles, persisted hints/examples, relative-date fixtures, workers or batch API were added. The reference working tree remains unchanged; no full equivalence is claimed.
+
+Reproduce from the reference root with Studio-hosted ignored cache output:
+
+```sh
+node node_modules/jest/bin/jest.js --selectProjects renderer --runInBand --coverage=false --cacheDirectory C:/git/mockforge-studio/reports/reference-jest-cache --testPathPatterns="test-data-profiles.spec|test-data-scenarios.spec|preview-test-data.spec"
 ```

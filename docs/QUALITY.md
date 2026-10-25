@@ -1,6 +1,6 @@
 # Code quality and test evidence
 
-**124 passing automated tests. 98.54% line coverage. All configured quality gates pass.**
+**134 passing automated tests. 98.60% line coverage. All configured quality gates pass.**
 
 MockForge Studio is developed with documented Clean Code practices and substantial automated regression coverage for its current feature set. Complete local verification passed on **October 25, 2026**. Counts describe this checkpoint; rerun the commands after changes.
 
@@ -8,25 +8,25 @@ MockForge Studio is developed with documented Clean Code practices and substanti
 
 | Check                       | Verified result                                  |
 | --------------------------- | ------------------------------------------------ |
-| Jest unit/component tests   | **92 passed** across **11 suites**               |
-| Playwright end-to-end tests | **32 passed**, running in Chromium               |
-| Total automated tests       | **124 passed**                                   |
-| Statement coverage          | **96.97%**; required minimum 80%                 |
-| Branch coverage             | **90.40%**; required minimum 75%                 |
-| Function coverage           | **97.31%**; required minimum 80%                 |
-| Line coverage               | **98.54%**; required minimum 80%                 |
+| Jest unit/component tests   | **100 passed** across **12 suites**               |
+| Playwright end-to-end tests | **34 passed**, running in Chromium               |
+| Total automated tests       | **134 passed**                                   |
+| Statement coverage          | **97.11%**; required minimum 80%                 |
+| Branch coverage             | **90.91%**; required minimum 75%                 |
+| Function coverage           | **97.40%**; required minimum 80%                 |
+| Line coverage               | **98.60%**; required minimum 80%                 |
 | ESLint                      | Passed without reported violations               |
 | Prettier style check        | All matched files pass                           |
-| Runtime translations        | **349 German/English/Persian entries** validated |
+| Runtime translations        | **372 German/English/Persian entries** validated |
 | Angular production build    | Passed                                           |
 
 The spec TypeScript check (`npx tsc --noEmit -p tsconfig.spec.json`) also passes. It exposed a pre-existing timer-cleanup callback returning the Jest object despite declaring `void`; the callback now uses a block body.
 
-The production build succeeds with a bundle-size warning: the initial bundle is 808.26 kB against the existing 700 kB warning budget (the 1 MB failure limit is unchanged). No budget was raised. Browser development runs also retain Angular's existing oversized-logo advisory.
+The production build succeeds with a bundle-size warning: the initial bundle is 820.12 kB against the existing 700 kB warning budget (the 1 MB failure limit is unchanged). No budget was raised. Browser development runs also retain Angular's existing oversized-logo advisory.
 
-New coverage includes session clipboard copying/moving across root/group lists, definition limits, deferred-cut cancellation, seeded native preview filling, unsupported-pattern reporting, answer preservation, localized settings dialogs and live shell identity. The new desktop and Persian mobile screenshots were visually inspected. The complete 32-test Chromium suite passed, including DE/EN/FA guide content, mobile bounds and accessibility scans.
+New coverage includes session clipboard copying/moving across root/group lists, definition limits, deferred-cut cancellation, seeded native preview filling, unsupported-pattern reporting, answer preservation, localized settings dialogs and live shell identity. The new desktop and Persian mobile screenshots were visually inspected. The complete 34-test Chromium suite passed, including DE/EN/FA guide content, mobile bounds and accessibility scans.
 
-The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio's 124 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
+The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio's 134 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
 
 Coverage percentages come from Jest's instrumented application source, not E2E coverage. Browser tests include desktop/mobile layout, Persian RTL direction and font loading, the presentation, repeat groups, tooltip behavior, full-width response retention, import/export, persistence, native validation, confirmation and accessibility scans. The total counts executed tests, not assertions or accessibility rules. The suite exceeds every configured coverage threshold and provides extensive regression protection for the implemented scope.
 
@@ -76,3 +76,7 @@ Five new unit/component tests and four new browser tests bring the inventory to 
 ## Boundary diagnostics milestone - October 25, 2026
 
 Nine new unit/component cases and three new Chromium journeys bring Studio to 92 + 32 = 124 tests. Checks cover exact/under/over text lengths, required/type failures, inapplicable and unsafe-pattern skips, rollback, maximum-plus-one allocation, shared renderer validity, correction/reset and protected group shrink with stable row identities. LocalStorage/specification/review remain unchanged. The Persian mobile report passes axe after correcting its code-label contrast. The full suites pass, with the unchanged build warning at 808.26 kB. The 18 current-reference unit tests in two suites are separate evidence and do not enter Studio totals.
+
+## Coherent records milestone - October 25, 2026
+
+Eight new unit/component cases and two browser journeys bring Studio to 100 tests in twelve Jest suites and 34 Chromium tests, 134 total. Checks cover DE/EN/FA record consistency, native ASCII emails, company/address fields, conservative source precedence, ambiguous translations, seed/scope determinism, strict reference-date validation, root/row alignment, unchanged storage/review, adjustment reporting and reproduction after actual preview reset. Persian mobile settings/report accessibility and responsive screenshots pass. The full suites and configured gates pass. The independent original-edition comparison adds 44 targeted renderer tests in three suites at cf50030; these are excluded from Studio totals.

@@ -76,3 +76,7 @@ The app's empty question box is a review condition, not a reason to erase unreso
 "This session gives me a clear basis for implementing your wishes. We can refine these details now instead of changing production code because I guessed wrong. Once we agree the scope, I can estimate and test that work more precisely. If you discover a new need later, we can discuss its impact against this baseline."
 
 Do not promise a fixed saving. Evaluate the session by the decisions it resolves and the clarity of the resulting implementation scope.
+
+### Review a coherent example
+
+Use First name, Last name, Full name, Email and address component labels to review a consistent fictional record. Choose DE/EN/FA content, seed and reference date explicitly; each group row gets its own record. Inspect the recognition source and any adjustment flags. Preserved manual responses may describe another person, and length/invalid scenarios can break a relationship. Discuss whether the real form needs these fields and limits; illustrative postal/address fixtures are not production address validation.

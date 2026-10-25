@@ -12,9 +12,11 @@ Status: October 25, 2026. This is Studio's independent adaptation; original-edit
 
 See [authoring tools](AUTHORING_TOOLS.md) for exact behavior and limitations, [quality evidence](QUALITY.md) for measured checks and [edition comparison](FEATURE_COMPARISON.md) for remaining differences.
 
-## Next: coherent semantic data
+## Second milestone: coherent semantic data delivered
 
-Improve first/last/full names, organization and address recognition; create a coherent identity per record rather than choosing each field independently. Retain DE/EN/FA and deterministic explicit seeds. Optional semantic hints and validated author examples require a separately reviewed backward-compatible model/editor/import/export change. An explicit reference date should precede relative date fixtures. Additional profiles and mixed/normalization settings follow this foundation.
+Studio now generates coherent first/last/full names, ASCII email, company and address components per root form and group row, with DE/EN/FA fixtures and explicit seeds. Native type and conservative exact label/placeholder/help recognition appear in diagnostics, including conflicting translations and adjusted candidates. Scope uses physical row positions so reset/reload reproduces records and field traversal does not change identity values. A selected reference date supplies date fields unchanged, with a fixed default and guarded invalid settings. Studio stays at schema 1.3.0.
+
+Optional persisted semantic hints and validated author examples remain a separate backward-compatible model/editor/import/export milestone. Additional profiles, mixed/normalization settings and relative-date fixtures also remain follow-up work. Manual preserved answers and constraint-mutated samples do not guarantee record consistency; the report and tools guide explain these boundaries.
 
 ## Then: bounded pattern support
 
