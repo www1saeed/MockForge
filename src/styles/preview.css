@@ -368,3 +368,33 @@ app-field-title {
 .test-data-dialog .form-select {
   min-height: 44px;
 }
+
+.test-data-diagnostics {
+  margin-block-end: 16px;
+  padding: 12px;
+  border: 1px solid #bad3c5;
+  border-radius: 8px;
+  background: #f6faf8;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.test-data-diagnostics summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.test-data-diagnostics p {
+  margin-block: 10px;
+}
+.test-data-diagnostics ol {
+  padding-inline-start: 22px;
+}
+.test-data-diagnostics li {
+  margin-block: 12px;
+}
+.test-data-diagnostics span,
+.test-data-diagnostics code {
+  display: block;
+}
+.test-data-diagnostics code {
+  color: var(--ink);
+}

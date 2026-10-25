@@ -72,6 +72,20 @@ export class RepeatGroupComponent {
     this.feedback.notify('entryAdded', 'info');
   }
 
+  /** Never discard existing responses without the explicit replace setting. */
+  resizeForTestData(count: number, replace: boolean): boolean {
+    const bounds = this.field().group!;
+    const target = Math.max(bounds.minItems, Math.min(bounds.maxItems, count));
+    if (target < this.rows().length && !replace) return false;
+    this.rows.update((rows): PreviewRow[] => [
+      ...rows.slice(0, target),
+      ...Array.from({ length: Math.max(0, target - rows.length) }, (): PreviewRow => ({
+        id: ++this.sequence,
+      })),
+    ]);
+    return true;
+  }
+
   /** Confirm removal of response values; the shared child definitions remain intact. */
   removeEntry(row: number): void {
     const group = this.field().group;

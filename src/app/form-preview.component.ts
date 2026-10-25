@@ -12,7 +12,17 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { DataScenario, FillReport, fillTestData, ResponseControl } from './preview-test-data';
+import {
+  DataBoundary,
+  DataDiagnostic,
+  DataReason,
+  DataRule,
+  DataScenario,
+  FillReport,
+  fillTestData,
+  ResponseControl,
+} from './preview-test-data';
+import { responseLengthViolation } from './response-constraints';
 import { FeedbackService } from './feedback.service';
 import { FormsModule } from '@angular/forms';
 import {
@@ -76,6 +86,8 @@ export class FormPreviewComponent {
   readonly dataSeed = signal(1);
   readonly replaceResponses = signal(false);
   readonly dataScenario = signal<DataScenario>('valid');
+  readonly dataBoundary = signal<DataBoundary>('minimum');
+  readonly dataGroupRows = signal<'existing' | 'minimum' | 'maximum'>('existing');
   readonly dataReport = signal<FillReport | null>(null);
   private answered = new WeakSet<ResponseControl>();
   private filling = false;
@@ -95,24 +107,46 @@ export class FormPreviewComponent {
   }
 
   fillResponses(form: HTMLFormElement): void {
-    // Create one response for an empty optional group, respecting its bounds.
+    const groupDiagnostics: DataDiagnostic[] = [];
     for (const group of this.groups()) {
-      if (!group.rows().length) group.addEntry();
+      const mode = this.dataGroupRows();
+      const definition = group.field();
+      const bounds = definition.group!;
+      const count =
+        mode === 'minimum'
+          ? bounds.minItems
+          : mode === 'maximum'
+            ? bounds.maxItems
+            : Math.max(1, group.rows().length);
+      const applied = group.resizeForTestData(count, this.replaceResponses());
+      if (mode !== 'existing')
+        groupDiagnostics.push({
+          fieldId: definition.id,
+          response: definition.id,
+          instance: 0,
+          outcome: applied ? 'filled' : 'skipped',
+          reason: applied ? 'applied' : 'protected',
+          rule: 'group',
+          expectedValid: true,
+          actualValid: applied ? group.rows().length === count : null,
+        });
     }
     this.detector.detectChanges();
     this.filling = true;
     try {
-      this.dataReport.set(
-        fillTestData(
-          form,
-          allFields(this.project().fields),
-          this.dataLocale(),
-          this.dataSeed(),
-          this.replaceResponses(),
-          this.dataScenario(),
-          this.answered,
-        ),
+      const report = fillTestData(
+        form,
+        allFields(this.project().fields),
+        this.dataLocale(),
+        this.dataSeed(),
+        this.replaceResponses(),
+        this.dataScenario(),
+        this.answered,
+        this.dataBoundary(),
       );
+      for (const item of groupDiagnostics) report[item.outcome]++;
+      report.diagnostics.unshift(...groupDiagnostics);
+      this.dataReport.set(report);
       this.simulated.set(false);
     } finally {
       this.filling = false;
@@ -124,6 +158,46 @@ export class FormPreviewComponent {
   }
   closeTestData(): void {
     this.testDataDialog.nativeElement.close();
+  }
+
+  diagnosticLabel(item: DataDiagnostic): string {
+    const field = allFields(this.project().fields).find(
+      (field): boolean => field.id === item.fieldId,
+    );
+    const parent = this.project().fields.find(
+      (field): boolean =>
+        field.group?.fields.some((child): boolean => child.id === item.fieldId) ?? false,
+    );
+    return `${parent ? this.text(parent.label) + ' · ' + this.t('entry') + ' ' + item.instance + ' · ' : ''}${field ? this.text(field.label) : item.fieldId}`;
+  }
+
+  diagnosticReason(reason: DataReason): string {
+    const keys: Record<DataReason, CopyKey> = {
+      applied: 'dataApplied',
+      preserved: 'dataPreserved',
+      unsupported: 'dataUnsupported',
+      unavailable: 'dataUnavailable',
+      mismatch: 'dataMismatch',
+      protected: 'dataProtected',
+    };
+    return this.t(keys[reason]);
+  }
+
+  diagnosticRule(rule: DataRule): string {
+    const keys: Record<DataRule, CopyKey> = {
+      none: 'dataValid',
+      required: 'required',
+      type: 'fieldType',
+      minimum: 'dataMinimum',
+      maximum: 'dataMaximum',
+      pattern: 'pattern',
+      group: 'dataGroupRows',
+    };
+    return this.t(keys[rule]);
+  }
+
+  diagnosticValidity(value: boolean | null): string {
+    return this.t(value === null ? 'dataNotChecked' : value ? 'dataIsValid' : 'dataIsInvalid');
   }
 
   readonly feedback = inject(FeedbackService);
@@ -163,7 +237,7 @@ export class FormPreviewComponent {
     return value[this.language()];
   }
 
-  /** Apply localized custom validity after typing, including for textarea patterns. */
+  /** Refresh localized length/pattern validity after native response edits. */
   validatePattern(event: Event, field: Field): void {
     const control = event.target;
     if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement) {
@@ -239,6 +313,13 @@ export class FormPreviewComponent {
     control: HTMLInputElement | HTMLTextAreaElement,
     field: Field,
   ): void {
+    const length = responseLengthViolation(field, control.value);
+    if (length) {
+      control.setCustomValidity(
+        `${this.formCopy(length === 'minimum' ? 'minLength' : 'maxLength')}: ${length === 'minimum' ? field.minLength : field.maxLength}`,
+      );
+      return;
+    }
     const matches =
       !supportsPattern(field) ||
       !field.pattern ||

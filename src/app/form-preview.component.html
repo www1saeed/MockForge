@@ -43,6 +43,28 @@
     </p>
   }
 </div>
+@if (dataReport(); as report) {
+  <details class="test-data-diagnostics">
+    <summary>{{ t('dataDetails') }} ({{ report.diagnostics.length }})</summary>
+    <p>{{ t('dataDetailsHint') }}</p>
+    <ol>
+      @for (item of report.diagnostics.slice(0, 20); track $index) {
+        <li>
+          <strong>{{ diagnosticLabel(item) }}</strong>
+          <span>{{ diagnosticReason(item.reason) }} · {{ diagnosticRule(item.rule) }}</span>
+          <span
+            >{{ t('dataExpected') }}: {{ diagnosticValidity(item.expectedValid) }} ·
+            {{ t('dataObserved') }}: {{ diagnosticValidity(item.actualValid) }}</span
+          >
+          <code dir="ltr">{{ item.response }}</code>
+        </li>
+      }
+    </ol>
+    @if (report.diagnostics.length > 20) {
+      <p>{{ t('dataDetailsLimit') }}</p>
+    }
+  </details>
+}
 <div class="browser-frame" [class.mobile-frame]="mobile()">
   <div class="browser-bar">
     <span aria-hidden="true">● ● ●</span><span>preview.mockforge.local</span
@@ -139,6 +161,34 @@
   >
     <option value="valid">{{ t('dataValid') }}</option>
     <option value="empty">{{ t('dataEmpty') }}</option>
+    <option value="invalid">{{ t('dataInvalid') }}</option>
+    <option value="boundary">{{ t('dataBoundary') }}</option>
+  </select>
+  @if (dataScenario() === 'boundary') {
+    <label for="data-boundary">{{ t('dataBoundary') }}</label>
+    <select
+      class="form-select"
+      id="data-boundary"
+      [ngModel]="dataBoundary()"
+      (ngModelChange)="dataBoundary.set($event)"
+    >
+      <option value="minimum">{{ t('dataMinimum') }}</option>
+      <option value="maximum">{{ t('dataMaximum') }}</option>
+      <option value="belowMinimum">{{ t('dataBelowMinimum') }}</option>
+      <option value="aboveMaximum">{{ t('dataAboveMaximum') }}</option>
+      <option value="requiredEmpty">{{ t('dataRequiredEmpty') }}</option>
+    </select>
+  }
+  <label for="data-group-rows">{{ t('dataGroupRows') }}</label>
+  <select
+    class="form-select"
+    id="data-group-rows"
+    [ngModel]="dataGroupRows()"
+    (ngModelChange)="dataGroupRows.set($event)"
+  >
+    <option value="existing">{{ t('dataExistingRows') }}</option>
+    <option value="minimum">{{ t('dataMinimum') }}</option>
+    <option value="maximum">{{ t('dataMaximum') }}</option>
   </select>
   <label class="check-row"
     ><input

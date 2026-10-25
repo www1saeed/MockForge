@@ -199,8 +199,8 @@ export const copy = {
   ],
   guideTestData: ['Vorschau mit Testdaten prüfen', 'Check the preview with test data'],
   guideTestDataText: [
-    'Blende die Vorschau ein und wähle Testdaten einfüllen. Vorhandene Antworten bleiben erhalten. In den Einstellungen wählst du DE/EN/FA unabhängig von der Formularsprache, einen Startwert und gültige oder leere Werte. Ersetzen muss ausdrücklich aktiviert werden. Gefüllt, Beibehalten und Übersprungen zählen Antwortfelder. Komplexe RegEx werden übersprungen; fehlende Werte prüfst du manuell. Testantworten und Einstellungen werden nicht gespeichert oder exportiert.',
-    'Show the preview and choose Fill test data. Existing answers are preserved. Settings offer DE/EN/FA independently of form language, a seed and valid or empty values. Replacement must be enabled explicitly. Filled, Preserved and Skipped count response fields. Complex patterns are skipped; check missing values manually. Test answers and settings are never saved or exported.',
+    'Blende die Vorschau ein und wähle Testdaten einfüllen. Einstellungen bieten DE/EN/FA, einen Startwert sowie gültige, leere, ungültige und Grenzwertfälle. Prüfe exakte Textlängen, ein Zeichen darunter/darüber oder leere Pflichtfelder. Gruppenzeilen können bestehend, minimal oder maximal sein. Ersetzen muss ausdrücklich aktiviert werden; Zeilenabbau ist sonst geschützt. Ergebnisse pro Feld zeigen Regel und erwartete/beobachtete Gültigkeit. Summen zählen Antworten und angeforderte Gruppenprüfungen. Nicht anwendbare Fälle und komplexe RegEx werden ausgewiesen. Antworten, Einstellungen und Berichte werden nicht gespeichert oder exportiert.',
+    'Show the preview and choose Fill test data. Settings offer DE/EN/FA, a seed, valid, empty, invalid and boundary cases. Check exact text lengths, one character below/above or required-empty values. Group rows can stay as mounted or use their minimum/maximum. Enable replacement explicitly; otherwise row removal is protected. Per-field results show the rule and expected/observed validity. Totals count responses and requested group checks. Inapplicable cases and complex patterns are reported. Answers, settings and reports are never saved or exported.',
   ],
   guideShell: [
     'Projekt im Header und in der Navigation',
@@ -233,8 +233,8 @@ export const copy = {
   fillTestData: ['Testdaten einfüllen', 'Fill test data'],
   testDataSettings: ['Testdaten-Einstellungen', 'Test data settings'],
   testDataHint: [
-    'Synthetische Vorschauwerte werden weder gespeichert noch exportiert. Bestehende Antworten bleiben standardmäßig erhalten. Nicht unterstützte RegEx-Regeln oder unerfüllbare Vorgaben werden übersprungen und gezählt. Leere optionale Gruppen erhalten einen Eintrag. Gleicher Startwert und gleiche Struktur ergeben gleiche Werte.',
-    'Synthetic preview values are never saved or exported. Existing answers are preserved by default. Unsupported patterns or unsatisfied constraints are skipped and counted. Empty optional groups receive one entry. The same seed and structure reproduce the same values.',
+    'Synthetische Antworten bleiben lokal und ungespeichert. Antworten bleiben standardmäßig erhalten; Zeilenabbau benötigt Ersetzen. Grenzwerte prüfen Textlängen und Pflichtfelder. Zahlen-/Datumsgrenzen sind nicht konfigurierbar. Nicht anwendbare Fälle und komplexe RegEx werden ausgewiesen. Gleicher Startwert, gleiche Einstellungen und Struktur ergeben gleiche Werte.',
+    'Synthetic answers remain local and unsaved. Answers are preserved by default; removing rows requires replacement. Boundaries cover text lengths and required fields. Numeric/date bounds are not configurable. Inapplicable cases and complex patterns are reported. The same seed, settings and structure reproduce the same values.',
   ],
   dataProfile: ['Sprache der Testinhalte', 'Test content language'],
   dataSeed: ['Startwert (Seed)', 'Seed'],
@@ -246,6 +246,44 @@ export const copy = {
   dataFilled: ['Gefüllt', 'Filled'],
   dataPreserved: ['Beibehalten', 'Preserved'],
   dataSkipped: ['Übersprungen', 'Skipped'],
+
+  dataInvalid: ['Gezielt ungültige Werte', 'Deliberately invalid values'],
+  dataBoundary: ['Grenzwertfall', 'Boundary case'],
+  dataMinimum: ['Genau Mindestlänge / Mindestanzahl', 'Exact minimum length / row count'],
+  dataMaximum: ['Genau Maximallänge / Höchstanzahl', 'Exact maximum length / row count'],
+  dataBelowMinimum: ['Ein Zeichen unter Mindestlänge', 'One character below minimum length'],
+  dataAboveMaximum: ['Ein Zeichen über Maximallänge', 'One character above maximum length'],
+  dataRequiredEmpty: ['Pflichtfeld leer', 'Required field empty'],
+  dataGroupRows: ['Gruppenzeilen', 'Group rows'],
+  dataExistingRows: [
+    'Bestehende Zeilen; leere Gruppen erhalten eine',
+    'Existing rows; add one to empty groups',
+  ],
+  dataDetails: ['Ergebnisse pro Feld', 'Per-field results'],
+  dataDetailsHint: [
+    'Die Gültigkeit beschreibt den geprüften Kandidaten. Bei Abweichungen wird die vorherige Antwort wiederhergestellt. Geschützte oder nicht unterstützte Werte werden nicht geprüft.',
+    'Validity describes the attempted candidate. A mismatch restores the previous answer. Protected or unsupported values are not checked.',
+  ],
+  dataDetailsLimit: [
+    'Die ersten 20 Ergebnisse werden angezeigt; die Summen enthalten alle Felder und angeforderten Gruppenprüfungen.',
+    'Showing the first 20 results; totals include all fields and requested group checks.',
+  ],
+  dataExpected: ['Erwartet', 'Expected'],
+  dataObserved: ['Beobachtet', 'Observed'],
+  dataIsValid: ['Gültig', 'Valid'],
+  dataIsInvalid: ['Ungültig', 'Invalid'],
+  dataNotChecked: ['Nicht geprüft', 'Not checked'],
+  dataApplied: ['Szenario bestätigt', 'Scenario verified'],
+  dataUnsupported: ['RegEx wird nicht unterstützt', 'Pattern is unsupported'],
+  dataUnavailable: ['Für dieses Feld nicht anwendbar', 'Not applicable to this field'],
+  dataMismatch: [
+    'Kandidat erfüllt das erwartete Ergebnis nicht; Antwort wiederhergestellt',
+    'Candidate did not match the expected result; answer restored',
+  ],
+  dataProtected: [
+    'Zeilenabbau geschützt; Ersetzen aktivieren',
+    'Row removal protected; enable replacement',
+  ],
 
   expandFields: ['Hauptfeldliste aufklappen', 'Expand main field list'],
   collapseFields: ['Hauptfeldliste zuklappen', 'Collapse main field list'],
