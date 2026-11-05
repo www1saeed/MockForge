@@ -9,3 +9,6 @@ export * from './project.model';
 export * from './project.examples';
 export * from './project.validation';
 export * from './project.handoff';
+// Staged application APIs are independent of the live 1.3.0 editor boundary.
+export * from './application-project';
+export * from './application-forms';
