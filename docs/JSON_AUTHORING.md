@@ -1,6 +1,6 @@
 # Design a form in a text editor
 
-Open **Design a form in a text editor** in Studio's navigation, or use `/#guide-json`. The page provides a DE/EN/FA reference, selectable complete JSON, and downloads. The format is **MockForge Studio 2.0.0** with `format: "mockforge-studio"` and `forms[]`; files from the original MockForge edition are incompatible.
+Open **Design a form in a text editor** in Studio's navigation, or use `/#guide-json`. The page provides a DE/EN/FA reference, selectable complete JSON, and downloads. The format is **MockForge Studio 2.1.0** with `format: "mockforge-studio"` and `forms[]`; files from the original MockForge edition are incompatible.
 
 ## Working sequence
 
@@ -22,8 +22,8 @@ The in-app reference groups the properties below. The application contract lives
 
 | Object  | Required properties and bounds                                                                                                                                                                                                       |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Project | `format: "mockforge-studio"`, `schemaVersion: "2.0.0"`; string `name`, `owner`, `audience`, `goal`, `scope`, `decisions`, `questions`; shared `theme`, `languages`, `review`; `forms` with 1–20 entries. |
-| Form | Unique `id`; Text `title`, `description`, `submit`; `columns`, `buttons`, `fields`; optional boolean `menu` retained for future navigation. No lists/roles/flows yet. |
+| Project | `format: "mockforge-studio"`, `schemaVersion: "2.1.0"`; string `name`, `owner`, `audience`, `goal`, `scope`, `decisions`, `questions`; shared `theme`, `languages`, `review`; `forms` with 1–20 entries. |
+| Form | Unique `id`; Text `title`, `description`, `submit`; `columns`, `buttons`, `fields`; optional boolean `menu` retained for future navigation. Optional `lists` and `entries`; no roles/flows. |
 | Text    | `{ "de": "...", "en": "...", "fa": "..." }`. All three keys are required. Activate one or two distinct languages. Empty inactive translations are allowed.                                                                           |
 | Field   | `id`, `type`, `label`, `placeholder`, `help`, `required`, `options`, `note`, `minLength`, `maxLength`, `tooltip`, `pattern`, `patternMessage`. Optional `tooltipPlacement` and, only for groups, `group`.                            |
 | Group   | `layout: "cards"` or `"table"`, integer `minItems` 0–20, `maxItems` 1–20, `minItems <= maxItems`, and 1–20 leaf definitions in `fields`. Optional boolean `gapless`. No nested groups. Set the group's `required` to `minItems > 0`. |
@@ -38,10 +38,10 @@ Length rules are integers 0–10000; maximum 0 means unlimited. Minimum cannot e
 
 Themes: `bootstrap`, `material`, `carbon`, `fluent`; columns: 1 or 2. Button variants: `primary`, `secondary`, `ghost`, `danger`. Actions: `submit`, `validate`, `save`, `reset`, `cancel`, `delete`, `next`, `back`, `none`. Existing CSS class tokens use only letters, digits, underscore, whitespace or hyphen, at most 200 characters. Styles and actions never implement a backend. Next/back simulate navigation within this single-page edition.
 
-Project-wide limits are 500 field definitions including group children and 100 buttons, in addition to the per-form limits of 100 definitions and 20 buttons. Whole-form copies retain local field/button IDs and receive a new form ID. Legacy Studio 1.0–1.3 imports migrate into one form and clear old acknowledgements; invalid stored bytes remain available for recovery. Older Studio versions cannot read 2.0.0 exports.
+Project-wide limits are 500 field definitions including group children and 100 buttons, in addition to the per-form limits of 100 definitions and 20 buttons. Whole-form copies retain local field/button IDs and receive a new form ID. Studio 2.0.0 imports migrate without adding list preferences; legacy Studio 1.0–1.3 imports migrate into one form and clear old acknowledgements; invalid stored bytes remain available for recovery. Older Studio versions cannot read 2.1.0 exports.
 
 ## Troubleshooting and boundaries
 
-Files above 1 MiB, wrong versions, malformed Text objects, duplicate IDs, unsupported enums, invalid patterns and out-of-range groups are rejected. Studio currently reports a general import failure, not detailed JSON paths. Compare the file with a complete example and check syntax in the editor. Older Studio files use the existing migration path; do not relabel a foreign-edition file as a Studio 2.0.0 file.
+Files above 1 MiB, wrong versions, malformed Text objects, duplicate IDs, unsupported enums, invalid patterns and out-of-range groups are rejected. Studio currently reports a general import failure, not detailed JSON paths. Compare the file with a complete example and check syntax in the editor. Older Studio files use the existing migration path; do not relabel a foreign-edition file as a Studio 2.1.0 file.
 
-Keep preview answers, test-data settings and field-clipboard state out of the file. Extra keys do not add conditional visibility, uploads, wizard pages, numeric min/max validation or integrations. Record production requirements in the brief and notes. For assisted drafting, use [the AI guide](AI_AUTHORING.md).
+See [the complete list contract and session behavior](COLLECTIONS.md). Optional form `entries` stores count/seed only. `lists` stores titles, root-leaf references, filters/presets, sorting, pagination, selection and four explicit action switches. Keep actual records, per-fill preview settings and field-clipboard state out of the file. Extra keys do not add conditional visibility, uploads, wizard pages, numeric min/max validation or integrations. Record production requirements in the brief and notes. For assisted drafting, use [the AI guide](AI_AUTHORING.md).

@@ -216,6 +216,32 @@
           "cssClass": "",
           "note": "Clear preview answers only."
         }
+      ],
+      "entries": {
+        "count": 25,
+        "seed": 1
+      },
+      "lists": [
+        {
+          "id": "requests",
+          "title": {
+            "de": "Kontaktanfragen",
+            "en": "Contact requests",
+            "fa": "درخواست‌های تماس"
+          },
+          "columns": ["contact-name", "contact-email", "request-topic", "contact-consent"],
+          "searchFields": ["contact-name", "contact-email", "request-topic", "contact-consent"],
+          "filters": [],
+          "presets": [],
+          "pageSize": 10,
+          "selectable": true,
+          "actions": {
+            "create": true,
+            "view": true,
+            "edit": true,
+            "delete": true
+          }
+        }
       ]
     }
   ]

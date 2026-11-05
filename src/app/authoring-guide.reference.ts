@@ -61,6 +61,46 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
       },
       { names: 'columns', type: '1 | 2', description: 'layoutRule' },
       { names: 'fields, buttons', type: 'Field[], FormButton[]', description: 'arrayRule' },
+      {
+        names: 'lists?, entries?',
+        type: 'CollectionList[], CollectionEntries',
+        description: 'listContractRule',
+      },
+    ],
+  },
+  {
+    title: 'listContract',
+    rows: [
+      {
+        names: 'id, title',
+        type: 'safe form-local list ID, Text',
+        description: 'listContractRule',
+      },
+      {
+        names: 'columns, searchFields, filters',
+        type: 'root leaf ID[]; at most 20 each',
+        description: 'listContractRule',
+      },
+      {
+        names: 'presets',
+        type: '{ fieldId, value: string | boolean }[]',
+        description: 'listContractRule',
+      },
+      {
+        names: 'pageSize, selectable, sort?',
+        type: '1..100, boolean, { fieldId, direction: asc / desc }',
+        description: 'listContractRule',
+      },
+      {
+        names: 'actions',
+        type: '{ create, view, edit, delete: boolean }',
+        description: 'listActionsRule',
+      },
+      {
+        names: 'entries?',
+        type: '{ count: 1..500, seed: 0..999999 }',
+        description: 'listEntriesRule',
+      },
     ],
   },
   {

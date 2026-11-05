@@ -3,6 +3,21 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  listMoveUp: ['Liste nach vorne verschieben', 'Move list earlier'],
+  listMoveDown: ['Liste nach hinten verschieben', 'Move list later'],
+  listContract: ['Listen: Ansichten eines Formulars', 'Lists: form views'],
+  listContractRule: [
+    'Optional: bis zu 10 Listen pro Formular, 50 im Projekt. Referenzen nur auf eigene Wurzelfelder ohne Gruppen, höchstens 20 je Array. Filter für Auswahlfelder/Checkboxen; feste Filter gelten gemeinsam (UND). Auswahlwerte sind Optionsindizes als Strings, Checkboxwerte Booleans. Sortierfeld muss eine Spalte sein.',
+    'Optional: up to 10 lists per form, 50 per project. References target own root leaves, at most 20 per array. Filters use choices/checkboxes; fixed filters combine with AND. Choice values are option-index strings, checkbox values booleans. Sort field must be a column.',
+  ],
+  listEntriesRule: [
+    'Nur Anzahl und Seed werden gespeichert. Erzeugte und bearbeitete Einträge bleiben in der Sitzung und fehlen in JSON/Markdown. Vorhandene Einträge werden erst nach Bestätigung und vollständiger Generierung ersetzt.',
+    'Only count and seed persist. Generated and edited records remain in the session and are absent from JSON/Markdown. Existing records are replaced only after confirmation and complete generation.',
+  ],
+  listActionsRule: [
+    'Vier explizite Aktionsschalter für Erstellen, Ansehen, Bearbeiten und Löschen. Dies ist eine lokale Simulation ohne Berechtigungsprüfung oder Backend.',
+    'Four explicit action switches for create, view, edit and delete. This is a local simulation without authorization or a backend.',
+  ],
   listsTitle: ['Listen und Einträge', 'Lists and entries'],
   listsHint: [
     'Listen teilen die Einträge ihres Formulars. Nur die Konfiguration wird gespeichert; Einträge bleiben in dieser Sitzung.',
@@ -105,12 +120,12 @@ export const copy = {
   moveFormDown: ['Formular nach hinten verschieben', 'Move form later'],
   formTitleLabel: ['Formulartitel', 'Form title'],
   formSwitchNotice: [
-    'Beim Formularwechsel werden Vorschauantworten verworfen. Die Review gilt für alle Formulare im Projekt.',
-    'Switching forms discards preview answers. Review covers every form in the project.',
+    'Formularwechsel verwirft ungespeicherte Formularantworten; Listeneinträge bleiben in der Sitzung. Review umfasst alle Formulare und Listen.',
+    'Switching forms discards unsaved form answers; list records remain in the session. Review covers all forms and lists.',
   ],
   applicationLimit: [
-    'Änderung nicht möglich. Prüfe die Formularregeln und Projektgrenzen: 20 Formulare, 500 Felddefinitionen, 100 Buttons insgesamt.',
-    'Change unavailable. Check form rules and project limits: 20 forms, 500 field definitions, 100 buttons in total.',
+    'Änderung nicht möglich. Prüfe Formular-/Listenregeln und Projektgrenzen: 20 Formulare, 500 Felder, 100 Buttons, 50 Listen; höchstens 10 Listen je Formular.',
+    'Change unavailable. Check form/list rules and project limits: 20 forms, 500 fields, 100 buttons, 50 lists; at most 10 lists per form.',
   ],
   copySuffix: ['Kopie', 'Copy'],
   formAdded: ['Formular hinzugefügt.', 'Form added.'],

@@ -1,6 +1,33 @@
 # Code quality and test evidence
 
-## Current checkpoint — November 5, 2026
+## CRUD lists checkpoint — November 5, 2026
+
+**227 Studio tests pass: 172 Jest unit/component tests in 20 suites and 55
+Chromium journeys.** Ten Node E2E-selection checks pass separately. Coverage is
+94.83% statements, 90.25% branches, 95.99% functions and 96.68% lines, above the
+unchanged thresholds. Coverage measures Jest; native record restoration is also
+exercised in real Chromium, including repeated values and pattern validation.
+
+Formatting, ESLint, spec/E2E types, 458 DE/EN/FA translations, synchronized
+authoring kit, local documentation targets and production build pass. The initial
+bundle is **912.80 kB**, above the unchanged 700 kB warning and below the 1 MB failure
+budget. No dependency or worker/batch-budget increase was introduced.
+
+Five new `collections` browser journeys cover shared CRUD, response-persistence
+isolation, search/filter/presets, sorting/paging/selection, cancellation/staleness,
+group editing and Persian mobile Axe/bounds. Unit/component cases cover schema
+migration, reference pruning, callback ownership, limits and atomic generation.
+The full evidence is `reports/collections-final-e2e.json`, with the normal
+HTML/JUnit/JSON reports described in the contributor guide. Current CI still
+requires its own run after push. There is no new original-edition test claim.
+
+[Collections documentation](COLLECTIONS.md) describes session lifetime and exact
+bounds. The actual 15-slide HTML deck and narration include CRUD and updated
+figures. The ignored PDF remains a separate older export; regenerate it from the
+current HTML before sharing. Existing historical evidence below is retained with
+its original scope.
+
+## Previous multi-form checkpoint — November 5, 2026
 
 **205 Studio tests pass: 155 Jest unit/component tests in 16 suites and all
 50 Chromium E2E journeys.** The final browser run uses two workers with zero
