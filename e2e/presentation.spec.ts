@@ -23,10 +23,10 @@ test(
     await expect(data).toContainText('Developer API: 1-500 records');
     await expect(shell).toContainText('The project name identifies the draft');
     await expect(shell).toContainText('Export and review cover all form and list definitions');
-    await expect(quality).toContainText('227');
-    await expect(quality).toContainText('172 unit/component tests');
-    await expect(quality).toContainText('55 Chromium end-to-end tests');
-    await expect(quality).toContainText('96.68%');
+    await expect(quality).toContainText('231');
+    await expect(quality).toContainText('174 unit/component tests');
+    await expect(quality).toContainText('57 Chromium end-to-end tests');
+    await expect(quality).toContainText('97.62%');
     for (const slide of await page.locator('main section').all()) {
       const narration = await slide.getAttribute('data-narration');
       expect(narration!.length).toBeGreaterThan(200);
@@ -151,7 +151,7 @@ test(
     const html = await readFile(path, 'utf8');
     expect(html).toContain('data:image/png;base64,');
     expect(html).toContain('Cut waits for a valid destination');
-    expect(html).toContain('96.68%');
+    expect(html).toContain('97.62%');
     const { resolve } = await import('node:path');
     const { pathToFileURL } = await import('node:url');
     const savedPath = resolve('reports/saved-presentation.html');

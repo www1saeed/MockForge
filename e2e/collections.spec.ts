@@ -49,6 +49,72 @@ async function create(page: Page, name: string, flag = true, state = '0'): Promi
 }
 
 test(
+  'record preserve-mode fill retains saved false checkboxes and empty radio answers including group rows',
+  {
+    tag: tagsFor('collections', 'lists-restored-choices', {
+      areas: ['lists', 'test-data', 'groups'],
+    }),
+  },
+  async ({ page }) => {
+    const project = fixture(),
+      group = createField('group', 'items');
+    group.group!.minItems = 1;
+    group.required = true;
+    group.group!.fields = [createField('checkbox', 'child'), createField('radio', 'choice')];
+    project.forms[0].fields.push(createField('radio', 'radio'), group);
+    await openProject(page, project);
+    await openLists(page);
+    await create(page, 'Alice', false);
+    const preview = page.locator('.collection-preview'),
+      dialog = page.locator('.collection-dialog');
+    await preview.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Testdaten einfüllen', exact: true }).click();
+    await expect(dialog.locator('#preview-flag')).not.toBeChecked();
+    await expect(dialog.locator('input[data-field-id="child"]')).not.toBeChecked();
+    await expect(dialog.locator('input[type="radio"]:checked')).toHaveCount(0);
+    await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
+    await preview.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
+    await expect(dialog.locator('#preview-flag')).not.toBeChecked();
+    await expect(dialog.locator('input[data-field-id="child"]')).not.toBeChecked();
+    await expect(dialog.locator('input[type="radio"]:checked')).toHaveCount(0);
+  },
+);
+
+test(
+  'heading clicks reverse configured ascending and descending sorts on their first click',
+  { tag: tagsFor('collections', 'lists-default-sort') },
+  async ({ page }) => {
+    const project = fixture(),
+      form = project.forms[0];
+    form.lists![0].sort = { fieldId: 'name', direction: 'asc' };
+    form.lists!.push({
+      ...form.lists![0],
+      id: 'descending',
+      sort: { fieldId: 'name', direction: 'desc' },
+    });
+    await openProject(page, project);
+    await openLists(page);
+    await create(page, 'Alice');
+    await create(page, 'Bob');
+    const preview = page.locator('.collection-preview');
+    const heading = preview
+      .getByRole('columnheader')
+      .filter({ has: page.getByRole('button', { name: 'Name', exact: true }) });
+    await expect(heading).toHaveAttribute('aria-sort', 'ascending');
+    await heading.getByRole('button').click();
+    await expect(heading).toHaveAttribute('aria-sort', 'descending');
+    await expect(preview.locator('tbody tr').first()).toContainText('Bob');
+    await heading.getByRole('button').click();
+    await expect(heading).toHaveAttribute('aria-sort', 'ascending');
+    await page.locator('#active-list').selectOption('descending');
+    await expect(heading).toHaveAttribute('aria-sort', 'descending');
+    await heading.getByRole('button').click();
+    await expect(heading).toHaveAttribute('aria-sort', 'ascending');
+    await expect(preview.locator('tbody tr').first()).toContainText('Alice');
+  },
+);
+
+test(
   'CRUD shares form records across lists but never persists answers',
   {
     tag: tagsFor('collections', 'lists-crud', {

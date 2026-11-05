@@ -18,7 +18,8 @@ not its records. Deleting a form also discards its session records.
    with the first view. Fixed filters combine with AND and cannot be removed by
    the preview reader. Search matches any configured search field; reader filters
    combine with AND. Choices display localized labels but use option-index strings.
-4. Sort by a column heading and page through the result. Select the current page,
+4. Sort by a column heading and page through the result. The first click reverses
+   the configured direction when that column is already sorted. Select the current page,
    then explicitly select all matching records if needed. Changing search/filter,
    list, locale or records resets selection; moving pages retains it. Bulk deletion
    removes only matching selected records, after confirmation, from every view.
@@ -26,6 +27,9 @@ not its records. Deleting a form also discards its session records.
    isolated pattern validation as ordinary preview. Repeat rows are retained in
    detail/edit views. Save validates before changing the shared session dataset.
    Form simulation buttons are replaced by **Save record** in this editor.
+   Test-data fill preserves explicitly saved unchecked checkboxes and unselected
+   radio answers, including group rows, unless replacement is enabled. Missing
+   answers remain fillable.
 
 Action switches are mockup configuration, not authorization. Create/view/edit/delete
 handlers check the current switch and session context. Ordinary form-preview
