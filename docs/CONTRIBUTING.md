@@ -42,6 +42,70 @@ Tests should protect user behavior and specification boundaries. Inspect respons
 `bootstrap-tooltip.directive.ts` owns Bootstrap tooltip setup and disposal for the collapsible main-field rail. Keep imported labels plain text and dispose floating nodes when a trigger changes or disappears. Group-list visibility belongs to AppComponent; saved table spacing belongs to the domain model and ProjectStore.
 `field-title.component.ts` renders the shared form title and tooltip trigger. Repeat containers determine tooltip ownership: once in each table header or only in the first current card. Preserve native label/control association, independent checkbox behavior and plain localized tooltip text when changing the markup.
 
+## E2E organization and selection
+
+All 44 current Chromium journeys carry discovery-time metadata. Register each
+`e2e/*.spec.ts` in `e2e/test-catalogue.json`. Use `tagsFor` on every test with a
+stable, globally unique case ID, owning suite, one or more functional areas and
+the checks actually exercised. Case IDs must stay stable when titles or file
+positions change. Suite defaults describe its normal consumers; override areas
+for mixed suites such as `studio` and `presentation`.
+
+| Command | Scope |
+| --- | --- |
+| `npm run e2e` | Full Chromium regression; remains the default |
+| `npm run e2e -- --plan` | List the full plan without running browsers |
+| `npm run e2e -- --area preview,groups --plan` | Inspect area selection plus smoke |
+| `npm run e2e -- --area patterns --check a11y` | Pattern accessibility journeys plus smoke |
+| `npm run e2e -- --check responsive,i18n` | Responsive or i18n journeys plus smoke |
+| `npm run e2e:smoke` | Five core journeys |
+| `npm run e2e:check` | Ten selector tests plus real Playwright discovery/catalogue validation |
+| `npm run typecheck:e2e` | Strict typecheck of E2E, helpers and Playwright config |
+| `npm run e2e:full -- --grep …` | Raw Playwright command for advanced filtering/debugging |
+
+Areas are `authoring`, `forms`, `lists`, `roles`, `navigation`, `preview`, `groups`,
+`transfer`, `persistence`, `review`, `shell`, `guide`, `presentation`, `test-data`
+and `patterns`. The future forms/lists/roles/navigation areas intentionally have
+no tests yet; requesting one fails until its journeys are implemented. Checks
+are `a11y`, `keyboard`, `responsive`, `i18n` and `performance`. The performance tag
+currently identifies the existing 500-record responsiveness observation; it does
+not establish a benchmark or a representative-device guarantee.
+
+Multiple areas form a union; multiple checks form a union. Supplying both takes
+their intersection, then adds smoke. A requested empty selection fails even when
+smoke could run. Unknown flags/tags, unregistered suites, duplicate case IDs and
+missing metadata fail. `--list` is an alias for `--plan`. Discovery imports specs
+but starts no browser/dev server and builds no batch harness; keep future
+expensive setup in hooks or fixtures, not at module scope.
+
+Smoke is bounded to 3–8 individually tagged journeys and includes i18n. Its five
+current cases cover project transfer/reload, native validation, review/handoff,
+answer-preserving test data and Persian/RTL. It is a quick regression signal;
+run the affected feature journeys as well. These tags describe checks within
+existing journeys, not independently selectable browser/locale/theme variants.
+No Firefox/WebKit acceptance or full DE/EN/FA/theme cross-product is claimed.
+
+CI validates selectors/catalogue/types and keeps the full browser regression for
+pushes and pull requests. Manual runs may choose `full`, `smoke` or `selected`
+and provide areas/checks. Publishing requires `full`. Failed tests keep traces
+and screenshots; HTML, JUnit and failure artifacts are uploaded even on failure.
+Two workers and zero retries remain the baseline. Do not report retries as a
+clean first-attempt run. Raw `e2e:full` filtering bypasses catalogue selection,
+so run `e2e:check` alongside it. Manual GitHub workflow execution has not been
+verified by the local checks.
+
+Selection is currently **explicit**, not inferred from Git changes. Add a
+conservative change-impact map after the application store/feature boundaries
+are integrated. Domain/store/shared styles must select their dependent journeys;
+unknown production paths must widen the run. Keep a full pre-release regression.
+As workflow steps expand, replace positional step selectors with stable step
+identities and introduce shared project/import/navigation fixtures. Add new
+feature suites for multiple forms, lists, roles and navigation rather than
+extending the mixed `studio.spec.ts` indefinitely. Test state must remain
+independent per browser context. When upgrading Playwright, align its pinned
+`playwright-core` dependency used by Axe and rerun `typecheck:e2e` and browser
+regression; do not suppress cross-version `Page` incompatibilities with casts.
+
 ## Documentation and feature comparisons
 
 Keep [authoring tools](AUTHORING_TOOLS.md), [the workshop](PRODUCT_OWNER_WORKSHOP.md), [the demo](SALES_DEMO.md) and the application's DE/EN/FA guide aligned with user-facing behavior. Update README and QUALITY test counts only from completed runs. Reference-repository comparison tests are separate evidence and must never be added to Studio's test total. The [comparison report](FEATURE_COMPARISON.md) records shared behavior and deliberate differences; do not infer full parity from similarly named features.

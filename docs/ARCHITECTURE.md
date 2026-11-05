@@ -60,6 +60,15 @@ available for recovery.
 
 ### Next implementation increments
 
+E2E organization is an additional foundation increment before runtime activation:
+the existing journeys have stable case/suite/area/check tags, a validated
+catalogue, explicit area/check selection plus bounded smoke, strict E2E types
+and retained CI evidence. Full Chromium regression remains the default and
+automatic CI behavior. The CI workflow also offers manual reduced profiles.
+See [contributor commands and extension rules](CONTRIBUTING.md#e2e-organization-and-selection).
+Change-based selection and browser/locale/theme matrices are subsequent work;
+the present tags do not imply those capabilities.
+
 1. Integrate the application store and form selector; add/duplicate/move/delete
    UI with confirmation, form-scoped field clipboard and stale-worker
    cancellation. Check review readiness across all forms. Switch persistence,

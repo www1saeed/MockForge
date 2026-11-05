@@ -48,6 +48,28 @@ and the combined 175-test figures above remain the dated October 25 checkpoint;
 they are not a newly executed combined result. Runtime activation requires new
 multi-form browser journeys as described in the architecture.
 
+## E2E organization verification — November 5, 2026
+
+The catalogue/selection increment passed all **44 Chromium journeys** with two
+workers, no retries and no skipped or flaky results, plus a separate **5/5 smoke
+run** through the selection runner. The smoke cases are a subset, not five new
+tests. Ten Node selector tests and real Playwright discovery validate suite
+registration, stable case identities, area/check metadata, selection semantics,
+empty-selection errors and bounded smoke. E2E TypeScript, ESLint, formatting and
+diff whitespace checks pass. The Axe/Playwright core dependency mismatch exposed
+by strict E2E typing is resolved at 1.61.1. The batch harness now builds in a
+test hook so listing/catalogue validation does not compile it.
+
+Full local evidence is `reports/e2e/results.json`, with JUnit in
+`reports/e2e/results.xml` and an HTML report in `playwright-report/`. CI now
+retains these reports and failure traces/screenshots and supports manual
+full/smoke/selected profiles; those workflow changes have not been executed on
+GitHub. Automatic runs remain full regression. Product source is unchanged by
+this increment; the prior 143-case Jest run remains the unit/component evidence.
+Do not combine the 10 selector checks or repeated smoke cases with the historical
+175-test presentation figures. Change-based selection and an expanded browser
+matrix remain future work.
+
 ## Clean Code conventions
 
 - **Explicit types:** TypeScript strict mode, explicit function return types, no explicit `any`, no implicit returns and no switch fallthrough. Angular templates and injection parameters are checked strictly.
