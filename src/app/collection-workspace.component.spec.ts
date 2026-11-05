@@ -52,7 +52,35 @@ describe('Collection workspace boundaries', () => {
       expect.anything(),
     );
     c.generationCount.set(null);
-    expect(c.generationValid()).toBe(true);
+    expect(c.generationValid()).toBe(false);
+  });
+  it('resets a count override when its source default or form changes and retains the confirmed request', async () => {
+    const c = setup(),
+      generator = TestBed.inject(COLLECTION_GENERATOR) as jest.Mock;
+    c.generationCount.set(12);
+    c.entries('count', 3);
+    expect(c.generationCount()).toBe(3);
+    c.setGenerationCount(7);
+    expect(c.generationCount()).toBe(7);
+    c.store.update({ name: 'Unrelated copy' });
+    expect(c.generationCount()).toBe(7);
+    c.data.save({ name: 'Manual', state: '0', flag: false }, c.data.context());
+    c.regenerate();
+    c.generationCount.set(9);
+    TestBed.inject(FeedbackService).confirmDelete();
+    await Promise.resolve();
+    expect(generator).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ count: 7 }),
+      expect.anything(),
+    );
+    c.setGenerationCount(null);
+    expect(c.generationValid()).toBe(false);
+    const calls = generator.mock.calls.length;
+    c.regenerate();
+    expect(generator).toHaveBeenCalledTimes(calls);
+    c.store.addForm(text('Zweite', 'Second'));
+    expect(c.generationCount()).toBe(25);
   });
   it('toggles the effective default direction, then uses reader overrides independently per column', () => {
     const c = setup();

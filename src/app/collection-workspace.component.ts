@@ -17,6 +17,8 @@ import {
   ViewChild,
   OnDestroy,
   input,
+  output,
+  linkedSignal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -53,11 +55,28 @@ export class CollectionWorkspaceComponent
   readonly selectedLanguage = signal<Locale | null>(null);
   readonly mobile = signal(false);
   readonly fixtureLanguage = signal<Locale | 'mixed' | null>(null);
-  readonly generationCount = signal<number | null>(null);
+  readonly syncFixtureCount = input(false);
+  readonly fixtureCountChange = output<number>();
+  private readonly generationDefaults = computed(
+    () => ({
+      count: this.data.form().entries?.count ?? 25,
+      epoch: this.data.viewSession(),
+      session: this.store.projectSession(),
+    }),
+    { equal: (a, b) => a.count === b.count && a.epoch === b.epoch && a.session === b.session },
+  );
+  readonly generationCount = linkedSignal({
+    source: this.generationDefaults,
+    computation: (value): number | null => value.count,
+  });
+  setGenerationCount(value: number | null): void {
+    this.generationCount.set(value);
+    if (this.syncFixtureCount() && this.generationValid()) this.fixtureCountChange.emit(value!);
+  }
   readonly settingsOpen = signal(false);
   readonly generationValid = computed(() => {
-    const count = this.generationCount() ?? this.data.form().entries?.count ?? 25;
-    return Number.isInteger(count) && count >= 1 && count <= 500;
+    const count = this.generationCount();
+    return count !== null && Number.isInteger(count) && count >= 1 && count <= 500;
   });
   override readonly contentLocale = computed(() =>
     this.selectedLanguage() && this.store.application().languages.includes(this.selectedLanguage()!)
@@ -75,9 +94,6 @@ export class CollectionWorkspaceComponent
   }
   appendOne(): void {
     void this.data.regenerate(this.data.context(), this.dataLanguages(), 1, true);
-  }
-  private generate(context: RecordContext): void {
-    void this.data.regenerate(context, this.dataLanguages(), this.generationCount() ?? undefined);
   }
   columnHeading(id: string): string {
     return (
@@ -227,15 +243,21 @@ export class CollectionWorkspaceComponent
     this.selection.set(new Set(this.matches().map((record) => record.id)));
   }
   regenerate(): void {
-    const context = this.data.context();
+    if (!this.generationValid()) return;
+    const context = this.data.context(),
+      count = this.generationCount()!,
+      languages = this.dataLanguages();
+    const generate = (): void => {
+      void this.data.regenerate(context, languages, count);
+    };
     if (!this.data.records().length) {
-      this.generate(context);
+      generate();
       return;
     }
     this.feedback.requestDelete(
       this.t('listGenerate'),
       () => {
-        this.generate(context);
+        generate();
       },
       'listRegenerateDescription',
     );
