@@ -40,6 +40,8 @@ import {
 import { ProjectStore } from './project.store';
 import { CollectionWorkspaceComponent } from './collection-workspace.component';
 import { CollectionSessionStore } from './collection-session.store';
+import { CollectionSessionRegistry } from './collection-session.registry';
+import { COLLECTION_VIEW, editorCollectionView } from './collection-view';
 import { PatternCheckService } from './pattern-check.service';
 import { CopyKey, translate } from './translations';
 import { FieldListComponent } from './field-list.component';
@@ -81,7 +83,7 @@ import {
     AuthoringGuideComponent,
     CollectionWorkspaceComponent,
   ],
-  providers: [ProjectStore, CollectionSessionStore, PatternCheckService],
+  providers: [ProjectStore, CollectionSessionRegistry, CollectionSessionStore, PatternCheckService, {provide: COLLECTION_VIEW, useFactory: editorCollectionView}],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
 })

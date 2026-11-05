@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CollectionWorkspaceComponent } from './collection-workspace.component';
 import { CollectionSessionStore, COLLECTION_GENERATOR } from './collection-session.store';
 import { ProjectStore } from './project.store';
+import { CollectionSessionRegistry } from './collection-session.registry';
 import { PatternCheckService } from './pattern-check.service';
 import { FeedbackService } from './feedback.service';
 import { createField, handoff, text, validateApplicationProject } from './project';
@@ -28,6 +29,7 @@ describe('Collection workspace boundaries', () => {
       imports: [CollectionWorkspaceComponent],
       providers: [
         ProjectStore,
+        CollectionSessionRegistry,
         CollectionSessionStore,
         PatternCheckService,
         {

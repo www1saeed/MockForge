@@ -1,6 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { createEnvironmentInjector, EnvironmentInjector, signal } from '@angular/core';
+import { COLLECTION_VIEW } from './collection-view';
 import { CollectionSessionStore, COLLECTION_GENERATOR } from './collection-session.store';
 import { ProjectStore } from './project.store';
+import { CollectionSessionRegistry } from './collection-session.registry';
 import { PatternCheckService } from './pattern-check.service';
 import { BatchOptions, BatchResult } from './preview-data-batch';
 import { createField, text, STORAGE_KEY } from './project';
@@ -19,6 +22,7 @@ describe('Session record ownership', () => {
     TestBed.configureTestingModule({
       providers: [
         ProjectStore,
+        CollectionSessionRegistry,
         CollectionSessionStore,
         PatternCheckService,
         {
@@ -60,6 +64,69 @@ describe('Session record ownership', () => {
     expect(data.remove([id], data.context())).toBe(true);
     expect(project.application()).toBe(specification);
     expect(localStorage.getItem(STORAGE_KEY)).toBe(stored);
+  });
+  it('shares records across independent cursors without changing editor selection or accepting another owner context', () => {
+    data.save({ name: 'Author' }, data.context());
+    const second = project.addForm(text('Zweit', 'Second'))!;
+    project.update({ fields: [createField('text', 'name')] });
+    project.selectForm('form-1');
+    TestBed.tick();
+    const formId = signal(second),
+      epoch = signal(0);
+    const child = createEnvironmentInjector(
+      [CollectionSessionStore, { provide: COLLECTION_VIEW, useValue: { formId, epoch } }],
+      TestBed.inject(EnvironmentInjector),
+    );
+    const preview = child.get(CollectionSessionStore);
+    expect(preview.form().id).toBe(second);
+    expect(preview.save({ name: 'Preview' }, preview.context())).toBe(true);
+    expect(project.activeFormId()).toBe('form-1');
+    expect(data.records()[0].values['name']).toBe('Author');
+    project.selectForm(second);
+    TestBed.tick();
+    expect(data.records()[0].values['name']).toBe('Preview');
+    expect(data.remove([data.records()[0].id], preview.context())).toBe(false);
+    const pending = preview.context();
+    data.save({ name: 'Author edit' }, data.context(), data.records()[0].id);
+    expect(preview.current(pending)).toBe(false);
+    expect(preview.records()[0].values['name']).toBe('Author edit');
+    formId.set('form-1');
+    epoch.update((value) => value + 1);
+    TestBed.tick();
+    expect(preview.records()[0].values['name']).toBe('Author');
+    expect(project.activeFormId()).toBe(second);
+    child.destroy();
+    expect(data.records()[0].values['name']).toBe('Author edit');
+  });
+  it('keeps preview generation independent of editor navigation and cancels it on its own cursor change', async () => {
+    const second = project.addForm(text('Zweit', 'Second'))!;
+    project.update({ fields: [createField('text', 'name')] });
+    project.selectForm('form-1');
+    TestBed.tick();
+    const formId = signal(second),
+      epoch = signal(0);
+    const child = createEnvironmentInjector(
+      [CollectionSessionStore, { provide: COLLECTION_VIEW, useValue: { formId, epoch } }],
+      TestBed.inject(EnvironmentInjector),
+    );
+    const preview = child.get(CollectionSessionStore);
+    let work = preview.regenerate(preview.context());
+    project.selectForm(second);
+    TestBed.tick();
+    expect(options.signal?.aborted).toBe(false);
+    resolve(result());
+    await work;
+    expect(preview.records()[0].values['name']).toBe('Generated');
+    work = preview.regenerate(preview.context());
+    formId.set('form-1');
+    epoch.update((value) => value + 1);
+    TestBed.tick();
+    expect(options.signal?.aborted).toBe(true);
+    resolve(result());
+    await work;
+    expect(preview.records()).toHaveLength(0);
+    expect(data.records()[0].values['name']).toBe('Generated');
+    child.destroy();
   });
   it('keeps separate form records through selection and clears on whole-project replacement', () => {
     data.save({ name: 'First' }, data.context());
