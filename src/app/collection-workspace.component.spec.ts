@@ -8,6 +8,52 @@ import { FeedbackService } from './feedback.service';
 import { createField, handoff, text, validateApplicationProject } from './project';
 
 describe('Collection workspace boundaries', () => {
+  it('uses active content languages for single/mixed fixtures and falls back after language removal', () => {
+    const c = setup();
+    c.selectedLanguage.set('en');
+    expect(c.contentLocale()).toBe('en');
+    c.fixtureLanguage.set('fa');
+    expect(c.dataLanguages()).toEqual(['en']);
+    c.fixtureLanguage.set('mixed');
+    expect(c.dataLanguages()).toEqual(['de', 'en']);
+    c.store.update({ languages: ['de', 'fa'] });
+    expect(c.contentLocale()).toBe('de');
+    c.fixtureLanguage.set('en');
+    expect(c.dataLanguages()).toEqual(['de']);
+    c.selectedLanguage.set('fa');
+    expect(c.contentLocale()).toBe('fa');
+    c.generationCount.set(0);
+    expect(c.generationValid()).toBe(false);
+    c.generationCount.set(1.5);
+    expect(c.generationValid()).toBe(false);
+    c.generationCount.set(3);
+    expect(c.generationValid()).toBe(true);
+  });
+  it('retains language/count options through replace confirmation and uses one-record append', async () => {
+    const c = setup(),
+      generator = TestBed.inject(COLLECTION_GENERATOR) as jest.Mock;
+    c.fixtureLanguage.set('en');
+    c.generationCount.set(3);
+    c.data.save({ name: 'Manual', state: '0', flag: false }, c.data.context());
+    c.regenerate();
+    expect(generator).not.toHaveBeenCalled();
+    TestBed.inject(FeedbackService).confirmDelete();
+    await Promise.resolve();
+    expect(generator).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ locale: 'en', locales: ['en'], count: 3 }),
+      expect.anything(),
+    );
+    c.appendOne();
+    await Promise.resolve();
+    expect(generator).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ count: 1, locale: 'en' }),
+      expect.anything(),
+    );
+    c.generationCount.set(null);
+    expect(c.generationValid()).toBe(true);
+  });
   it('toggles the effective default direction, then uses reader overrides independently per column', () => {
     const c = setup();
     c.defaultSort('name');

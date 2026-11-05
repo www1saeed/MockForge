@@ -3,7 +3,7 @@ import { ProjectStore } from './project.store';
 import { CollectionSessionStore } from './collection-session.store';
 import {
   CollectionList,
-  collectionLeaves,
+  collectionFields,
   collectionChoice,
   createCollectionList,
 } from './collection.model';
@@ -28,8 +28,10 @@ export class CollectionDefinitionController {
       ? this.lists().find((list) => list.id === this.listId())
       : (this.lists().find((list) => list.id === this.selected()) ?? this.lists()[0]),
   );
-  readonly leaves = computed(() => collectionLeaves(this.data.form().fields));
-  readonly choices = computed(() => this.leaves().filter(collectionChoice));
+  readonly leaves = computed(() => collectionFields(this.data.form().fields));
+  readonly choices = computed(() =>
+    this.leaves().filter((field) => !field.id.includes('/') && collectionChoice(field)),
+  );
   readonly contentLocale = computed(() =>
     this.store.application().languages.includes(this.contentLanguage() ?? this.locale())
       ? (this.contentLanguage() ?? this.locale())

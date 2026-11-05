@@ -1,9 +1,23 @@
-<section class="collection-builder" [attr.aria-label]="t('listConfigure')">
+<section
+  class="collection-builder"
+  [class.preview-only]="previewFullWidth()"
+  [attr.aria-label]="t('listConfigure')"
+>
   <header class="collection-builder-heading">
     <h2>{{ t('listsTitle') }}</h2>
     <p>{{ t('listBuilderHint') }}</p>
   </header>
-  <div class="collection-tools">
+  <div class="collection-tools collection-definition-tools">
+    <label for="list-source-form">{{ t('listSourceForm') }}</label
+    ><select
+      id="list-source-form"
+      [ngModel]="store.activeFormId()"
+      (ngModelChange)="formSelected.emit($event)"
+    >
+      @for (form of store.application().forms; track form.id) {
+        <option [value]="form.id">{{ text(form.title) || form.id }}</option>
+      }
+    </select>
     <label for="active-list">{{ t('activeList') }}</label
     ><select id="active-list" [ngModel]="list()?.id ?? ''" (ngModelChange)="selected.set($event)">
       @for (item of lists(); track item.id) {
@@ -64,8 +78,8 @@
       }
       <button
         class="secondary-button"
-        aria-controls="list-config-preview"
-        (click)="scroll('preview')"
+        aria-controls="live-preview"
+        (click)="scroll('live-preview')"
       >
         {{ t('listPreview') }}
       </button>
@@ -134,6 +148,18 @@
         <fieldset id="list-config-appearance" tabindex="-1" class="collection-config">
           <legend>{{ t('listAppearance') }}</legend>
           <p>{{ t('listAppearanceHint') }}</p>
+          <label
+            >{{ t('listLayout')
+            }}<select
+              [attr.aria-label]="t('listLayout')"
+              [ngModel]="appearance().layout ?? 'table'"
+              (ngModelChange)="look({ layout: $event })"
+            >
+              <option value="table">{{ t('listLayoutTable') }}</option>
+              <option value="cards">{{ t('listLayoutCards') }}</option>
+              <option value="accordion">{{ t('listLayoutAccordion') }}</option>
+            </select></label
+          >
           <div class="collection-designs">
             @for (design of designs; track design) {
               <button
@@ -247,6 +273,44 @@
                   />{{ t('columnSortable') }}</label
                 >
               </div>
+              <label
+                >{{ t('columnDisplay')
+                }}<select
+                  [attr.aria-label]="t('columnDisplay') + ': ' + text(field(id).label)"
+                  [ngModel]="column(id).display ?? (field(id).group ? 'table' : 'text')"
+                  (ngModelChange)="columnPatch(id, { display: $event })"
+                >
+                  <option value="text">{{ t('displayText') }}</option>
+                  <option value="badge">{{ t('displayBadge') }}</option>
+                  <option value="chips">{{ t('displayChips') }}</option>
+                  <option value="count">{{ t('displayCount') }}</option>
+                  @if (field(id).group) {
+                    <option value="table">{{ t('listLayoutTable') }}</option>
+                    <option value="cards">{{ t('listLayoutCards') }}</option>
+                    <option value="accordion">{{ t('listLayoutAccordion') }}</option>
+                  }
+                </select></label
+              >
+              @if (field(id).group; as group) {
+                <fieldset>
+                  <legend>{{ t('listGroupFields') }}</legend>
+                  @for (child of group.fields; track child.id) {
+                    <label
+                      ><input
+                        type="checkbox"
+                        [ngModel]="
+                          !column(id).groupFields || column(id).groupFields!.includes(child.id)
+                        "
+                        (ngModelChange)="groupField(id, child.id, $event)"
+                        [disabled]="
+                          column(id).groupFields?.length === 1 &&
+                          column(id).groupFields!.includes(child.id)
+                        "
+                      />{{ text(child.label) }}</label
+                    >
+                  }
+                </fieldset>
+              }
             </div>
           }
         </fieldset>
@@ -291,9 +355,10 @@
                     </td>
                     <td>
                       @if (
-                        field.type === 'checkbox' ||
-                        field.type === 'select' ||
-                        field.type === 'radio'
+                        !field.id.includes('/') &&
+                        (field.type === 'checkbox' ||
+                          field.type === 'select' ||
+                          field.type === 'radio')
                       ) {
                         <input
                           type="checkbox"
@@ -474,10 +539,12 @@
           </div>
         </fieldset>
       </div>
-      <aside id="list-config-preview" tabindex="-1" class="collection-live-preview">
-        <h3>{{ t('listPreview') }}</h3>
-        <app-collection-workspace [locale]="locale()" [previewOnly]="true" [listId]="view.id" />
-      </aside>
+      @if (previewVisible()) {
+        <aside id="live-preview" tabindex="-1" class="collection-live-preview">
+          <h3>{{ t('listPreview') }}</h3>
+          <app-collection-workspace [locale]="locale()" [previewOnly]="true" [listId]="view.id" />
+        </aside>
+      }
     </div>
   } @else {
     <p>{{ t('listEmptyConfig') }}</p>

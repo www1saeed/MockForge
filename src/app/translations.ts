@@ -3,6 +3,26 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  listCountInvalid: [
+    'Wähle eine ganze Anzahl von 1 bis 500.',
+    'Choose a whole count from 1 to 500.',
+  ],
+  listSourceForm: ['Quellformular der Liste', 'List source form'],
+  listLayout: ['Darstellungsform', 'List layout'],
+  listLayoutTable: ['Tabelle', 'Table'],
+  listLayoutCards: ['Karten', 'Cards'],
+  listLayoutAccordion: ['Akkordeon', 'Accordion'],
+  columnDisplay: ['Wertdarstellung', 'Value display'],
+  displayBadge: ['Badge', 'Badge'],
+  displayChips: ['Chips', 'Chips'],
+  displayCount: ['Anzahl', 'Count'],
+  listGroupFields: ['Sichtbare Gruppen-Unterfelder', 'Visible group subfields'],
+  listAddFixture: ['Einzelnen Testeintrag hinzufügen', 'Add one test record'],
+  listMixedLanguages: ['Gemischt (aktive Formularsprachen)', 'Mixed (active form languages)'],
+  listLanguageHint: [
+    'Die Datensprache bestimmt erzeugte Namen, Adressen und Texte. Gemischt verteilt die aktiven Sprachen abwechselnd. Auswahl, Anzahl und Antworten bleiben nur in dieser Sitzung.',
+    'Data language controls generated names, addresses and text. Mixed alternates active languages. Settings and answers remain in this session only.',
+  ],
   actionVariant: ['Button-Stil', 'Button style'],
   symbolPlus: ['Plus', 'Plus'],
   symbolEye: ['Auge', 'Eye'],
@@ -27,8 +47,8 @@ export const copy = {
   ],
   listAppearance: ['Tabellen-Design', 'Table design'],
   listAppearanceHint: [
-    'Wähle ein Design und passe Zeilendichte, Hervorhebung und feste Kopfzeile an. Die Auswahl gilt auch für den HTML-Export.',
-    'Choose a design, density, hover highlight and sticky header. These settings also apply to HTML exports.',
+    'Wähle Tabelle, Karten oder Akkordeon. Für Tabellen stehen Design, Zeilendichte, Hervorhebung und feste Kopfzeile bereit. Die Auswahl gilt auch für den HTML-Export.',
+    'Choose table, cards or accordion. Table designs also offer density, hover highlight and sticky headers. These settings also apply to HTML exports.',
   ],
   tablePlain: ['Klassisch', 'Classic'],
   tableStriped: ['Gestreift', 'Striped'],
@@ -40,8 +60,8 @@ export const copy = {
   tableHover: ['Zeile unter dem Zeiger hervorheben', 'Highlight hovered row'],
   tableSticky: ['Kopfzeile beim Scrollen festhalten', 'Keep column headings visible'],
   listColumnsHint: [
-    'Wähle Felder unten unter Filter & Felder. Hier ordnest du sichtbare Spalten und konfigurierst Überschrift, Breite, Ausrichtung und Sortierbarkeit. Eine leere Überschrift verwendet die Feldbeschriftung.',
-    'Choose fields under Filters & fields below. Reorder visible columns and configure headings, width, alignment and sorting here. An empty heading uses the field label.',
+    'Wähle Felder unten unter Filter & Felder. Hier ordnest du sichtbare Spalten und konfigurierst Überschrift, Breite, Ausrichtung und Sortierbarkeit. Gruppen und einzelne Unterfelder sind wählbar. Für Gruppen wählst du Unterfelder und Darstellung. Eine leere Überschrift verwendet die Feldbeschriftung.',
+    'Choose fields under Filters & fields below. Reorder visible columns and configure headings, width, alignment and sorting here. Groups and individual subfields are available; choose group children and display mode. Empty headings use field labels.',
   ],
   listFiltersSection: ['Filter & Feldauswahl', 'Filters & fields'],
   listFiltersHint: [
@@ -152,8 +172,8 @@ export const copy = {
   listMoveDown: ['Liste nach hinten verschieben', 'Move list later'],
   listContract: ['Listen: Ansichten eines Formulars', 'Lists: form views'],
   listContractRule: [
-    'Optional: bis zu 10 Listen pro Formular, 50 im Projekt. Referenzen nur auf eigene Wurzelfelder ohne Gruppen, höchstens 20 je Array. Filter für Auswahlfelder/Checkboxen; feste Filter gelten gemeinsam (UND). Auswahlwerte sind Optionsindizes als Strings, Checkboxwerte Booleans. Sortierfeld muss eine Spalte sein.',
-    'Optional: up to 10 lists per form, 50 per project. References target own root leaves, at most 20 per array. Filters use choices/checkboxes; fixed filters combine with AND. Choice values are option-index strings, checkbox values booleans. Sort field must be a column.',
+    'Optional: bis zu 10 Listen pro Formular, 50 im Projekt. Spalten/Suche verwenden eigene Wurzelfelder, Gruppen oder groupId/childId-Pfade, höchstens 20 je Array. Filter für Auswahlfelder/Checkboxen; feste Filter gelten gemeinsam (UND). Auswahlwerte sind Optionsindizes als Strings, Checkboxwerte Booleans. Sortierfeld muss eine Spalte sein.',
+    'Optional: up to 10 lists per form, 50 per project. Columns/search target own roots, groups or groupId/childId paths, at most 20 per array. Filters use choices/checkboxes; fixed filters combine with AND. Choice values are option-index strings, checkbox values booleans. Sort field must be a column.',
   ],
   listEntriesRule: [
     'Nur Anzahl und Seed werden gespeichert. Erzeugte und bearbeitete Einträge bleiben in der Sitzung und fehlen in JSON/Markdown. Vorhandene Einträge werden erst nach Bestätigung und vollständiger Generierung ersetzt.',
@@ -181,7 +201,7 @@ export const copy = {
   listDirection: ['Sortierrichtung', 'Sort direction'],
   listAscending: ['Aufsteigend', 'Ascending'],
   listDescending: ['Absteigend', 'Descending'],
-  listFields: ['Felder der Liste (ohne Gruppen)', 'List fields (excluding groups)'],
+  listFields: ['Felder und Gruppen der Liste', 'List fields and groups'],
   listColumn: ['Spalte', 'Column'],
   listSearch: ['Suche', 'Search'],
   listFilter: ['Filter', 'Filter'],

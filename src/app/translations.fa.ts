@@ -2,6 +2,21 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  listCountInvalid: 'یک عدد صحیح بین ۱ تا ۵۰۰ انتخاب کنید.',
+  listSourceForm: 'فرم منبع فهرست',
+  listLayout: 'چیدمان فهرست',
+  listLayoutTable: 'جدول',
+  listLayoutCards: 'کارت‌ها',
+  listLayoutAccordion: 'آکاردئون',
+  columnDisplay: 'نمایش مقدار',
+  displayBadge: 'نشان',
+  displayChips: 'برچسب‌ها',
+  displayCount: 'تعداد',
+  listGroupFields: 'زیرفیلدهای قابل نمایش گروه',
+  listAddFixture: 'افزودن یک رکورد آزمایشی',
+  listMixedLanguages: 'ترکیبی (زبان‌های فعال فرم)',
+  listLanguageHint:
+    'زبان داده نام‌ها، نشانی‌ها و متن تولیدشده را تعیین می‌کند. حالت ترکیبی زبان‌های فعال را به نوبت به کار می‌برد. تنظیمات و پاسخ‌ها فقط در همین نشست می‌مانند.',
   actionVariant: 'سبک دکمه',
   symbolPlus: 'افزودن',
   symbolEye: 'چشم',
@@ -93,7 +108,7 @@ export const faCopy = {
   listMoveDown: 'انتقال فهرست به بعد',
   listContract: 'فهرست‌ها: نماهای فرم',
   listContractRule:
-    'اختیاری: حداکثر ۱۰ فهرست در هر فرم و ۵۰ در پروژه. ارجاع فقط به فیلدهای ریشه بدون گروه، حداکثر ۲۰ در هر آرایه. فیلترهای ثابت با «و» ترکیب می‌شوند. مقدار گزینه رشتهٔ اندیس و مقدار کادر علامت بولی است. فیلد مرتب‌سازی باید ستون باشد.',
+    'اختیاری: حداکثر ۱۰ فهرست در هر فرم و ۵۰ در پروژه. ستون‌ها و جستجو به فیلد ریشه، گروه یا مسیر groupId/childId ارجاع می‌دهند؛ حداکثر ۲۰ در هر آرایه. فیلترهای ثابت با «و» ترکیب می‌شوند. مقدار گزینه رشتهٔ اندیس و مقدار کادر علامت بولی است. فیلد مرتب‌سازی باید ستون باشد.',
   listEntriesRule:
     'فقط تعداد و بذر ذخیره می‌شود. رکوردهای تولیدشده و ویرایش‌شده در نشست می‌مانند و در JSON/Markdown نیستند. جایگزینی پس از تأیید و تولید کامل انجام می‌شود.',
   listActionsRule:
@@ -114,7 +129,7 @@ export const faCopy = {
   listDirection: 'جهت مرتب‌سازی',
   listAscending: 'صعودی',
   listDescending: 'نزولی',
-  listFields: 'فیلدهای فهرست (بدون گروه‌ها)',
+  listFields: 'فیلدها و گروه‌های فهرست',
   listColumn: 'ستون',
   listSearch: 'جستجو',
   listFilter: 'فیلتر',

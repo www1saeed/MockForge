@@ -148,7 +148,6 @@
                 [attr.aria-expanded]="previewVisible()"
                 [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
                 (click)="togglePreview()"
-                [disabled]="listsOpen()"
               >
                 {{ t(previewVisible() ? 'hidePreview' : 'showPreview') }}</button
               ><button
@@ -156,7 +155,6 @@
                 [attr.aria-pressed]="previewFullWidth()"
                 [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
                 (click)="togglePreviewWidth()"
-                [disabled]="listsOpen()"
               >
                 {{ t(previewFullWidth() ? 'restoreEditor' : 'expandPreview') }}</button
               ><button class="secondary-button" (click)="fileInput.click()">
@@ -187,76 +185,83 @@
               </button>
             }
           </nav>
-          <section class="form-manager" [attr.aria-label]="t('manageForms')">
-            <div class="form-selector">
-              <label for="active-form">{{ t('activeForm') }}</label>
-              <select
-                id="active-form"
-                [ngModel]="store.activeFormId()"
-                (ngModelChange)="selectForm($event)"
-              >
-                @for (form of store.application().forms; track form.id) {
-                  <option [value]="form.id">
-                    {{ form.title[locale()] || form.title[project().languages[0]] || form.id }} ·
-                    {{ form.id }}
-                  </option>
-                }
-              </select>
-            </div>
-            <div class="form-manager-actions">
-              <label class="application-menu-setting"
-                ><input
-                  type="checkbox"
-                  [ngModel]="store.application().forms[formIndex()].menu !== false"
-                  (ngModelChange)="store.setFormMenu($event)"
-                />{{ t('applicationShowForm') }}</label
-              >
+          @if (!listsOpen()) {
+            <section class="form-manager" [attr.aria-label]="t('manageForms')">
+              <div class="form-selector">
+                <label for="active-form">{{ t('activeForm') }}</label>
+                <select
+                  id="active-form"
+                  [ngModel]="store.activeFormId()"
+                  (ngModelChange)="selectForm($event)"
+                >
+                  @for (form of store.application().forms; track form.id) {
+                    <option [value]="form.id">
+                      {{ form.title[locale()] || form.title[project().languages[0]] || form.id }} ·
+                      {{ form.id }}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="form-manager-actions">
+                <label class="application-menu-setting"
+                  ><input
+                    type="checkbox"
+                    [ngModel]="store.application().forms[formIndex()].menu !== false"
+                    (ngModelChange)="store.setFormMenu($event)"
+                  />{{ t('applicationShowForm') }}</label
+                >
 
-              <button
-                class="secondary-button"
-                (click)="openFormDialog('new')"
-                [disabled]="store.application().forms.length >= 20"
-              >
-                {{ t('newForm') }}
-              </button>
-              <button
-                class="secondary-button"
-                (click)="openFormDialog('duplicate')"
-                [disabled]="store.application().forms.length >= 20"
-              >
-                {{ t('duplicateForm') }}
-              </button>
-              <button
-                class="secondary-button"
-                (click)="moveForm(-1)"
-                [disabled]="formIndex() === 0"
-                [attr.aria-label]="t('moveFormUp')"
-                [title]="t('moveFormUp')"
-              >
-                ↑
-              </button>
-              <button
-                class="secondary-button"
-                (click)="moveForm(1)"
-                [disabled]="formIndex() === store.application().forms.length - 1"
-                [attr.aria-label]="t('moveFormDown')"
-                [title]="t('moveFormDown')"
-              >
-                ↓
-              </button>
-              <button
-                class="secondary-button"
-                (click)="removeForm()"
-                [disabled]="store.application().forms.length === 1"
-              >
-                {{ t('deleteForm') }}
-              </button>
-            </div>
-            <p class="fine-print">{{ t('formSwitchNotice') }}</p>
-          </section>
+                <button
+                  class="secondary-button"
+                  (click)="openFormDialog('new')"
+                  [disabled]="store.application().forms.length >= 20"
+                >
+                  {{ t('newForm') }}
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="openFormDialog('duplicate')"
+                  [disabled]="store.application().forms.length >= 20"
+                >
+                  {{ t('duplicateForm') }}
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="moveForm(-1)"
+                  [disabled]="formIndex() === 0"
+                  [attr.aria-label]="t('moveFormUp')"
+                  [title]="t('moveFormUp')"
+                >
+                  ↑
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="moveForm(1)"
+                  [disabled]="formIndex() === store.application().forms.length - 1"
+                  [attr.aria-label]="t('moveFormDown')"
+                  [title]="t('moveFormDown')"
+                >
+                  ↓
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="removeForm()"
+                  [disabled]="store.application().forms.length === 1"
+                >
+                  {{ t('deleteForm') }}
+                </button>
+              </div>
+              <p class="fine-print">{{ t('formSwitchNotice') }}</p>
+            </section>
+          }
           @if (listsOpen()) {
             @defer (on immediate) {
-              <app-collection-configurator [locale]="locale()" />
+              <app-collection-configurator
+                [locale]="locale()"
+                [previewVisible]="previewVisible()"
+                [previewFullWidth]="previewFullWidth()"
+                (formSelected)="selectForm($event)"
+              />
             }
           } @else {
             <div
@@ -821,12 +826,14 @@
         </section>
       }
       @if (view() === 'application') {
-        <app-application-preview
-          [locale]="locale()"
-          [route]="applicationRoute()"
-          [exporting]="previewExport.busy()"
-          (exportRequested)="previewExport.download(locale())"
-        />
+        @defer (on immediate) {
+          <app-application-preview
+            [locale]="locale()"
+            [route]="applicationRoute()"
+            [exporting]="previewExport.busy()"
+            (exportRequested)="previewExport.download(locale())"
+          />
+        }
       }
       @if (view() === 'examples') {
         <section id="workspace" class="content-page">

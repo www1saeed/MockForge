@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, signal, OnDestroy } from '@angular/core';
+import { Component, ElementRef, inject, signal, OnDestroy, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CollectionDefinitionController } from './collection-definition.controller';
 import { CollectionWorkspaceComponent } from './collection-workspace.component';
@@ -24,6 +24,9 @@ export class CollectionConfiguratorComponent
   extends CollectionDefinitionController
   implements OnDestroy
 {
+  readonly previewVisible = input(true);
+  readonly previewFullWidth = input(false);
+  readonly formSelected = output<string>();
   readonly host: ElementRef<HTMLElement> = inject(ElementRef);
   readonly activeSection = signal('basics');
   readonly designs = TABLE_DESIGNS;
@@ -43,7 +46,9 @@ export class CollectionConfiguratorComponent
   }
   scroll(section: string): void {
     this.activeSection.set(section);
-    const element = this.host.nativeElement.querySelector<HTMLElement>('#list-config-' + section);
+    const element = this.host.nativeElement.querySelector<HTMLElement>(
+      section === 'live-preview' ? '#live-preview' : '#list-config-' + section,
+    );
     element?.scrollIntoView({ block: 'start', behavior: 'smooth' });
     element?.focus({ preventScroll: true });
   }
@@ -73,6 +78,14 @@ export class CollectionConfiguratorComponent
         ? { sort: undefined }
         : {}),
     });
+  }
+  groupField(id: string, child: string, enabled: boolean): void {
+    const selected =
+      this.column(id).groupFields ?? this.field(id).group!.fields.map((field) => field.id);
+    const groupFields = enabled
+      ? [...selected, child]
+      : selected.filter((value) => value !== child);
+    if (groupFields.length) this.columnPatch(id, { groupFields });
   }
   columnLabel(id: string, lang: Locale, value: string): void {
     this.columnPatch(id, { label: { ...this.column(id).label, [lang]: value } });

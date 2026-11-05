@@ -1,3 +1,4 @@
+import { createField } from './project.model';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CollectionConfiguratorComponent } from './collection-configurator.component';
 import { CollectionSessionStore } from './collection-session.store';
@@ -30,6 +31,26 @@ describe('Dedicated list configuration', () => {
     TestBed.tick();
     return { fixture, c };
   }
+  it('keeps at least one selected group child and persists explicit child selection', () => {
+    const { c } = setup();
+    const field = {
+      ...createField('group', 'items'),
+      group: {
+        layout: 'table' as const,
+        minItems: 0,
+        maxItems: 2,
+        fields: [createField('text', 'product'), createField('number', 'quantity')],
+      },
+    };
+    c.store.update({ fields: [field] });
+    c.toggle('columns', 'items', true);
+    c.groupField('items', 'quantity', false);
+    expect(c.column('items').groupFields).toEqual(['product']);
+    c.groupField('items', 'product', false);
+    expect(c.column('items').groupFields).toEqual(['product']);
+    c.groupField('items', 'quantity', true);
+    expect(c.column('items').groupFields).toEqual(['product', 'quantity']);
+  });
   it('stores ordered headings, dimensions and disabled sorting without changing answer rules', () => {
     const { c } = setup();
     c.defaultSort('name');

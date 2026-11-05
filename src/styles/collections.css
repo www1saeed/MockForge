@@ -339,3 +339,154 @@
 .collection-preview h3[hidden] {
   display: none !important;
 }
+/* List preview uses the same controls as form preview while retaining its own content cursor. */
+.collection-workspace .preview-toolbar {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.collection-workspace .test-data-toolbar {
+  flex-wrap: wrap;
+}
+.collection-data-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.collection-data-settings label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.collection-data-settings input,
+.collection-data-settings select {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--paper);
+}
+.collection-data-settings p {
+  flex-basis: 100%;
+}
+.collection-preview.collection-mobile {
+  max-width: 390px;
+  margin-inline: auto;
+}
+.collection-preview {
+  min-width: 0;
+}
+.collection-builder.preview-only > .collection-builder-heading,
+.collection-builder.preview-only > .collection-definition-tools,
+.collection-builder.preview-only > .collection-editor-nav,
+.collection-builder.preview-only .collection-editor {
+  display: none;
+}
+.collection-builder.preview-only .collection-builder-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.collection-builder-grid:not(:has(.collection-live-preview)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.collection-records {
+  display: grid;
+  gap: 1rem;
+  margin-block: 1rem;
+}
+.collection-cards {
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+.collection-record {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  overflow-wrap: anywhere;
+}
+.collection-record summary,
+.collection-group-items summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding-block: 0.65rem;
+  font-weight: 600;
+}
+.collection-record dl {
+  margin-block: 0.75rem;
+}
+.collection-record dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+.collection-record dd {
+  margin: 0.2rem 0 0.5rem;
+}
+.collection-group-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  max-height: 320px;
+}
+.collection-group-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85rem;
+}
+.collection-preview .collection-group-table th,
+.collection-preview .collection-group-table td {
+  padding: 0.4rem;
+  min-width: 90px;
+  border: 1px solid var(--line);
+  white-space: normal;
+}
+.collection-group-items {
+  display: grid;
+  gap: 0.5rem;
+  max-height: 320px;
+  overflow: auto;
+}
+.collection-group-card,
+.collection-group-items details {
+  border: 1px solid var(--line);
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin: 0;
+}
+.collection-group-items dt {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.collection-group-items dd {
+  margin: 0 0 0.35rem;
+}
+.collection-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-height: 320px;
+  overflow: auto;
+}
+.collection-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  background: var(--accent-soft);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.collection-preview .collection-table td:has(app-collection-cell) {
+  min-width: 150px;
+  vertical-align: top;
+  white-space: normal;
+}
+.collection-builder select,
+.collection-builder input {
+  max-width: 100%;
+}

@@ -373,7 +373,9 @@ export class AppComponent implements OnInit {
   setStep(step: number): void {
     this.previewFullWidth.set(false);
     this.step.set(step === 1 || step === 2 ? 0 : step);
-    this.previewVisible.set(step === WORKFLOW.design || step === WORKFLOW.review);
+    this.previewVisible.set(
+      step === WORKFLOW.design || step === WORKFLOW.review || step === WORKFLOW.lists,
+    );
   }
 
   toggleListWorkspace(): void {

@@ -1,3 +1,5 @@
+import { CollectionCellComponent } from './collection-cell.component';
+import { Locale } from './project.model';
 import { CollectionActionComponent } from './collection-action.component';
 import {
   CollectionColumnSetting,
@@ -16,18 +18,30 @@ import {
   OnDestroy,
   input,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CollectionDefinitionController } from './collection-definition.controller';
 import { CollectionList } from './collection.model';
 import { RecordContext } from './collection-session.store';
-import { CollectionRecord, formatRecordValue, queryCollection } from './collection-query';
+import {
+  CollectionRecord,
+  formatRecordValue,
+  queryCollection,
+  collectionValue,
+} from './collection-query';
 import { Field } from './project.model';
 import { FormPreviewComponent } from './form-preview.component';
 import { ownResponse, ResponseValues } from './response-values';
 @Component({
   selector: 'app-collection-workspace',
   standalone: true,
-  imports: [FormsModule, FormPreviewComponent, CollectionActionComponent],
+  imports: [
+    NgTemplateOutlet,
+    FormsModule,
+    FormPreviewComponent,
+    CollectionActionComponent,
+    CollectionCellComponent,
+  ],
   templateUrl: './collection-workspace.component.html',
 })
 export class CollectionWorkspaceComponent
@@ -35,6 +49,36 @@ export class CollectionWorkspaceComponent
   implements OnDestroy
 {
   readonly standalone = input(false);
+  readonly showToolbar = input(true);
+  readonly selectedLanguage = signal<Locale | null>(null);
+  readonly mobile = signal(false);
+  readonly fixtureLanguage = signal<Locale | 'mixed' | null>(null);
+  readonly generationCount = signal<number | null>(null);
+  readonly settingsOpen = signal(false);
+  readonly generationValid = computed(() => {
+    const count = this.generationCount() ?? this.data.form().entries?.count ?? 25;
+    return Number.isInteger(count) && count >= 1 && count <= 500;
+  });
+  override readonly contentLocale = computed(() =>
+    this.selectedLanguage() && this.store.application().languages.includes(this.selectedLanguage()!)
+      ? this.selectedLanguage()!
+      : this.store.application().languages.includes(this.contentLanguage() ?? this.locale())
+        ? (this.contentLanguage() ?? this.locale())
+        : this.store.application().languages[0],
+  );
+  dataLanguages(): Locale[] {
+    const value = this.fixtureLanguage();
+    const languages = this.store.application().languages;
+    return value === 'mixed'
+      ? [...languages]
+      : [value && languages.includes(value) ? value : this.contentLocale()];
+  }
+  appendOne(): void {
+    void this.data.regenerate(this.data.context(), this.dataLanguages(), 1, true);
+  }
+  private generate(context: RecordContext): void {
+    void this.data.regenerate(context, this.dataLanguages(), this.generationCount() ?? undefined);
+  }
   columnHeading(id: string): string {
     return (
       this.list()
@@ -128,7 +172,7 @@ export class CollectionWorkspaceComponent
       this.data.viewSession();
       this.list();
       this.data.dataset();
-      this.locale();
+      this.contentLocale();
       this.search.set('');
       this.filters.set(new Map());
       this.sort.set(undefined);
@@ -138,7 +182,7 @@ export class CollectionWorkspaceComponent
     });
   }
   value(record: CollectionRecord, field: Field): string {
-    return formatRecordValue(field, ownResponse(record.values, field.id), this.contentLocale());
+    return formatRecordValue(field, collectionValue(record.values, field.id), this.contentLocale());
   }
   groupRows(record: CollectionRecord, field: Field): ResponseValues[] {
     const rows = ownResponse(record.values, field.id);
@@ -180,13 +224,13 @@ export class CollectionWorkspaceComponent
   regenerate(): void {
     const context = this.data.context();
     if (!this.data.records().length) {
-      void this.data.regenerate(context);
+      this.generate(context);
       return;
     }
     this.feedback.requestDelete(
       this.t('listGenerate'),
       () => {
-        void this.data.regenerate(context);
+        this.generate(context);
       },
       'listRegenerateDescription',
     );
