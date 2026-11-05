@@ -15,7 +15,7 @@ LocalStorage writes are synchronous after each edit. A form specification is sma
 ## Application foundation (November 5, 2026)
 
 The application-mockup expansion is being implemented in small commits on
-`codex/application-mockup-foundation`. Its behavioral reference is the local
+`feature/application-mockup-foundation`. Its behavioral reference is the local
 original edition at `0b9b47e` (its changelog calls 0.2.0 a release candidate).
 Original source, private packages and assets are not imported into Studio.
 
