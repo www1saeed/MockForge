@@ -1,9 +1,34 @@
 import { allFields, FormContent, Project } from './project.model';
 import { parseProject, validateProject } from './project.validation';
 
-/** Staged Studio application contract; the live editor still writes Studio 1.3.0. */
+/** Studio application contract; legacy forms remain valid import and renderer inputs. */
 export const APPLICATION_SCHEMA_VERSION = '2.0.0';
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
+const PROJECT_KEYS = new Set([
+  'format',
+  'schemaVersion',
+  'name',
+  'owner',
+  'audience',
+  'goal',
+  'scope',
+  'theme',
+  'languages',
+  'forms',
+  'decisions',
+  'questions',
+  'review',
+]);
+const FORM_KEYS = new Set([
+  'id',
+  'menu',
+  'title',
+  'description',
+  'submit',
+  'columns',
+  'fields',
+  'buttons',
+]);
 
 /** Field and button IDs are unique within this form, including its group children. */
 export interface ApplicationForm extends FormContent {
@@ -28,6 +53,31 @@ export interface ApplicationProject {
   decisions: string;
   questions: string;
   review: Project['review'];
+}
+
+/** Read-only renderer/editor projection. Never persist or export this selected-form view. */
+export function projectForForm(project: ApplicationProject, id: string): Project | null {
+  const form = project.forms.find((item): boolean => item.id === id);
+  if (!form) return null;
+  return {
+    schemaVersion: '1.3.0',
+    name: project.name,
+    owner: project.owner,
+    audience: project.audience,
+    goal: project.goal,
+    scope: project.scope,
+    theme: project.theme,
+    languages: project.languages,
+    decisions: project.decisions,
+    questions: project.questions,
+    review: project.review,
+    title: form.title,
+    description: form.description,
+    submit: form.submit,
+    columns: form.columns,
+    fields: form.fields,
+    buttons: form.buttons,
+  };
 }
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -67,6 +117,7 @@ function formProject(
 export function validateApplicationProject(value: unknown): value is ApplicationProject {
   if (
     !record(value) ||
+    Object.keys(value).some((key): boolean => !PROJECT_KEYS.has(key)) ||
     value['format'] !== 'mockforge-studio' ||
     value['schemaVersion'] !== APPLICATION_SCHEMA_VERSION ||
     value['roles'] !== undefined ||
@@ -83,6 +134,7 @@ export function validateApplicationProject(value: unknown): value is Application
   for (const form of value['forms'] as unknown[]) {
     if (
       !record(form) ||
+      Object.keys(form).some((key): boolean => !FORM_KEYS.has(key)) ||
       typeof form['id'] !== 'string' ||
       !/^[a-z][a-z0-9_-]{0,63}$/.test(form['id']) ||
       ids.has(form['id']) ||

@@ -1,4 +1,5 @@
 import { Field, FormButton, Project, Text } from './project.model';
+import { ApplicationProject } from './application-project';
 
 /** Keep heading/metadata values on one line without breaking Markdown table separators. */
 function inline(value: string): string {
@@ -58,7 +59,7 @@ function renderButton(button: FormButton, language: Project['languages'][number]
  * in JSON for compatibility. The final review note distinguishes a local record
  * from authenticated approval and a simulated action from production behavior.
  */
-export function handoff(project: Project): string {
+export function handoff(project: Project | ApplicationProject): string {
   const language = project.languages[0];
   const design =
     project.theme === 'bootstrap'
@@ -72,15 +73,20 @@ export function handoff(project: Project): string {
       `Audience: ${inline(project.audience)}`,
       `Goal: ${project.goal}`,
       `Scope: ${project.scope}`,
-      '## Form',
-      `Design: ${design}`,
-      `Languages: ${project.languages.join(', ')}`,
-      `Layout: ${project.columns} column(s)`,
-      localized('Title', project.title),
-      localized('Description', project.description),
-      ...project.fields.map((field: Field): string => renderField(field, language)),
-      '## Buttons',
-      ...project.buttons.map((button: FormButton): string => renderButton(button, language)),
+      ...('forms' in project ? project.forms : [project]).flatMap((form): string[] => [
+        'forms' in project && 'id' in form ? `## Form (${inline(form.id)})` : '## Form',
+        ...('menu' in form
+          ? [`Application menu: ${form.menu === false ? 'Hidden' : 'Included'}`]
+          : []),
+        `Design: ${design}`,
+        `Languages: ${project.languages.join(', ')}`,
+        `Layout: ${form.columns} column(s)`,
+        localized('Title', form.title),
+        localized('Description', form.description),
+        ...form.fields.map((field: Field): string => renderField(field, language)),
+        '## Buttons',
+        ...form.buttons.map((button: FormButton): string => renderButton(button, language)),
+      ]),
       '## Decisions',
       project.decisions || 'None recorded',
       '## Open questions',

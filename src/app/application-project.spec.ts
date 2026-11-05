@@ -4,6 +4,7 @@ import {
   parseApplicationProject,
   serializeApplicationProject,
   validateApplicationProject,
+  projectForForm,
 } from './application-project';
 import { allFields, createField, example, Project } from './project';
 
@@ -11,7 +12,21 @@ function application(): ApplicationProject {
   return parseApplicationProject(example('complex'))!;
 }
 
-describe('Staged Studio application contract', (): void => {
+describe('Studio application contract', (): void => {
+  it('projects a named form without application containers and rejects unknown root state', (): void => {
+    const project = application();
+    project.forms.push({ ...project.forms[0], id: 'second' });
+    const selected = projectForForm(project, 'second')!;
+    expect(selected.fields).toEqual(project.forms[1].fields);
+    expect(selected.schemaVersion).toBe('1.3.0');
+    expect('forms' in selected).toBe(false);
+    expect('format' in selected).toBe(false);
+    expect(projectForForm(project, 'missing')).toBeNull();
+    expect(validateApplicationProject({ ...project, responses: {} })).toBe(false);
+    expect(
+      validateApplicationProject({ ...project, forms: [{ ...project.forms[0], session: {} }] }),
+    ).toBe(false);
+  });
   it('migrates every example without losing form, brief, translations or source ownership', (): void => {
     for (const kind of ['saas', 'commerce', 'agency', 'complex'] as const) {
       const legacy = example(kind);
@@ -192,7 +207,7 @@ describe('Staged Studio application contract', (): void => {
     expect(validateApplicationProject(project)).toBe(true);
   });
 
-  it('does not change the established legacy parser or persisted schema', (): void => {
+  it('keeps the legacy factory as a compatible input and never writes storage', (): void => {
     const legacy: Project = example('saas');
     expect(legacy.schemaVersion).toBe('1.3.0');
     expect(parseApplicationProject(legacy)?.schemaVersion).toBe('2.0.0');
