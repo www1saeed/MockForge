@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CollectionCellComponent } from './collection-cell.component';
 import { collectionFields, createCollectionList, pruneCollections } from './collection.model';
-import { collectionValue, queryCollection } from './collection-query';
+import { collectionValue, queryCollection, formatRecordValue } from './collection-query';
 import {
   example,
   createField,
@@ -54,6 +54,7 @@ describe('Grouped list projections', () => {
       'items/quantity',
     ]);
     expect(collectionValue(values, 'items/name')).toEqual(['Notebook', 'Pencil']);
+    expect(formatRecordValue(group, values.items, 'en', ['name'])).toBe('Notebook | Pencil');
     const records = [
       { id: 'a', values },
       { id: 'b', values: { items: [{ name: 'Other', quantity: '1' }] } },

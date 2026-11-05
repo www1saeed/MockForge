@@ -182,7 +182,12 @@ export class CollectionWorkspaceComponent
     });
   }
   value(record: CollectionRecord, field: Field): string {
-    return formatRecordValue(field, collectionValue(record.values, field.id), this.contentLocale());
+    return formatRecordValue(
+      field,
+      collectionValue(record.values, field.id),
+      this.contentLocale(),
+      this.columnSetting(field.id)?.groupFields,
+    );
   }
   groupRows(record: CollectionRecord, field: Field): ResponseValues[] {
     const rows = ownResponse(record.values, field.id);

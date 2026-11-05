@@ -20,7 +20,12 @@ export function collectionValue(values: ResponseValues, id: string): unknown {
   const value = ownResponse(values, parent);
   return child && Array.isArray(value) ? value.map((row) => ownResponse(row, child)) : value;
 }
-export function formatRecordValue(field: Field, value: unknown, locale: Locale): string {
+export function formatRecordValue(
+  field: Field,
+  value: unknown,
+  locale: Locale,
+  groupFields?: readonly string[],
+): string {
   if (value === undefined || value === '') return '—';
   if (typeof value === 'boolean') return translate(value ? 'recordTrue' : 'recordFalse', locale);
   if (Array.isArray(value))
@@ -28,9 +33,8 @@ export function formatRecordValue(field: Field, value: unknown, locale: Locale):
       ? value
           .map((row) =>
             field
-              .group!.fields.map((child) =>
-                formatRecordValue(child, ownResponse(row, child.id), locale),
-              )
+              .group!.fields.filter((child) => !groupFields || groupFields.includes(child.id))
+              .map((child) => formatRecordValue(child, ownResponse(row, child.id), locale))
               .join(' · '),
           )
           .join(' | ') || '—'
