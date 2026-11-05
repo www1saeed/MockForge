@@ -9,11 +9,70 @@ import { COLLECTION_VIEW } from './collection-view';
 import { PatternCheckService } from './pattern-check.service';
 import { ProjectStore } from './project.store';
 import { createCollectionList, text } from './project';
+import { FeedbackService } from './feedback.service';
 
 describe('Application preview cursor', () => {
+  beforeEach(() => {
+    HTMLDialogElement.prototype.close = jest.fn();
+  });
+  it('retires shared confirmations on screen/project changes and disposal, retaining current requests through language or copy edits', () => {
+    TestBed.configureTestingModule({ providers: [ProjectStore, CollectionSessionRegistry] });
+    const store = TestBed.inject(ProjectStore),
+      feedback = TestBed.inject(FeedbackService);
+    const second = store.addForm(text('Zweit', 'Second'))!;
+    const fixture = TestBed.createComponent(ApplicationPreviewComponent);
+    fixture.componentRef.setInput('route', { kind: 'form', formId: 'form-1' });
+    fixture.detectChanges();
+    TestBed.tick();
+    const confirm = jest.fn();
+    const request = (): void => feedback.requestDelete('Old form', confirm);
+    request();
+    fixture.componentRef.setInput('locale', 'en');
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(feedback.deletion()).not.toBeNull();
+    store.update({ owner: 'Changed copy' });
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(feedback.deletion()).not.toBeNull();
+    fixture.componentRef.setInput('route', { kind: 'form', formId: 'form-1' });
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(feedback.deletion()).not.toBeNull();
+    fixture.componentRef.setInput('route', { kind: 'form', formId: second });
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(feedback.deletion()).toBeNull();
+    feedback.confirmDelete();
+    expect(confirm).not.toHaveBeenCalled();
+    request();
+    fixture.componentRef.setInput('route', { kind: 'missing' });
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(feedback.deletion()).toBeNull();
+    feedback.confirmDelete();
+    expect(confirm).not.toHaveBeenCalled();
+    fixture.componentRef.setInput('route', { kind: 'form', formId: second });
+    fixture.detectChanges();
+    TestBed.tick();
+    request();
+    store.replace(store.application());
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(feedback.deletion()).toBeNull();
+    feedback.confirmDelete();
+    expect(confirm).not.toHaveBeenCalled();
+    request();
+    feedback.confirmDelete();
+    expect(confirm).toHaveBeenCalledTimes(1);
+    request();
+    fixture.destroy();
+    expect(feedback.deletion()).toBeNull();
+    feedback.confirmDelete();
+    expect(confirm).toHaveBeenCalledTimes(1);
+  });
   it('resolves routed projections and localized titles without changing authoring state, storage or review', () => {
     // Native modal behavior is exercised by the Chromium navigation journeys.
-    HTMLDialogElement.prototype.close = jest.fn();
     TestBed.configureTestingModule({
       providers: [
         ProjectStore,

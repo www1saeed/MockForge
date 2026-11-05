@@ -6,6 +6,7 @@ import {
   ElementRef,
   inject,
   input,
+  OnDestroy,
   signal,
   untracked,
   viewChild,
@@ -26,6 +27,7 @@ import { FormPreviewComponent } from './form-preview.component';
 import { PatternCheckService } from './pattern-check.service';
 import { Locale } from './project.model';
 import { CopyKey, translate } from './translations';
+import { FeedbackService } from './feedback.service';
 
 @Component({
   selector: 'app-application-preview',
@@ -39,12 +41,13 @@ import { CopyKey, translate } from './translations';
   ],
   templateUrl: './application-preview.component.html',
 })
-export class ApplicationPreviewComponent {
+export class ApplicationPreviewComponent implements OnDestroy {
   /** Keep the current document path/query despite a static host's base element. */
   readonly documentUrl = window.location.href.split('#')[0];
   readonly store = inject(ProjectStore);
   readonly scope = inject(ApplicationPreviewSession);
   readonly data = inject(CollectionSessionStore);
+  private readonly feedback = inject(FeedbackService);
   readonly locale = input<Locale>('de');
   readonly route = input<ApplicationRoute>({ kind: 'home' });
   readonly selectedLocale = signal<Locale | null>(null);
@@ -69,6 +72,12 @@ export class ApplicationPreviewComponent {
       const target = this.target();
       untracked(() => this.scope.select(target));
     });
+    // The shared modal outlives individual form renderers; retire its old request too.
+    effect(() => {
+      this.scope.epoch();
+      this.store.projectSession();
+      untracked(() => this.feedback.cancelDelete());
+    });
     effect(() => {
       this.locale();
       this.selectedLocale.set(null);
@@ -78,6 +87,9 @@ export class ApplicationPreviewComponent {
       this.store.projectSession();
       this.heading()?.nativeElement.focus();
     });
+  }
+  ngOnDestroy(): void {
+    this.feedback.cancelDelete();
   }
   t(key: CopyKey): string {
     return translate(key, this.locale());
