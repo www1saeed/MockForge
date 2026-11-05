@@ -1,8 +1,201 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { createButton, createField, example, FieldType } from './project';
+import { createButton, createField, example, FieldType, parseApplicationProject } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('cross-form cuts move invalid drafts and cannot contaminate reused source IDs', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.addField();
+    const movedId = app.selectedId();
+    app.changePattern('[');
+    app.captureField('cut');
+    const target = app.store.addForm({ de: 'Zweite', en: 'Second', fa: 'دوم' })!;
+    app.pasteField();
+    expect(app.selectedId()).toBe(movedId);
+    expect(app.patternError(app.selected()!)).toBe(true);
+    expect(app.patternDrafts().get(movedId)).toBe('[');
+    app.selectForm('form-1');
+    expect(app.patternDrafts().has(movedId)).toBe(false);
+    app.addField();
+    expect(app.selectedId()).toBe(movedId);
+    expect(app.selected()!.pattern).toBe('');
+    expect(app.patternError(app.selected()!)).toBe(false);
+    app.selectForm(target);
+    expect(app.patternError(app.selected()!)).toBe(true);
+    expect(app.project().fields[0].pattern).toBe('');
+    app.changePattern('[A-Z]{2}');
+    expect(app.patternError(app.selected()!)).toBe(false);
+    app.selectForm('form-1');
+    app.selectRootField('email');
+    app.captureField('cut');
+    app.store.addForm({ de: 'Dritte', en: 'Third', fa: 'سوم' });
+    app.pasteField();
+    expect(app.patternDrafts().size).toBe(0);
+    expect(app.patternError(app.selected()!)).toBe(false);
+  });
+
+  test('group cuts transfer live child drafts atomically while rejected cuts and copies preserve source drafts', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.selectRootField('name');
+    app.changePattern('(?');
+    app.addField('group');
+    const groupId = app.selectedId();
+    app.openGroupFields();
+    const firstChild = app.selectedId();
+    app.changePattern('[');
+    app.captureField('copy', true);
+    const target = app.store.addForm({ de: 'Zweite', en: 'Second', fa: 'دوم' })!;
+    app.pasteField();
+    expect(app.patternDrafts().size).toBe(0);
+    app.selectForm('form-1');
+    app.selectRootField(groupId);
+    app.captureField('cut');
+    app.openGroupFields();
+    app.addGroupField('text');
+    const secondChild = app.selectedId();
+    app.changePattern('(');
+    app.selectForm(target);
+    const before = app.store.application();
+    app.pasteField(); // the earlier copied group still occupies groupId
+    expect(app.store.application()).toBe(before);
+    expect(app.store.clipboard()?.mode).toBe('cut');
+    app.selectForm('form-1');
+    expect(app.patternDrafts().get(firstChild)).toBe('[');
+    expect(app.patternDrafts().get(secondChild)).toBe('(');
+    app.selectForm(target);
+    app.selectRootField(groupId);
+    app.removeField(true);
+    app.feedback.confirmDelete();
+    app.pasteField();
+    expect(app.project().fields[0].group!.fields).toHaveLength(2);
+    expect(app.patternDrafts().get(firstChild)).toBe('[');
+    expect(app.patternDrafts().get(secondChild)).toBe('(');
+    app.selectForm('form-1');
+    expect(app.patternDrafts().has(firstChild)).toBe(false);
+    expect(app.patternDrafts().has(secondChild)).toBe(false);
+    expect(app.patternDrafts().get('name')).toBe('(?');
+  });
+  test('safe form and field IDs cannot inherit pattern drafts and still participate in review', async (): Promise<void> => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const app = fixture.componentInstance;
+    for (const [formId, fieldId] of [
+      ['constructor', 'name'],
+      ['form-1', 'constructor'],
+      ['constructor', 'constructor'],
+    ]) {
+      const project = parseApplicationProject(example('saas'))!;
+      project.forms[0].id = formId;
+      project.forms[0].fields = [createField('text', fieldId)];
+      app.store.replace(project);
+      app.selectRootField(fieldId);
+      app.view.set('workspace');
+      app.setStep(3);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      expect(fixture.nativeElement.querySelector('#field-pattern').value).toBe('');
+      expect(app.patternError(app.selected()!)).toBe(false);
+      app.changePattern('[');
+      expect(app.patternError(app.selected()!)).toBe(true);
+      app.changePattern('');
+      expect(app.patternError(app.selected()!)).toBe(false);
+      app.update({ owner: 'Owner', questions: '' });
+      app.setReviewer('Reviewer');
+      for (let index = 0; index < 5; index++) app.setCheck(index, true);
+      expect(app.canApprove()).toBe(true);
+    }
+  });
+  test('creates and duplicates named forms, protects cancelled/stale dialogs and resets editor selection', (): void => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const app = fixture.componentInstance;
+    const dialog = fixture.nativeElement.querySelector(
+      '[aria-labelledby="form-dialog-title"]',
+    ) as HTMLDialogElement;
+    dialog.showModal = jest.fn();
+    dialog.close = jest.fn();
+    app.openFormDialog('new');
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(1);
+    app.setFormTitle('de', 'Zweite');
+    app.setFormTitle('en', 'Second');
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(2);
+    expect(app.project().title.en).toBe('Second');
+    app.openFormDialog('duplicate');
+    app.confirmForm();
+    expect(app.project().title.en).toBe('Second (Copy)');
+    expect(app.store.application().forms).toHaveLength(3);
+    app.openFormDialog('new');
+    app.closeFormDialog();
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(3);
+    app.selectForm('form-1');
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(3);
+    const id = app.store.activeFormId();
+    app.selectForm('missing');
+    expect(app.store.activeFormId()).toBe(id);
+  });
+
+  test('review includes inactive forms and form-local invalid drafts while selection preserves review', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.update({ owner: 'Owner', questions: '' });
+    const id = app.store.duplicateForm('form-1', app.project().title)!;
+    app.selectRootField('name');
+    app.changePattern('[');
+    app.selectForm('form-1');
+    app.setReviewer('Reviewer');
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(false);
+    app.selectForm(id);
+    app.changePattern('');
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(true);
+    app.approve();
+    app.selectForm('form-1');
+    expect(app.project().review.approvedAt).not.toBeNull();
+    app.store.update({ title: { ...app.project().title, en: '' } });
+    app.selectForm(id);
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(false);
+  });
+
+  test('stale deletion callbacks cannot affect another form even when local IDs match', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    const second = app.store.duplicateForm('form-1', app.project().title)!;
+    app.selectForm('form-1');
+    app.selectRootField('name');
+    app.removeField();
+    const pending = app.feedback.deletion()!;
+    app.selectForm(second);
+    pending.confirm();
+    expect(app.project().fields.some((field): boolean => field.id === 'name')).toBe(true);
+    app.selectForm('form-1');
+    pending.confirm();
+    expect(app.project().fields.some((field): boolean => field.id === 'name')).toBe(true);
+    app.removeForm();
+    app.feedback.confirmDelete();
+    expect(app.store.application().forms).toHaveLength(1);
+    app.removeForm();
+    expect(app.feedback.deletion()).toBeNull();
+    expect(app.store.activeFormId()).toBe(second);
+    app.moveForm(-1);
+  });
+
+  test('exports every form with shared review and metadata instead of the selected projection', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.store.duplicateForm('form-1', { de: 'Zweite', en: 'Second', fa: 'دوم' });
+    const download = jest.spyOn(app, 'download').mockImplementation((): void => {});
+    app.exportJson();
+    const content = JSON.parse(download.mock.calls[0][0]);
+    expect(content.forms).toHaveLength(2);
+    expect(content.fields).toBeUndefined();
+    app.exportBrief();
+    expect(download.mock.calls[1][0]).toContain('## Form (form-1)');
+    expect(download.mock.calls[1][0]).toContain('## Form (form-2)');
+    expect(download.mock.calls[1][0]).toContain('Second');
+  });
   test('shell labels follow project identity with localized fallback', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.update({ name: '' });
@@ -85,7 +278,7 @@ describe('Alignment workspace', (): void => {
     expect(app.selectedId()).toBe(app.editingGroup()?.group?.fields[0].id);
     app.closeGroupFields();
     expect(app.selectedId()).toBe(groupId);
-    expect(app.patternDrafts()[childId]).toBeUndefined();
+    expect(app.patternDrafts().get(childId)).toBeUndefined();
     expect(app.selected()?.group?.fields).toHaveLength(1);
     app.selectedId.set(app.selected()!.group!.fields[0].id);
     app.removeField();
@@ -224,9 +417,9 @@ describe('Alignment workspace', (): void => {
     app.changePattern('[');
     expect(app.selected()?.pattern).toBe('[A-Z]{3}');
     expect(app.patternError(app.selected()!)).toBe(true);
-    expect(JSON.parse(localStorage.getItem('mockforge-studio-v1')!).fields[0].pattern).toBe(
-      '[A-Z]{3}',
-    );
+    expect(
+      JSON.parse(localStorage.getItem('mockforge-studio-v1')!).forms[0].fields[0].pattern,
+    ).toBe('[A-Z]{3}');
     app.changePattern('[A-Z]{3}');
     expect(app.patternError(app.selected()!)).toBe(false);
     app.selectedId.set('missing');

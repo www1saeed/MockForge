@@ -88,3 +88,7 @@ Try an identifier with fixed literals, uppercase letters and digits. Explain tha
 ### Discuss multiple samples
 
 Developers can use the [bounded browser batch API](TEST_DATA_BATCH_API.md) to inspect up to 500 synthetic records in memory. This is not a customer-facing bulk screen or export promise. Discuss repeated values, skipped answers and partial budget results explicitly; synthetic variety does not establish realistic population coverage.
+
+## Reviewing several forms
+
+Name the forms in the application and review each with the form selector. Brief, active languages and theme are shared; fields and buttons belong to their form. Switching clears preview answers and pending checks. The project review, JSON and Markdown include every form. Confirm deletion explicitly; the final form is retained. CRUD lists, role differences and wizard pages are subsequent increments, so record those requirements as open production decisions.

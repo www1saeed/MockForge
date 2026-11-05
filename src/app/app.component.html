@@ -176,6 +176,7 @@
               <button
                 [class.current]="step() === index"
                 [attr.aria-current]="step() === index ? 'step' : null"
+                [attr.data-step]="['brief', 'copy', 'design', 'fields', 'review'][index]"
                 (click)="setStep(index)"
               >
                 <span>{{ index + 1 }}</span
@@ -183,6 +184,65 @@
               </button>
             }
           </nav>
+          <section class="form-manager" [attr.aria-label]="t('manageForms')">
+            <div class="form-selector">
+              <label for="active-form">{{ t('activeForm') }}</label>
+              <select
+                id="active-form"
+                [ngModel]="store.activeFormId()"
+                (ngModelChange)="selectForm($event)"
+              >
+                @for (form of store.application().forms; track form.id) {
+                  <option [value]="form.id">
+                    {{ form.title[locale()] || form.title[project().languages[0]] || form.id }} ·
+                    {{ form.id }}
+                  </option>
+                }
+              </select>
+            </div>
+            <div class="form-manager-actions">
+              <button
+                class="secondary-button"
+                (click)="openFormDialog('new')"
+                [disabled]="store.application().forms.length >= 20"
+              >
+                {{ t('newForm') }}
+              </button>
+              <button
+                class="secondary-button"
+                (click)="openFormDialog('duplicate')"
+                [disabled]="store.application().forms.length >= 20"
+              >
+                {{ t('duplicateForm') }}
+              </button>
+              <button
+                class="secondary-button"
+                (click)="moveForm(-1)"
+                [disabled]="formIndex() === 0"
+                [attr.aria-label]="t('moveFormUp')"
+                [title]="t('moveFormUp')"
+              >
+                ↑
+              </button>
+              <button
+                class="secondary-button"
+                (click)="moveForm(1)"
+                [disabled]="formIndex() === store.application().forms.length - 1"
+                [attr.aria-label]="t('moveFormDown')"
+                [title]="t('moveFormDown')"
+              >
+                ↓
+              </button>
+              <button
+                class="secondary-button"
+                (click)="removeForm()"
+                [disabled]="store.application().forms.length === 1"
+              >
+                {{ t('deleteForm') }}
+              </button>
+            </div>
+            <p class="fine-print">{{ t('formSwitchNotice') }}</p>
+          </section>
           <div
             class="editor-layout"
             [class.preview-hidden]="!previewVisible()"
@@ -503,7 +563,7 @@
                               ><input
                                 id="field-pattern"
                                 maxlength="500"
-                                [ngModel]="patternDrafts()[field.id] ?? field.pattern"
+                                [ngModel]="patternDrafts().get(field.id) ?? field.pattern"
                                 (ngModelChange)="changePattern($event)"
                                 [attr.aria-invalid]="patternError(field)"
                                 aria-describedby="pattern-hint"
@@ -711,15 +771,17 @@
               }
             </section>
             @if (previewVisible()) {
-              <!-- The preview owns response values and simulations; the project store never sees them. -->
-              <app-form-preview
-                [project]="project()"
-                [uiLocale]="locale()"
-                [locale]="previewLocale()"
-                [mobile]="mobile()"
-                (localeChange)="setPreviewLocale($event)"
-                (mobileChange)="mobile.set($event)"
-              ></app-form-preview>
+              @for (session of previewSessions(); track session.id) {
+                <!-- The preview owns response values and simulations; the project store never sees them. -->
+                <app-form-preview
+                  [project]="project()"
+                  [uiLocale]="locale()"
+                  [locale]="previewLocale()"
+                  [mobile]="mobile()"
+                  (localeChange)="setPreviewLocale($event)"
+                  (mobileChange)="mobile.set($event)"
+                ></app-form-preview>
+              }
             }
           </div>
         </section>
@@ -800,7 +862,7 @@
 </div>
 <dialog
   #replaceDialog
-  class="replace-dialog"
+  class="replace-dialog studio-dialog"
   aria-labelledby="replace-title"
   aria-describedby="replace-description"
   (cancel)="cancelReplace()"
@@ -812,5 +874,35 @@
     ><button class="secondary-button" (click)="confirmReplace(true)">{{ t('saveFirst') }}</button
     ><button class="primary-button" (click)="confirmReplace()">{{ t('replace') }}</button>
   </div>
+</dialog>
+<dialog
+  #formDialog
+  class="form-dialog studio-dialog"
+  aria-labelledby="form-dialog-title"
+  (cancel)="closeFormDialog()"
+>
+  <h2 id="form-dialog-title">{{ t(formMode() === 'new' ? 'newForm' : 'duplicateForm') }}</h2>
+  <form (ngSubmit)="confirmForm()">
+    @for (lang of project().languages; track lang) {
+      <label [for]="'new-form-title-' + lang"
+        >{{ t('formTitleLabel') }} ({{ lang.toUpperCase() }})</label
+      >
+      <input
+        [id]="'new-form-title-' + lang"
+        [name]="'title-' + lang"
+        [ngModel]="formTitle()[lang]"
+        (ngModelChange)="setFormTitle(lang, $event)"
+        required
+      />
+    }
+    <div class="dialog-actions">
+      <button type="button" class="secondary-button" (click)="closeFormDialog()">
+        {{ t('cancel') }}
+      </button>
+      <button type="submit" class="primary-button" [disabled]="!formTitleValid()">
+        {{ t(formMode() === 'new' ? 'newForm' : 'duplicateForm') }}
+      </button>
+    </div>
+  </form>
 </dialog>
 <app-feedback [locale]="locale()" />

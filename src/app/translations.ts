@@ -3,6 +3,38 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  activeForm: ['Aktives Formular', 'Active form'],
+  formContract: ['Formulare: Inhalt und Identität', 'Forms: content and identity'],
+  applicationFormsRule: [
+    'Ein bis 20 Formulare; insgesamt höchstens 500 Felddefinitionen und 100 Buttons. Der Projektbrief, Sprachen, Design und Review sind gemeinsam.',
+    'One to 20 forms; at most 500 field definitions and 100 buttons in total. Brief, languages, design and review are shared.',
+  ],
+  formIdRule: [
+    'Eindeutige Formular-ID. menu ist eine optionale Einstellung für spätere Anwendungsnavigation; sie wird derzeit nur erhalten.',
+    'Unique form ID. Optional menu is retained for later application navigation; it has no navigation effect yet.',
+  ],
+  manageForms: ['Formulare im Projekt', 'Project forms'],
+  newForm: ['Formular hinzufügen', 'Add form'],
+  duplicateForm: ['Formular duplizieren', 'Duplicate form'],
+  deleteForm: ['Formular löschen', 'Delete form'],
+  moveFormUp: ['Formular nach vorne verschieben', 'Move form earlier'],
+  moveFormDown: ['Formular nach hinten verschieben', 'Move form later'],
+  formTitleLabel: ['Formulartitel', 'Form title'],
+  formSwitchNotice: [
+    'Beim Formularwechsel werden Vorschauantworten verworfen. Die Review gilt für alle Formulare im Projekt.',
+    'Switching forms discards preview answers. Review covers every form in the project.',
+  ],
+  applicationLimit: [
+    'Änderung nicht möglich. Prüfe die Formularregeln und Projektgrenzen: 20 Formulare, 500 Felddefinitionen, 100 Buttons insgesamt.',
+    'Change unavailable. Check form rules and project limits: 20 forms, 500 field definitions, 100 buttons in total.',
+  ],
+  copySuffix: ['Kopie', 'Copy'],
+  formAdded: ['Formular hinzugefügt.', 'Form added.'],
+  formDeleted: ['Formular gelöscht.', 'Form deleted.'],
+  deleteFormDescription: [
+    'Dieses Formular einschließlich aller Feld- und Buttondefinitionen löschen? Die übrigen Formulare bleiben erhalten.',
+    'Delete this form with all its field and button definitions? The other forms remain.',
+  ],
   'guide-json': ['Formular im Texteditor entwerfen', 'Design a form in a text editor'],
   'guide-ai': ['Formular mit KI entwerfen', 'Design a form with AI'],
   authoringNavigation: ['Anleitungen zur Formularerstellung', 'Form authoring guides'],
@@ -15,8 +47,8 @@ export const copy = {
     'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
   ],
   studioFormatNotice: [
-    'Studio-Format 1.3.0: Andere MockForge-Editionen sind nicht kompatibel. Dieser Ablauf implementiert keine Produktionsanbindung und bestätigt keine Review.',
-    'Studio format 1.3.0: other MockForge editions use incompatible files. This workflow does not implement production integrations or establish review approval.',
+    'Studio-Format 2.0.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
+    'Studio format 2.0.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
   ],
   authoringWorkflow: [
     'Vom Texteditor zur geprüften Vorschau',
@@ -80,8 +112,8 @@ export const copy = {
     'Use five false values, an empty reviewer and approvedAt: null for new or AI-edited files. Imported acknowledgements cannot certify review in this workspace.',
   ],
   idRule: [
-    'Feld-IDs müssen über Hauptfelder und Unterfelder hinweg eindeutig sein. Bestehende IDs beim Bearbeiten oder Verschieben erhalten.',
-    'Field IDs must be unique across root fields and children. Keep existing IDs when editing or moving fields.',
+    'Feld-IDs müssen innerhalb eines Formulars über Haupt- und Unterfelder hinweg eindeutig sein. Beim Ausschneiden zwischen Formularen werden ID-Konflikte abgewiesen.',
+    'Field IDs must be unique within a form across root fields and children. Cross-form cuts reject conflicting IDs.',
   ],
   typeRule: [
     'Nur diese zehn Typen. Zusätzliche Schlüssel erzeugen keine Uploads, Assistentenseiten oder bedingten Felder.',

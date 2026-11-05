@@ -83,3 +83,7 @@ Use text fields labeled First name, Last name, Full name, Company, Street, House
 ### Demonstrate isolated pattern checking
 
 Use a field with `DE-[A-Z]{2}\d{4}` to show bounded synthesis. Then use a name field with a finite alternative that includes an actual fictional profile name to demonstrate known-fixture worker verification. Inspect the report rather than implying every expression can be generated. Cancellation discards pending fill before answers or rows change. Manual deferred input is isolated as well; timeouts and unverified responses cannot simulate a successful submit. Keep the customer walkthrough focused on the intended validation rule, not a claim of arbitrary RegEx coverage.
+
+## Multi-form walkthrough
+
+Add a named second form, copy a field into it, switch back to show independent definitions, then export JSON or Markdown containing both forms. Show that reviewing only a complete form cannot approve a project whose other form is incomplete. Explain that preview answers reset when switching. This demonstrates multiple single-page forms; CRUD lists, roles and a standalone application menu are not yet part of this Studio increment.

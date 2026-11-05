@@ -1,5 +1,44 @@
 # Code quality and test evidence
 
+## Current checkpoint — November 5, 2026
+
+**205 Studio tests pass: 155 Jest unit/component tests in 16 suites and all
+50 Chromium E2E journeys.** The final browser run uses two workers with zero
+retries, skipped, unexpected or flaky results. Ten Node selector checks pass
+separately; repeated smoke/focused runs do not increase the 205-test total.
+Coverage is 97.06% statements, 92.43% branches, 98.80% functions and 98.52% lines.
+ESLint, formatting, application/spec and E2E typechecks, 398 DE/EN/FA catalogue
+entries, authoring-kit synchronization and the production build pass.
+
+The initial bundle is **853.61 kB**, above the unchanged 700 kB warning and below
+the unchanged 1 MB failure budget. The full browser report is
+`reports/e2e/results.json`; HTML/JUnit/failure evidence uses the paths described
+in the contributor guide. The new multi-form browser journeys cover complete
+JSON round-trip, duplication/deletion, clipboard, all-form review and drafts,
+worker/generation disposal and Persian mobile accessibility. Desktop/Persian
+mobile workspace captures and revised desktop/mobile slides 13/14 were visually
+inspected. The current workspace image is refreshed in this increment.
+
+An initial full run exposed group-row resets caused by cloning unchanged form
+definitions during unrelated brief edits, plus an outdated standalone-deck
+expectation. The store now snapshots caller changes while reusing unchanged
+form/field identities, preserving the 36-response deferred-check regression.
+The initial corrected multi-form checkpoint passed its focused 19-test and full
+48-test runs. PR #5 CI subsequently passed at `68d7e2a`; the review corrections
+below are verified locally and require their own PR CI run after push.
+
+PR #5 review corrections add three component cases and two browser journeys.
+Drafts use nested immutable Map snapshots, so valid form/field IDs such as
+`constructor` cannot read inherited properties. Successful cross-form cuts
+transfer current drafts, including group children added after clipboard capture,
+and clean the source scope. Rejected cuts and copies leave source drafts intact.
+Unrelated drafts survive; reallocated source IDs start clean. The final 155-case
+unit suite and all 50 browser journeys pass. The full browser report is retained
+as `reports/pr5-review-fixes-e2e.json`. Revised quality figures/narration were
+visually checked at desktop and mobile widths; the deck remains fifteen slides.
+
+## Historical checkpoint — October 25, 2026
+
 **175 passing automated tests. 98.24% line coverage. All configured quality gates pass.**
 
 MockForge Studio is developed with documented Clean Code practices and substantial automated regression coverage for its current feature set. Complete local verification passed on **October 25, 2026**. Counts describe this checkpoint; rerun the commands after changes.
@@ -29,6 +68,46 @@ New coverage includes session clipboard copying/moving across root/group lists, 
 The original edition also passed 337 targeted unit/component tests and four Chromium comparison journeys. Those results are separate from Studio's 175 tests; see [the behavior comparison](FEATURE_COMPARISON.md) for scope, commands and the remaining differences.
 
 Coverage percentages come from Jest's instrumented application source, not E2E coverage. Browser tests include desktop/mobile layout, Persian RTL direction and font loading, the presentation, repeat groups, tooltip behavior, full-width response retention, import/export, persistence, native validation, confirmation and accessibility scans. The total counts executed tests, not assertions or accessibility rules. The suite exceeds every configured coverage threshold and provides extensive regression protection for the implemented scope.
+
+## Incremental foundation verification — November 5, 2026
+
+The staged application-domain increment passes **143 Jest unit/component tests
+in 16 suites**, including 12 new cases for legacy migration, multi-form JSON
+round-trip, aggregate budgets, owned snapshots, immutable form operations and
+review invalidation. Coverage is 97.04% statements, 92.26% branches, 97.80%
+functions and 98.38% lines; both new domain modules reach 100% in these metrics.
+Coverage establishes exercised paths, not complete behavioral correctness.
+
+Formatting, ESLint, spec TypeScript, authoring-kit synchronization, all 381
+translations and production build pass. The bundle remains 834.58 kB, with the
+same 700 kB warning and 1 MB failure budgets. The application-domain APIs are
+staged; no editor/template/styles, active storage or file-transfer behavior
+changed. Browser tests were not rerun for this increment. The 44 Chromium results
+and the combined 175-test figures above remain the dated October 25 checkpoint;
+they are not a newly executed combined result. Runtime activation requires new
+multi-form browser journeys as described in the architecture.
+
+## E2E organization verification — November 5, 2026
+
+The catalogue/selection increment passed all **44 Chromium journeys** with two
+workers, no retries and no skipped or flaky results, plus a separate **5/5 smoke
+run** through the selection runner. The smoke cases are a subset, not five new
+tests. Ten Node selector tests and real Playwright discovery validate suite
+registration, stable case identities, area/check metadata, selection semantics,
+empty-selection errors and bounded smoke. E2E TypeScript, ESLint, formatting and
+diff whitespace checks pass. The Axe/Playwright core dependency mismatch exposed
+by strict E2E typing is resolved at 1.61.1. The batch harness now builds in a
+test hook so listing/catalogue validation does not compile it.
+
+Full local evidence is `reports/e2e/results.json`, with JUnit in
+`reports/e2e/results.xml` and an HTML report in `playwright-report/`. CI now
+retains these reports and failure traces/screenshots and supports manual
+full/smoke/selected profiles; those workflow changes have not been executed on
+GitHub. Automatic runs remain full regression. Product source is unchanged by
+this increment; the prior 143-case Jest run remains the unit/component evidence.
+Do not combine the 10 selector checks or repeated smoke cases with the historical
+175-test presentation figures. Change-based selection and an expanded browser
+matrix remain future work.
 
 ## Clean Code conventions
 

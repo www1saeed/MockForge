@@ -6,11 +6,106 @@ The project has its own manifest, lockfile, Angular configuration, source, tests
 
 ## Domain and state
 
-`project.ts` is the public domain entry point. The JSON 1.3.0 contract lives in `project.model.ts`, fictional factories in `project.examples.ts`, unknown-input validation in `project.validation.ts` and Markdown export in `project.handoff.ts`. These leaf modules import the model directly to avoid circular dependencies. `ProjectStore` is component-provided and owns the current immutable specification with Angular signals. Signals suit this synchronous single-form application and keep derived selection/review readiness readable without a second state library.
+`project.ts` is the public domain entry point. The application contract lives in `application-project.ts`; shared form/field types and the legacy 1.3.0 renderer contract live in `project.model.ts`. Fictional factories in `project.examples.ts` remain legacy-compatible inputs. Validation chains `application-project.ts` and `project.validation.ts`; `project.handoff.ts` renders all forms. `ProjectStore` owns the complete immutable application and a computed selected-form projection, using Angular signals without another state library. Only the complete application is persisted and exported.
 
 State changes go through `update`, which clears every review checkbox and acknowledgement timestamp. `updateReview` changes only the review record. `replace` clones an already validated or locally created project. The UI resets imported acknowledgements because another file cannot establish review identity in this workspace.
 
 LocalStorage writes are synchronous after each edit. A form specification is small and must survive an immediate reload. Failures keep the in-memory draft and expose an export warning. Invalid restores do not overwrite the stored bytes automatically.
+
+## Application foundation (November 5, 2026)
+
+The application-mockup expansion is being implemented in small commits on
+`feature/application-mockup-foundation`. Its behavioral reference is the local
+original edition at `0b9b47e` (its changelog calls 0.2.0 a release candidate).
+Original source, private packages and assets are not imported into Studio.
+
+`FormContent` separates the reusable form definition from the unchanged legacy
+`Project`. `application-project.ts` defines the **active**, independently versioned
+Studio 2.0.0 contract: mandatory `format: "mockforge-studio"`, project-wide
+brief/theme/languages/review and a nonempty `forms` array. Each form has a stable
+ID, title, description, legacy submit copy, column layout, fields and buttons,
+plus an optional menu flag. Field/button IDs are scoped to their form; form IDs
+are unique across the project. The discriminator distinguishes Studio from the
+incompatible original edition's 2.x files. Unknown application/form container keys are rejected rather than silently activating future contracts.
+
+`parseApplicationProject` validates Studio 2.0.0 snapshots or chains the existing
+Studio 1.0–1.3 parser into a one-form migration. Migration preserves all supported
+brief/form properties and all stored translations, resets review checks and the
+acknowledgement timestamp, retains the reviewer and never mutates the source or
+writes storage. Parsing returns an owned JSON snapshot. Serialization includes
+every form. Per-form validation reuses Studio 1.3 rules. Aggregate limits are
+20 forms, 500 field definitions including group children and 100 buttons, in
+addition to existing per-form limits. These are configuration limits, not a
+raised worker, batch or total-memory allowance. Lists, roles, form access and
+flows have no implemented contract yet and are rejected at their future
+container locations.
+
+`application-forms.ts` supplies pure immutable add, duplicate, update, move and
+remove operations. They validate the complete candidate before committing;
+failure returns `null` without changing the source. Specification changes clear
+project-wide review; an unchanged update preserves it. Duplicated forms keep
+their form-local field/button IDs and receive a new form ID. Nested data is
+detached from caller-owned input. Deleting the last form is forbidden. Active
+selection and preview-session epochs belong to the store; native responses and
+workers remain owned by the mounted preview. Confirmation dialogs belong to the UI.
+
+**Active runtime:** Store, JSON persistence/import/export, Markdown, guides,
+downloadable examples and the authoring kit use 2.0.0. The existing LocalStorage
+key is retained: restore reads legacy or current data without rewriting bytes;
+the next successful edit writes the entire application. Failed migrations leave
+stored bytes recoverable. `projectForForm` supplies the old 1.3.0 renderer/batch
+view, never the export payload. Selection is transient, starts at the first form
+on reload, preserves review and writes no storage. A form change or whole-project
+replacement changes a session epoch and remounts the preview, discarding responses
+and disposing workers/generation even when local field IDs match. Width/language
+changes retain their existing behavior. Destructive callbacks capture the epoch;
+form-local pattern drafts survive switching and block whole-project review.
+Nested Map snapshots keep form/field IDs separate from JavaScript prototype
+properties. After a successful cross-form cut the UI moves the current drafts
+for the pasted subtree to its destination scope and removes those source keys;
+rejected cuts and copies do not move drafts. Group children are resolved from the
+committed subtree, including children added after clipboard capture.
+Clipboard capture includes source form identity; cross-form cuts preserve IDs and
+reject collisions atomically. Copies allocate destination-local IDs. Whole-form
+operations have an accessible DE/EN/FA toolbar and named native dialog; the final
+form cannot be deleted.
+
+### Next implementation increments
+
+E2E organization accompanies runtime activation:
+the existing journeys have stable case/suite/area/check tags, a validated
+catalogue, explicit area/check selection plus bounded smoke, strict E2E types
+and retained CI evidence. Full Chromium regression remains the default and
+automatic CI behavior. The CI workflow also offers manual reduced profiles.
+See [contributor commands and extension rules](CONTRIBUTING.md#e2e-organization-and-selection).
+Change-based selection and browser/locale/theme matrices are subsequent work;
+the present tags do not imply those capabilities.
+
+1. **Implemented:** application store/form selector, named add/duplicate,
+   reorder/confirmed-delete, scoped clipboard, stale-worker disposal, all-form
+   readiness and handoff, 2.0.0 persistence/transfer and updated guides/examples.
+   Four browser journeys cover migration/round-trip, review/drafts, worker and
+   generation cancellation, and Persian mobile accessibility.
+2. Add one shared session-only record set per form, configurable CRUD lists,
+   columns, search/filter/sort, paging, selection and confirmed actions. Multiple
+   lists share records and can apply preset filters. Preserve test-data and
+   pattern-check budgets; regeneration must not silently discard edited records.
+3. Add application preview navigation and stable form/list links, followed by an
+   editor-free standalone preview. Separate authoring selection from preview
+   navigation; support deployment prefixes and DE/EN/FA direction.
+4. Add optional simulated roles, a central inherited-access resolver, rights
+   editors and a matrix. Hidden required fields must not validate; read-only
+   values survive editing; action handlers recheck effective rights. Sign-in
+   selects a mock role and provides no real authentication or authorization.
+5. Add real multi-page forms, localized messages and closing pages, followed by
+   group columns and lists over group items.
+6. Extend review and handoff, then deterministic acceptance criteria and external
+   chatbot requirements prompts. Keep translations, authoring kit, documentation,
+   examples and presentation aligned with activated capabilities.
+
+A local library of projects is a separate increment after multi-form editing.
+This remains a browser mockup; backend integration, production authentication,
+inter-form data relations and code generation are outside this expansion.
 
 ## Import and rendering
 
@@ -26,7 +121,7 @@ Preview row removal asks for confirmation without touching definitions. Changing
 
 Preview uses text interpolation, never imported HTML or CSS declarations. Button class tokens may use existing styles such as Bootstrap utilities. Native `required`, email, URL and text-length constraints drive browser validation. Text/email/URL patterns use the native pattern attribute; textarea patterns and localized pattern messages use full-value Unicode-v matching and custom validity. Invalid RegEx drafts remain transient in the editor and invalidate review; only valid patterns replace saved rules. Shared field-title components render plain-text Bootstrap tooltips with hover/focus triggers and Escape dismissal. The renderer submits no network request. Native controls may look different across operating systems, especially dates and validation popovers.
 
-Configured buttons validate before submit/save/validate/next simulations. Reset clears preview controls and custom validity without changing the specification. Cancel/delete/back/none do not require valid inputs. Next/back report a navigation simulation because this edition still contains a single form page. Preview responses are never persisted.
+Configured buttons validate before submit/save/validate/next simulations. Reset clears preview controls and custom validity without changing the specification. Cancel/delete/back/none do not require valid inputs. Next/back report a navigation simulation because each form remains a single page. Preview responses are never persisted.
 
 ## Workspace frame
 
@@ -77,11 +172,11 @@ Optional `RepeatGroup.gapless` accepts only boolean values at the import boundar
 
 ## Session authoring and preview tools
 
-`ProjectStore.clipboard` holds a cloned field snapshot for copy or a stable source ID for deferred cut. `pasteField` resolves cut sources against the latest specification, checks root/group bounds before mutation, and performs a single immutable update. Copies allocate globally unique IDs across root and child definitions. Cuts preserve IDs, cannot empty a group's definitions, and cannot introduce nested groups. Clipboard capture and cancellation do not invalidate review; successful paste does. Replacement, restore and source deletion cancel pending cuts. Clipboard state is never serialized.
+`ProjectStore.clipboard` holds a cloned field snapshot for copy or a stable source ID for deferred cut. `pasteField` resolves cut sources against the latest specification, checks root/group bounds before mutation, and performs a single immutable update. Copies allocate IDs across root and child definitions within the destination form; capture includes source form identity and cross-form cuts reject destination collisions. Cuts preserve IDs, cannot empty a group's definitions, and cannot introduce nested groups. Clipboard capture and cancellation do not invalidate review; successful paste does. Replacement, restore and source deletion cancel pending cuts. Clipboard state is never serialized.
 
 `preview-test-data.ts` fills mounted native controls, grouping radio instances by response name. The small original DE/EN/FA catalogue is independent of preview language. A bounded seed reproduces values for the same structure; this fills one mounted preview; the separate batch adapter below reuses its validation. Native required/type/pattern validity and explicit text-length checks reject unsuitable candidates, restoring prior values. A finite bounded concatenation subset is generated; deferred known fixture candidates use worker isolation. The renderer refreshes existing custom validity through input events. The default row mode adds one transient row to empty groups; minimum/maximum settings and protected shrink are described below. Results count response instances plus explicitly requested group checks. A session WeakSet records explicitly edited native controls so intentional unchecked answers survive preserve-mode filling. Generation guards its own dispatched events, and reset clears this edit history. Settings use an application-level native dialog outside the simulated mobile viewport. The existing response reset clears the report and restores group minima.
 
-The shell derives workspace navigation names and the header project context from the current project signal. The form title follows the current UI language when active, otherwise the first configured form language. Blank project names use the translated workspace label. Studio branding and route identities remain stable. No new persisted properties or schema migration are needed; Studio JSON remains 1.3.0.
+The shell derives workspace navigation names and the header project context from the current project signal. The form title follows the current UI language when active, otherwise the first configured form language. Blank project names use the translated workspace label. Studio branding and route identities remain stable. Application files now use 2.0.0 and contain all forms; the selected renderer projection remains 1.3.0.
 
 The DE/EN/FA in-app guide presents the new authoring, data and shell workflows without changing the five-step editing model. Its content has browser coverage for all three locales. [The feature comparison](FEATURE_COMPARISON.md) documents which original-edition behaviors are shared and which remain absent; the two generators are not interchangeable.
 
@@ -93,7 +188,7 @@ The hash views `guide-json` and `guide-ai` preserve the shell and never mutate P
 
 `response-constraints.ts` shares UTF-16 text-length checks between `preview-test-data.ts` and `FormPreviewComponent`. The renderer uses custom validity to make programmatically assigned length errors visible to native form validation and clears them on correction/reset. The generator sets candidate controls, dispatches guarded input/change events, observes validity, checks the intended failure rule and restores previous responses on mismatch. Deferred patterns reach only isolated candidate evaluation; empty values bypass patterns. The isolated manual boundary is described below.
 
-`FillReport` contains per-instance diagnostics with expected/observed candidate validity; untouched cases stay untested. The UI displays 20 entries and totals all entries. Explicit row-boundary checks add one diagnostic per group. `RepeatGroupComponent.resizeForTestData` clamps row counts, preserves retained row identities and refuses shrinking without replacement. Settings, diagnostics, row identities and answers remain transient; schema 1.3.0 and review ownership stay unchanged.
+`FillReport` contains per-instance diagnostics with expected/observed candidate validity; untouched cases stay untested. The UI displays 20 entries and totals all entries. Explicit row-boundary checks add one diagnostic per group. `RepeatGroupComponent.resizeForTestData` clamps row counts, preserves retained row identities and refuses shrinking without replacement. Settings, diagnostics, row identities and answers remain transient; the renderer projection remains 1.3.0 while the application uses 2.0.0 and project-wide review.
 
 ## Coherent records and recognition
 

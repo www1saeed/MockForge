@@ -859,7 +859,7 @@
       <section
         class="slide"
         aria-labelledby="title-13"
-        data-narration="A working session needs clear project context while people navigate and edit. The workspace navigation entry follows the current project name. The header shows that name together with the localized form title, while MockForge Studio keeps its own visible identity. Renaming or importing another project updates the context immediately. If the project name is blank, the navigation uses the translated workspace label. The form title follows the current UI language when that language is active for the form, otherwise it uses the first active form language. Studio supports German, English and Persian, including right-to-left layout. The separate text-editor and AI guides supply the Studio contract, complete examples and copyable task briefs. Every externally authored result still needs import and review. This helps the owner recognize the draft and wording being discussed without changing the stored form contract or replacing the product's brand."
+        data-narration="A working session needs clear project context while people navigate and edit. The workspace navigation entry follows the current project name. The header shows that name together with the localized form title, while MockForge Studio keeps its own visible identity. Renaming or importing another project updates the context immediately. If the project name is blank, the navigation uses the translated workspace label. The form title follows the current UI language when that language is active for the form, otherwise it uses the first active form language. Studio supports German, English and Persian, including right-to-left layout. The separate text-editor and AI guides supply the Studio contract, complete examples and copyable task briefs. Every externally authored result still needs import and review. This helps the owner recognize the draft and wording being discussed while keeping the product branding stable. One project now holds several independent single-page forms. A selector chooses the active form; named dialogs add or duplicate forms, and the owner can reorder or confirm deletion. Switching discards preview answers and cancels pending checks. Project languages and theme remain shared, while review, JSON export and Markdown handoff include every form. CRUD lists and roles remain later increments."
       >
         <p class="eyebrow">12 / Recognizing the working draft</p>
         <h2 id="title-13">The shell follows<br /><span>the project under discussion</span></h2>
@@ -878,7 +878,8 @@
             <h3>The form title identifies the experience</h3>
             <p>The header shows the localized form title, with an active-form-language fallback.</p>
             <p>
-              DE/EN/FA switching retains Studio branding and supports Persian right-to-left layout.
+              Choose any form in the project; add, duplicate, reorder or delete it. Export and
+              review cover every form.
             </p>
           </div>
         </div>
@@ -886,26 +887,27 @@
           The owner can recognize the current project while reviewing its exact wording.
         </p>
         <p class="note">
-          The guide includes a text-editor reference and copyable AI briefs in DE/EN/FA.
+          The DE/EN/FA guides explain the 2.0.0 application format. Switching forms discards preview
+          answers.
         </p>
       </section>
       <section
         class="slide"
         aria-labelledby="title-14"
-        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the October twenty-fifth, 2026 quality checkpoint, all 131 unit and component tests across fourteen suites and all 44 Chromium end to end tests passed. That is 175 Studio tests. Line coverage was 98.24 percent. The catalog check verified 381 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the November fifth, 2026 quality checkpoint, all 155 unit and component tests across sixteen suites and all 50 Chromium end to end tests passed. That is 205 Studio tests. Line coverage was 98.52 percent. The catalog check verified 398 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
       >
         <p class="eyebrow">13 / Engineering evidence</p>
         <h2 id="title-14">A tested foundation<br /><span>for the alignment conversation</span></h2>
         <div class="split">
           <div>
-            <div class="metric">175</div>
+            <div class="metric">205</div>
             <h3>Passing automated tests</h3>
             <p>
-              131 unit/component tests across fourteen suites.<br />44 Chromium end-to-end tests.
+              155 unit/component tests across sixteen suites.<br />50 Chromium end-to-end tests.
             </p>
           </div>
           <div>
-            <div class="metric">98.24%</div>
+            <div class="metric">98.52%</div>
             <h3>Line coverage</h3>
             <p>
               Strict TypeScript, separated responsibilities, immutable state and validated imports.
@@ -916,7 +918,7 @@
           Formatting, ESLint, translation validation and the production build also pass.
         </p>
         <p class="note">
-          Verified October 25, 2026. Jest line coverage. 381 DE/EN/FA catalog entries. Build passes
+          Verified November 5, 2026. Jest line coverage. 398 DE/EN/FA catalog entries. Build passes
           with a size warning. Sonar analysis is not configured. Details: docs/QUALITY.md.
         </p>
       </section>

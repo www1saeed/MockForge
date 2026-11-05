@@ -1,0 +1,35 @@
+{
+  "areas": [
+    "authoring",
+    "forms",
+    "lists",
+    "roles",
+    "navigation",
+    "preview",
+    "groups",
+    "transfer",
+    "persistence",
+    "review",
+    "shell",
+    "guide",
+    "presentation",
+    "test-data",
+    "patterns"
+  ],
+  "checks": ["a11y", "keyboard", "responsive", "i18n", "performance"],
+  "suites": {
+    "multi-form": ["forms", "authoring", "transfer", "persistence"],
+    "authoring-guides": ["guide", "transfer"],
+    "field-clipboard": ["authoring", "persistence"],
+    "form-tooltips": ["authoring", "preview", "groups"],
+    "full-preview": ["preview", "shell"],
+    "guide": ["guide"],
+    "presentation": ["presentation"],
+    "preview-data-batch": ["test-data", "preview"],
+    "preview-patterns": ["patterns", "test-data", "preview"],
+    "preview-test-data": ["test-data", "preview", "groups"],
+    "repeat-groups": ["groups", "authoring", "preview"],
+    "shell-context": ["shell"],
+    "studio": ["authoring", "preview", "transfer", "persistence", "review", "shell"]
+  }
+}

@@ -29,6 +29,38 @@
   margin-top: 6px;
 }
 
+.form-manager {
+  padding: 16px 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+}
+.form-selector {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.form-selector select {
+  width: 100%;
+  min-width: 0;
+}
+.form-selector label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-block-end: 6px;
+}
+.form-manager-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.form-manager .fine-print {
+  flex-basis: 100%;
+  margin: 0;
+}
+
 .workflow {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -116,14 +148,16 @@
   margin: 13px 0 23px;
 }
 
-.configuration label {
+.configuration label,
+.form-dialog label {
   font-size: 15px;
   font-weight: 600;
   display: block;
   margin: 15px 0 6px;
 }
 
-.configuration input:not([type='checkbox']):not([type='radio']) {
+.configuration input:not([type='checkbox']):not([type='radio']),
+.form-dialog input {
   display: block;
   width: 100%;
   min-width: 0;
@@ -135,7 +169,8 @@
   font-size: 15px;
 }
 
-.configuration select {
+.configuration select,
+.form-selector select {
   display: block;
   width: 100%;
   min-width: 0;
@@ -161,7 +196,12 @@
   resize: vertical;
 }
 
-.configuration input:focus {
+.form-dialog input {
+  min-height: 44px;
+}
+
+.configuration input:focus,
+.form-dialog input:focus {
   border-color: var(--accent);
 }
 
@@ -169,7 +209,8 @@
   border-color: var(--accent);
 }
 
-.configuration select:focus {
+.configuration select:focus,
+.form-selector select:focus {
   border-color: var(--accent);
 }
 

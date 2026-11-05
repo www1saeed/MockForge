@@ -1,10 +1,27 @@
 # Field clipboard, preview data and project context
 
+## Multiple forms
+
+The form selector chooses the editor and preview within one project. Add a named
+form, duplicate the current one, reorder or delete it with confirmation. The last
+form cannot be deleted. Switching discards preview answers and cancels pending
+workers/generation. Brief, languages, theme and review are shared. JSON/Markdown
+include every form, and review readiness checks all forms and their transient
+invalid pattern drafts. Selection starts at the first form on reload.
+
+Clipboard capture includes its source form. Copies allocate destination-local
+IDs; cuts resolve the latest source and retain IDs, rejecting destination
+conflicts. A failed paste changes neither form. Deleting the source cancels a cut.
+Successful cross-form cuts also move unsaved pattern drafts, including group
+children. Invalid edits remain visible in the destination and continue to block
+review until corrected; newly added source fields cannot inherit those edits.
+Copies use the saved configuration and leave source drafts in place.
+
 ## Copy, cut and paste
 
 In the form editor, select a field and use **Copy**, **Cut** or **Paste** below its field list. Paste appends to that list and selects the result. The child list has its own destination, so you can move a leaf between root and group or between groups.
 
-Copy snapshots the complete saved configuration, including inactive translations, validation, tooltips and group children. Every paste allocates fresh globally unique IDs. Copy can be pasted repeatedly. Cut keeps the original in place until paste succeeds; paste moves its latest saved configuration and retains its IDs. Clearing the clipboard cancels a cut without deleting anything.
+Copy snapshots the complete saved configuration, including inactive translations, validation, tooltips and group children. Every paste allocates fresh IDs unique in the destination form. Copy can be pasted repeatedly. Cut keeps the original in place until paste succeeds; paste moves its latest saved configuration and retains its IDs. Clearing the clipboard cancels a cut without deleting anything.
 
 Groups cannot nest, a group must keep at least one definition, and the existing 100-definition/20-child limits apply. Rejected paste leaves the project unchanged. Clipboard actions do not intercept Ctrl+C/Ctrl+X/Ctrl+V, so ordinary text editing continues to work. Clipboard state survives workflow steps, but replacement and reload clear it. Deleting a cut source also cancels that cut. It is never saved or exported. Successful paste resets review through the normal specification update.
 
@@ -49,7 +66,7 @@ The workspace navigation tooltip and accessible name follow the current project 
 
 ## Author a file outside the visual editor
 
-The navigation also opens separate [text-editor instructions](JSON_AUTHORING.md) and [AI prompts](AI_AUTHORING.md), available in-app in all three UI languages. Both use the actual Studio 1.3.0 contract and share complete downloadable examples. The generated TXT kit is reference material; import the resulting JSON, confirm replacement and review it before use.
+The navigation also opens separate [text-editor instructions](JSON_AUTHORING.md) and [AI prompts](AI_AUTHORING.md), available in-app in all three UI languages. Both use the actual Studio 2.0.0 application contract and share complete downloadable examples. The generated TXT kit is reference material; import the resulting JSON, confirm replacement and review it before use.
 
 ## Bounded patterns and isolated verification
 
@@ -63,7 +80,7 @@ One worker runs at a time per mounted preview. PatternCheckService accepts at mo
 
 Manual deferred-pattern input is isolated too. Its native pattern attribute is omitted so the browser cannot re-evaluate it on the UI thread; custom validity carries the verified worker result. While checking, validation stays blocked. Configured submit/validate/save/next actions wait for current checks, then verify the unchanged request before simulating success. Corrections, reset and disposal abort obsolete checks; errors can be retried. Empty values retain native required semantics. Worker input limits also apply to manual values, so a long otherwise-valid response may remain unverified. Native Enter submission may require waiting for its pending validity check before pressing Enter again.
 
-All worker code is served locally from `assets/preview-pattern.worker.js`, resolved against the deployment base URL. No external service is called. JSON schema stays 1.3.0, and review/persistence/export boundaries remain unchanged.
+All worker code is served locally from `assets/preview-pattern.worker.js`, resolved against the deployment base URL. No external service is called. Application JSON uses 2.0.0; the preview and browser batch API use a 1.3.0 selected-form projection. Worker limits remain unchanged.
 
 ## Developer batch API
 
