@@ -29,6 +29,23 @@
   min-width: 170px;
   max-width: 100%;
 }
+.collection-workspace input:not([type='checkbox']):not([type='radio']),
+.collection-workspace select {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: var(--paper);
+  font: inherit;
+}
+.collection-settings input,
+.collection-settings select {
+  width: 100%;
+}
+.collection-tools input[type='search'] {
+  width: 180px;
+}
 .collection-config {
   margin-block: 1.5rem;
   padding: 1rem;
@@ -54,6 +71,7 @@
 }
 .collection-table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   margin-block: 1rem;
 }

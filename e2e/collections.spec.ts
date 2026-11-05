@@ -253,6 +253,16 @@ test(
     await openLists(page);
     await page.getByRole('button', { name: 'FA', exact: true }).click();
     await expect(page.locator('.collection-workspace')).toHaveAttribute('dir', 'rtl');
+    expect(
+      await page
+        .locator('.collection-preview input[type="search"]')
+        .evaluate((el) => el.getBoundingClientRect().height),
+    ).toBeGreaterThanOrEqual(44);
+    expect(
+      await page
+        .locator('.collection-preview .collection-scroll')
+        .evaluate((el) => el.scrollWidth > el.clientWidth),
+    ).toBe(true);
     await dismissToasts(page);
     expect(
       (await new AxeBuilder({ page }).include('.collection-workspace').analyze()).violations,
@@ -262,5 +272,12 @@ test(
     ).toBe(true);
     await page.locator('.collection-preview').scrollIntoViewIfNeeded();
     await page.screenshot({ path: 'reports/collections-fa-mobile.png' });
+    await page
+      .locator('.collection-preview')
+      .getByRole('button', { name: 'ایجاد رکورد', exact: true })
+      .click();
+    await expect(page.locator('.collection-dialog')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.collection-dialog')).not.toBeVisible();
   },
 );
