@@ -49,7 +49,7 @@ test(
     await page.getByRole('link', { name: 'Anwendungsvorschau', exact: true }).click();
     await expect(page.locator('.application-frame h2')).toHaveText('Erstes Formular');
     await page.locator('.application-frame #preview-name').fill('Unsaved');
-    await page.locator('.application-menu a[href="#application/form/second"]').click();
+    await page.locator('.application-menu a[href$="#application/form/second"]').click();
     await expect(page.locator('.application-frame h2')).toHaveText('Zweites Formular');
     await expect(page.locator('.application-frame #preview-name')).toHaveValue('');
     await expect(page.locator('.application-frame h2')).toBeFocused();
@@ -66,6 +66,20 @@ test(
     await page.goto('/#application/form/second');
     await page.reload();
     await expect(page.locator('.application-frame h2')).toHaveText('Zweites Formular');
+    await page.goto('/index.html?walkthrough=1#application/form/form-1');
+    await page.evaluate(() => {
+      (window as unknown as { navigationMarker: string }).navigationMarker = 'same-document';
+    });
+    await page.locator('.application-menu a[href$="#application/form/second"]').click();
+    await expect(page.locator('.application-frame h2')).toHaveText('Zweites Formular');
+    expect(await page.evaluate(() => window.location.pathname + window.location.search)).toBe(
+      '/index.html?walkthrough=1',
+    );
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { navigationMarker: string }).navigationMarker,
+      ),
+    ).toBe('same-document');
   },
 );
 
@@ -97,7 +111,7 @@ test(
       .getByRole('button', { name: 'Eintrag speichern', exact: true })
       .click();
     await expect(page.locator('.collection-preview')).toContainText('4 Einträge');
-    await page.locator('.application-menu a[href="#application/list/form-1/entries"]').click();
+    await page.locator('.application-menu a[href$="#application/list/form-1/entries"]').click();
     await expect(page.locator('.collection-preview')).toContainText('0 Einträge');
     await page.getByRole('link', { name: 'Zurück zum Editor', exact: true }).click();
     await expect(page.locator('#active-form')).toHaveValue('form-1');
@@ -123,11 +137,11 @@ test(
     await openProject(page, fixture());
     await page.getByLabel('Formular im Anwendungsmenü anzeigen', { exact: true }).uncheck();
     await page.getByRole('link', { name: 'Anwendungsvorschau', exact: true }).click();
-    await expect(page.locator('.application-menu a[href="#application/form/form-1"]')).toHaveCount(
+    await expect(page.locator('.application-menu a[href$="#application/form/form-1"]')).toHaveCount(
       0,
     );
     await expect(
-      page.locator('.application-menu a[href="#application/list/form-1/entries"]'),
+      page.locator('.application-menu a[href$="#application/list/form-1/entries"]'),
     ).toHaveCount(1);
     await page.goto('/#application/form/form-1');
     await expect(page.locator('.application-frame h2')).toHaveText('Erstes Formular');
@@ -186,7 +200,7 @@ test(
         ),
       )
       .toBeGreaterThan(0);
-    await page.locator('.application-menu a[href="#application/list/second/entries"]').click();
+    await page.locator('.application-menu a[href$="#application/list/second/entries"]').click();
     await expect
       .poll(() =>
         page.evaluate(
@@ -200,7 +214,7 @@ test(
     await expect(
       page.locator('.collection-fixtures').getByRole('button', { name: 'Abbrechen', exact: true }),
     ).toBeVisible();
-    await page.locator('.application-menu a[href="#application/form/second"]').click();
+    await page.locator('.application-menu a[href$="#application/form/second"]').click();
     await expect(page.locator('.application-frame #preview-name')).toHaveValue('');
     await page.goBack();
     await expect(page.locator('.collection-preview')).toContainText('0 Einträge');
@@ -233,7 +247,7 @@ test(
     await expect(page.locator('.application-frame')).toHaveAttribute('dir', 'rtl');
     await expect(page.locator('.application-frame h2')).toHaveText('فهرست دوم');
     await expect(page.locator('.application-frame h2')).toBeFocused();
-    const link = page.locator('.application-menu a[href="#application/form/second"]');
+    const link = page.locator('.application-menu a[href$="#application/form/second"]');
     await link.focus();
     await page.keyboard.press('Enter');
     await expect(page.locator('.application-frame h2')).toHaveText('فرم دوم');

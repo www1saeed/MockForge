@@ -40,6 +40,8 @@ import { CopyKey, translate } from './translations';
   templateUrl: './application-preview.component.html',
 })
 export class ApplicationPreviewComponent {
+  /** Keep the current document path/query despite a static host's base element. */
+  readonly documentUrl = window.location.href.split('#')[0];
   readonly store = inject(ProjectStore);
   readonly scope = inject(ApplicationPreviewSession);
   readonly data = inject(CollectionSessionStore);

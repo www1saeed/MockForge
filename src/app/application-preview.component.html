@@ -2,7 +2,7 @@
   <div class="application-intro">
     <h1>{{ store.application().name || t('application') }}</h1>
     <p>{{ t('applicationHint') }}</p>
-    <a class="secondary-button" href="#workspace">{{ t('applicationBack') }}</a>
+    <a class="secondary-button" [href]="documentUrl + '#workspace'">{{ t('applicationBack') }}</a>
   </div>
   <div
     class="application-frame"
@@ -11,7 +11,7 @@
   >
     <nav class="application-menu" [attr.aria-label]="t('applicationMenu')">
       @for (item of menu(); track href(item)) {
-        <a [href]="href(item)" [attr.aria-current]="active(item) ? 'page' : null">
+        <a [href]="documentUrl + href(item)" [attr.aria-current]="active(item) ? 'page' : null">
           <span class="application-kind">{{
             t(item.kind === 'form' ? 'applicationForm' : 'applicationList')
           }}</span>
@@ -45,7 +45,9 @@
         {{ t(route().kind === 'home' ? 'applicationEmpty' : 'applicationMissing') }}
       </h2>
       <p>{{ t('applicationRecovery') }}</p>
-      <a class="secondary-button" href="#application">{{ t('applicationHome') }}</a>
+      <a class="secondary-button" [href]="documentUrl + '#application'">{{
+        t('applicationHome')
+      }}</a>
     }
   </div>
 </section>
