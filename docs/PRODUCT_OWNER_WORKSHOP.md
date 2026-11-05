@@ -92,3 +92,7 @@ Developers can use the [bounded browser batch API](TEST_DATA_BATCH_API.md) to in
 ## Reviewing several forms
 
 Name the forms in the application and review each with the form selector. Brief, active languages and theme are shared; fields and buttons belong to their form. Switching clears preview answers and pending checks. The project review, JSON and Markdown include every form. Confirm deletion explicitly; the final form is retained. CRUD lists, role differences and wizard pages are subsequent increments, so record those requirements as open production decisions.
+
+## Agree list behavior when the prototype needs CRUD
+
+Use [list previews](COLLECTIONS.md) to agree columns, search, fixed/reader filters, sorting, page size, selection and visible actions. Check create/edit validation and repeated values. Record production persistence, permissions and API expectations separately; session records and action switches do not implement them. Review covers every configured list, including titles and columns, before exporting the full project.

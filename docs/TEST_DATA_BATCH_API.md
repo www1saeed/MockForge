@@ -1,6 +1,6 @@
 # Bounded browser batch API
 
-`generateTestDataBatch` in `src/app/preview-data-batch.ts` creates 1–500 synthetic records in the browser. This is a developer API, with no bulk-list screen or download button. It does not fill the visible preview, save answers, update review, call an external service or change application configuration. This API retains its legacy 1.3.0 selected-form input; application exports use 2.0.0. Use `projectForForm(application, formId)` to select a form before calling it, never for application persistence/export.
+`generateTestDataBatch` in `src/app/preview-data-batch.ts` creates 1–500 synthetic records in the browser. This is a developer API, with no bulk-list screen or download button. It does not fill the visible preview, save answers, update review, call an external service or change application configuration. This API retains its legacy 1.3.0 selected-form input; application exports use 2.1.0. Use `projectForForm(application, formId)` to select a form before calling it, never for application persistence/export.
 
 ## Use from application code
 

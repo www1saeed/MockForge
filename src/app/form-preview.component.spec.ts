@@ -4,6 +4,43 @@ import { BUTTON_ACTIONS, createButton, createField } from './project.model';
 import { example } from './project.examples';
 
 describe('FormPreviewComponent', (): void => {
+  it('preserves explicit restored false/empty choices while filling missing answers and permits replacement', async (): Promise<void> => {
+    TestBed.configureTestingModule({ imports: [FormPreviewComponent] });
+    const fixture = TestBed.createComponent(FormPreviewComponent);
+    const saved = createField('checkbox', 'saved');
+    const missing = createField('checkbox', 'missing');
+    const radio = createField('radio', 'radio');
+    const group = createField('group', 'items');
+    group.group!.minItems = 1;
+    group.group!.fields = [createField('checkbox', 'child'), createField('radio', 'choice')];
+    fixture.componentRef.setInput('project', {
+      ...example('saas'),
+      fields: [saved, missing, radio, group],
+    });
+    fixture.componentRef.setInput('recordMode', true);
+    fixture.componentRef.setInput('initialValues', {
+      saved: false,
+      radio: '',
+      items: [{ child: false, choice: '' }],
+    });
+    fixture.detectChanges();
+    TestBed.tick();
+    const form: HTMLFormElement = fixture.nativeElement.querySelector('form');
+    await fixture.componentInstance.fillResponses(form);
+    expect((form.elements.namedItem('preview-saved') as HTMLInputElement).checked).toBe(false);
+    expect((form.elements.namedItem('preview-missing') as HTMLInputElement).checked).toBe(true);
+    expect(form.querySelector<HTMLInputElement>('input[data-field-id="child"]')!.checked).toBe(
+      false,
+    );
+    expect(form.querySelector('input[type="radio"]:checked')).toBeNull();
+    fixture.componentInstance.replaceResponses.set(true);
+    await fixture.componentInstance.fillResponses(form);
+    expect((form.elements.namedItem('preview-saved') as HTMLInputElement).checked).toBe(true);
+    expect(form.querySelector<HTMLInputElement>('input[data-field-id="child"]')!.checked).toBe(
+      true,
+    );
+    expect(form.querySelector('input[type="radio"]:checked')).not.toBeNull();
+  });
   function setup(): {
     component: FormPreviewComponent;
     form: HTMLFormElement;

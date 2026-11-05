@@ -859,7 +859,7 @@
       <section
         class="slide"
         aria-labelledby="title-13"
-        data-narration="A working session needs clear project context while people navigate and edit. The workspace navigation entry follows the current project name. The header shows that name together with the localized form title, while MockForge Studio keeps its own visible identity. Renaming or importing another project updates the context immediately. If the project name is blank, the navigation uses the translated workspace label. The form title follows the current UI language when that language is active for the form, otherwise it uses the first active form language. Studio supports German, English and Persian, including right-to-left layout. The separate text-editor and AI guides supply the Studio contract, complete examples and copyable task briefs. Every externally authored result still needs import and review. This helps the owner recognize the draft and wording being discussed while keeping the product branding stable. One project now holds several independent single-page forms. A selector chooses the active form; named dialogs add or duplicate forms, and the owner can reorder or confirm deletion. Switching discards preview answers and cancels pending checks. Project languages and theme remain shared, while review, JSON export and Markdown handoff include every form. CRUD lists and roles remain later increments."
+        data-narration="A working session needs clear project context while people navigate and edit. The workspace navigation entry follows the current project name. The header shows that name together with the localized form title, while MockForge Studio keeps its own visible identity. Renaming or importing another project updates the context immediately. If the project name is blank, the navigation uses the translated workspace label. The form title follows the current UI language when that language is active for the form, otherwise it uses the first active form language. Studio supports German, English and Persian, including right-to-left layout. The separate text-editor and AI guides supply the Studio contract, complete examples and copyable task briefs. Every externally authored result still needs import and review. This helps the owner recognize the draft and wording being discussed while keeping the product branding stable. One project now holds several independent single-page forms. A selector chooses the active form; named dialogs add or duplicate forms, and the owner can reorder or confirm deletion. Switching discards preview answers and cancels pending checks. Project languages and theme remain shared, while review, JSON export and Markdown handoff include every form. Several configurable table lists can now share one session-only record set per form. Search, fixed and reader filters, sorting, paging and row selection support the owner’s walkthrough. Create, view, edit and confirmed delete operate on these records. Editing reuses form validation, including repeat rows and isolated pattern checks. Regeneration replaces existing entries only after confirmation and complete generation. Records are never exported or persisted. Roles and application navigation remain later increments."
       >
         <p class="eyebrow">12 / Recognizing the working draft</p>
         <h2 id="title-13">The shell follows<br /><span>the project under discussion</span></h2>
@@ -878,8 +878,8 @@
             <h3>The form title identifies the experience</h3>
             <p>The header shows the localized form title, with an active-form-language fallback.</p>
             <p>
-              Choose any form in the project; add, duplicate, reorder or delete it. Export and
-              review cover every form.
+              Several forms and shared session-only CRUD lists. Configure columns, filters, sorting,
+              paging and selection. Export and review cover all form and list definitions.
             </p>
           </div>
         </div>
@@ -887,27 +887,25 @@
           The owner can recognize the current project while reviewing its exact wording.
         </p>
         <p class="note">
-          The DE/EN/FA guides explain the 2.0.0 application format. Switching forms discards preview
-          answers.
+          DE/EN/FA guides explain Studio 2.1.0. List records survive form switches; reload clears
+          them.
         </p>
       </section>
       <section
         class="slide"
         aria-labelledby="title-14"
-        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the November fifth, 2026 quality checkpoint, all 155 unit and component tests across sixteen suites and all 50 Chromium end to end tests passed. That is 205 Studio tests. Line coverage was 98.52 percent. The catalog check verified 398 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
+        data-narration="The Studio itself is developed with documented Clean Code conventions and automated tests. At the November fifth, 2026 quality checkpoint, all 174 unit and component tests across twenty suites and all 57 Chromium end to end tests passed. That is 231 Studio tests. Line coverage was 97.62 percent. The catalog check verified 458 German, English and Persian entries. Formatting, ESLint, translation validation and the production build also passed. The build reports a bundle size warning against its existing warning budget. Strict types, separate responsibilities and validated import boundaries support maintainability. These are local verification results for that checkpoint. Sonar analysis is not configured, and passing tests do not prove that every possible defect is absent."
       >
         <p class="eyebrow">13 / Engineering evidence</p>
         <h2 id="title-14">A tested foundation<br /><span>for the alignment conversation</span></h2>
         <div class="split">
           <div>
-            <div class="metric">205</div>
+            <div class="metric">231</div>
             <h3>Passing automated tests</h3>
-            <p>
-              155 unit/component tests across sixteen suites.<br />50 Chromium end-to-end tests.
-            </p>
+            <p>174 unit/component tests across twenty suites.<br />57 Chromium end-to-end tests.</p>
           </div>
           <div>
-            <div class="metric">98.52%</div>
+            <div class="metric">97.62%</div>
             <h3>Line coverage</h3>
             <p>
               Strict TypeScript, separated responsibilities, immutable state and validated imports.
@@ -918,7 +916,7 @@
           Formatting, ESLint, translation validation and the production build also pass.
         </p>
         <p class="note">
-          Verified November 5, 2026. Jest line coverage. 398 DE/EN/FA catalog entries. Build passes
+          Verified November 5, 2026. Jest line coverage. 458 DE/EN/FA catalog entries. Build passes
           with a size warning. Sonar analysis is not configured. Details: docs/QUALITY.md.
         </p>
       </section>

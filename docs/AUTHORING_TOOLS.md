@@ -66,7 +66,7 @@ The workspace navigation tooltip and accessible name follow the current project 
 
 ## Author a file outside the visual editor
 
-The navigation also opens separate [text-editor instructions](JSON_AUTHORING.md) and [AI prompts](AI_AUTHORING.md), available in-app in all three UI languages. Both use the actual Studio 2.0.0 application contract and share complete downloadable examples. The generated TXT kit is reference material; import the resulting JSON, confirm replacement and review it before use.
+The navigation also opens separate [text-editor instructions](JSON_AUTHORING.md) and [AI prompts](AI_AUTHORING.md), available in-app in all three UI languages. Both use the actual Studio 2.1.0 application contract and share complete downloadable examples. The generated TXT kit is reference material; import the resulting JSON, confirm replacement and review it before use.
 
 ## Bounded patterns and isolated verification
 
@@ -80,7 +80,7 @@ One worker runs at a time per mounted preview. PatternCheckService accepts at mo
 
 Manual deferred-pattern input is isolated too. Its native pattern attribute is omitted so the browser cannot re-evaluate it on the UI thread; custom validity carries the verified worker result. While checking, validation stays blocked. Configured submit/validate/save/next actions wait for current checks, then verify the unchanged request before simulating success. Corrections, reset and disposal abort obsolete checks; errors can be retried. Empty values retain native required semantics. Worker input limits also apply to manual values, so a long otherwise-valid response may remain unverified. Native Enter submission may require waiting for its pending validity check before pressing Enter again.
 
-All worker code is served locally from `assets/preview-pattern.worker.js`, resolved against the deployment base URL. No external service is called. Application JSON uses 2.0.0; the preview and browser batch API use a 1.3.0 selected-form projection. Worker limits remain unchanged.
+All worker code is served locally from `assets/preview-pattern.worker.js`, resolved against the deployment base URL. No external service is called. Application JSON uses 2.1.0; the preview and browser batch API use a 1.3.0 selected-form projection. Worker limits remain unchanged.
 
 ## Developer batch API
 

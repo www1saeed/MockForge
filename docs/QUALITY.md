@@ -1,6 +1,40 @@
 # Code quality and test evidence
 
-## Current checkpoint — November 5, 2026
+## CRUD lists checkpoint — November 5, 2026
+
+**231 Studio tests pass: 174 Jest unit/component tests in 20 suites and 57
+Chromium journeys.** Ten Node E2E-selection checks pass separately. Coverage is
+95.74% statements, 90.69% branches, 96.34% functions and 97.62% lines, above the
+unchanged thresholds. Coverage measures Jest; native record restoration is also
+exercised in real Chromium, including repeated values and pattern validation.
+
+Formatting, ESLint, spec/E2E types, 458 DE/EN/FA translations, synchronized
+authoring kit, local documentation targets and production build pass. The initial
+bundle is **913.08 kB**, above the unchanged 700 kB warning and below the 1 MB failure
+budget. No dependency or worker/batch-budget increase was introduced.
+
+Seven `collections` browser journeys cover shared CRUD, response-persistence
+isolation, search/filter/presets, sorting/paging/selection, cancellation/staleness,
+group editing and Persian mobile Axe/bounds. Unit/component cases cover schema
+migration, reference pruning, callback ownership, limits and atomic generation.
+The full evidence is `reports/pr6-review-fixes-e2e.json`, with the normal
+HTML/JUnit/JSON reports described in the contributor guide. Current CI still
+requires its own run after push. There is no new original-edition test claim.
+
+[Collections documentation](COLLECTIONS.md) describes session lifetime and exact
+bounds. The actual 15-slide HTML deck and narration include CRUD and updated
+figures. The ignored PDF remains a separate older export; regenerate it from the
+current HTML before sharing. Existing historical evidence below is retained with
+its original scope.
+
+PR #6 review corrections preserve explicitly saved false checkbox and empty radio
+answers through record-editor test-data filling, including group children. Missing
+answers remain fillable and explicit replacement still works. Heading clicks now
+toggle the effective configured sort immediately. Two component and two browser
+regressions cover these cases; the review reproductions originally failed against
+228ff4f.
+
+## Previous multi-form checkpoint — November 5, 2026
 
 **205 Studio tests pass: 155 Jest unit/component tests in 16 suites and all
 50 Chromium E2E journeys.** The final browser run uses two workers with zero

@@ -120,7 +120,7 @@ describe('Studio application contract', (): void => {
     for (const change of [
       { menu: null },
       { menu: 'yes' },
-      { lists: [] },
+      { lists: null },
       { flow: {} },
       { access: {} },
       { fields: [null] },
@@ -210,7 +210,7 @@ describe('Studio application contract', (): void => {
   it('keeps the legacy factory as a compatible input and never writes storage', (): void => {
     const legacy: Project = example('saas');
     expect(legacy.schemaVersion).toBe('1.3.0');
-    expect(parseApplicationProject(legacy)?.schemaVersion).toBe('2.0.0');
+    expect(parseApplicationProject(legacy)?.schemaVersion).toBe('2.1.0');
     expect(localStorage.length).toBe(0);
   });
 });

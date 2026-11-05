@@ -87,3 +87,7 @@ Use a field with `DE-[A-Z]{2}\d{4}` to show bounded synthesis. Then use a name f
 ## Multi-form walkthrough
 
 Add a named second form, copy a field into it, switch back to show independent definitions, then export JSON or Markdown containing both forms. Show that reviewing only a complete form cannot approve a project whose other form is incomplete. Explain that preview answers reset when switching. This demonstrates multiple single-page forms; CRUD lists, roles and a standalone application menu are not yet part of this Studio increment.
+
+## Optional CRUD walkthrough
+
+Open **Lists and entries** for the selected form. Add a list, generate test records, and configure another view with a fixed filter. Create/edit one record and show it changing across both views. Select a page before selecting all matching records, then demonstrate confirmed deletion. Explain that list configuration is exported while records remain in the session; reload clears them. Use [the exact list behavior](COLLECTIONS.md) when discussing limits, roles and production integration.

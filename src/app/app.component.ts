@@ -38,6 +38,9 @@ import {
   ExampleKind,
 } from './project';
 import { ProjectStore } from './project.store';
+import { CollectionWorkspaceComponent } from './collection-workspace.component';
+import { CollectionSessionStore } from './collection-session.store';
+import { PatternCheckService } from './pattern-check.service';
 import { CopyKey, translate } from './translations';
 import { FieldListComponent } from './field-list.component';
 import { FormPreviewComponent } from './form-preview.component';
@@ -76,8 +79,9 @@ import {
     FormPreviewComponent,
     FeedbackComponent,
     AuthoringGuideComponent,
+    CollectionWorkspaceComponent,
   ],
-  providers: [ProjectStore],
+  providers: [ProjectStore, CollectionSessionStore, PatternCheckService],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
 })
@@ -91,6 +95,7 @@ export class AppComponent implements OnInit {
   readonly locale = signal<Locale>('de');
   readonly view = signal<StudioView>('overview');
   readonly step = signal(0);
+  readonly listsOpen = signal(false);
   readonly previewVisible = signal(false);
   /** View-only expansion preserves the mounted preview and its unsaved response values. */
   readonly previewFullWidth = signal(false);
@@ -177,7 +182,10 @@ export class AppComponent implements OnInit {
                   !!field.label[lang].trim() &&
                   field.options.every((option: Text): boolean => !!option[lang].trim()),
               ) &&
-              form.buttons.every((button: FormButton): boolean => !!button.label[lang].trim()),
+              form.buttons.every((button: FormButton): boolean => !!button.label[lang].trim()) &&
+              (form.lists ?? []).every(
+                (list) => !!list.title[lang].trim() && list.columns.length > 0,
+              ),
           ),
       ) &&
       !project.questions.trim() &&
@@ -340,9 +348,15 @@ export class AppComponent implements OnInit {
 
   /** Use preview defaults appropriate to each task; the user can always override visibility. */
   setStep(step: number): void {
+    this.listsOpen.set(false);
     this.previewFullWidth.set(false);
     this.step.set(step);
     this.previewVisible.set(step === WORKFLOW.design || step === WORKFLOW.review);
+  }
+
+  toggleListWorkspace(): void {
+    this.previewFullWidth.set(false);
+    this.listsOpen.update((open) => !open);
   }
   /** Retain inactive translations while changing which languages require review. */
   setLanguages(choice: string): void {
