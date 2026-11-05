@@ -7,6 +7,22 @@ import { FeedbackService } from './feedback.service';
 import { createField, handoff, text, validateApplicationProject } from './project';
 
 describe('Collection workspace boundaries', () => {
+  it('toggles the effective default direction, then uses reader overrides independently per column', () => {
+    const c = setup();
+    c.defaultSort('name');
+    c.order('name');
+    expect(c.sort()).toEqual({ fieldId: 'name', direction: 'desc' });
+    c.order('name');
+    expect(c.sort()?.direction).toBe('asc');
+    c.sort.set(undefined);
+    c.patch({ sort: { fieldId: 'name', direction: 'desc' } });
+    c.order('name');
+    expect(c.sort()?.direction).toBe('asc');
+    c.order('state');
+    expect(c.sort()).toEqual({ fieldId: 'state', direction: 'asc' });
+    c.order('state');
+    expect(c.sort()?.direction).toBe('desc');
+  });
   function setup(): CollectionWorkspaceComponent {
     TestBed.configureTestingModule({
       imports: [CollectionWorkspaceComponent],

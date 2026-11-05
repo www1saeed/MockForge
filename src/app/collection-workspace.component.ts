@@ -200,9 +200,10 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     this.patch({ sort: id ? { fieldId: id, direction: 'asc' } : undefined });
   }
   order(id: string): void {
+    const effective = this.sort() ?? this.list()?.sort;
     this.sort.set({
       fieldId: id,
-      direction: this.sort()?.fieldId === id && this.sort()?.direction === 'asc' ? 'desc' : 'asc',
+      direction: effective?.fieldId === id && effective.direction === 'asc' ? 'desc' : 'asc',
     });
   }
   filter(field: Field, value: string): void {
