@@ -60,6 +60,11 @@ replacement changes a session epoch and remounts the preview, discarding respons
 and disposing workers/generation even when local field IDs match. Width/language
 changes retain their existing behavior. Destructive callbacks capture the epoch;
 form-local pattern drafts survive switching and block whole-project review.
+Nested Map snapshots keep form/field IDs separate from JavaScript prototype
+properties. After a successful cross-form cut the UI moves the current drafts
+for the pasted subtree to its destination scope and removes those source keys;
+rejected cuts and copies do not move drafts. Group children are resolved from the
+committed subtree, including children added after clipboard capture.
 Clipboard capture includes source form identity; cross-form cuts preserve IDs and
 reject collisions atomically. Copies allocate destination-local IDs. Whole-form
 operations have an accessible DE/EN/FA toolbar and named native dialog; the final

@@ -12,6 +12,10 @@ invalid pattern drafts. Selection starts at the first form on reload.
 Clipboard capture includes its source form. Copies allocate destination-local
 IDs; cuts resolve the latest source and retain IDs, rejecting destination
 conflicts. A failed paste changes neither form. Deleting the source cancels a cut.
+Successful cross-form cuts also move unsaved pattern drafts, including group
+children. Invalid edits remain visible in the destination and continue to block
+review until corrected; newly added source fields cannot inherit those edits.
+Copies use the saved configuration and leave source drafts in place.
 
 ## Copy, cut and paste
 

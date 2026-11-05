@@ -44,7 +44,7 @@ Tests should protect user behavior and specification boundaries. Inspect respons
 
 ## E2E organization and selection
 
-All 48 current Chromium journeys carry discovery-time metadata. Register each
+All 50 current Chromium journeys carry discovery-time metadata. Register each
 `e2e/*.spec.ts` in `e2e/test-catalogue.json`. Use `tagsFor` on every test with a
 stable, globally unique case ID, owning suite, one or more functional areas and
 the checks actually exercised. Case IDs must stay stable when titles or file

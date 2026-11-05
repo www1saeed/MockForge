@@ -2,15 +2,15 @@
 
 ## Current checkpoint — November 5, 2026
 
-**200 Studio tests pass: 152 Jest unit/component tests in 16 suites and all
-48 Chromium E2E journeys.** The final browser run uses two workers with zero
+**205 Studio tests pass: 155 Jest unit/component tests in 16 suites and all
+50 Chromium E2E journeys.** The final browser run uses two workers with zero
 retries, skipped, unexpected or flaky results. Ten Node selector checks pass
-separately; repeated smoke/focused runs do not increase the 200-test total.
-Coverage is 96.82% statements, 91.88% branches, 97.83% functions and 98.33% lines.
+separately; repeated smoke/focused runs do not increase the 205-test total.
+Coverage is 97.06% statements, 92.43% branches, 98.80% functions and 98.52% lines.
 ESLint, formatting, application/spec and E2E typechecks, 398 DE/EN/FA catalogue
 entries, authoring-kit synchronization and the production build pass.
 
-The initial bundle is **853.14 kB**, above the unchanged 700 kB warning and below
+The initial bundle is **853.61 kB**, above the unchanged 700 kB warning and below
 the unchanged 1 MB failure budget. The full browser report is
 `reports/e2e/results.json`; HTML/JUnit/failure evidence uses the paths described
 in the contributor guide. The new multi-form browser journeys cover complete
@@ -23,8 +23,19 @@ An initial full run exposed group-row resets caused by cloning unchanged form
 definitions during unrelated brief edits, plus an outdated standalone-deck
 expectation. The store now snapshots caller changes while reusing unchanged
 form/field identities, preserving the 36-response deferred-check regression.
-The corrected focused 19-test run and final complete 48-test run both pass.
-These are local results; the changed CI workflow has not run on GitHub.
+The initial corrected multi-form checkpoint passed its focused 19-test and full
+48-test runs. PR #5 CI subsequently passed at `68d7e2a`; the review corrections
+below are verified locally and require their own PR CI run after push.
+
+PR #5 review corrections add three component cases and two browser journeys.
+Drafts use nested immutable Map snapshots, so valid form/field IDs such as
+`constructor` cannot read inherited properties. Successful cross-form cuts
+transfer current drafts, including group children added after clipboard capture,
+and clean the source scope. Rejected cuts and copies leave source drafts intact.
+Unrelated drafts survive; reallocated source IDs start clean. The final 155-case
+unit suite and all 50 browser journeys pass. The full browser report is retained
+as `reports/pr5-review-fixes-e2e.json`. Revised quality figures/narration were
+visually checked at desktop and mobile widths; the deck remains fifteen slides.
 
 ## Historical checkpoint — October 25, 2026
 
