@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { example } from '../src/app/project.examples';
-import { createField, text } from '../src/app/project.model';
+import { createButton, createField, text } from '../src/app/project.model';
 import { ApplicationProject, parseApplicationProject } from '../src/app/application-project';
 import { createCollectionList } from '../src/app/collection.model';
 import { tagsFor } from './test-tags';
@@ -29,6 +29,120 @@ function fixture(): ApplicationProject {
   });
   return project;
 }
+
+test(
+  'normal-form confirmations retire on Back, missing routes and exit while current confirmations still work',
+  {
+    tag: tagsFor('application-navigation', 'navigation-form-confirmations', {
+      areas: ['navigation', 'preview'],
+      checks: ['keyboard'],
+    }),
+  },
+  async ({ page }) => {
+    const project = fixture(),
+      first = project.forms[0];
+    first.buttons = [
+      {
+        ...createButton('remove'),
+        action: 'delete',
+        label: text('Formularaktion löschen', 'Delete form action', 'حذف عملیات فرم'),
+      },
+    ];
+    first.submit = text('', '', '');
+    await openProject(page, project);
+    await page.goto('/#application/form/second');
+    const openDelete = async (): Promise<void> => {
+      await page
+        .locator('.application-frame')
+        .getByRole('button', { name: 'Formularaktion löschen', exact: true })
+        .click();
+      await expect(page.locator('.delete-dialog')).toBeVisible();
+    };
+    await page.locator('.application-menu a[href$="#application/form/form-1"]').click();
+    await openDelete();
+    await page.goBack();
+    await expect(page.locator('.application-frame h2')).toHaveText('Zweites Formular');
+    await expect(page.locator('.delete-dialog')).not.toBeVisible();
+    await page
+      .locator('.delete-confirm-button')
+      .evaluate((button) => (button as HTMLButtonElement).click());
+    await expect(page.locator('.toast-stack')).not.toContainText('Löschen simuliert.');
+    await page.locator('.application-menu a[href$="#application/form/form-1"]').click();
+    await openDelete();
+    await page.evaluate(() => {
+      window.location.hash = 'application/form/missing';
+    });
+    await expect(page.locator('.application-frame h2')).toHaveText(
+      'Diese Seite wurde nicht gefunden',
+    );
+    await expect(page.locator('.delete-dialog')).not.toBeVisible();
+    await page
+      .locator('.delete-confirm-button')
+      .evaluate((button) => (button as HTMLButtonElement).click());
+    await expect(page.locator('.toast-stack')).not.toContainText('Löschen simuliert.');
+    await page.evaluate(() => {
+      window.location.hash = 'workspace';
+    });
+    await expect(page.locator('#active-form')).toBeVisible();
+    await page.getByRole('link', { name: 'Anwendungsvorschau', exact: true }).click();
+    await openDelete();
+    await page.goBack();
+    await expect(page.locator('#active-form')).toBeVisible();
+    await expect(page.locator('.delete-dialog')).not.toBeVisible();
+    await page
+      .locator('.delete-confirm-button')
+      .evaluate((button) => (button as HTMLButtonElement).click());
+    await expect(page.locator('.toast-stack')).not.toContainText('Löschen simuliert.');
+    await page.getByRole('link', { name: 'Anwendungsvorschau', exact: true }).click();
+    await openDelete();
+    await page.locator('.delete-confirm-button').click();
+    await expect(page.locator('.toast-stack')).toContainText('Löschen simuliert.');
+  },
+);
+
+test(
+  'repeat-row confirmations retire on navigation and a fresh confirmation deletes only its live row',
+  {
+    tag: tagsFor('application-navigation', 'navigation-row-confirmations', {
+      areas: ['navigation', 'groups', 'preview'],
+    }),
+  },
+  async ({ page }) => {
+    const project = fixture(),
+      group = createField('group', 'items');
+    group.group!.minItems = 1;
+    group.group!.maxItems = 3;
+    group.required = true;
+    group.group!.fields = [createField('text', 'child')];
+    project.forms[0].fields.push(group);
+    await openProject(page, project);
+    await page.goto('/#application/form/second');
+    await page.locator('.application-menu a[href$="#application/form/form-1"]').click();
+    await page.locator('.repeat-add').click();
+    await page.locator('.repeat-remove').last().click();
+    await expect(page.locator('.delete-dialog')).toBeVisible();
+    await page.goBack();
+    await expect(page.locator('.application-frame h2')).toHaveText('Zweites Formular');
+    await expect(page.locator('.delete-dialog')).not.toBeVisible();
+    await page
+      .locator('.delete-confirm-button')
+      .evaluate((button) => (button as HTMLButtonElement).click());
+    await expect(page.locator('.toast-stack')).not.toContainText(
+      'Der Vorschau-Eintrag wurde gelöscht.',
+    );
+    await page.goForward();
+    await expect(page.locator('.application-frame h2')).toHaveText('Erstes Formular');
+    await expect(page.locator('.repeat-remove')).toHaveCount(1);
+    await page.locator('.repeat-add').click();
+    await expect(page.locator('.repeat-remove')).toHaveCount(2);
+    await page.locator('.repeat-remove').last().click();
+    await page.locator('.delete-confirm-button').click();
+    await expect(page.locator('.repeat-remove')).toHaveCount(1);
+    await expect(page.locator('.toast-stack')).toContainText(
+      'Der Vorschau-Eintrag wurde gelöscht.',
+    );
+  },
+);
 
 test(
   'application links preserve editor selection, drafts and storage while browser history disposes form answers',
