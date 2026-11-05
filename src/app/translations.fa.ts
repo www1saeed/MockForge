@@ -2,6 +2,19 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  application: 'پیش‌نمایش برنامه',
+  applicationHint:
+    'بین فرم‌ها و فهرست‌ها جابه‌جا شوید. رکوردها در این نشست می‌مانند؛ پاسخ‌های ذخیره‌نشدهٔ فرم هنگام تغییر صفحه پاک می‌شوند.',
+  applicationBack: 'بازگشت به ویرایشگر',
+  applicationMenu: 'منوی برنامه',
+  applicationForm: 'فرم',
+  applicationList: 'فهرست',
+  applicationEmpty: 'منو خالی است',
+  applicationMissing: 'این صفحه یافت نشد',
+  applicationRecovery:
+    'صفحه‌ای از منو انتخاب کنید یا به ویرایشگر بازگردید. فرم‌های پنهان از طریق پیوند مستقیم قابل دسترسی هستند.',
+  applicationHome: 'صفحهٔ نخست برنامه',
+  applicationShowForm: 'نمایش فرم در منوی برنامه',
   listMoveUp: 'انتقال فهرست به قبل',
   listMoveDown: 'انتقال فهرست به بعد',
   listContract: 'فهرست‌ها: نماهای فرم',
@@ -74,7 +87,7 @@ export const faCopy = {
   applicationFormsRule:
     'یک تا ۲۰ فرم؛ حداکثر ۵۰۰ تعریف فیلد و ۱۰۰ دکمه در مجموع. شرح پروژه، زبان‌ها، طراحی و بازبینی مشترک هستند.',
   formIdRule:
-    'شناسهٔ فرم یکتا است. گزینهٔ menu برای ناوبری آینده نگه داشته می‌شود و فعلاً اثری ندارد.',
+    'شناسهٔ فرم یکتا است. menu اختیاری و پیش‌فرض آن true است. false فقط پیوند فرم را از منو پنهان می‌کند؛ فهرست‌ها و پیوند مستقیم همچنان در دسترس‌اند.',
   manageForms: 'فرم‌های پروژه',
   newForm: 'افزودن فرم',
   duplicateForm: 'ایجاد کپی فرم',

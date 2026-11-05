@@ -1,0 +1,87 @@
+.application-workspace {
+  padding: 28px;
+  max-width: 1600px;
+  margin-inline: auto;
+  min-width: 0;
+}
+.application-intro {
+  margin-bottom: 24px;
+}
+.application-intro h1 {
+  font-size: clamp(24px, 3vw, 36px);
+  overflow-wrap: anywhere;
+}
+.application-frame {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  padding: 24px;
+}
+.application-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.application-menu a {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 48px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.application-menu a[aria-current='page'] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.application-kind {
+  font-size: 11px;
+  color: var(--muted);
+}
+.application-frame h2 {
+  font-size: 24px;
+  margin-block: 16px;
+  overflow-wrap: anywhere;
+}
+.application-frame > .preview-panel {
+  display: block;
+  position: static;
+  max-height: none;
+  border: 0;
+}
+.application-frame .collection-workspace {
+  padding: 0;
+  border: 0;
+}
+.application-menu-setting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin: 0;
+}
+.application-menu-setting input {
+  width: 20px;
+  height: 20px;
+}
+@media (max-width: 760px) {
+  .application-workspace {
+    padding: 16px;
+  }
+  .application-frame {
+    padding: 12px;
+  }
+  .application-frame > .preview-panel {
+    padding: 12px;
+  }
+  .application-menu {
+    flex-direction: column;
+  }
+}

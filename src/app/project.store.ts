@@ -326,4 +326,13 @@ export class ProjectStore {
     }
     return this.commit(next);
   }
+
+  setFormMenu(included: boolean): boolean {
+    return this.commit({
+      ...this.application(),
+      forms: this.application().forms.map((form) =>
+        form.id === this.activeFormId() ? { ...form, menu: included } : form,
+      ),
+    });
+  }
 }

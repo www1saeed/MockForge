@@ -36,10 +36,15 @@ export class CollectionWorkspaceComponent implements OnDestroy {
   readonly data = inject(CollectionSessionStore);
   readonly feedback = inject(FeedbackService);
   readonly locale = input<Locale>('de');
+  readonly contentLanguage = input<Locale | null>(null);
+  readonly previewOnly = input(false);
+  readonly listId = input<string | null>(null);
   readonly selected = signal('');
   readonly lists = computed(() => this.data.form().lists ?? []);
-  readonly list = computed<CollectionList | undefined>(
-    () => this.lists().find((list) => list.id === this.selected()) ?? this.lists()[0],
+  readonly list = computed<CollectionList | undefined>(() =>
+    this.previewOnly()
+      ? this.lists().find((list) => list.id === this.listId())
+      : (this.lists().find((list) => list.id === this.selected()) ?? this.lists()[0]),
   );
   readonly leaves = computed(() => collectionLeaves(this.data.form().fields));
   readonly choices = computed(() => this.leaves().filter(collectionChoice));
@@ -83,8 +88,8 @@ export class CollectionWorkspaceComponent implements OnDestroy {
       !!this.visible().length && this.visible().every((record) => this.selection().has(record.id)),
   );
   readonly contentLocale = computed(() =>
-    this.store.application().languages.includes(this.locale())
-      ? this.locale()
+    this.store.application().languages.includes(this.contentLanguage() ?? this.locale())
+      ? (this.contentLanguage() ?? this.locale())
       : this.store.application().languages[0],
   );
   readonly editing = signal<{
@@ -97,7 +102,7 @@ export class CollectionWorkspaceComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      this.store.formSession();
+      this.data.viewSession();
       this.list();
       this.data.dataset();
       this.locale();
@@ -126,7 +131,7 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     return Array.isArray(rows) ? rows : [];
   }
   patch(change: Partial<CollectionList>): void {
-    if (!this.list()) return;
+    if (this.previewOnly() || !this.list()) return;
     this.store.updateCollections(
       this.lists().map((list) => (list.id === this.list()!.id ? { ...list, ...change } : list)),
     );
@@ -135,16 +140,19 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     this.patch({ title: { ...this.list()!.title, [lang]: value } });
   }
   add(): void {
+    if (this.previewOnly()) return;
     const list = createCollectionList(this.data.form().fields, this.lists());
     if (this.store.updateCollections([...this.lists(), list])) this.selected.set(list.id);
   }
   duplicate(): void {
+    if (this.previewOnly()) return;
     const source = this.list();
     if (!source) return;
     const id = createCollectionList(this.data.form().fields, this.lists()).id;
     if (this.store.updateCollections([...this.lists(), { ...source, id }])) this.selected.set(id);
   }
   move(offset: number): void {
+    if (this.previewOnly()) return;
     const lists = [...this.lists()],
       index = lists.indexOf(this.list()!),
       target = index + offset;
@@ -153,13 +161,14 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     this.store.updateCollections(lists);
   }
   removeList(): void {
+    if (this.previewOnly()) return;
     const list = this.list(),
-      session = this.store.formSession();
+      context = this.data.context();
     if (!list) return;
     this.feedback.requestDelete(
       this.text(list.title),
       () => {
-        if (session === this.store.formSession() && this.list() === list)
+        if (!this.previewOnly() && this.data.current(context) && this.list() === list)
           this.store.updateCollections(this.lists().filter((item) => item.id !== list.id));
       },
       'listDeleteDescription',
@@ -191,6 +200,7 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     this.patch({ actions: { ...this.list()!.actions, [key]: value } });
   }
   entries(key: 'count' | 'seed', value: number): void {
+    if (this.previewOnly()) return;
     this.store.updateCollections(this.lists(), {
       ...(this.data.form().entries ?? { count: 25, seed: 1 }),
       [key]: value,

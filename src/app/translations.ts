@@ -3,6 +3,23 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  application: ['Anwendungsvorschau', 'Application preview'],
+  applicationHint: [
+    'Navigiere zwischen Formularen und Listen. Einträge bleiben in dieser Sitzung; Formularantworten werden beim Seitenwechsel verworfen.',
+    'Navigate between forms and lists. Records remain in this session; unsaved form answers are discarded when changing screens.',
+  ],
+  applicationBack: ['Zurück zum Editor', 'Back to editor'],
+  applicationMenu: ['Anwendungsmenü', 'Application menu'],
+  applicationForm: ['Formular', 'Form'],
+  applicationList: ['Liste', 'List'],
+  applicationEmpty: ['Keine Menüeinträge', 'No menu entries'],
+  applicationMissing: ['Diese Seite wurde nicht gefunden', 'This screen was not found'],
+  applicationRecovery: [
+    'Wähle eine Seite im Menü oder kehre zum Editor zurück. Ausgeblendete Formulare bleiben über ihren direkten Link erreichbar.',
+    'Choose a screen from the menu or return to the editor. Hidden forms remain reachable through their direct links.',
+  ],
+  applicationHome: ['Zum Anwendungsstart', 'Application home'],
+  applicationShowForm: ['Formular im Anwendungsmenü anzeigen', 'Show form in application menu'],
   listMoveUp: ['Liste nach vorne verschieben', 'Move list earlier'],
   listMoveDown: ['Liste nach hinten verschieben', 'Move list later'],
   listContract: ['Listen: Ansichten eines Formulars', 'Lists: form views'],
@@ -109,8 +126,8 @@ export const copy = {
     'One to 20 forms; at most 500 field definitions and 100 buttons in total. Brief, languages, design and review are shared.',
   ],
   formIdRule: [
-    'Eindeutige Formular-ID. menu ist eine optionale Einstellung für spätere Anwendungsnavigation; sie wird derzeit nur erhalten.',
-    'Unique form ID. Optional menu is retained for later application navigation; it has no navigation effect yet.',
+    'Eindeutige Formular-ID. menu ist optional und standardmäßig true. false blendet nur den Formular-Menüeintrag aus; Listen und direkte Links bleiben erreichbar.',
+    'Unique form ID. Optional menu defaults to true. false hides only the form menu entry; lists and direct links remain reachable.',
   ],
   manageForms: ['Formulare im Projekt', 'Project forms'],
   newForm: ['Formular hinzufügen', 'Add form'],

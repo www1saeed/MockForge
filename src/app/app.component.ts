@@ -42,6 +42,8 @@ import { CollectionWorkspaceComponent } from './collection-workspace.component';
 import { CollectionSessionStore } from './collection-session.store';
 import { CollectionSessionRegistry } from './collection-session.registry';
 import { COLLECTION_VIEW, editorCollectionView } from './collection-view';
+import { ApplicationPreviewComponent } from './application-preview.component';
+import { ApplicationRoute, parseApplicationRoute } from './application-navigation';
 import { PatternCheckService } from './pattern-check.service';
 import { CopyKey, translate } from './translations';
 import { FieldListComponent } from './field-list.component';
@@ -82,8 +84,15 @@ import {
     FeedbackComponent,
     AuthoringGuideComponent,
     CollectionWorkspaceComponent,
+    ApplicationPreviewComponent,
   ],
-  providers: [ProjectStore, CollectionSessionRegistry, CollectionSessionStore, PatternCheckService, {provide: COLLECTION_VIEW, useFactory: editorCollectionView}],
+  providers: [
+    ProjectStore,
+    CollectionSessionRegistry,
+    CollectionSessionStore,
+    PatternCheckService,
+    { provide: COLLECTION_VIEW, useFactory: editorCollectionView },
+  ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './app.component.html',
 })
@@ -96,6 +105,7 @@ export class AppComponent implements OnInit {
   readonly previewSessions = computed(() => [{ id: this.store.formSession() }]);
   readonly locale = signal<Locale>('de');
   readonly view = signal<StudioView>('overview');
+  readonly applicationRoute = signal<ApplicationRoute>({ kind: 'home' });
   readonly step = signal(0);
   readonly listsOpen = signal(false);
   readonly previewVisible = signal(false);
@@ -294,6 +304,12 @@ export class AppComponent implements OnInit {
   /** Honor browser back/forward navigation; unknown hashes safely return to the overview. */
   @HostListener('window:hashchange')
   readLocation(): void {
+    const applicationRoute = parseApplicationRoute(window.location.hash);
+    if (applicationRoute) {
+      this.applicationRoute.set(applicationRoute);
+      this.view.set('application');
+      return;
+    }
     const next = window.location.hash.slice(1);
     this.view.set(
       next === 'workspace' ||
@@ -307,6 +323,7 @@ export class AppComponent implements OnInit {
   }
   /** Keep visible content and shareable hash navigation in agreement. */
   openView(view: StudioView): void {
+    if (view === 'application') this.applicationRoute.set({ kind: 'home' });
     this.view.set(view);
     window.location.hash = view;
   }
