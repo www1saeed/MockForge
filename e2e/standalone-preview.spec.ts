@@ -139,7 +139,7 @@ test(
     });
     const preview = await context.newPage();
     await preview.goto(url);
-    await expect(preview.locator('.application-intro h1')).toHaveText(hostile);
+    await expect(preview.locator('.standalone-title')).toHaveText(hostile);
     expect(await preview.evaluate(() => Reflect.get(window, 'INJECTED'))).toBeUndefined();
     await preview.getByRole('button', { name: 'FA', exact: true }).click();
     await expect(preview.locator('html')).toHaveAttribute('dir', 'rtl');
@@ -186,9 +186,7 @@ test(
     await preview.goto(url);
     const input = preview.locator('#preview-evil');
     await input.fill('a'.repeat(500) + '!');
-    await preview.locator('.test-data-toolbar .text-button').click();
-    await expect(preview.locator('.test-data-dialog')).toBeVisible();
-    await preview.keyboard.press('Escape');
+    await expect(preview.locator('.standalone-header')).toBeVisible();
     await expect(input).toHaveJSProperty(
       'validationMessage',
       'RegEx-Prüfung hat das Zeitlimit erreicht.',

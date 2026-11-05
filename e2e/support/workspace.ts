@@ -20,9 +20,13 @@ export async function openProject(
 /** Workflow identity is stable even when new steps are inserted. */
 export async function goToStep(
   page: Page,
-  key: 'brief' | 'copy' | 'design' | 'fields' | 'review',
+  key: 'brief' | 'copy' | 'design' | 'fields' | 'review' | 'lists',
 ): Promise<void> {
-  await page.locator(`.workflow [data-step="${key}"]`).click();
+  await page
+    .locator(
+      `.workflow [data-step="${['brief', 'copy', 'design'].includes(key) ? 'project' : key}"]`,
+    )
+    .click();
 }
 
 export async function dismissToasts(page: Page): Promise<void> {

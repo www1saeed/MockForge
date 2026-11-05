@@ -168,11 +168,11 @@ test(
     const team = project.forms[0].fields.find(
       (field: { id: string }): boolean => field.id === 'team-members',
     );
-    expect(project.schemaVersion).toBe('2.1.0');
+    expect(project.schemaVersion).toBe('2.2.0');
     expect(team.group).toMatchObject({ layout: 'table', minItems: 0, maxItems: 3, gapless: true });
     expect(team.group.fields.at(-1).label.en).toBe('Access type');
     await page.reload();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.locator('.root-field-list .field-row').filter({ hasText: 'Projektteam' }).click();
     await expect(page.locator('#group-layout')).toHaveValue('table');
     await expect(page.locator('#group-gapless')).toBeChecked();

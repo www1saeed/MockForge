@@ -65,7 +65,7 @@ test(
     await expect(page.locator('.tooltip-inner')).toHaveText('Name help once');
     await tableGroup.locator('thead .field-tooltip-button').press('Escape');
     await page.reload();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.locator('.root-field-list .field-row').first().click();
     await expect(page.locator('#field-tooltip-placement')).toHaveValue('info');
     await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();

@@ -17,7 +17,8 @@ test(
     await expect(link).toHaveAccessibleName('Workspace');
     await page.locator('#project-name').fill('My Studio project');
     await page.locator('.topbar .locale-toggle button').filter({ hasText: 'FA' }).click();
-    await page.locator('.workflow button').nth(2).click();
+    await page.locator('.workflow [data-step="project"]').click();
+    await page.locator('.transfer-actions button[aria-expanded="false"]').click();
     await page.locator('.test-data-toolbar .text-button').click();
     await expect(page.locator('.test-data-dialog')).toBeVisible();
     expect(

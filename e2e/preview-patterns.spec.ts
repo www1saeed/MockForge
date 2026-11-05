@@ -19,7 +19,8 @@ async function open(page: Page, fields: Field[]): Promise<string> {
     project,
   );
   await page.goto('/#workspace');
-  await page.locator('.workflow button').nth(2).click();
+  await page.locator('.workflow [data-step="project"]').click();
+  await page.locator('.transfer-actions button[aria-expanded="false"]').click();
   return page.evaluate((): string => localStorage.getItem('mockforge-studio-v1')!);
 }
 
@@ -146,7 +147,7 @@ test(
         patternMessage: text('Old error', 'Old error'),
       },
     ]);
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
     const control = page.locator('#preview-name');
     await control.fill('bad');
@@ -193,7 +194,7 @@ test(
       })),
     };
     await open(page, [group]);
-    await page.locator('.workflow button').nth(0).click();
+    await page.locator('.workflow [data-step="project"]').click();
     await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
     const controls = page.locator('app-form-preview input[data-field-id]');
     await expect(controls).toHaveCount(36);

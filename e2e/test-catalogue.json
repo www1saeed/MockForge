@@ -34,6 +34,7 @@
     "shell-context": ["shell"],
     "studio": ["authoring", "preview", "transfer", "persistence", "review", "shell"],
     "standalone-preview": ["transfer", "navigation", "lists", "preview"],
-    "examples": ["authoring", "forms", "lists", "groups"]
+    "examples": ["authoring", "forms", "lists", "groups"],
+    "list-configurator": ["authoring", "lists", "transfer"]
   }
 }
