@@ -230,10 +230,15 @@ export class AppComponent implements OnInit {
   pasteField(child = false): void {
     const parentId = child ? this.editingGroup()?.id : undefined;
     if (child && !parentId) return;
+    const clipboard = this.store.clipboard();
     const id = this.store.pasteField(parentId);
     if (!id) {
       this.feedback.notify('pasteUnavailable', 'warning');
       return;
+    }
+    if (clipboard?.mode === 'cut' && clipboard.formId !== this.store.activeFormId()) {
+      const pasted = allFields(this.project().fields).find((field): boolean => field.id === id)!;
+      this.movePatternDrafts(clipboard.formId, allFields([pasted]));
     }
     if (child) this.selectChildField(id);
     else this.selectRootField(id);
@@ -799,6 +804,26 @@ export class AppComponent implements OnInit {
   ): void {
     const id = this.store.activeFormId();
     this.draftsByForm.update((forms) => new Map(forms).set(id, update(forms.get(id) ?? new Map())));
+  }
+
+  /** Move current transient edits only after the specification cut has committed successfully. */
+  private movePatternDrafts(sourceFormId: string, fields: readonly Field[]): void {
+    const targetFormId = this.store.activeFormId();
+    this.draftsByForm.update((forms) => {
+      const next = new Map(forms);
+      const source = new Map(forms.get(sourceFormId));
+      const target = new Map(forms.get(targetFormId));
+      for (const field of fields) {
+        target.delete(field.id);
+        if (source.has(field.id)) target.set(field.id, source.get(field.id)!);
+        source.delete(field.id);
+      }
+      if (source.size) next.set(sourceFormId, source);
+      else next.delete(sourceFormId);
+      if (target.size) next.set(targetFormId, target);
+      else next.delete(targetFormId);
+      return next;
+    });
   }
 
   /** Guard destructive callbacks against a changed form/project, including switch-away-and-back. */

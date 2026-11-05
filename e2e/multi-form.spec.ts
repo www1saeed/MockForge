@@ -11,6 +11,60 @@ import { tagsFor } from './test-tags';
 import { dismissToasts, goToStep, openProject } from './support/workspace';
 
 test(
+  'cross-form cuts transfer invalid drafts without contaminating reused source IDs',
+  {
+    tag: tagsFor('multi-form', 'forms-draft-cut', {
+      areas: ['forms', 'authoring', 'patterns', 'review'],
+    }),
+  },
+  async ({ page }): Promise<void> => {
+    const project = parseApplicationProject(sample('saas'))!;
+    project.owner = 'Owner';
+    project.questions = '';
+    project.forms[0].fields = [createField('text', 'field-1')];
+    project.forms.push({
+      ...project.forms[0],
+      id: 'second',
+      fields: [],
+      title: text('Zweite', 'Second', 'دوم'),
+    });
+    await openProject(page, project);
+    await goToStep(page, 'fields');
+    await page.locator('#field-pattern').fill('[');
+    await page
+      .locator('.root-field-list')
+      .getByRole('button', { name: 'Ausschneiden', exact: true })
+      .click();
+    await page.locator('#active-form').selectOption('second');
+    await page
+      .locator('.root-field-list')
+      .getByRole('button', { name: 'Einfügen', exact: true })
+      .click();
+    await expect(page.locator('#field-pattern')).toHaveValue('[');
+    await page.locator('#active-form').selectOption('form-1');
+    await page.getByRole('button', { name: '+ Feld hinzufügen', exact: true }).click();
+    await expect(page.locator('#field-pattern')).toHaveValue('');
+    await expect(page.locator('.pattern-error')).toHaveCount(0);
+    await goToStep(page, 'review');
+    await page.getByLabel('Name der prüfenden Person').fill('Reviewer');
+    for (const box of await page.locator('.review-checklist input').all()) await box.check();
+    await expect(page.getByRole('button', { name: 'Review dokumentieren' })).toBeDisabled();
+    await page.locator('#active-form').selectOption('second');
+    await goToStep(page, 'fields');
+    await expect(page.locator('#field-pattern')).toHaveValue('[');
+    await page.locator('#field-pattern').fill('[A-Z]{2}');
+    await goToStep(page, 'review');
+    for (const box of await page.locator('.review-checklist input').all()) await box.check();
+    await expect(page.getByRole('button', { name: 'Review dokumentieren' })).toBeEnabled();
+    const stored = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('mockforge-studio-v1')!),
+    );
+    expect(stored.forms[0].fields[0].pattern).toBe('');
+    expect(stored.forms[1].fields[0].pattern).toBe('[A-Z]{2}');
+  },
+);
+
+test(
   'reserved-looking form and field IDs display only their own pattern drafts',
   { tag: tagsFor('multi-form', 'forms-draft-keys', { areas: ['forms', 'authoring', 'patterns'] }) },
   async ({ page }): Promise<void> => {

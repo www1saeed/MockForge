@@ -3,6 +3,78 @@ import { AppComponent } from './app.component';
 import { createButton, createField, example, FieldType, parseApplicationProject } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('cross-form cuts move invalid drafts and cannot contaminate reused source IDs', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.addField();
+    const movedId = app.selectedId();
+    app.changePattern('[');
+    app.captureField('cut');
+    const target = app.store.addForm({ de: 'Zweite', en: 'Second', fa: 'دوم' })!;
+    app.pasteField();
+    expect(app.selectedId()).toBe(movedId);
+    expect(app.patternError(app.selected()!)).toBe(true);
+    expect(app.patternDrafts().get(movedId)).toBe('[');
+    app.selectForm('form-1');
+    expect(app.patternDrafts().has(movedId)).toBe(false);
+    app.addField();
+    expect(app.selectedId()).toBe(movedId);
+    expect(app.selected()!.pattern).toBe('');
+    expect(app.patternError(app.selected()!)).toBe(false);
+    app.selectForm(target);
+    expect(app.patternError(app.selected()!)).toBe(true);
+    expect(app.project().fields[0].pattern).toBe('');
+    app.changePattern('[A-Z]{2}');
+    expect(app.patternError(app.selected()!)).toBe(false);
+    app.selectForm('form-1');
+    app.selectRootField('email');
+    app.captureField('cut');
+    app.store.addForm({ de: 'Dritte', en: 'Third', fa: 'سوم' });
+    app.pasteField();
+    expect(app.patternDrafts().size).toBe(0);
+    expect(app.patternError(app.selected()!)).toBe(false);
+  });
+
+  test('group cuts transfer live child drafts atomically while rejected cuts and copies preserve source drafts', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.selectRootField('name');
+    app.changePattern('(?');
+    app.addField('group');
+    const groupId = app.selectedId();
+    app.openGroupFields();
+    const firstChild = app.selectedId();
+    app.changePattern('[');
+    app.captureField('copy', true);
+    const target = app.store.addForm({ de: 'Zweite', en: 'Second', fa: 'دوم' })!;
+    app.pasteField();
+    expect(app.patternDrafts().size).toBe(0);
+    app.selectForm('form-1');
+    app.selectRootField(groupId);
+    app.captureField('cut');
+    app.openGroupFields();
+    app.addGroupField('text');
+    const secondChild = app.selectedId();
+    app.changePattern('(');
+    app.selectForm(target);
+    const before = app.store.application();
+    app.pasteField(); // the earlier copied group still occupies groupId
+    expect(app.store.application()).toBe(before);
+    expect(app.store.clipboard()?.mode).toBe('cut');
+    app.selectForm('form-1');
+    expect(app.patternDrafts().get(firstChild)).toBe('[');
+    expect(app.patternDrafts().get(secondChild)).toBe('(');
+    app.selectForm(target);
+    app.selectRootField(groupId);
+    app.removeField(true);
+    app.feedback.confirmDelete();
+    app.pasteField();
+    expect(app.project().fields[0].group!.fields).toHaveLength(2);
+    expect(app.patternDrafts().get(firstChild)).toBe('[');
+    expect(app.patternDrafts().get(secondChild)).toBe('(');
+    app.selectForm('form-1');
+    expect(app.patternDrafts().has(firstChild)).toBe(false);
+    expect(app.patternDrafts().has(secondChild)).toBe(false);
+    expect(app.patternDrafts().get('name')).toBe('(?');
+  });
   test('safe form and field IDs cannot inherit pattern drafts and still participate in review', async (): Promise<void> => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
