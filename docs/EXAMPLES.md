@@ -3,7 +3,7 @@
 Open **Business examples** and choose a project. Replacement always asks for
 confirmation; export the current draft first or cancel to keep it. The gallery,
 JSON-authoring guide, downloadable JSON files and AI authoring kit all use the
-same three Studio 2.2.0 application snapshots. Every example includes DE/EN/FA
+same three Studio 2.3.0 application snapshots. Every example includes DE/EN/FA
 copy, with German/English initially active and no recorded approval.
 
 | Level | Forms and lists | What to try |
@@ -67,3 +67,5 @@ nested definitions and the capability/planning boundary. The `examples` E2E suit
 covers the actual gallery, CRUD, repeated row restoration, presets/read-only views,
 independent form datasets, offline export/theme and Persian mobile accessibility.
 The authoring-guide journeys download/import all three assets and inspect the kit.
+
+The intermediate/extensive examples also demonstrate table, cards and accordion list layouts, badges, selected group subfields and group/child column paths. The repeated items still belong to their form's records. Switch preview/data language or choose Mixed to generate the supported active-language profiles.

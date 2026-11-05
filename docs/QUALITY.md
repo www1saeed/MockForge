@@ -1,5 +1,13 @@
 # Code quality and test evidence
 
+## Grouped lists and language-aware fixtures — November 5, 2026
+
+**281 Studio tests pass: 205 Jest cases in 28 suites and 76 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.66% statements, 90.17% branches, 95.90% functions and 97.41% lines. Format/lint/app+spec+E2E types, 548 translations, synchronized authoring kit, local documentation targets and production build pass. Full browser evidence: reports/pr8-expanded-lists-final-e2e.json; CI needs its own run after push.
+
+New cases cover safe group/child projection, schema2.2 migration and malformed settings, pruning after definition changes, actual group layouts and localized values, atomic append/cancellation, inactive-language fallback and confirmed generation options. Three browser journeys cover all layouts, selected group children, badges, toolbar/full-width/visibility, language-specific replacement/mixed/single append, real offline export and Persian mobile Axe/keyboard/bounds. Existing CRUD/navigation/example journeys retain their regression assertions.
+
+Studio2.3 adds optional finite layout/display/groupFields settings and migrates older contracts with approval cleared. Nine new unit cases and three journeys extend the previous inventory. Table styles remain four; list layouts are table/card/accordion, with group-specific nested views. Production initial bundle is 897.72 kB (unchanged 700 kB warning / 1 MB failure); configurator and application preview remain lazy. No new dependency, role/auth contract or worker/generation/storage/bundle budget increase. Application preview/configuration are lazy; the offline runtime retains independent header/sidebar, noHTTP/noStudioStorage and session-only records. Actual deck remains fifteen slides; previous ignored PDF is a separate export.
+
 ## List designer and independent shell checkpoint — November 5, 2026
 
 **269 Studio tests pass: 196 Jest unit/component cases in 27 suites and 73 Chromium journeys.** Ten E2E selector checks pass separately. Coverage: 95.65% statements, 90.37% branches, 96.25% functions and 97.55% lines (src/app/*.ts; standalone bootstrap is covered in Chromium). Format/lint/app+spec+E2E types, 534 translations, synchronized authoring kit, local documentation targets and build pass.

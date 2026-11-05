@@ -10,7 +10,7 @@ not its records. Deleting a form also discards its session records.
 ## Walkthrough
 
 1. Add root fields to a form, then add a list. Up to the first 20 root leaf fields
-   become its initial columns and search fields. Group columns are not supported.
+   become its initial columns and search fields. Add groups or individual `groupId/childId` subfields in the field matrix.
 2. Create a record manually or generate test records. Generation defaults to
    25 records, seed 1, the first active content language and reference date
    2026-01-01. It uses the existing valid-scenario generator and minimum group rows.
@@ -37,7 +37,7 @@ buttons still simulate their configured actions; they do not insert list records
 
 ## Persistence, stale data and cancellation
 
-Studio 2.2.0 JSON stores optional `lists` and `entries` preferences inside each
+Studio 2.3.0 JSON stores optional `lists` and `entries` preferences inside each
 form. Storage, JSON, Markdown and review include configuration only. Manual and
 generated records, record IDs, selection, page, queries and open details are never
 persisted or exported. Switching forms or returning to the form editor retains
@@ -63,7 +63,7 @@ These operations cannot be undone after confirmation.
 ## Limits and boundaries
 
 - At most 10 lists per form, 50 per project; 20 columns/search fields/filters/fixed
-  filters per list; page size 1–100. References point to that form's root leaves.
+  filters per list; page size 1–100. Column/search references point to that form's roots, groups or unambiguous group/child paths. Choice filters/presets remain root-only.
 - Generation count 1–500 and integer seed 0–999999 per form. Retained session data
   is limited to 500 records per form, 1,000 across forms and 2,000,000 UTF-16 JSON
   units for record values/IDs including container overhead. Limits reject whole
@@ -75,7 +75,7 @@ These operations cannot be undone after confirmation.
 - Unsupported generator constraints can omit answers. The UI reports their count;
   generated fixtures are not certified complete valid production records. Editing
   such a record requires correcting all required/invalid answers before Save.
-- This increment supports table lists. Roles, wizard pages, relationships, group columns and
+- Lists support table, card and accordion layouts. Roles, wizard pages, relationships and
   lists over group rows remain future work. There is no backend or authentication.
 
 ## Verification
@@ -99,4 +99,10 @@ The Project & design page combines briefing, language/copy and form styling. The
 
 Four table designs (classic, striped, cell-bordered, minimal) combine with comfortable/compact density, hover highlight and a locally scrolling sticky header. Existing CRUD actions have per-project-language labels, primary/secondary/ghost/danger variants, built-in icons and text/icon/both display. Row actions can be reordered; Create remains in the toolbar and Delete also applies to selection. Disabled actions remain guarded in handlers. No arbitrary CSS, icon URLs, custom server actions or role permissions are introduced.
 
-Studio 2.2.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.1.0 imports retain their list configuration with review acknowledgement reset. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.
+Studio 2.3.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.2.0 and 2.1.0 imports retain their list configuration with review acknowledgement reset. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.
+
+## Group values and layout
+
+Choose Table, Cards or Accordion independently of the table's four border/stripe styles. Every layout shares the same search, filtering, sorting, paging, selection and guarded CRUD actions. Cards use localized column headings as facts; accordions open record content inline. Whole repeated groups can show selected child fields as nested tables, cards, accordions, chips, text or row counts. Individual paths such as `items/description` show the values across those saved rows without creating another collection or changing record ownership. Text/badge/chip/count display is available for leaf columns. Choice labels and booleans follow the preview content language. Content is rendered as text. The View action still opens the whole record; configured columns are not permissions.
+
+The list tab has a source-form selector instead of form-management actions. Workspace Show/hide and Full width apply to list preview as they do to forms. Preview language/device controls are independent of the interface language. The test-data toolbar supports whole-dataset replacement (confirmed when nonempty), clearing and adding one generated record. Settings select an active form language or Mixed and a count from 1 to 500. Unconfigured data language follows content preview language. Mixed alternates active languages deterministically, continuing the sequence for single appends. Generation uses one batch-wide time/output/control budget; cancelled/obsolete/over-budget runs preserve the complete old dataset. Language/count overrides and record answers remain session-only. Fixture count/seed defaults still live in the specification.

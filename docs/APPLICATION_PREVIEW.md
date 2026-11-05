@@ -18,7 +18,7 @@ optional form `menu` flag. Omission means true. Setting false hides only that
 form's menu link; its lists remain visible and the form still has a direct link.
 This controls navigation presentation, not access or authorization. The change
 invalidates project review like other specification edits. Studio JSON remains
-2.2.0, and no routing state is added to the file.
+2.3.0, and no routing state is added to the file.
 
 | Destination | Hash |
 | --- | --- |
