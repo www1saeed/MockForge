@@ -140,7 +140,7 @@
           <div class="workspace-heading">
             <div>
               <span class="tiny-label">{{ t('formWorkspace') }}</span>
-              <h2>{{ project().name }}</h2>
+              <h1>{{ project().name }}</h1>
             </div>
             <div class="transfer-actions">
               <button
@@ -174,15 +174,16 @@
             [attr.aria-label]="t('import')"
           />
           <nav class="workflow" [attr.aria-label]="t('formWorkspace')">
-            @for (key of steps; track key; let index = $index) {
+            @for (tab of workflowTabs; track tab.id; let index = $index) {
               <button
-                [class.current]="step() === index"
-                [attr.aria-current]="step() === index ? 'step' : null"
-                [attr.data-step]="['brief', 'copy', 'design', 'fields', 'review'][index]"
-                (click)="setStep(index)"
+                [class.current]="step() === tab.value"
+                [attr.aria-current]="step() === tab.value ? 'step' : null"
+                [attr.data-step]="tab.id"
+                [attr.aria-label]="t(tab.label)"
+                (click)="setStep(tab.value)"
               >
                 <span>{{ index + 1 }}</span
-                >{{ t(key) }}
+                >{{ t(tab.label) }}
               </button>
             }
           </nav>
@@ -210,13 +211,7 @@
                   (ngModelChange)="store.setFormMenu($event)"
                 />{{ t('applicationShowForm') }}</label
               >
-              <button
-                class="secondary-button"
-                [attr.aria-pressed]="listsOpen()"
-                (click)="toggleListWorkspace()"
-              >
-                {{ t(listsOpen() ? 'listBack' : 'listsTitle') }}
-              </button>
+
               <button
                 class="secondary-button"
                 (click)="openFormDialog('new')"
@@ -260,7 +255,9 @@
             <p class="fine-print">{{ t('formSwitchNotice') }}</p>
           </section>
           @if (listsOpen()) {
-            <app-collection-workspace [locale]="locale()" />
+            @defer (on immediate) {
+              <app-collection-configurator [locale]="locale()" />
+            }
           } @else {
             <div
               class="editor-layout"
@@ -269,7 +266,7 @@
             >
               <section class="configuration">
                 <div class="section-heading">
-                  <h3>{{ t(steps[step()]) }}</h3>
+                  <h2>{{ t(steps[step()]) }}</h2>
                   <span class="status-pill" [class.reviewed]="project().review.approvedAt">{{
                     t(project().review.approvedAt ? 'approved' : 'draft')
                   }}</span>
@@ -309,8 +306,7 @@
                       [ngModel]="project().scope"
                       (ngModelChange)="update({ scope: $event })"
                     ></textarea>
-                  }
-                  @case (1) {
+                    <h3 class="project-section-title">{{ t('projectCopy') }}</h3>
                     <p class="section-description">{{ t('languageLead') }}</p>
                     <fieldset class="language-picker">
                       <legend>{{ t('formLanguages') }}</legend>
@@ -356,8 +352,7 @@
                       }
                     </div>
                     <p class="fine-print">{{ t('buttonsCopyHint') }}</p>
-                  }
-                  @case (2) {
+                    <h3 class="project-section-title">{{ t('projectDesign') }}</h3>
                     <p class="section-description">{{ t('designLead') }}</p>
                     <div class="theme-grid">
                       @for (theme of themes; track theme.id) {

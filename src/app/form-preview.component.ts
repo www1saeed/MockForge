@@ -102,6 +102,7 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
 export class FormPreviewComponent implements OnDestroy {
   @ViewChild('previewForm') previewForm!: ElementRef<HTMLFormElement>;
   readonly recordMode = input(false);
+  readonly applicationMode = input(false);
   readonly initialValues = input<ResponseValues | null>(null);
   readonly recordSaved = output<ResponseValues>();
   @ViewChild('testDataDialog') testDataDialog!: ElementRef<HTMLDialogElement>;

@@ -38,7 +38,7 @@ import {
   RepeatGroup,
 } from './project';
 import { ProjectStore } from './project.store';
-import { CollectionWorkspaceComponent } from './collection-workspace.component';
+import { CollectionConfiguratorComponent } from './collection-configurator.component';
 import { CollectionSessionStore } from './collection-session.store';
 import { CollectionSessionRegistry } from './collection-session.registry';
 import { COLLECTION_VIEW, editorCollectionView } from './collection-view';
@@ -57,6 +57,7 @@ import {
   NAVIGATION,
   SAMPLES,
   STEP_COPY,
+  WORKFLOW_TABS,
   StudioView,
   THEMES_COPY,
   VARIANT_COPY,
@@ -83,7 +84,7 @@ import {
     FormPreviewComponent,
     FeedbackComponent,
     AuthoringGuideComponent,
-    CollectionWorkspaceComponent,
+    CollectionConfiguratorComponent,
     ApplicationPreviewComponent,
   ],
   providers: [
@@ -109,7 +110,7 @@ export class AppComponent implements OnInit {
   readonly view = signal<StudioView>('overview');
   readonly applicationRoute = signal<ApplicationRoute>({ kind: 'home' });
   readonly step = signal(0);
-  readonly listsOpen = signal(false);
+  readonly listsOpen = computed(() => this.step() === WORKFLOW.lists);
   readonly previewVisible = signal(false);
   /** View-only expansion preserves the mounted preview and its unsaved response values. */
   readonly previewFullWidth = signal(false);
@@ -144,6 +145,7 @@ export class AppComponent implements OnInit {
   readonly localizedFieldKeys = ['label', 'placeholder', 'help', 'tooltip'] as const;
   readonly navigation = NAVIGATION;
   readonly steps = STEP_COPY;
+  readonly workflowTabs = WORKFLOW_TABS;
   readonly guideTools = [
     { title: 'guideClipboard', body: 'guideClipboardText' },
     { title: 'guideTestData', body: 'guideTestDataText' },
@@ -369,15 +371,14 @@ export class AppComponent implements OnInit {
 
   /** Use preview defaults appropriate to each task; the user can always override visibility. */
   setStep(step: number): void {
-    this.listsOpen.set(false);
     this.previewFullWidth.set(false);
-    this.step.set(step);
+    this.step.set(step === 1 || step === 2 ? 0 : step);
     this.previewVisible.set(step === WORKFLOW.design || step === WORKFLOW.review);
   }
 
   toggleListWorkspace(): void {
     this.previewFullWidth.set(false);
-    this.listsOpen.update((open) => !open);
+    this.setStep(this.listsOpen() ? WORKFLOW.fields : WORKFLOW.lists);
   }
   /** Retain inactive translations while changing which languages require review. */
   setLanguages(choice: string): void {

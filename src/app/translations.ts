@@ -3,6 +3,92 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  actionVariant: ['Button-Stil', 'Button style'],
+  symbolPlus: ['Plus', 'Plus'],
+  symbolEye: ['Auge', 'Eye'],
+  symbolEdit: ['Stift', 'Pencil'],
+  symbolTrash: ['Papierkorb', 'Trash'],
+  symbolArrow: ['Pfeil', 'Arrow'],
+  projectSettings: ['Projekt & Gestaltung', 'Project & design'],
+  projectCopy: ['Sprachen und Formulartexte', 'Languages and form copy'],
+  projectDesign: ['Gestaltung und Layout', 'Appearance and layout'],
+  listBuilderHint: [
+    'Konfiguriere jede Listenansicht Schritt für Schritt. Die Vorschau zeigt die gespeicherte Konfiguration mit den Sitzungseinträgen dieses Formulars.',
+    'Configure each list view step by step. The preview uses the saved configuration and this form’s session records.',
+  ],
+  listInvalidSetting: [
+    'Ungültige Einstellung. Gespeichert bleibt der letzte gültige Wert. Prüfe Grenzen und Feldverweise.',
+    'Invalid setting. The last valid value is retained. Check bounds and field references.',
+  ],
+  listBasics: ['Grundlagen und Navigation', 'Basics and navigation'],
+  listBasicsHint: [
+    'Benenne die Ansicht in den Projektsprachen. Lege Seitengröße, Anfangssortierung und Zeilenauswahl fest.',
+    'Name the view in project languages. Set page size, initial sorting and row selection.',
+  ],
+  listAppearance: ['Tabellen-Design', 'Table design'],
+  listAppearanceHint: [
+    'Wähle ein Design und passe Zeilendichte, Hervorhebung und feste Kopfzeile an. Die Auswahl gilt auch für den HTML-Export.',
+    'Choose a design, density, hover highlight and sticky header. These settings also apply to HTML exports.',
+  ],
+  tablePlain: ['Klassisch', 'Classic'],
+  tableStriped: ['Gestreift', 'Striped'],
+  tableBordered: ['Mit Zellrahmen', 'Cell borders'],
+  tableMinimal: ['Reduziert', 'Minimal'],
+  tableDensity: ['Zeilendichte', 'Row density'],
+  densityComfortable: ['Komfortabel', 'Comfortable'],
+  densityCompact: ['Kompakt', 'Compact'],
+  tableHover: ['Zeile unter dem Zeiger hervorheben', 'Highlight hovered row'],
+  tableSticky: ['Kopfzeile beim Scrollen festhalten', 'Keep column headings visible'],
+  listColumnsHint: [
+    'Wähle Felder unten unter Filter & Felder. Hier ordnest du sichtbare Spalten und konfigurierst Überschrift, Breite, Ausrichtung und Sortierbarkeit. Eine leere Überschrift verwendet die Feldbeschriftung.',
+    'Choose fields under Filters & fields below. Reorder visible columns and configure headings, width, alignment and sorting here. An empty heading uses the field label.',
+  ],
+  listFiltersSection: ['Filter & Feldauswahl', 'Filters & fields'],
+  listFiltersHint: [
+    'Sichtbare Spalten, Suchfelder und auswählbare Filter sind getrennt. Feste Filter werden mit UND verknüpft und gelten vor der Suche. Sie sind keine Benutzerrechte.',
+    'Columns, search fields and reader filters are independent. Fixed filters combine with AND before search; they are not user permissions.',
+  ],
+  columnHeading: ['Spaltenüberschrift', 'Column heading'],
+  columnWidth: ['Breite in Pixeln · 80–600', 'Width in pixels · 80–600'],
+  columnAlign: ['Ausrichtung', 'Alignment'],
+  alignStart: ['Anfang', 'Start'],
+  alignCenter: ['Mitte', 'Center'],
+  alignEnd: ['Ende', 'End'],
+  columnSortable: ['Sortierung erlauben', 'Allow sorting'],
+  columnEarlier: ['Nach vorne', 'Move earlier'],
+  columnLater: ['Nach hinten', 'Move later'],
+  listActionsHint: [
+    'Aktiviere lokale CRUD-Aktionen und gestalte Beschriftung, Farbe und Symbol. Erstellen erscheint über der Liste; die übrigen Aktionen pro Zeile. Löschen gilt auch für die Auswahl. Die Reihenfolge betrifft die Zeilenaktionen.',
+    'Enable local CRUD actions and configure labels, color and icons. Create appears in the toolbar; other actions appear per row. Delete also applies to selection. Ordering controls row actions.',
+  ],
+  actionEnabled: ['Aktion aktiv', 'Enable action'],
+  actionLabel: ['Button-Beschriftung', 'Button label'],
+  actionDisplay: ['Darstellung', 'Display'],
+  displayText: ['Nur Text', 'Text only'],
+  displayIcon: ['Nur Symbol', 'Icon only'],
+  displayBoth: ['Symbol und Text', 'Icon and text'],
+  actionIcon: ['Symbol', 'Icon'],
+  actionCreateHint: [
+    'Öffnet einen leeren Eintrag mit der Formularvalidierung.',
+    'Opens an empty record using form validation.',
+  ],
+  actionViewHint: [
+    'Zeigt den vollständigen Eintrag ohne Bearbeitung. Spaltenauswahl ist kein Feldzugriffsschutz.',
+    'Shows the full record without editing. Column selection is not field access control.',
+  ],
+  actionEditHint: [
+    'Bearbeitet den Eintrag mit denselben Regeln wie das Formular.',
+    'Edits the record with the same rules as the form.',
+  ],
+  actionDeleteHint: [
+    'Fragt vor dem Löschen nach Bestätigung. Änderungen bleiben in dieser Sitzung.',
+    'Requires confirmation before deletion. Changes remain in this session.',
+  ],
+  listFixturesSection: ['Testdaten und Sitzung', 'Test data and session'],
+  listEmptyConfig: [
+    'Noch keine Liste. Lege eine Listenansicht für dieses Formular an.',
+    'No list yet. Add a list view for this form.',
+  ],
   exampleRolesHint: [
     'Die Beispiele bereiten fachliche Zuständigkeiten für spätere Rollen vor. Aktionsschalter gelten für alle; sie ersetzen keine Benutzerrechte.',
     'The examples prepare business responsibilities for future roles. Action switches apply to everyone; they do not provide user permissions.',
@@ -205,8 +291,8 @@ export const copy = {
     'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
   ],
   studioFormatNotice: [
-    'Studio-Format 2.1.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
-    'Studio format 2.1.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
+    'Studio-Format 2.2.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
+    'Studio format 2.2.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
   ],
   authoringWorkflow: [
     'Vom Texteditor zur geprüften Vorschau',

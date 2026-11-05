@@ -1,0 +1,485 @@
+<section class="collection-builder" [attr.aria-label]="t('listConfigure')">
+  <header class="collection-builder-heading">
+    <h2>{{ t('listsTitle') }}</h2>
+    <p>{{ t('listBuilderHint') }}</p>
+  </header>
+  <div class="collection-tools">
+    <label for="active-list">{{ t('activeList') }}</label
+    ><select id="active-list" [ngModel]="list()?.id ?? ''" (ngModelChange)="selected.set($event)">
+      @for (item of lists(); track item.id) {
+        <option [value]="item.id">{{ text(item.title) || item.id }}</option>
+      }
+    </select>
+    <button class="secondary-button" (click)="add()" [disabled]="lists().length >= 10">
+      {{ t('listAdd') }}
+    </button>
+    @if (list()) {
+      <button class="secondary-button" (click)="duplicate()" [disabled]="lists().length >= 10">
+        {{ t('listDuplicate') }}</button
+      ><button
+        class="secondary-button"
+        (click)="move(-1)"
+        [disabled]="lists()[0] === list()"
+        [attr.aria-label]="t('listMoveUp')"
+      >
+        ↑</button
+      ><button
+        class="secondary-button"
+        (click)="move(1)"
+        [disabled]="lists()[lists().length - 1] === list()"
+        [attr.aria-label]="t('listMoveDown')"
+      >
+        ↓</button
+      ><button class="secondary-button" (click)="removeList()">{{ t('listRemove') }}</button>
+    }
+  </div>
+  @if (store.mutationError()) {
+    <p class="collection-warning" role="alert">{{ t('listInvalidSetting') }}</p>
+  }
+  @if (list(); as view) {
+    <nav class="collection-editor-nav" [attr.aria-label]="t('listConfigure')">
+      @for (section of sections; track section) {
+        <button
+          class="secondary-button"
+          [attr.aria-current]="activeSection() === section ? 'location' : null"
+          [attr.aria-controls]="'list-config-' + section"
+          (click)="scroll(section)"
+        >
+          {{
+            t(
+              section === 'basics'
+                ? 'listBasics'
+                : section === 'appearance'
+                  ? 'listAppearance'
+                  : section === 'columns'
+                    ? 'listFields'
+                    : section === 'filters'
+                      ? 'listFiltersSection'
+                      : section === 'actions'
+                        ? 'listActions'
+                        : 'listFixturesSection'
+            )
+          }}
+        </button>
+      }
+      <button
+        class="secondary-button"
+        aria-controls="list-config-preview"
+        (click)="scroll('preview')"
+      >
+        {{ t('listPreview') }}
+      </button>
+    </nav>
+    <div class="collection-builder-grid">
+      <div class="collection-editor">
+        <fieldset id="list-config-basics" tabindex="-1" class="collection-config">
+          <legend>{{ t('listBasics') }}</legend>
+          <p>{{ t('listBasicsHint') }}</p>
+          <div class="collection-settings">
+            @for (lang of store.application().languages; track lang) {
+              <label
+                >{{ t('listTitle') }} · {{ lang.toUpperCase()
+                }}<input
+                  maxlength="256"
+                  [ngModel]="view.title[lang]"
+                  (ngModelChange)="title($event, lang)"
+              /></label>
+            }
+            <label
+              >{{ t('listPageSize')
+              }}<input
+                type="number"
+                min="1"
+                max="100"
+                [ngModel]="view.pageSize"
+                (ngModelChange)="patch({ pageSize: $event })"
+            /></label>
+            <label
+              >{{ t('listDefaultSort')
+              }}<select
+                [attr.aria-label]="t('listDefaultSort')"
+                [ngModel]="view.sort?.fieldId ?? ''"
+                (ngModelChange)="defaultSort($event)"
+              >
+                <option value="">—</option>
+                @for (id of view.columns; track id) {
+                  @if (column(id).sortable) {
+                    <option [value]="id">{{ text(field(id).label) }}</option>
+                  }
+                }
+              </select></label
+            >
+            @if (view.sort; as sort) {
+              <label
+                >{{ t('listDirection')
+                }}<select
+                  [attr.aria-label]="t('listDirection')"
+                  [ngModel]="sort.direction"
+                  (ngModelChange)="patch({ sort: { fieldId: sort.fieldId, direction: $event } })"
+                >
+                  <option value="asc">{{ t('listAscending') }}</option>
+                  <option value="desc">{{ t('listDescending') }}</option>
+                </select></label
+              >
+            }
+            <label
+              ><input
+                type="checkbox"
+                [ngModel]="view.selectable"
+                (ngModelChange)="patch({ selectable: $event })"
+              />{{ t('listSelectable') }}</label
+            >
+          </div>
+        </fieldset>
+        <fieldset id="list-config-appearance" tabindex="-1" class="collection-config">
+          <legend>{{ t('listAppearance') }}</legend>
+          <p>{{ t('listAppearanceHint') }}</p>
+          <div class="collection-designs">
+            @for (design of designs; track design) {
+              <button
+                type="button"
+                [attr.aria-pressed]="appearance().design === design"
+                [class]="'collection-design design-' + design"
+                (click)="look({ design })"
+              >
+                <span class="design-lines" aria-hidden="true"><i></i><i></i><i></i></span
+                >{{
+                  t(
+                    design === 'plain'
+                      ? 'tablePlain'
+                      : design === 'striped'
+                        ? 'tableStriped'
+                        : design === 'bordered'
+                          ? 'tableBordered'
+                          : 'tableMinimal'
+                  )
+                }}
+              </button>
+            }
+          </div>
+          <div class="collection-settings">
+            <label
+              >{{ t('tableDensity')
+              }}<select
+                [attr.aria-label]="t('tableDensity')"
+                [ngModel]="appearance().density"
+                (ngModelChange)="look({ density: $event })"
+              >
+                <option value="comfortable">{{ t('densityComfortable') }}</option>
+                <option value="compact">{{ t('densityCompact') }}</option>
+              </select></label
+            >
+            <label
+              ><input
+                type="checkbox"
+                [ngModel]="appearance().hover"
+                (ngModelChange)="look({ hover: $event })"
+              />{{ t('tableHover') }}</label
+            ><label
+              ><input
+                type="checkbox"
+                [ngModel]="appearance().stickyHeader"
+                (ngModelChange)="look({ stickyHeader: $event })"
+              />{{ t('tableSticky') }}</label
+            >
+          </div>
+        </fieldset>
+        <fieldset id="list-config-columns" tabindex="-1" class="collection-config">
+          <legend>{{ t('listFields') }}</legend>
+          <p>{{ t('listColumnsHint') }}</p>
+          @for (id of view.columns; track id; let index = $index) {
+            <div class="collection-column-editor">
+              <h3>{{ index + 1 }} · {{ text(field(id).label) }}</h3>
+              <div class="collection-tools">
+                <button
+                  class="secondary-button"
+                  [disabled]="index === 0"
+                  (click)="moveColumn(id, -1)"
+                  [attr.aria-label]="t('columnEarlier') + ': ' + text(field(id).label)"
+                >
+                  ↑</button
+                ><button
+                  class="secondary-button"
+                  [disabled]="index === view.columns.length - 1"
+                  (click)="moveColumn(id, 1)"
+                  [attr.aria-label]="t('columnLater') + ': ' + text(field(id).label)"
+                >
+                  ↓
+                </button>
+              </div>
+              <div class="collection-settings">
+                @for (lang of store.application().languages; track lang) {
+                  <label
+                    >{{ t('columnHeading') }} · {{ lang.toUpperCase()
+                    }}<input
+                      maxlength="256"
+                      [placeholder]="field(id).label[lang]"
+                      [ngModel]="column(id).label[lang]"
+                      (ngModelChange)="columnLabel(id, lang, $event)"
+                  /></label>
+                }
+                <label
+                  >{{ t('columnWidth')
+                  }}<input
+                    type="number"
+                    min="80"
+                    max="600"
+                    [ngModel]="column(id).width ?? null"
+                    (ngModelChange)="
+                      columnPatch(id, { width: $event === null ? undefined : $event })
+                    " /></label
+                ><label
+                  >{{ t('columnAlign')
+                  }}<select
+                    [attr.aria-label]="t('columnAlign')"
+                    [ngModel]="column(id).align"
+                    (ngModelChange)="columnPatch(id, { align: $event })"
+                  >
+                    <option value="start">{{ t('alignStart') }}</option>
+                    <option value="center">{{ t('alignCenter') }}</option>
+                    <option value="end">{{ t('alignEnd') }}</option>
+                  </select></label
+                ><label
+                  ><input
+                    type="checkbox"
+                    [ngModel]="column(id).sortable"
+                    (ngModelChange)="columnPatch(id, { sortable: $event })"
+                  />{{ t('columnSortable') }}</label
+                >
+              </div>
+            </div>
+          }
+        </fieldset>
+        <fieldset id="list-config-filters" tabindex="-1" class="collection-config">
+          <legend>{{ t('listFiltersSection') }}</legend>
+          <p>{{ t('listFiltersHint') }}</p>
+          <div class="collection-scroll">
+            <table class="collection-table">
+              <caption>
+                {{
+                  t('listFields')
+                }}
+              </caption>
+              <thead>
+                <tr>
+                  <th>{{ t('label') }}</th>
+                  <th>{{ t('listColumn') }}</th>
+                  <th>{{ t('listSearch') }}</th>
+                  <th>{{ t('listFilter') }}</th>
+                  <th>{{ t('listPreset') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (field of leaves(); track field.id) {
+                  <tr>
+                    <th scope="row">{{ text(field.label) || field.id }}</th>
+                    <td>
+                      <input
+                        type="checkbox"
+                        [attr.aria-label]="t('listColumn') + ': ' + text(field.label)"
+                        [ngModel]="view.columns.includes(field.id)"
+                        (ngModelChange)="toggle('columns', field.id, $event)"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        [attr.aria-label]="t('listSearch') + ': ' + text(field.label)"
+                        [ngModel]="view.searchFields.includes(field.id)"
+                        (ngModelChange)="toggle('searchFields', field.id, $event)"
+                      />
+                    </td>
+                    <td>
+                      @if (
+                        field.type === 'checkbox' ||
+                        field.type === 'select' ||
+                        field.type === 'radio'
+                      ) {
+                        <input
+                          type="checkbox"
+                          [attr.aria-label]="t('listFilter') + ': ' + text(field.label)"
+                          [ngModel]="view.filters.includes(field.id)"
+                          (ngModelChange)="toggle('filters', field.id, $event)"
+                        />
+                      }
+                    </td>
+                    <td>
+                      @if (
+                        field.type === 'checkbox' ||
+                        field.type === 'select' ||
+                        field.type === 'radio'
+                      ) {
+                        <select
+                          [attr.aria-label]="t('listPreset') + ': ' + text(field.label)"
+                          [ngModel]="presetValue(field.id)"
+                          (ngModelChange)="preset(field, $event)"
+                        >
+                          <option value="">{{ t('listAny') }}</option>
+                          @if (field.type === 'checkbox') {
+                            <option value="true">{{ t('recordTrue') }}</option>
+                            <option value="false">{{ t('recordFalse') }}</option>
+                          } @else {
+                            @for (option of field.options; track $index) {
+                              <option [value]="'' + $index">{{ text(option) }}</option>
+                            }
+                          }
+                        </select>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
+        <fieldset id="list-config-actions" tabindex="-1" class="collection-config">
+          <legend>{{ t('listActions') }}</legend>
+          <p>{{ t('listActionsHint') }}</p>
+          @for (kind of view.actionOrder ?? actions; track kind; let index = $index) {
+            <div class="collection-action-editor">
+              <h3>{{ buttonTitle(kind) }}</h3>
+              <div class="collection-tools">
+                <label
+                  ><input
+                    type="checkbox"
+                    [ngModel]="view.actions[kind]"
+                    (ngModelChange)="action(kind, $event)"
+                  />{{ t('actionEnabled') }}</label
+                ><button
+                  class="secondary-button"
+                  [disabled]="index === 0"
+                  (click)="moveAction(kind, -1)"
+                  [attr.aria-label]="t('columnEarlier') + ': ' + buttonTitle(kind)"
+                >
+                  ↑</button
+                ><button
+                  class="secondary-button"
+                  [disabled]="index === actions.length - 1"
+                  (click)="moveAction(kind, 1)"
+                  [attr.aria-label]="t('columnLater') + ': ' + buttonTitle(kind)"
+                >
+                  ↓
+                </button>
+              </div>
+              <div class="collection-settings">
+                @for (lang of store.application().languages; track lang) {
+                  <label
+                    >{{ t('actionLabel') }} · {{ lang.toUpperCase()
+                    }}<input
+                      maxlength="256"
+                      [ngModel]="button(kind).label[lang]"
+                      (ngModelChange)="buttonLabel(kind, lang, $event)"
+                  /></label>
+                }
+                <label
+                  >{{ t('actionVariant')
+                  }}<select
+                    [attr.aria-label]="t('actionVariant')"
+                    [ngModel]="button(kind).variant"
+                    (ngModelChange)="buttonPatch(kind, { variant: $event })"
+                  >
+                    @for (variant of variants; track variant) {
+                      <option [value]="variant">
+                        {{
+                          t(
+                            variant === 'primary'
+                              ? 'variant_primary'
+                              : variant === 'secondary'
+                                ? 'variant_secondary'
+                                : variant === 'danger'
+                                  ? 'variant_danger'
+                                  : 'variant_ghost'
+                          )
+                        }}
+                      </option>
+                    }
+                  </select></label
+                >
+                <label
+                  >{{ t('actionDisplay')
+                  }}<select
+                    [attr.aria-label]="t('actionDisplay')"
+                    [ngModel]="button(kind).display"
+                    (ngModelChange)="buttonPatch(kind, { display: $event })"
+                  >
+                    <option value="text">{{ t('displayText') }}</option>
+                    <option value="icon">{{ t('displayIcon') }}</option>
+                    <option value="both">{{ t('displayBoth') }}</option>
+                  </select></label
+                >
+                <label
+                  >{{ t('actionIcon')
+                  }}<select
+                    [attr.aria-label]="t('actionIcon')"
+                    [ngModel]="button(kind).icon"
+                    (ngModelChange)="buttonPatch(kind, { icon: $event })"
+                  >
+                    @for (icon of icons; track icon) {
+                      <option [value]="icon">
+                        {{
+                          t(
+                            icon === 'plus'
+                              ? 'symbolPlus'
+                              : icon === 'eye'
+                                ? 'symbolEye'
+                                : icon === 'edit'
+                                  ? 'symbolEdit'
+                                  : icon === 'trash'
+                                    ? 'symbolTrash'
+                                    : 'symbolArrow'
+                          )
+                        }}
+                      </option>
+                    }
+                  </select></label
+                >
+              </div>
+              <p class="fine-print">
+                {{
+                  t(
+                    kind === 'create'
+                      ? 'actionCreateHint'
+                      : kind === 'view'
+                        ? 'actionViewHint'
+                        : kind === 'edit'
+                          ? 'actionEditHint'
+                          : 'actionDeleteHint'
+                  )
+                }}
+              </p>
+            </div>
+          }
+        </fieldset>
+        <fieldset id="list-config-fixtures" tabindex="-1" class="collection-config">
+          <legend>{{ t('listFixturesSection') }}</legend>
+          <p>{{ t('listsHint') }}</p>
+          <div class="collection-settings">
+            <label
+              >{{ t('listCount')
+              }}<input
+                type="number"
+                min="1"
+                max="500"
+                [ngModel]="data.form().entries?.count ?? 25"
+                (ngModelChange)="entries('count', $event)" /></label
+            ><label
+              >{{ t('dataSeed')
+              }}<input
+                type="number"
+                min="0"
+                max="999999"
+                [ngModel]="data.form().entries?.seed ?? 1"
+                (ngModelChange)="entries('seed', $event)"
+            /></label>
+          </div>
+        </fieldset>
+      </div>
+      <aside id="list-config-preview" tabindex="-1" class="collection-live-preview">
+        <h3>{{ t('listPreview') }}</h3>
+        <app-collection-workspace [locale]="locale()" [previewOnly]="true" [listId]="view.id" />
+      </aside>
+    </div>
+  } @else {
+    <p>{{ t('listEmptyConfig') }}</p>
+  }
+</section>

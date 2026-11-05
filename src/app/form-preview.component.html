@@ -1,4 +1,4 @@
-@if (!recordMode()) {
+@if (!recordMode() && !applicationMode()) {
   <div class="preview-toolbar">
     <span class="tiny-label"
       ><span class="live-dot" aria-hidden="true"></span>{{ t('preview') }}</span
@@ -31,7 +31,12 @@
     </div>
   </div>
 }
-<div class="test-data-toolbar" role="group" [attr.aria-label]="t('testData')">
+<div
+  [hidden]="applicationMode()"
+  class="test-data-toolbar"
+  role="group"
+  [attr.aria-label]="t('testData')"
+>
   <button
     type="button"
     class="secondary-button"
@@ -96,8 +101,12 @@
     }
   </details>
 }
-<div class="browser-frame" [class.mobile-frame]="mobile()">
-  <div class="browser-bar">
+<div
+  class="browser-frame"
+  [class.application-form]="applicationMode()"
+  [class.mobile-frame]="mobile()"
+>
+  <div class="browser-bar" [hidden]="applicationMode()">
     <span aria-hidden="true">● ● ●</span><span>preview.mockforge.local</span
     ><span aria-hidden="true">↗</span>
   </div>
@@ -105,8 +114,10 @@
     [class]="'rendered-form theme-' + project().theme"
     [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
   >
-    <span class="preview-brand">{{ project().name.split(' · ')[0] }}</span>
-    <h3>{{ text(project().title) }}</h3>
+    <span class="preview-brand" [hidden]="applicationMode()">{{
+      project().name.split(' · ')[0]
+    }}</span>
+    <h3 [hidden]="applicationMode()">{{ text(project().title) }}</h3>
     <p class="preview-intro">{{ text(project().description) }}</p>
     <form
       #previewForm
@@ -163,7 +174,7 @@
     }
   </div>
 </div>
-<p class="preview-caption">{{ t('previewHint') }}</p>
+<p class="preview-caption" [hidden]="applicationMode()">{{ t('previewHint') }}</p>
 
 <dialog #testDataDialog class="test-data-dialog" aria-labelledby="test-data-title">
   <h3 id="test-data-title">{{ t('testDataSettings') }}</h3>
