@@ -1,3 +1,4 @@
+import { PreviewExportService } from './preview-export.service';
 import {
   Component,
   computed,
@@ -87,6 +88,7 @@ import {
     ApplicationPreviewComponent,
   ],
   providers: [
+    PreviewExportService,
     ProjectStore,
     CollectionSessionRegistry,
     CollectionSessionStore,
@@ -99,6 +101,7 @@ import {
 export class AppComponent implements OnInit {
   @ViewChild('replaceDialog', { static: true }) replaceDialog!: ElementRef<HTMLDialogElement>;
   @ViewChild('formDialog', { static: true }) formDialog!: ElementRef<HTMLDialogElement>;
+  readonly previewExport = inject(PreviewExportService);
   readonly store = inject(ProjectStore);
   readonly feedback = inject(FeedbackService);
   readonly project = this.store.project;

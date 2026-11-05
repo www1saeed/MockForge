@@ -2,6 +2,7 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  interfaceLanguage: 'زبان رابط کاربری',
   standaloneExport: 'دریافت پیش‌نمایش HTML',
   standaloneHint: 'نمونهٔ تعاملی. تغییرات فقط در این برگهٔ باز باقی می‌مانند.',
   standaloneRecovery: 'صفحه‌ای از منو انتخاب کنید یا آغاز برنامه را باز کنید.',

@@ -3,6 +3,7 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  interfaceLanguage: ['Sprache der Oberfläche', 'Interface language'],
   standaloneExport: ['HTML-Vorschau herunterladen', 'Download HTML preview'],
   standaloneHint: [
     'Interaktiver Prototyp. Änderungen bleiben nur in diesem geöffneten Tab.',

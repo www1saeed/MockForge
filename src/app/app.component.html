@@ -826,7 +826,12 @@
         </section>
       }
       @if (view() === 'application') {
-        <app-application-preview [locale]="locale()" [route]="applicationRoute()" />
+        <app-application-preview
+          [locale]="locale()"
+          [route]="applicationRoute()"
+          [exporting]="previewExport.busy()"
+          (exportRequested)="previewExport.download(locale())"
+        />
       }
       @if (view() === 'examples') {
         <section id="workspace" class="content-page">

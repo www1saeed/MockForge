@@ -41,10 +41,11 @@ function workerFactory(): () => Worker | null {
   template: ` <header class="standalone-header">
       <strong>MockForge</strong>
       <span>{{ hint() }}</span>
-      <nav aria-label="UI language">
+      <nav [attr.aria-label]="languageLabel()">
         @for (language of languages; track language) {
           <button
             type="button"
+            class="secondary-button"
             [attr.aria-pressed]="locale() === language"
             (click)="setLocale(language)"
           >
@@ -63,6 +64,7 @@ export class StandalonePreviewComponent {
   readonly languages = LOCALES;
   readonly locale = signal<Locale>('en');
   readonly route = signal<ApplicationRoute>({ kind: 'home' });
+  readonly languageLabel = (): string => translate('interfaceLanguage', this.locale());
   readonly hint = (): string => translate('standaloneHint', this.locale());
   constructor() {
     const value = JSON.parse(
