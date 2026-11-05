@@ -15,7 +15,7 @@ LocalStorage writes are synchronous after each edit. A form specification is sma
 ## Application foundation (November 5, 2026)
 
 The application-mockup expansion is being implemented in small commits on
-`feature/crud-list-previews` after the merged multi-form foundation. Its behavioral reference is the local
+`feature/application-preview-navigation` after the merged multi-form and CRUD increments. Its behavioral reference is the local
 original edition at `0b9b47e` (its changelog calls 0.2.0 a release candidate).
 Original source, private packages and assets are not imported into Studio.
 
@@ -88,9 +88,9 @@ the present tags do not imply those capabilities.
    columns, search/filter/sort, paging, selection and confirmed actions. Multiple
    lists share records and can apply preset filters. Preserve test-data and
    pattern-check budgets; regeneration must not silently discard edited records.
-3. Add application preview navigation and stable form/list links, followed by an
-   editor-free standalone preview. Separate authoring selection from preview
-   navigation; support deployment prefixes and DE/EN/FA direction.
+3. **Implemented:** in-app application navigation with stable form/list hash links,
+   browser history, separate authoring/preview cursors, shared records, hidden-menu
+   direct links and DE/EN/FA direction. Standalone application export remains later.
 4. Add optional simulated roles, a central inherited-access resolver, rights
    editors and a matrix. Hidden required fields must not validate; read-only
    values survive editing; action handlers recheck effective rights. Sign-in
@@ -214,4 +214,8 @@ Manual pattern dispatch is now serialized centrally in FormPreviewComponent for 
 
 ## Collection state boundary
 
-`CollectionSessionStore` is provided beside `ProjectStore`, with its own bounded pattern checker. It owns form-keyed records and immutable revisions, never LocalStorage. Generation stages a complete existing browser batch before installing it. Form/project epochs, revisions and answer-rule fingerprints reject obsolete saves and confirmations. View configuration lives on `ApplicationForm`; record values use shared native read/write helpers. `CollectionWorkspaceComponent` owns query/paging/selection and confirmed actions. `FormPreviewComponent` accepts record mode, restores physical group rows and emits validated native values; ordinary simulation behavior remains unchanged. Action switches express mockup behavior and do not provide authorization. See [collections](COLLECTIONS.md).
+`CollectionSessionRegistry` is provided beside `ProjectStore` and owns form-keyed records and immutable revisions, never LocalStorage. Each `CollectionSessionStore` facade has its own cursor, owner identity, bounded pattern checker, cancellation and progress. The editor uses `COLLECTION_VIEW` with the authoring selection; `ApplicationPreviewSession` supplies a separate navigation cursor. Both facades share the registry and enforce the same aggregate limits. Generation stages a complete existing browser batch before installing it. Form/project epochs, revisions and answer-rule fingerprints reject obsolete saves and confirmations. View configuration lives on `ApplicationForm`; record values use shared native read/write helpers. `CollectionWorkspaceComponent` owns query/paging/selection and confirmed actions. `FormPreviewComponent` accepts record mode, restores physical group rows and emits validated native values; ordinary simulation behavior remains unchanged. Action switches express mockup behavior and do not provide authorization. See [collections](COLLECTIONS.md).
+
+## Application routing
+
+`application-navigation.ts` parses strict hash-only form/list targets and builds ordered menu entries. The application root observes hashes without changing editor selection. `ApplicationPreviewComponent` resolves targets against the current specification and remounts response owners on route/project epochs. Missing routes show recovery, never an unrelated form. Route changes focus the screen heading. `CollectionWorkspaceComponent` reuses query/CRUD behavior through its injected view facade, hides authoring configuration in preview-only mode and rejects configuration mutation there. Record dialogs use the facade projection, not the authoring store projection. See [application behavior](APPLICATION_PREVIEW.md).

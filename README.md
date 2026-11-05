@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 231 passing automated tests: 174 unit/component tests and 57 end-to-end tests.** Verified on November 5, 2026, with **97.62% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 242 passing automated tests: 180 unit/component tests and 62 end-to-end tests.** Verified on November 5, 2026, with **97.71% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -16,7 +16,7 @@ MockForge Studio helps product owners and developers agree on a form before prod
 
 ## CRUD list previews
 
-Use **Lists and entries** beside the form selector to configure several table views per form. Share session-only records across views, search/filter/sort/page, select matching rows and create/view/edit/delete with native form validation. Regeneration requires confirmation and replaces records only on complete success. Configuration persists; record values never do. See [the walkthrough and limits](docs/COLLECTIONS.md). Roles and application navigation follow in later increments.
+Use **Lists and entries** beside the form selector to configure several table views per form. Share session-only records across views, search/filter/sort/page, select matching rows and create/view/edit/delete with native form validation. Regeneration requires confirmation and replaces records only on complete success. Configuration persists; record values never do. See [the walkthrough and limits](docs/COLLECTIONS.md). Use **Application preview** to navigate forms and lists with direct links and browser history while retaining editor selection. See [navigation and session lifetime](docs/APPLICATION_PREVIEW.md). Roles and standalone application export follow later.
 
 ## Why agree before implementation?
 

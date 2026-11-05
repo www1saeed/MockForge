@@ -68,3 +68,7 @@ npm run authoring:check
 ```
 
 CI runs the check, and unit/browser tests validate the exact examples, kit content and import workflow. These checks cover the supplied reference material, not arbitrary responses from external chatbots. No external model test or model-specific prompt guarantee is claimed.
+
+## Application menu
+
+Use optional form `menu: false` to hide only a form menu entry, retaining its lists and direct links. Application routes are transient and are not JSON properties. Verify the [application preview](APPLICATION_PREVIEW.md) after importing multi-screen drafts. Roles, wizard navigation and standalone app export remain unsupported.

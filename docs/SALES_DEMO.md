@@ -91,3 +91,7 @@ Add a named second form, copy a field into it, switch back to show independent d
 ## Optional CRUD walkthrough
 
 Open **Lists and entries** for the selected form. Add a list, generate test records, and configure another view with a fixed filter. Create/edit one record and show it changing across both views. Select a page before selecting all matching records, then demonstrate confirmed deletion. Explain that list configuration is exported while records remain in the session; reload clears them. Use [the exact list behavior](COLLECTIONS.md) when discussing limits, roles and production integration.
+
+## Connected-screen walkthrough
+
+Open **Application preview** and move between two forms and their lists. Change a record in a list and return to the editor to show the shared session. Use browser Back/Forward and a direct hash link, then explain that sharing the URL does not transfer a locally stored specification. Menu hiding is presentation, not authorization. Refer to [navigation boundaries](APPLICATION_PREVIEW.md) before promising production behavior.

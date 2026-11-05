@@ -96,3 +96,7 @@ Name the forms in the application and review each with the form selector. Brief,
 ## Agree list behavior when the prototype needs CRUD
 
 Use [list previews](COLLECTIONS.md) to agree columns, search, fixed/reader filters, sorting, page size, selection and visible actions. Check create/edit validation and repeated values. Record production persistence, permissions and API expectations separately; session records and action switches do not implement them. Review covers every configured list, including titles and columns, before exporting the full project.
+
+## Agree connected-screen navigation
+
+Use [Application preview](APPLICATION_PREVIEW.md) to agree form/list menu order, localized titles, hidden form links and recovery from missing screens. Confirm which unsaved answers may be discarded on navigation and distinguish shared session records from future production persistence. Record roles, authentication, wizard steps and standalone delivery separately.

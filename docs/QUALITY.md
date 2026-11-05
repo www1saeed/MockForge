@@ -1,6 +1,34 @@
 # Code quality and test evidence
 
-## CRUD lists checkpoint — November 5, 2026
+## Application navigation checkpoint — November 5, 2026
+
+**242 Studio tests pass: 180 Jest unit/component tests in 22 suites and 62
+Chromium journeys.** Ten E2E-selection Node tests pass separately. Coverage is
+95.91% statements, 90.65% branches, 96.88% functions and 97.71% lines against
+unchanged thresholds. Formatting, lint, spec/E2E types, 469 translations,
+authoring-kit synchronization, local documentation links and build pass.
+
+Five new navigation journeys cover independent editor/preview selection and drafts,
+shared CRUD for identical local IDs, hash reload/history, menu hiding/direct links,
+missing/empty routes, worker and generation cancellation, obsolete dialogs and
+Persian mobile Axe/keyboard focus. Component/domain cases cover route validation,
+shared revisions/owner guards, cursor-specific cancellation and menu persistence.
+Full browser evidence: `reports/application-navigation-final-e2e.json` plus the
+normal HTML/JUnit/JSON reports. The run has no retries, skips or flaky results.
+CI requires its own run after eventual push.
+
+The initial bundle is **927.43 kB**, above the existing 700 kB warning and below
+the unchanged 1 MB failure limit. No dependencies, schema or resource budgets were
+increased. Studio JSON stays 2.1.0; routing state and records remain transient.
+The actual fifteen-slide HTML deck and narration include application navigation;
+changed desktop/mobile content was visually inspected. The separate ignored PDF
+is an older export and must be regenerated before sharing.
+
+See [application behavior](APPLICATION_PREVIEW.md) for exact boundaries. This is
+in-app navigation; standalone application export, roles and wizard pages remain
+future increments. No original-edition tests or functional parity are claimed.
+
+## Previous CRUD lists checkpoint — November 5, 2026
 
 **231 Studio tests pass: 174 Jest unit/component tests in 20 suites and 57
 Chromium journeys.** Ten Node E2E-selection checks pass separately. Coverage is
