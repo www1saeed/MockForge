@@ -4,6 +4,7 @@
  * Each module owns its responsive rules; avoid appending global override layers.
  */
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import './styles/fonts.css';
 @import './styles/foundation.css';
 @import './styles/shell.css';
 @import './styles/workspace.css';

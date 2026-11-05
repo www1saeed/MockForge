@@ -2,7 +2,17 @@
   <div class="application-intro">
     <h1>{{ store.application().name || t('application') }}</h1>
     <p>{{ t('applicationHint') }}</p>
-    <a class="secondary-button" [href]="documentUrl + '#workspace'">{{ t('applicationBack') }}</a>
+    @if (!standalone()) {
+      <a class="secondary-button" [href]="documentUrl + '#workspace'">{{ t('applicationBack') }}</a>
+      <button
+        class="secondary-button"
+        type="button"
+        [disabled]="exporting()"
+        (click)="exportRequested.emit()"
+      >
+        {{ t('standaloneExport') }}
+      </button>
+    }
   </div>
   <div
     class="application-frame"
@@ -44,7 +54,7 @@
       <h2 #screenTitle tabindex="-1">
         {{ t(route().kind === 'home' ? 'applicationEmpty' : 'applicationMissing') }}
       </h2>
-      <p>{{ t('applicationRecovery') }}</p>
+      <p>{{ t(standalone() ? 'standaloneRecovery' : 'applicationRecovery') }}</p>
       <a class="secondary-button" [href]="documentUrl + '#application'">{{
         t('applicationHome')
       }}</a>

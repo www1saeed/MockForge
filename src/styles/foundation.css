@@ -1,21 +1,5 @@
 /* Design tokens, native-control defaults, accessible focus, reusable actions and the replacement modal. */
 
-@font-face {
-  font-family: 'IRANSans';
-  src: url('../../fonts/iransans/IRANSans.woff2') format('woff2');
-  font-weight: 400 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IRANSans';
-  src: url('../../fonts/iransans/IRANSans-Black.woff2') format('woff2');
-  font-weight: 800 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --ink: #172b39;
   --muted: #546674;

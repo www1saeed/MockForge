@@ -16,22 +16,71 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": ["bootstrap/js/dist/tooltip"],
-            "assets": [{ "glob": "**/*", "input": "src/assets", "output": "assets" }],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "preview-runtime.json",
+                "input": "dist/standalone-package",
+                "output": "assets/standalone"
+              }
+            ],
             "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {
               "outputHashing": "all",
-              "budgets": [{ "type": "initial", "maximumWarning": "700kb", "maximumError": "1mb" }]
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "700kb",
+                  "maximumError": "1mb"
+                }
+              ]
             },
-            "development": { "optimization": false, "sourceMap": true, "extractLicenses": false }
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false
+            }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "configurations": { "development": { "buildTarget": "studio:build:development" } },
+          "configurations": {
+            "development": {
+              "buildTarget": "studio:build:development"
+            }
+          },
           "defaultConfiguration": "development"
+        }
+      }
+    },
+    "standalone-preview": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/standalone-preview",
+            "index": "src/standalone/index.html",
+            "browser": "src/standalone/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.preview.json",
+            "allowedCommonJsDependencies": ["bootstrap/js/dist/tooltip"],
+            "styles": ["src/standalone/styles.css"],
+            "assets": [],
+            "optimization": true,
+            "outputHashing": "none",
+            "extractLicenses": true,
+            "sourceMap": false
+          }
         }
       }
     }

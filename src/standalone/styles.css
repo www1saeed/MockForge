@@ -1,0 +1,41 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '../styles/foundation.css';
+@import '../styles/preview.css';
+@import '../styles/feedback.css';
+@import '../styles/repeat-groups.css';
+@import '../styles/collections.css';
+@import '../styles/application-preview.css';
+.standalone-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.standalone-header nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+.standalone-header button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.standalone-header button[aria-pressed='true'] {
+  font-weight: bold;
+  outline: 2px solid var(--accent);
+}
+main {
+  max-width: 1440px;
+  margin: auto;
+  padding: 1rem;
+}
+.standalone-licenses {
+  margin: 1rem;
+}
+.standalone-licenses pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

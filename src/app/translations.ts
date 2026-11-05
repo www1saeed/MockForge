@@ -3,6 +3,23 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  standaloneExport: ['HTML-Vorschau herunterladen', 'Download HTML preview'],
+  standaloneHint: [
+    'Interaktiver Prototyp. Änderungen bleiben nur in diesem geöffneten Tab.',
+    'Interactive prototype. Changes remain only in this open tab.',
+  ],
+  standaloneRecovery: [
+    'Wähle eine Seite im Menü oder öffne den Anwendungsstart.',
+    'Choose a screen from the menu or open application home.',
+  ],
+  standaloneError: [
+    'Die HTML-Vorschau konnte nicht erstellt werden. Versuche es erneut.',
+    'Could not create the HTML preview. Try again.',
+  ],
+  standaloneStale: [
+    'Das Projekt wurde geändert. Starte den Export erneut.',
+    'The project changed. Start the export again.',
+  ],
   application: ['Anwendungsvorschau', 'Application preview'],
   applicationHint: [
     'Navigiere zwischen Formularen und Listen. Einträge bleiben in dieser Sitzung; Formularantworten werden beim Seitenwechsel verworfen.',

@@ -2,6 +2,11 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  standaloneExport: 'دریافت پیش‌نمایش HTML',
+  standaloneHint: 'نمونهٔ تعاملی. تغییرات فقط در این برگهٔ باز باقی می‌مانند.',
+  standaloneRecovery: 'صفحه‌ای از منو انتخاب کنید یا آغاز برنامه را باز کنید.',
+  standaloneError: 'ساخت پیش‌نمایش HTML ممکن نشد. دوباره تلاش کنید.',
+  standaloneStale: 'پروژه تغییر کرده است. خروجی را دوباره بسازید.',
   application: 'پیش‌نمایش برنامه',
   applicationHint:
     'بین فرم‌ها و فهرست‌ها جابه‌جا شوید. رکوردها در این نشست می‌مانند؛ پاسخ‌های ذخیره‌نشدهٔ فرم هنگام تغییر صفحه پاک می‌شوند.',
