@@ -36,6 +36,21 @@ A review can be recorded only when the brief contains a name, owner, audience, g
 
 Form mockups have no network submission, code generation, backend, CRM, payments, refunds, cloud collaboration or multiple concurrent projects. The tool documents intended behavior as notes and decisions. Production implementation requires separate requirements for APIs, security, accessibility, error handling and operational behavior.
 
+## Planned application-mockup expansion
+
+The November 5, 2026 expansion adds multiple forms, CRUD lists, application
+navigation and simulated roles in separate increments. Its staged domain
+foundation is implemented; these features are **not yet active in the editor**.
+The current import/export and persistence contract remains Studio 1.3.0.
+See the [architecture and implementation sequence](docs/ARCHITECTURE.md#staged-application-foundation-november-5-2026).
+
+The first increment defines a separate Studio 2.0.0 application draft, validates
+project-wide bounds, migrates legacy Studio forms without retaining an old
+acknowledgement, and provides immutable form operations. Runtime activation must
+integrate all-form review, handoff, import/export and persistence together; no
+selected-form export may discard the rest of a project. DE/EN/FA, RTL, existing
+worker limits and recoverable storage failures remain requirements throughout.
+
 ## Nonfunctional requirements
 
 - Follow the documented Clean Code conventions and pass every configured quality gate. Maintain behavior-focused unit/component and E2E regression coverage, with minimum Jest coverage of 80% statements, 75% branches, 80% functions and 80% lines. See the [quality report](docs/QUALITY.md) for measured results and analysis scope.

@@ -30,6 +30,24 @@ The original edition also passed 337 targeted unit/component tests and four Chro
 
 Coverage percentages come from Jest's instrumented application source, not E2E coverage. Browser tests include desktop/mobile layout, Persian RTL direction and font loading, the presentation, repeat groups, tooltip behavior, full-width response retention, import/export, persistence, native validation, confirmation and accessibility scans. The total counts executed tests, not assertions or accessibility rules. The suite exceeds every configured coverage threshold and provides extensive regression protection for the implemented scope.
 
+## Incremental foundation verification — November 5, 2026
+
+The staged application-domain increment passes **143 Jest unit/component tests
+in 16 suites**, including 12 new cases for legacy migration, multi-form JSON
+round-trip, aggregate budgets, owned snapshots, immutable form operations and
+review invalidation. Coverage is 97.04% statements, 92.26% branches, 97.80%
+functions and 98.38% lines; both new domain modules reach 100% in these metrics.
+Coverage establishes exercised paths, not complete behavioral correctness.
+
+Formatting, ESLint, spec TypeScript, authoring-kit synchronization, all 381
+translations and production build pass. The bundle remains 834.58 kB, with the
+same 700 kB warning and 1 MB failure budgets. The application-domain APIs are
+staged; no editor/template/styles, active storage or file-transfer behavior
+changed. Browser tests were not rerun for this increment. The 44 Chromium results
+and the combined 175-test figures above remain the dated October 25 checkpoint;
+they are not a newly executed combined result. Runtime activation requires new
+multi-form browser journeys as described in the architecture.
+
 ## Clean Code conventions
 
 - **Explicit types:** TypeScript strict mode, explicit function return types, no explicit `any`, no implicit returns and no switch fallthrough. Angular templates and injection parameters are checked strictly.

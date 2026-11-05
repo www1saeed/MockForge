@@ -12,6 +12,80 @@ State changes go through `update`, which clears every review checkbox and acknow
 
 LocalStorage writes are synchronous after each edit. A form specification is small and must survive an immediate reload. Failures keep the in-memory draft and expose an export warning. Invalid restores do not overwrite the stored bytes automatically.
 
+## Staged application foundation (November 5, 2026)
+
+The application-mockup expansion is being implemented in small commits on
+`codex/application-mockup-foundation`. Its behavioral reference is the local
+original edition at `0b9b47e` (its changelog calls 0.2.0 a release candidate).
+Original source, private packages and assets are not imported into Studio.
+
+`FormContent` separates the reusable form definition from the unchanged legacy
+`Project`. `application-project.ts` defines a **staged**, independently versioned
+Studio 2.0.0 contract: mandatory `format: "mockforge-studio"`, project-wide
+brief/theme/languages/review and a nonempty `forms` array. Each form has a stable
+ID, title, description, legacy submit copy, column layout, fields and buttons,
+plus an optional menu flag. Field/button IDs are scoped to their form; form IDs
+are unique across the project. The discriminator distinguishes Studio from the
+incompatible original edition's 2.x files. This draft format is not frozen.
+
+`parseApplicationProject` validates Studio 2.0.0 snapshots or chains the existing
+Studio 1.0–1.3 parser into a one-form migration. Migration preserves all supported
+brief/form properties and all stored translations, resets review checks and the
+acknowledgement timestamp, retains the reviewer and never mutates the source or
+writes storage. Parsing returns an owned JSON snapshot. Serialization includes
+every form. Per-form validation reuses Studio 1.3 rules. Aggregate limits are
+20 forms, 500 field definitions including group children and 100 buttons, in
+addition to existing per-form limits. These are configuration limits, not a
+raised worker, batch or total-memory allowance. Lists, roles, form access and
+flows have no implemented contract yet and are rejected at their future
+container locations.
+
+`application-forms.ts` supplies pure immutable add, duplicate, update, move and
+remove operations. They validate the complete candidate before committing;
+failure returns `null` without changing the source. Specification changes clear
+project-wide review; an unchanged update preserves it. Duplicated forms keep
+their form-local field/button IDs and receive a new form ID. Nested data is
+detached from caller-owned input. Deleting the last form is forbidden. Active
+selection, responses, pending workers and confirmation dialogs belong to the
+future session/UI integration.
+
+**Activation boundary:** the live `ProjectStore`, editor, JSON import/export,
+LocalStorage key, Markdown handoff, examples and authoring kit still use Studio
+1.3.0. The new APIs are exported from `project.ts` but are not wired into the UI.
+Never export or persist a selected-form projection as the whole application:
+that would drop other forms. Activate the new runtime only once editor selection,
+replacement, review readiness, whole-project handoff and all-form serialization
+are integrated and verified together. Failed migrations must leave stored bytes
+available for recovery.
+
+### Next implementation increments
+
+1. Integrate the application store and form selector; add/duplicate/move/delete
+   UI with confirmation, form-scoped field clipboard and stale-worker
+   cancellation. Check review readiness across all forms. Switch persistence,
+   import/export, handoff, guides and examples together, with browser coverage
+   for legacy restore, two-form editing, round-trip and asynchronous switching.
+2. Add one shared session-only record set per form, configurable CRUD lists,
+   columns, search/filter/sort, paging, selection and confirmed actions. Multiple
+   lists share records and can apply preset filters. Preserve test-data and
+   pattern-check budgets; regeneration must not silently discard edited records.
+3. Add application preview navigation and stable form/list links, followed by an
+   editor-free standalone preview. Separate authoring selection from preview
+   navigation; support deployment prefixes and DE/EN/FA direction.
+4. Add optional simulated roles, a central inherited-access resolver, rights
+   editors and a matrix. Hidden required fields must not validate; read-only
+   values survive editing; action handlers recheck effective rights. Sign-in
+   selects a mock role and provides no real authentication or authorization.
+5. Add real multi-page forms, localized messages and closing pages, followed by
+   group columns and lists over group items.
+6. Extend review and handoff, then deterministic acceptance criteria and external
+   chatbot requirements prompts. Keep translations, authoring kit, documentation,
+   examples and presentation aligned with activated capabilities.
+
+A local library of projects is a separate increment after multi-form editing.
+This remains a browser mockup; backend integration, production authentication,
+inter-form data relations and code generation are outside this expansion.
+
 ## Import and rendering
 
 The file reader rejects files over 1 MB. `validateProject` checks schema version, one or two selected languages, nine leaf types plus groups, bounded constraints, localized strings, options, unique safe field/button ids, button variants/actions/class tokens and the review record. Group structure is checked before flattening, so untrusted nested data is never recursively traversed. `parseProject` upgrades this Studio's 1.0.0 and 1.1.0 formats through their existing compatibility path, then recursively adds empty Persian values to every localized property. Schema 1.2.0 supports the same Persian migration, including group children. Every migration validates the result and clears acknowledgement. Other MockForge editions remain incompatible. A valid file becomes a pending replacement until the native modal returns a choice.
