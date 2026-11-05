@@ -1,16 +1,16 @@
-MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.2.0
+MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.3.0
 
 Attach this UTF-8 text file to a chatbot together with your brief or current Studio export.
 This file is reference material, not an importable JSON file. The three complete examples below
 are importable separately. The English TypeScript declarations describe JSON keys and types;
 output JSON, not TypeScript. Other MockForge editions use a different contract.
-New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.2.0".
+New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.3.0".
 Project below describes the legacy 1.3.0 single-form import/renderer contract only.
 
 AUTHORING RULES
 1. Read the attached studio-ai-authoring-kit.txt and the current user brief. If the attachment or URL cannot be read, ask for its text rather than pretending to have read it.
 2. Clarify essential ambiguities before producing the final file. Use synthetic examples. Record production requirements and agreed assumptions in scope, decisions, questions or field/button note.
-3. Output one complete MockForge Studio ApplicationProject with format "mockforge-studio", schemaVersion "2.2.0" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.
+3. Output one complete MockForge Studio ApplicationProject with format "mockforge-studio", schemaVersion "2.3.0" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.
 4. Every localized Text has de, en and fa string properties, including empty inactive translations. Activate one or two unique languages from de/en/fa. Provide useful copy in every selected language.
 5. Use 1-20 forms with unique stable form IDs. Each form has id, title, description, submit, columns, fields and buttons. Field IDs are unique within their form including group children; button IDs are unique within their form. IDs match ^[a-z][a-z0-9_-]{0,63}$. Preserve existing IDs. Copies within a form need fresh field IDs; duplicating a whole form keeps local IDs and needs a new form ID. Optional form menu defaults to true. false hides the form menu link but not its lists or direct links; this is presentation, not authorization. Application navigation uses stable form/list hash links without storing routes or answers in JSON.
 6. Per form: at most 100 field definitions including group children, 20 buttons and 100 choices per field. Per project: at most 500 definitions and 100 buttons in total. Keep arrays even when empty. select/radio need non-empty Text options; do not invent separate value keys.
@@ -18,7 +18,7 @@ AUTHORING RULES
 8. Keep every field property: id, type, label, placeholder, help, required, options, note, minLength, maxLength, tooltip, pattern and patternMessage. Optional tooltipPlacement is title/icon/info. Lengths are integers 0?10000; maxLength 0 means no maximum. Keep minLength <= nonzero maxLength.
 9. Patterns are whole-value Unicode-v expressions without slash delimiters, at most 500 characters; double backslashes in JSON. Only text/email/url/textarea use patterns. No configured numeric min/max rules, conditional visibility or nested groups exist.
 10. Each form button has id, label, variant, action, cssClass, note. Variants: primary/secondary/ghost/danger. Actions: submit/validate/save/reset/cancel/delete/next/back/none. cssClass contains existing class tokens matching [a-zA-Z0-9_\s-]{0,200}. Each form keeps legacy submit equal to its first submit button label, or empty Text if none.
-11. Project theme is bootstrap/material/carbon/fluent; form columns is 1 or 2. Forms remain single-page. Each form optionally has lists and entries preferences. Lists reference only their own root leaf fields, with at most 10 lists per form, 50 per project, 20 columns/search fields/filters/presets per list. Choice presets use option-index strings; checkbox presets use booleans. entries.count is 1-500, entries.seed is an integer 0-999999. Actual generated or edited records are never included in JSON. No roles, wizard flows, group columns or relations between forms are implemented.
+11. Project theme is bootstrap/material/carbon/fluent; form columns is 1 or 2. Forms remain single-page. Each form optionally has lists and entries preferences. Columns/search reference own roots, groups or groupId/childId paths; filters/presets use root choice fields, with at most 10 lists per form, 50 per project, 20 columns/search fields/filters/presets per list. Choice presets use option-index strings; checkbox presets use booleans. entries.count is 1-500, entries.seed is an integer 0-999999. Actual generated or edited records are never included in JSON. List appearance.layout is table/cards/accordion. Column display is text/badge/chips/count; whole groups also support table/cards/accordion. Optional groupFields selects nonempty existing child IDs. No roles, wizard flows, flattened group collections or relations between forms are implemented.
 12. Reset review to {"checks":[false,false,false,false,false],"reviewer":"","approvedAt":null}. A generated file cannot establish approval. Do not add preview answers, per-fill preview settings (only declared form entries count/seed preferences may persist), clipboard state, credentials, backend code or unrecognized properties.
 13. Check syntax, types, IDs, localized strings, bounds and the complete contract before output. Do not claim to have tested an import unless you actually ran it. The user must import and review the file in Studio.
 14. Final output: complete JSON only, without Markdown fences, comments, trailing commas, placeholders or omitted sections. Offer a UTF-8 .form.json attachment if supported. Keep the file below 1 MiB.
@@ -127,6 +127,7 @@ export const ACTION_ICONS = ['plus', 'eye', 'edit', 'trash', 'arrow'] as const;
 export type CollectionActionKind = (typeof COLLECTION_ACTIONS)[number];
 export interface CollectionAppearance {
   design: (typeof TABLE_DESIGNS)[number];
+  layout?: 'table' | 'cards' | 'accordion';
   density: 'comfortable' | 'compact';
   hover: boolean;
   stickyHeader: boolean;
@@ -137,6 +138,8 @@ export interface CollectionColumnSetting {
   align: 'start' | 'center' | 'end';
   sortable: boolean;
   width?: number;
+  display?: 'text' | 'badge' | 'chips' | 'count' | 'table' | 'cards' | 'accordion';
+  groupFields?: string[];
 }
 export interface CollectionActionSetting {
   label: Text;
@@ -182,7 +185,7 @@ export interface CollectionList {
   sort?: { fieldId: string; direction: 'asc' | 'desc' };
 }
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.2.0';
+export const APPLICATION_SCHEMA_VERSION = '2.3.0';
 
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 
@@ -217,7 +220,7 @@ END STUDIO TYPE CONTRACT
 BEGIN EXAMPLE studio-starter.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.2.0",
+  "schemaVersion": "2.3.0",
   "name": "01 · Contact desk",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -474,7 +477,7 @@ END EXAMPLE studio-starter.form.json
 BEGIN EXAMPLE studio-groups.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.2.0",
+  "schemaVersion": "2.3.0",
   "name": "02 · Purchase requests",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -969,7 +972,8 @@ BEGIN EXAMPLE studio-groups.form.json
             "requester-email",
             "department",
             "status",
-            "needed-by"
+            "needed-by",
+            "items"
           ],
           "searchFields": [
             "request-title",
@@ -999,7 +1003,8 @@ BEGIN EXAMPLE studio-groups.form.json
             "design": "plain",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": true
+            "stickyHeader": true,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -1032,7 +1037,35 @@ BEGIN EXAMPLE studio-groups.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "status",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": true,
+              "display": "badge"
+            },
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "table",
+              "groupFields": [
+                "item-code",
+                "item-description"
+              ]
+            }
+          ]
         },
         {
           "id": "new-requests",
@@ -1044,7 +1077,8 @@ BEGIN EXAMPLE studio-groups.form.json
           "columns": [
             "request-title",
             "department",
-            "needed-by"
+            "needed-by",
+            "items"
           ],
           "searchFields": [
             "request-title",
@@ -1072,7 +1106,8 @@ BEGIN EXAMPLE studio-groups.form.json
             "design": "striped",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "cards"
           },
           "actionSettings": {
             "view": {
@@ -1105,7 +1140,24 @@ BEGIN EXAMPLE studio-groups.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "cards",
+              "groupFields": [
+                "item-code",
+                "item-description"
+              ]
+            }
+          ]
         },
         {
           "id": "request-overview",
@@ -1117,12 +1169,14 @@ BEGIN EXAMPLE studio-groups.form.json
           "columns": [
             "request-title",
             "department",
-            "status"
+            "status",
+            "items/item-code"
           ],
           "searchFields": [
             "request-title",
             "department",
-            "status"
+            "status",
+            "items/item-code"
           ],
           "filters": [
             "department",
@@ -1141,7 +1195,8 @@ BEGIN EXAMPLE studio-groups.form.json
             "design": "bordered",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "accordion"
           },
           "actionSettings": {
             "view": {
@@ -1174,7 +1229,31 @@ BEGIN EXAMPLE studio-groups.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "status",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": true,
+              "display": "badge"
+            },
+            {
+              "fieldId": "items/item-code",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "chips"
+            }
+          ]
         }
       ]
     }
@@ -1185,7 +1264,7 @@ END EXAMPLE studio-groups.form.json
 BEGIN EXAMPLE studio-workspace.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.2.0",
+  "schemaVersion": "2.3.0",
   "name": "03 · Procurement workspace",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -1994,7 +2073,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "requester-email",
             "department",
             "status",
-            "needed-by"
+            "needed-by",
+            "items"
           ],
           "searchFields": [
             "request-title",
@@ -2024,7 +2104,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "plain",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": true
+            "stickyHeader": true,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -2057,7 +2138,35 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "status",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": true,
+              "display": "badge"
+            },
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "table",
+              "groupFields": [
+                "item-code",
+                "item-description"
+              ]
+            }
+          ]
         },
         {
           "id": "new-requests",
@@ -2069,7 +2178,8 @@ BEGIN EXAMPLE studio-workspace.form.json
           "columns": [
             "request-title",
             "department",
-            "needed-by"
+            "needed-by",
+            "items"
           ],
           "searchFields": [
             "request-title",
@@ -2097,7 +2207,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "striped",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "cards"
           },
           "actionSettings": {
             "view": {
@@ -2130,7 +2241,24 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "cards",
+              "groupFields": [
+                "item-code",
+                "item-description"
+              ]
+            }
+          ]
         },
         {
           "id": "request-overview",
@@ -2142,12 +2270,14 @@ BEGIN EXAMPLE studio-workspace.form.json
           "columns": [
             "request-title",
             "department",
-            "status"
+            "status",
+            "items/item-code"
           ],
           "searchFields": [
             "request-title",
             "department",
-            "status"
+            "status",
+            "items/item-code"
           ],
           "filters": [
             "department",
@@ -2166,7 +2296,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "bordered",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "accordion"
           },
           "actionSettings": {
             "view": {
@@ -2199,7 +2330,31 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "status",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": true,
+              "display": "badge"
+            },
+            {
+              "fieldId": "items/item-code",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "chips"
+            }
+          ]
         },
         {
           "id": "review-queue",
@@ -2212,7 +2367,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "request-code",
             "request-title",
             "budget",
-            "priority"
+            "priority",
+            "items"
           ],
           "searchFields": [
             "request-code",
@@ -2243,7 +2399,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "minimal",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -2276,7 +2433,20 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "chips"
+            }
+          ]
         }
       ]
     },
@@ -2594,7 +2764,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "plain",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": true
+            "stickyHeader": true,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -2627,7 +2798,8 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": []
         },
         {
           "id": "active-suppliers",
@@ -2667,7 +2839,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "striped",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "cards"
           },
           "actionSettings": {
             "view": {
@@ -2700,7 +2873,8 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": []
         },
         {
           "id": "supplier-directory",
@@ -2733,7 +2907,8 @@ BEGIN EXAMPLE studio-workspace.form.json
             "design": "bordered",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "accordion"
           },
           "actionSettings": {
             "view": {
@@ -2766,7 +2941,8 @@ BEGIN EXAMPLE studio-workspace.form.json
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": []
         }
       ]
     }

@@ -28,7 +28,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
     rows: [
       {
         names: 'format, schemaVersion',
-        type: '"mockforge-studio", "2.2.0"',
+        type: '"mockforge-studio", "2.3.0"',
         description: 'versionRule',
       },
       {
@@ -69,7 +69,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
     rows: [
       {
         names: 'appearance?, columnSettings?, actionSettings?, actionOrder?',
-        type: 'bounded table/column/button presentation',
+        type: 'bounded table/card/accordion/group/column/button presentation',
         description: 'listAppearanceHint',
       },
       {
@@ -79,7 +79,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
       },
       {
         names: 'columns, searchFields, filters',
-        type: 'root leaf ID[]; at most 20 each',
+        type: 'root/group/child paths for columns/search; root choice IDs for filters; at most 20 each',
         description: 'listContractRule',
       },
       {

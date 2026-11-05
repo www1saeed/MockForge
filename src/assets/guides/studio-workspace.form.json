@@ -1,6 +1,6 @@
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.2.0",
+  "schemaVersion": "2.3.0",
   "name": "03 · Procurement workspace",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -795,7 +795,14 @@
             "en": "All requests",
             "fa": "همهٔ درخواست‌ها"
           },
-          "columns": ["request-title", "requester-email", "department", "status", "needed-by"],
+          "columns": [
+            "request-title",
+            "requester-email",
+            "department",
+            "status",
+            "needed-by",
+            "items"
+          ],
           "searchFields": ["request-title", "requester-email", "department", "status", "needed-by"],
           "filters": ["department", "status"],
           "presets": [],
@@ -815,7 +822,8 @@
             "design": "plain",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": true
+            "stickyHeader": true,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -848,7 +856,32 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "status",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": true,
+              "display": "badge"
+            },
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "table",
+              "groupFields": ["item-code", "item-description"]
+            }
+          ]
         },
         {
           "id": "new-requests",
@@ -857,7 +890,7 @@
             "en": "New requests",
             "fa": "درخواست‌های جدید"
           },
-          "columns": ["request-title", "department", "needed-by"],
+          "columns": ["request-title", "department", "needed-by", "items"],
           "searchFields": ["request-title", "department", "needed-by"],
           "filters": ["department"],
           "presets": [
@@ -878,7 +911,8 @@
             "design": "striped",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "cards"
           },
           "actionSettings": {
             "view": {
@@ -911,7 +945,21 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "cards",
+              "groupFields": ["item-code", "item-description"]
+            }
+          ]
         },
         {
           "id": "request-overview",
@@ -920,8 +968,8 @@
             "en": "Request overview · read-only",
             "fa": "نمای کلی درخواست‌ها · فقط خواندن"
           },
-          "columns": ["request-title", "department", "status"],
-          "searchFields": ["request-title", "department", "status"],
+          "columns": ["request-title", "department", "status", "items/item-code"],
+          "searchFields": ["request-title", "department", "status", "items/item-code"],
           "filters": ["department", "status"],
           "presets": [],
           "pageSize": 10,
@@ -936,7 +984,8 @@
             "design": "bordered",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "accordion"
           },
           "actionSettings": {
             "view": {
@@ -969,7 +1018,31 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "status",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": true,
+              "display": "badge"
+            },
+            {
+              "fieldId": "items/item-code",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "chips"
+            }
+          ]
         },
         {
           "id": "review-queue",
@@ -978,7 +1051,7 @@
             "en": "Review queue · high priority",
             "fa": "صف بررسی · اولویت بالا"
           },
-          "columns": ["request-code", "request-title", "budget", "priority"],
+          "columns": ["request-code", "request-title", "budget", "priority", "items"],
           "searchFields": ["request-code", "request-title", "budget", "priority"],
           "filters": [],
           "presets": [
@@ -1003,7 +1076,8 @@
             "design": "minimal",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -1036,7 +1110,20 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": [
+            {
+              "fieldId": "items",
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "align": "start",
+              "sortable": false,
+              "display": "chips"
+            }
+          ]
         }
       ]
     },
@@ -1341,7 +1428,8 @@
             "design": "plain",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": true
+            "stickyHeader": true,
+            "layout": "table"
           },
           "actionSettings": {
             "view": {
@@ -1374,7 +1462,8 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": []
         },
         {
           "id": "active-suppliers",
@@ -1404,7 +1493,8 @@
             "design": "striped",
             "density": "compact",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "cards"
           },
           "actionSettings": {
             "view": {
@@ -1437,7 +1527,8 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": []
         },
         {
           "id": "supplier-directory",
@@ -1462,7 +1553,8 @@
             "design": "bordered",
             "density": "comfortable",
             "hover": true,
-            "stickyHeader": false
+            "stickyHeader": false,
+            "layout": "accordion"
           },
           "actionSettings": {
             "view": {
@@ -1495,7 +1587,8 @@
               "display": "icon",
               "icon": "trash"
             }
-          }
+          },
+          "columnSettings": []
         }
       ]
     }

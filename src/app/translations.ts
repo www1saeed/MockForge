@@ -311,8 +311,8 @@ export const copy = {
     'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
   ],
   studioFormatNotice: [
-    'Studio-Format 2.2.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
-    'Studio format 2.2.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
+    'Studio-Format 2.3.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
+    'Studio format 2.3.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
   ],
   authoringWorkflow: [
     'Vom Texteditor zur geprüften Vorschau',
