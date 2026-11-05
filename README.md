@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 245 passing automated tests: 181 unit/component tests and 64 end-to-end tests.** Verified on November 5, 2026, with **97.72% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 255 passing automated tests: 188 unit/component tests and 67 end-to-end tests.** Verified on November 5, 2026, with **97.77% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -16,7 +16,7 @@ MockForge Studio helps product owners and developers agree on a form before prod
 
 ## CRUD list previews
 
-Use **Lists and entries** beside the form selector to configure several table views per form. Share session-only records across views, search/filter/sort/page, select matching rows and create/view/edit/delete with native form validation. Regeneration requires confirmation and replaces records only on complete success. Configuration persists; record values never do. See [the walkthrough and limits](docs/COLLECTIONS.md). Use **Application preview** to navigate forms and lists with direct links and browser history while retaining editor selection. See [navigation and session lifetime](docs/APPLICATION_PREVIEW.md). Roles and standalone application export follow later.
+Use **Lists and entries** beside the form selector to configure several table views per form. Share session-only records across views, search/filter/sort/page, select matching rows and create/view/edit/delete with native form validation. Regeneration requires confirmation and replaces records only on complete success. Configuration persists; record values never do. See [the walkthrough and limits](docs/COLLECTIONS.md). Use **Application preview** to navigate forms and lists with direct links and browser history while retaining editor selection. See [navigation and session lifetime](docs/APPLICATION_PREVIEW.md). Download a single offline HTML application preview with the same forms, lists and validation. See [standalone export](docs/STANDALONE_PREVIEW.md). Roles follow later.
 
 ## Why agree before implementation?
 

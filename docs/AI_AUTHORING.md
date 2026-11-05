@@ -71,4 +71,4 @@ CI runs the check, and unit/browser tests validate the exact examples, kit conte
 
 ## Application menu
 
-Use optional form `menu: false` to hide only a form menu entry, retaining its lists and direct links. Application routes are transient and are not JSON properties. Verify the [application preview](APPLICATION_PREVIEW.md) after importing multi-screen drafts. Roles, wizard navigation and standalone app export remain unsupported.
+Use optional form `menu: false` to hide only a form menu entry, retaining its lists and direct links. Application routes are transient and are not JSON properties. Verify the [application preview](APPLICATION_PREVIEW.md) after importing multi-screen drafts. Roles and wizard navigation remain unsupported. [Standalone HTML export](STANDALONE_PREVIEW.md) shares a configuration-only offline prototype.

@@ -39,7 +39,7 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 ## Planned application-mockup expansion
 
 The November 5, 2026 expansion adds multiple forms, CRUD lists, application
-navigation and simulated roles in separate increments. Multiple single-page forms are active in the editor, with whole-project persistence, import/export, handoff and review. The active application contract is Studio 2.1.0; legacy 1.0–1.3 files migrate. CRUD table lists with per-form session records are active. In-app application navigation with stable links and shared record sessions is active. Roles, standalone application export and wizards remain future increments.
+navigation and simulated roles in separate increments. Multiple single-page forms are active in the editor, with whole-project persistence, import/export, handoff and review. The active application contract is Studio 2.1.0; legacy 1.0–1.3 files migrate. CRUD table lists with per-form session records are active. In-app application navigation with stable links and shared record sessions is active. Standalone HTML application export is active. Roles and wizards remain future increments.
 See the [architecture and implementation sequence](docs/ARCHITECTURE.md#application-foundation-november-5-2026).
 
 The implemented foundation defines a separate Studio 2.1.0 application contract, validates
@@ -131,3 +131,7 @@ Provide multiple localized table views over one session-only record set per form
 ## Application navigation increment
 
 Provide a menu over forms and lists, direct form-scoped hash links, history/reload support and explicit missing/empty route states. Keep preview navigation independent from authoring selection and drafts. Share complete form record datasets across editor/application views, use the routed form for CRUD and retain existing validation/resource bounds. Dispose unsaved responses, pending workers and generation on navigation. Activate optional form menu visibility with direct links retained; do not imply access control. Preserve DE/EN/FA, RTL, keyboard heading focus and deployment prefixes. See [application preview](docs/APPLICATION_PREVIEW.md).
+
+## Standalone preview export increment
+
+Export one offline HTML file using the existing application/form/list renderers, including native and isolated pattern validation. Include configuration and licenses; exclude briefing/review/author notes, responses, session records and editor state. Start with fresh in-memory records, preserve configured CRUD and fixture tools, support DE/EN/FA and direct hash routes, and avoid Studio storage and external resources. Capture before asynchronous preparation and reject stale projects; retain existing generation/worker limits. See [exact export boundaries](docs/STANDALONE_PREVIEW.md).

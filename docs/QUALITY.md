@@ -1,6 +1,14 @@
 # Code quality and test evidence
 
-## Application navigation checkpoint — November 5, 2026
+## Standalone HTML checkpoint — November 5, 2026
+
+**255 Studio tests pass: 188 Jest unit/component tests in 24 suites and 67 Chromium journeys.** Ten E2E selector Node checks pass separately. Jest coverage of `src/app/*.ts` is 95.94% statements, 90.64% branches, 96.65% functions and 97.77% lines. The standalone bootstrap is exercised in Chromium, outside that Jest coverage scope. Formatting, lint, application/spec/E2E types, 475 translations, authoring-kit synchronization, 121 local documentation links and build pass.
+
+Three permanent offline export journeys download actual HTML and exercise file:// without HTTP or Studio storage, source record/answer exclusion, CRUD/history/reload, hostile author text, worker timeout/recovery, repeat rows through locale changes and Persian mobile Axe/layout. Capture/service cases cover private metadata stripping, import-extension pruning, escaping, invalid/oversized inputs, stale snapshots, retry and disposal. Full evidence: `reports/pr8-standalone-preview-e2e.json`; final run takes 214.96 seconds with two workers and no retries/skips/flaky results. CI requires its own run after push.
+
+Studio initial bundle is **934.42 kB**, above the unchanged 700 kB warning and below 1 MB failure. The standalone runtime is a separately loaded generated asset, approximately 1.13 million serialized UTF-16 units, excluded from that initial total. No schema, dependency or worker/generation-budget change. See [export/session/build limits](STANDALONE_PREVIEW.md). The fifteen-slide HTML deck and narration explain offline sharing and updated evidence. Desktop/mobile exports and changed slides were visually inspected. The older ignored PDF remains a separate export and must be regenerated before sharing. These are local Chromium results, not cross-browser certification or original-edition parity.
+
+## Previous application navigation checkpoint — November 5, 2026
 
 **245 Studio tests pass: 181 Jest unit/component tests in 22 suites and 64
 Chromium journeys.** Ten E2E-selection Node tests pass separately. Coverage is

@@ -86,7 +86,7 @@ Use a field with `DE-[A-Z]{2}\d{4}` to show bounded synthesis. Then use a name f
 
 ## Multi-form walkthrough
 
-Add a named second form, copy a field into it, switch back to show independent definitions, then export JSON or Markdown containing both forms. Show that reviewing only a complete form cannot approve a project whose other form is incomplete. Explain that preview answers reset when switching. This demonstrates multiple single-page forms; CRUD lists, roles and a standalone application menu are not yet part of this Studio increment.
+Add a named second form, copy a field into it, switch back to show independent definitions, then export JSON or Markdown containing both forms. Show that reviewing only a complete form cannot approve a project whose other form is incomplete. Explain that preview answers reset when switching. This demonstrates multiple single-page forms. Continue with the CRUD and connected-screen walkthroughs below; roles remain a later increment.
 
 ## Optional CRUD walkthrough
 
@@ -95,3 +95,7 @@ Open **Lists and entries** for the selected form. Add a list, generate test reco
 ## Connected-screen walkthrough
 
 Open **Application preview** and move between two forms and their lists. Change a record in a list and return to the editor to show the shared session. Use browser Back/Forward and a direct hash link, then explain that sharing the URL does not transfer a locally stored specification. Menu hiding is presentation, not authorization. Refer to [navigation boundaries](APPLICATION_PREVIEW.md) before promising production behavior.
+
+## Share an offline walkthrough
+
+In Application preview choose **Download HTML preview**, then open the downloaded file without a server. Navigate a form and list, create a synthetic record, and show that reload clears it. The file carries configuration and validation while briefing, author notes, review and entered/generated session records stay out. The recipient can use fixture tools and CRUD in the open tab. See [standalone export boundaries](STANDALONE_PREVIEW.md); this remains a prototype with no backend or sign-in.

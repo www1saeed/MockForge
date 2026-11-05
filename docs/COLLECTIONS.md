@@ -75,7 +75,7 @@ These operations cannot be undone after confirmation.
 - Unsupported generator constraints can omit answers. The UI reports their count;
   generated fixtures are not certified complete valid production records. Editing
   such a record requires correcting all required/invalid answers before Save.
-- This increment supports table lists. Roles, standalone application export, wizard pages, relationships, group columns and
+- This increment supports table lists. Roles, wizard pages, relationships, group columns and
   lists over group rows remain future work. There is no backend or authentication.
 
 ## Verification
@@ -90,3 +90,5 @@ remains `npm run e2e` and runs automatically for pull requests.
 ## Shared application preview
 
 [Application preview](APPLICATION_PREVIEW.md) navigates these lists through form-scoped hash links. It shares this session registry with the editor while keeping navigation separate from authoring selection. CRUD dialogs use the routed form; configuration controls are absent. Returning to the editor retains complete session records.
+
+[Standalone HTML previews](STANDALONE_PREVIEW.md) reuse these list/CRUD controls with fresh record sessions; Studio session records never travel with the file.

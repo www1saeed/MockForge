@@ -3,7 +3,8 @@
 Open **Application preview** in the Studio navigation to walk through the loaded
 project as connected form and list screens. Form/list configuration stays in the
 editor. The Studio shell and synthetic-data tools remain available; this is an
-in-app preview, not an exported standalone application or a production frontend.
+in-app prototype. Download an offline HTML copy using **Download HTML preview**;
+see [standalone export](STANDALONE_PREVIEW.md).
 
 ## Menu and links
 
@@ -70,8 +71,8 @@ the existing fixed reference date. UI language remains a Studio preference.
 ## Boundaries and verification
 
 This increment adds no roles, simulated sign-in, access rules, wizard pages,
-inter-form relations, navigation actions on form buttons, standalone/offline app
-export, backend or code generation. A browser mockup does not implement production
+inter-form relations, navigation actions on form buttons, backend or code generation.
+[Standalone HTML export](STANDALONE_PREVIEW.md) is available separately with fresh record sessions. A browser mockup does not implement production
 authentication, authorization or persistence.
 
 Pure route tests cover valid/malformed/deleted/hidden/empty targets. Context tests

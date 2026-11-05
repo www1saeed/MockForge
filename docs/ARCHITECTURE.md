@@ -15,7 +15,7 @@ LocalStorage writes are synchronous after each edit. A form specification is sma
 ## Application foundation (November 5, 2026)
 
 The application-mockup expansion is being implemented in small commits on
-`feature/application-preview-navigation` after the merged multi-form and CRUD increments. Its behavioral reference is the local
+`feature/standalone-preview-export` after the merged multi-form and CRUD increments. Its behavioral reference is the local
 original edition at `0b9b47e` (its changelog calls 0.2.0 a release candidate).
 Original source, private packages and assets are not imported into Studio.
 
@@ -90,7 +90,8 @@ the present tags do not imply those capabilities.
    pattern-check budgets; regeneration must not silently discard edited records.
 3. **Implemented:** in-app application navigation with stable form/list hash links,
    browser history, separate authoring/preview cursors, shared records, hidden-menu
-   direct links and DE/EN/FA direction. Standalone application export remains later.
+   direct links and DE/EN/FA direction. Standalone HTML export now packages these
+   same components for offline use with fresh record sessions.
 4. Add optional simulated roles, a central inherited-access resolver, rights
    editors and a matrix. Hidden required fields must not validate; read-only
    values survive editing; action handlers recheck effective rights. Sign-in
@@ -219,3 +220,7 @@ Manual pattern dispatch is now serialized centrally in FormPreviewComponent for 
 ## Application routing
 
 `application-navigation.ts` parses strict hash-only form/list targets and builds ordered menu entries. The application root observes hashes without changing editor selection. `ApplicationPreviewComponent` resolves targets against the current specification and remounts response owners on route/project epochs. Missing routes show recovery, never an unrelated form. Route changes focus the screen heading. `CollectionWorkspaceComponent` reuses query/CRUD behavior through its injected view facade, hides authoring configuration in preview-only mode and rejects configuration mutation there. Record dialogs use the facade projection, not the authoring store projection. See [application behavior](APPLICATION_PREVIEW.md).
+
+## Standalone preview runtime
+
+`preview-export.ts` validates/captures a sanitized application and assembles escaped HTML. `PreviewExportService` owns lazy runtime loading, deadlines, stale-project guards and downloads. `src/standalone/main.ts` bootstraps the same `ApplicationPreviewComponent` and collection registry with a store whose restore/persist methods are inert and a Blob-backed worker factory. The application component emits export requests to Studio; the standalone build never imports the download service or Studio editor. The separate AOT build is packaged into one inline script/CSS/worker asset before Studio starts or builds. See [build, session, security and size limits](STANDALONE_PREVIEW.md).
