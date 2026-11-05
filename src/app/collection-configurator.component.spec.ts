@@ -52,7 +52,7 @@ describe('Dedicated list configuration', () => {
     expect(c.column('items').groupFields).toEqual(['product', 'quantity']);
   });
   it('stores ordered headings, dimensions and disabled sorting without changing answer rules', () => {
-    const { c } = setup();
+    const { fixture, c } = setup();
     c.defaultSort('name');
     c.columnLabel('name', 'de', 'Person');
     c.columnPatch('name', { width: 180, align: 'end', sortable: false });
@@ -68,6 +68,12 @@ describe('Dedicated list configuration', () => {
     expect(c.list()?.appearance?.design).toBe('bordered');
     c.toggle('columns', 'name', false);
     expect(c.list()?.columnSettings).toEqual([]);
+    c.store.updateCollections([]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#live-preview')).not.toBeNull();
+    fixture.componentRef.setInput('previewVisible', false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#live-preview')).toBeNull();
   });
   it('preserves last valid settings on invalid edits and retires confirmations on disposal', () => {
     const { fixture, c } = setup();

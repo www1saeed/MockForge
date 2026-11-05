@@ -548,5 +548,11 @@
     </div>
   } @else {
     <p>{{ t('listEmptyConfig') }}</p>
+    @if (previewVisible()) {
+      <aside id="live-preview" tabindex="-1" class="collection-live-preview">
+        <h3>{{ t('listPreview') }}</h3>
+        <p>{{ t('listNoLists') }}</p>
+      </aside>
+    }
   }
 </section>
