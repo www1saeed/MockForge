@@ -12,23 +12,25 @@
 } @else {
   <ng-container [ngTemplateOutlet]="valueBody" />
 }
-<dialog
-  #detailsDialog
-  class="collection-group-dialog"
-  [attr.aria-label]="title()"
-  (cancel)="closeDetails()"
-  (close)="detailsOpen.set(false)"
->
-  @if (detailsOpen()) {
-    <div class="collection-group-dialog-heading">
-      <h2>{{ title() }}</h2>
-      <button type="button" class="secondary-button" (click)="closeDetails()">
-        {{ t('close') }}
-      </button>
-    </div>
-    <ng-container [ngTemplateOutlet]="valueBody" />
-  }
-</dialog>
+@if (dialogMode()) {
+  <dialog
+    #detailsDialog
+    class="collection-group-dialog"
+    [attr.aria-label]="title()"
+    (cancel)="closeDetails()"
+    (close)="detailsOpen.set(false)"
+  >
+    @if (detailsOpen()) {
+      <div class="collection-group-dialog-heading">
+        <h2>{{ title() }}</h2>
+        <button type="button" class="secondary-button" (click)="closeDetails()">
+          {{ t('close') }}
+        </button>
+      </div>
+      <ng-container [ngTemplateOutlet]="valueBody" />
+    }
+  </dialog>
+}
 <ng-template #valueBody>
   @if (renderMode() === 'count') {
     <span class="collection-badge">{{
