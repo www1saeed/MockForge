@@ -1,3 +1,4 @@
+import { openLegacyComplex } from './support/workspace';
 import { tagsFor } from './test-tags';
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -7,10 +8,7 @@ test(
   { tag: tagsFor('form-tooltips', 'tooltips', { checks: ['a11y', 'keyboard'] }) },
   async ({ page }): Promise<void> => {
     await page.setViewportSize({ width: 1600, height: 1000 });
-    await page.goto('/#examples');
-    await page.locator('.example-card').filter({ hasText: 'Atlas' }).getByRole('button').click();
-    await page.locator('.replace-dialog .primary-button').click();
-    await page.locator('.toast-close').click();
+    await openLegacyComplex(page);
     await page.locator('.root-field-list .field-row').first().click();
     await page.locator('#field-tooltip-de').fill('Titelhilfe <strong>als Text</strong>');
     await page.locator('#field-tooltip-en').fill('Title help');

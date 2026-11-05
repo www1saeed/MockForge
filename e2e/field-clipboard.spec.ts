@@ -1,18 +1,13 @@
 import { tagsFor } from './test-tags';
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-async function dismissToasts(page: Page): Promise<void> {
-  while (await page.locator('.toast-close').count())
-    await page.locator('.toast-close').first().click();
-}
+import { dismissToasts, openLegacyComplex } from './support/workspace';
 
 test(
   'clipboard survives steps, copies full groups, moves children and clears on reload',
   { tag: tagsFor('field-clipboard', 'clipboard', {}) },
   async ({ page }): Promise<void> => {
-    await page.goto('/#examples');
-    await page.locator('.example-card').filter({ hasText: 'Atlas' }).getByRole('button').click();
-    await page.locator('.replace-dialog .primary-button').click();
+    await openLegacyComplex(page);
     const list = page.locator('.root-field-list');
     const original = await list.locator('.field-row').count();
     await list.locator('.field-row').filter({ hasText: 'Projektteam' }).click();

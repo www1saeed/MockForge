@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import { ApplicationProject } from '../../src/app/application-project';
 import { Project } from '../../src/app/project.model';
+import { example } from '../../src/app/project.examples';
 
 /** Seed one fictional project once; subsequent reloads must exercise real persistence. */
 export async function openProject(
@@ -27,4 +28,11 @@ export async function goToStep(
 export async function dismissToasts(page: Page): Promise<void> {
   while (await page.locator('.toast-close').count())
     await page.locator('.toast-close').first().click();
+}
+
+/** Renderer regressions retain a fixed fixture independently of the public gallery's content. */
+export async function openLegacyComplex(page: Page): Promise<void> {
+  await openProject(page, example('complex'));
+  await goToStep(page, 'fields');
+  await dismissToasts(page);
 }

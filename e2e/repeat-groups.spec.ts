@@ -1,20 +1,9 @@
 import { tagsFor } from './test-tags';
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 
-async function openComplex(page: Page): Promise<void> {
-  await page.goto('/#examples');
-  await page.locator('.example-card').filter({ hasText: 'Atlas' }).getByRole('button').click();
-  await page.locator('.replace-dialog .primary-button').click();
-  await expect(page.locator('.workspace-heading')).toContainText('Atlas');
-  await page.locator('.toast-close').click();
-}
-
-async function dismissToasts(page: Page): Promise<void> {
-  while (await page.locator('.toast-close').count())
-    await page.locator('.toast-close').first().click();
-}
+import { dismissToasts, openLegacyComplex as openComplex } from './support/workspace';
 
 test(
   'empty optional tables hide headers and row deletion exposes Bootstrap help',
