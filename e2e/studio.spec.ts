@@ -214,7 +214,7 @@ test(
     await page.locator('.topbar').getByRole('button', { name: 'FA', exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    await expect(page.locator('.section-description')).toContainText('یک یا دو زبان');
+    await expect(page.locator('.section-description')).toContainText(['یک یا دو زبان']);
     await page.getByRole('button', { name: 'نمایش پیش‌نمایش' }).click();
     await page.locator('.preview-panel').getByRole('button', { name: 'FA', exact: true }).click();
     await expect(page.locator('.rendered-form')).toHaveAttribute('dir', 'rtl');
@@ -252,10 +252,11 @@ test(
   },
   async ({ page }): Promise<void> => {
     await page.goto('/#workspace');
-    await page.getByRole('button', { name: '3 Design auswählen' }).click();
+    await page.locator('.workflow [data-step="project"]').click();
+    await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
     await page.getByRole('button', { name: 'Carbon', exact: false }).click();
     await expect(page.locator('.theme-carbon')).toBeVisible();
-    await page.getByRole('button', { name: '4 Formular gestalten' }).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.getByRole('button', { name: 'Feld hinzufügen' }).click();
     await page.locator('#field-label-de').fill('Kundenreferenz');
     await page.reload();
