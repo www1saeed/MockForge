@@ -421,13 +421,13 @@ export class FormPreviewComponent implements OnDestroy {
           const group = this.groups().find((group) => group.field().id === field.id);
           group?.rows().forEach((row, index) => {
             for (const child of field.group!.fields)
-              writeNativeResponse(
+              this.restoreRecordResponse(
                 form.elements.namedItem(`preview-${field.id}:${row.id}:${child.id}`),
                 Array.isArray(rows) && rows[index] ? ownResponse(rows[index], child.id) : undefined,
               );
           });
         } else
-          writeNativeResponse(
+          this.restoreRecordResponse(
             form.elements.namedItem(`preview-${field.id}`),
             ownResponse(values, field.id),
           );
@@ -466,6 +466,16 @@ export class FormPreviewComponent implements OnDestroy {
         if (field) this.applyPatternValidity(control, field);
       }
     });
+  }
+
+  /** Restored explicit choice answers are occupied, including false and unselected radios. */
+  private restoreRecordResponse(control: Element | RadioNodeList | null, value: unknown): void {
+    writeNativeResponse(control, value);
+    if (value === undefined) return;
+    const controls = control instanceof RadioNodeList ? Array.from(control) : [control];
+    for (const item of controls)
+      if (item instanceof HTMLInputElement && (item.type === 'checkbox' || item.type === 'radio'))
+        this.answered.add(item);
   }
 
   /** Toolbar copy follows Studio language; the form itself uses the preview language. */
