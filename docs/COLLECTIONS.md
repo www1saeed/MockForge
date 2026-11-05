@@ -1,7 +1,7 @@
 # Lists and session records
 
-Open **Lists and entries** beside the form selector. Add one or several list views
-to the selected form. Expand **Configure list** to edit localized titles, columns,
+Open **Lists and entries** in its own workflow tab. Add one or several list views
+to the selected form. Use the configuration sections to edit localized titles, columns,
 search fields, choice/checkbox filters, fixed filters, sorting, page size,
 selection and the four CRUD actions. Views of the same form share one record set;
 other forms have independent records. Duplicate/reorder/delete changes the view,
@@ -37,7 +37,7 @@ buttons still simulate their configured actions; they do not insert list records
 
 ## Persistence, stale data and cancellation
 
-Studio 2.1.0 JSON stores optional `lists` and `entries` preferences inside each
+Studio 2.2.0 JSON stores optional `lists` and `entries` preferences inside each
 form. Storage, JSON, Markdown and review include configuration only. Manual and
 generated records, record IDs, selection, page, queries and open details are never
 persisted or exported. Switching forms or returning to the form editor retains
@@ -92,3 +92,11 @@ remains `npm run e2e` and runs automatically for pull requests.
 [Application preview](APPLICATION_PREVIEW.md) navigates these lists through form-scoped hash links. It shares this session registry with the editor while keeping navigation separate from authoring selection. CRUD dialogs use the routed form; configuration controls are absent. Returning to the editor retains complete session records.
 
 [Standalone HTML previews](STANDALONE_PREVIEW.md) reuse these list/CRUD controls with fresh record sessions; Studio session records never travel with the file.
+
+## Detailed configuration and presentation
+
+The Project & design page combines briefing, language/copy and form styling. The four workflow tabs are Project & design, Fields/actions, Lists/entries and Review. Lists have their own configuration page with section navigation and a live preview. Configure localized titles, page size, selection and default sorting; choose visible/search/filter fields and fixed AND presets; reorder columns and set independent localized headings, 80–600px widths, logical alignment and per-column sorting. Empty headings use field labels.
+
+Four table designs (classic, striped, cell-bordered, minimal) combine with comfortable/compact density, hover highlight and a locally scrolling sticky header. Existing CRUD actions have per-project-language labels, primary/secondary/ghost/danger variants, built-in icons and text/icon/both display. Row actions can be reordered; Create remains in the toolbar and Delete also applies to selection. Disabled actions remain guarded in handlers. No arbitrary CSS, icon URLs, custom server actions or role permissions are introduced.
+
+Studio 2.2.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.1.0 imports retain their list configuration with review acknowledgement reset. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.

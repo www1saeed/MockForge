@@ -18,7 +18,7 @@ optional form `menu` flag. Omission means true. Setting false hides only that
 form's menu link; its lists remain visible and the form still has a direct link.
 This controls navigation presentation, not access or authorization. The change
 invalidates project review like other specification edits. Studio JSON remains
-2.1.0, and no routing state is added to the file.
+2.2.0, and no routing state is added to the file.
 
 | Destination | Hash |
 | --- | --- |
@@ -81,3 +81,5 @@ and menu persistence. `e2e/application-navigation.spec.ts` covers history, reloa
 editor isolation, shared CRUD, invalid links, worker/batch disposal, Persian mobile
 Axe and keyboard focus. Run `npm run e2e -- --area navigation`; full regression
 remains the default and automatic CI behavior.
+
+Offline exports use an independent project header/sidebar rather than Studio chrome. List appearance, column settings and action presentation are shared with the detailed configurator. See [standalone behavior](STANDALONE_PREVIEW.md).

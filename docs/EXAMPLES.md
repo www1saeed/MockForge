@@ -3,7 +3,7 @@
 Open **Business examples** and choose a project. Replacement always asks for
 confirmation; export the current draft first or cancel to keep it. The gallery,
 JSON-authoring guide, downloadable JSON files and AI authoring kit all use the
-same three Studio 2.1.0 application snapshots. Every example includes DE/EN/FA
+same three Studio 2.2.0 application snapshots. Every example includes DE/EN/FA
 copy, with German/English initially active and no recorded approval.
 
 | Level | Forms and lists | What to try |

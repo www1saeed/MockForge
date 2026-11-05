@@ -1,5 +1,13 @@
 # Code quality and test evidence
 
+## List designer and independent shell checkpoint — November 5, 2026
+
+**269 Studio tests pass: 196 Jest unit/component cases in 27 suites and 73 Chromium journeys.** Ten E2E selector checks pass separately. Coverage: 95.65% statements, 90.37% branches, 96.25% functions and 97.55% lines (src/app/*.ts; standalone bootstrap is covered in Chromium). Format/lint/app+spec+E2E types, 534 translations, synchronized authoring kit, local documentation targets and build pass.
+
+The four workflow tabs combine Project & design and separate form fields, detailed list configuration and review. Five new unit cases cover 2.1 migration, bounded presentation, pruning, disabled sorting, persisted configuration and confirmation disposal. Two new registered browser journeys cover the merged page, saved column/design/action settings, accessible icon-only actions, matching offline output, Persian mobile layout/Axe and keyboard menu/focus behavior. Existing journeys use semantic workflow identities and preserve their regression assertions. Full evidence: reports/pr8-list-designer-final-e2e.json. The final run has no retries/skips/flaky/unexpected results; CI still needs its own run after push.
+
+Studio JSON is now 2.2.0; 2.1.0 and earlier supported inputs migrate with old approval retired. The configurator is deferred until its tab opens; the standalone build reuses only record interaction/rendering. Four finite table designs, bounded column settings and built-in action icons require no new dependency or arbitrary CSS. Worker/generation/storage resource limits and existing bundle budgets remain unchanged. Production initial bundle is 987.32 kB against the unchanged 700 kB warning / 1 MB failure; the deferred configurator is 18.43 kB. The HTML app has its own project header/sidebar/mobile disclosure and omits Studio form toolbars and fake browser chrome. Configurator, standalone desktop/mobile and changed fifteen-slide deck content were visually inspected. The old ignored PDF remains a separate export.
+
 ## Progressive examples checkpoint — November 5, 2026
 
 **262 Studio tests pass: 191 Jest unit/component tests in 25 suites and 71 Chromium journeys.** Ten E2E selector Node checks pass separately. Jest coverage is 95.93% statements, 90.60% branches, 96.67% functions and 97.78% lines. Format/lint/app+spec+E2E types, 484 translations, authoring-kit synchronization, 131 local documentation targets and production build pass. Schema, dependencies, worker/generation limits and build budgets remain unchanged.

@@ -21,15 +21,15 @@ Original source, private packages and assets are not imported into Studio.
 
 `FormContent` separates the reusable form definition from the unchanged legacy
 `Project`. `application-project.ts` defines the **active**, independently versioned
-Studio 2.1.0 contract: mandatory `format: "mockforge-studio"`, project-wide
+Studio 2.2.0 contract: mandatory `format: "mockforge-studio"`, project-wide
 brief/theme/languages/review and a nonempty `forms` array. Each form has a stable
 ID, title, description, legacy submit copy, column layout, fields and buttons,
 plus an optional menu flag. Field/button IDs are scoped to their form; form IDs
 are unique across the project. The discriminator distinguishes Studio from the
 incompatible original edition's 2.x files. Unknown application/form container keys are rejected rather than silently activating future contracts.
 
-`parseApplicationProject` validates Studio 2.1.0 snapshots or chains the existing
-Studio 1.0–1.3 parser into a one-form migration. Studio 2.0.0 applications migrate to 2.1.0 with review invalidated and no invented list configuration. Migration preserves all supported
+`parseApplicationProject` validates Studio 2.2.0 snapshots or chains the existing
+Studio 1.0–1.3 parser into a one-form migration. Studio 2.0.0 applications migrate to 2.2.0 with review invalidated and no invented list configuration. Migration preserves all supported
 brief/form properties and all stored translations, resets review checks and the
 acknowledgement timestamp, retains the reviewer and never mutates the source or
 writes storage. Parsing returns an owned JSON snapshot. Serialization includes
@@ -48,7 +48,7 @@ selection and preview-session epochs belong to the store; native responses and
 workers remain owned by the mounted preview. Confirmation dialogs belong to the UI.
 
 **Active runtime:** Store, JSON persistence/import/export, Markdown, guides,
-downloadable examples and the authoring kit use 2.1.0. The existing LocalStorage
+downloadable examples and the authoring kit use 2.2.0. The existing LocalStorage
 key is retained: restore reads legacy or current data without rewriting bytes;
 the next successful edit writes the entire application. Failed migrations leave
 stored bytes recoverable. `projectForForm` supplies the old 1.3.0 renderer/batch
@@ -81,7 +81,7 @@ the present tags do not imply those capabilities.
 
 1. **Implemented:** application store/form selector, named add/duplicate,
    reorder/confirmed-delete, scoped clipboard, stale-worker disposal, all-form
-   readiness and handoff, 2.1.0 persistence/transfer and updated guides/examples.
+   readiness and handoff, 2.2.0 persistence/transfer and updated guides/examples.
    Four browser journeys cover migration/round-trip, review/drafts, worker and
    generation cancellation, and Persian mobile accessibility.
 2. **Implemented:** one shared session-only record set per form, configurable CRUD lists,
@@ -175,9 +175,9 @@ Optional `RepeatGroup.gapless` accepts only boolean values at the import boundar
 
 `preview-test-data.ts` fills mounted native controls, grouping radio instances by response name. The small original DE/EN/FA catalogue is independent of preview language. A bounded seed reproduces values for the same structure; this fills one mounted preview; the separate batch adapter below reuses its validation. Native required/type/pattern validity and explicit text-length checks reject unsuitable candidates, restoring prior values. A finite bounded concatenation subset is generated; deferred known fixture candidates use worker isolation. The renderer refreshes existing custom validity through input events. The default row mode adds one transient row to empty groups; minimum/maximum settings and protected shrink are described below. Results count response instances plus explicitly requested group checks. A session WeakSet records explicitly edited native controls so intentional unchecked answers survive preserve-mode filling. Generation guards its own dispatched events, and reset clears this edit history. Settings use an application-level native dialog outside the simulated mobile viewport. The existing response reset clears the report and restores group minima.
 
-The shell derives workspace navigation names and the header project context from the current project signal. The form title follows the current UI language when active, otherwise the first configured form language. Blank project names use the translated workspace label. Studio branding and route identities remain stable. Application files now use 2.1.0 and contain all forms; the selected renderer projection remains 1.3.0.
+The shell derives workspace navigation names and the header project context from the current project signal. The form title follows the current UI language when active, otherwise the first configured form language. Blank project names use the translated workspace label. Studio branding and route identities remain stable. Application files now use 2.2.0 and contain all forms; the selected renderer projection remains 1.3.0.
 
-The DE/EN/FA in-app guide presents the new authoring, data and shell workflows without changing the five-step editing model. Its content has browser coverage for all three locales. [The feature comparison](FEATURE_COMPARISON.md) documents which original-edition behaviors are shared and which remain absent; the two generators are not interchangeable.
+The DE/EN/FA in-app guide presents authoring, data and shell workflows. The current four workflow tabs combine project settings/copy/design and give lists a dedicated page. Guide content has browser coverage for all three locales. [The feature comparison](FEATURE_COMPARISON.md) documents which original-edition behaviors are shared and which remain absent; the two generators are not interchangeable.
 
 ## Text-editor and AI authoring guides
 
@@ -187,7 +187,7 @@ The hash views `guide-json` and `guide-ai` preserve the shell and never mutate P
 
 `response-constraints.ts` shares UTF-16 text-length checks between `preview-test-data.ts` and `FormPreviewComponent`. The renderer uses custom validity to make programmatically assigned length errors visible to native form validation and clears them on correction/reset. The generator sets candidate controls, dispatches guarded input/change events, observes validity, checks the intended failure rule and restores previous responses on mismatch. Deferred patterns reach only isolated candidate evaluation; empty values bypass patterns. The isolated manual boundary is described below.
 
-`FillReport` contains per-instance diagnostics with expected/observed candidate validity; untouched cases stay untested. The UI displays 20 entries and totals all entries. Explicit row-boundary checks add one diagnostic per group. `RepeatGroupComponent.resizeForTestData` clamps row counts, preserves retained row identities and refuses shrinking without replacement. Settings, diagnostics, row identities and answers remain transient; the renderer projection remains 1.3.0 while the application uses 2.1.0 and project-wide review.
+`FillReport` contains per-instance diagnostics with expected/observed candidate validity; untouched cases stay untested. The UI displays 20 entries and totals all entries. Explicit row-boundary checks add one diagnostic per group. `RepeatGroupComponent.resizeForTestData` clamps row counts, preserves retained row identities and refuses shrinking without replacement. Settings, diagnostics, row identities and answers remain transient; the renderer projection remains 1.3.0 while the application uses 2.2.0 and project-wide review.
 
 ## Coherent records and recognition
 
@@ -227,4 +227,10 @@ Manual pattern dispatch is now serialized centrally in FormPreviewComponent for 
 
 ## Progressive example catalogue
 
-`application-examples.ts` owns the current three-level catalogue, backed by the same JSON assets used in the authoring guide, downloads and generated kit. Its factory validates/detaches complete 2.1.0 applications. Gallery metadata is shared through `SAMPLES`; loading stages a whole-application replacement instead of a legacy single-form projection. Legacy fixtures remain separate for compatibility and the initial draft. Planned role responsibilities are brief/questions text; current list capabilities and presets do not introduce an access schema. See [example boundaries](EXAMPLES.md).
+`application-examples.ts` owns the current three-level catalogue, backed by the same JSON assets used in the authoring guide, downloads and generated kit. Its factory validates/detaches complete 2.2.0 applications. Gallery metadata is shared through `SAMPLES`; loading stages a whole-application replacement instead of a legacy single-form projection. Legacy fixtures remain separate for compatibility and the initial draft. Planned role responsibilities are brief/questions text; current list capabilities and presets do not introduce an access schema. See [example boundaries](EXAMPLES.md).
+
+## Dedicated list editing and runtime shell
+
+`CollectionDefinitionController` owns shared configuration mutations and stable list selection. `CollectionConfiguratorComponent` contains the detailed editor and is loaded with Angular defer when its workflow tab opens. `CollectionWorkspaceComponent` owns record interaction and renders configured table/actions without editor controls; callback owner/revision guards remain in place. `collection-presentation.ts` admits finite style/icon tokens and bounded column dimensions/labels. The application contract is 2.2.0 and migrates 2.1.0 while retiring prior approval.
+
+Standalone HTML has its own project header, sidebar, mobile menu disclosure and routed content. Application-mode forms omit Studio toolbars, fake browser chrome and developer settings; native validation/isolated workers and session-only CRUD remain shared. The current-document hash URLs still preserve file paths and static-host prefixes.

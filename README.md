@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 262 passing automated tests: 191 unit/component tests and 71 end-to-end tests.** Verified on November 5, 2026, with **97.78% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 269 passing automated tests: 196 unit/component tests and 73 end-to-end tests.** Verified on November 5, 2026, with **97.55% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -16,7 +16,7 @@ MockForge Studio helps product owners and developers agree on a form before prod
 
 ## CRUD list previews
 
-Use **Lists and entries** beside the form selector to configure several table views per form. Share session-only records across views, search/filter/sort/page, select matching rows and create/view/edit/delete with native form validation. Regeneration requires confirmation and replaces records only on complete success. Configuration persists; record values never do. See [the walkthrough and limits](docs/COLLECTIONS.md). Use **Application preview** to navigate forms and lists with direct links and browser history while retaining editor selection. See [navigation and session lifetime](docs/APPLICATION_PREVIEW.md). Download a single offline HTML application preview with the same forms, lists and validation. See [standalone export](docs/STANDALONE_PREVIEW.md). Roles follow later.
+Use the dedicated **Lists and entries** workflow tab to configure several table views per form. Share session-only records across views, search/filter/sort/page, select matching rows and create/view/edit/delete with native form validation. Regeneration requires confirmation and replaces records only on complete success. Configuration persists; record values never do. See [the walkthrough and limits](docs/COLLECTIONS.md). Use **Application preview** to navigate forms and lists with direct links and browser history while retaining editor selection. See [navigation and session lifetime](docs/APPLICATION_PREVIEW.md). Download a single offline HTML application preview with the same forms, lists and validation. See [standalone export](docs/STANDALONE_PREVIEW.md). Roles follow later.
 
 ## Why agree before implementation?
 
@@ -72,7 +72,7 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 
 - Several independent single-page forms per project: add, name, duplicate, reorder, delete with confirmation and switch the active editor. Switching discards preview answers and cancels pending work. JSON, Markdown and review cover every form; project brief, languages and theme are shared.
 
-- An overview introduces the approach before opening the full-width, five-step workspace. A narrow icon rail, persistent header and footer keep navigation available.
+- An overview introduces the approach before opening the full-width workspace. Four workflow tabs separate Project & design, Fields/actions, Lists/entries and Review. A narrow icon rail, persistent header and footer keep navigation available.
 - German, English and Persian form copy, with one or two languages active at a time so field and button editors stay readable. Inactive translations remain stored.
 - Nine native field types plus repeatable groups with card/table layouts, editable child fields and minimum/maximum entry counts. Required rules, text length constraints, localized tooltips and full-value RegEx patterns have localized messages.
 - Show or hide the interactive preview on every step; it starts hidden for the brief, copy and form editor. Choose its language and desktop/mobile width separately.
@@ -94,7 +94,7 @@ See [authoring instructions](docs/AUTHORING_TOOLS.md) for copy/cut/paste and see
 
 ## Author forms in a text editor or with AI
 
-The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 2.1.0 and offers the same three progressive contact/request/workspace projects to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
+The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 2.2.0 and offers the same three progressive contact/request/workspace projects to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
 
 See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and format kit](docs/AI_AUTHORING.md). The original MockForge edition uses a different JSON contract.
 
@@ -108,7 +108,7 @@ See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and forma
 
 The review record is local and unauthenticated. It supports an actual conversation and explicit agreement outside the app. Imports reset review status. Preview inputs are not persisted or submitted. Backend integration, email delivery, refunds and CRM workflows are outside this mockup tool.
 
-JSON exports use Studio schema **2.1.0** with `format: "mockforge-studio"` and `forms[]`. Studio 2.0.0 applications migrate with review cleared; existing Studio 1.0.0–1.3.0 drafts become one-form applications on restore/import; missing Persian values start empty and 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. One or two of the three supported form languages can be active, while inactive copy remains stored. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
+JSON exports use Studio schema **2.2.0** with `format: "mockforge-studio"` and `forms[]`. Studio 2.0.0 and 2.1.0 applications migrate with review cleared; existing Studio 1.0.0–1.3.0 drafts become one-form applications on restore/import; missing Persian values start empty and 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. One or two of the three supported form languages can be active, while inactive copy remains stored. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
 
 Repeat groups support one level of up to 20 child fields and 0–20 entries, with at least one child definition. Each form allows 100 definitions counting groups and children together; the application allows 500 definitions across at most 20 forms. Preview entries validate independently and use distinct radio groups. Removing an entry asks for confirmation; resetting responses returns groups to their minimum count. Response values are never persisted or exported. The extensive application example has 24 definitions across two forms, including a 1–8-item table and optional 0–4 contact cards. Pricing, totals and finance approval remain production requirements to agree separately.
 
@@ -163,7 +163,7 @@ Test valid, empty and deliberately invalid responses, exact text limits, one cha
 
 ### Coherent preview records
 
-First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. The browser batch API continues to accept a legacy 1.3.0 selected-form projection; application JSON is 2.1.0. Persisted semantic hints/examples remain future work. See [the tools guide](docs/AUTHORING_TOOLS.md).
+First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. The browser batch API continues to accept a legacy 1.3.0 selected-form projection; application JSON is 2.2.0. Persisted semantic hints/examples remain future work. See [the tools guide](docs/AUTHORING_TOOLS.md).
 
 ### Bounded pattern examples and isolated checks
 

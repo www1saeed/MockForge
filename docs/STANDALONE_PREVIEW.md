@@ -18,7 +18,9 @@ viewers have not been certified.
 The export captures the complete application's configuration at the time of the
 click, including hidden forms, lists, action switches, generation count/seed and
 all three stored translations. Hidden menu items remain directly addressable;
-menu visibility is not access control. The editor's selected screen is not saved:
+menu visibility is not access control. The exported page has its own project header and sidebar; the sidebar collapses behind a keyboard-accessible menu button on mobile. Studio toolbars, device toggles, fake browser chrome and form test-data settings are omitted.
+
+The editor's selected screen is not saved:
 the file starts at the first available menu destination. Direct hash links,
 Back/Forward and explicit missing/empty states work within the exported document.
 
@@ -31,7 +33,7 @@ Review the visible configuration before sharing it.
 Native answers, saved/generated collection records, clipboard contents, editor
 drafts and feedback messages never enter the exported document. It starts with
 empty record sessions. Use a list's Create action or Generate test records to
-populate it. CRUD, queries, sorting, selection, fixture generation and confirmation
+populate it. Configured table designs, column headings/widths/alignment, action labels/icons, CRUD, queries, sorting, selection, fixture generation and confirmation
 dialogs use the existing Studio behavior and resource limits. Form simulation
 buttons retain their simulation behavior; they do not insert list records.
 
