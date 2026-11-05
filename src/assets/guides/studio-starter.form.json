@@ -1,15 +1,15 @@
 {
   "format": "mockforge-studio",
   "schemaVersion": "2.1.0",
-  "name": "Example contact request",
-  "owner": "",
-  "audience": "Prospective users (fictional example)",
-  "goal": "Agree which information a contact request needs.",
-  "scope": "Single-page local mockup. Submission and email delivery require production work.",
+  "name": "01 · Contact desk",
+  "owner": "Fictional example product owner",
+  "audience": "Product owners and delivery teams reviewing a fictional prototype",
+  "goal": "Learn how one short form and one list share session records.",
+  "scope": "One form, three fields and one CRUD list. No sign-in, email delivery or production storage.",
   "theme": "bootstrap",
   "languages": ["de", "en"],
-  "decisions": "Keep one page and collect only the data needed for a reply.",
-  "questions": "Agree response timing and production handling with the owner.",
+  "decisions": "Create records through the list. The form Check button only simulates validation. Planned future roles: coordinator maintains contact requests; observer reads them. Current list switches apply equally to every viewer and provide no role enforcement.",
+  "questions": "Which later roles may view email addresses, create, edit or delete requests? Who assigns those roles? Agree a retention policy before production.",
   "review": {
     "checks": [false, false, false, false, false],
     "reviewer": "",
@@ -17,26 +17,27 @@
   },
   "forms": [
     {
-      "id": "form-1",
+      "id": "contacts",
+      "menu": true,
       "title": {
         "de": "Kontaktanfrage",
         "en": "Contact request",
         "fa": "درخواست تماس"
       },
       "description": {
-        "de": "Ein fiktives Beispiel zum Bearbeiten im Texteditor.",
-        "en": "A fictional example for text-editor authoring.",
-        "fa": "نمونه‌ای فرضی برای ویرایش در ویرایشگر متن."
+        "de": "Name und E-Mail reichen für eine Antwort. Eine Nachricht ist optional.",
+        "en": "A name and email are enough for a reply. A message is optional.",
+        "fa": "نام و ایمیل برای پاسخ کافی است. پیام اختیاری است."
       },
       "submit": {
-        "de": "Anfrage prüfen",
-        "en": "Check request",
-        "fa": "بررسی درخواست"
+        "de": "Eingaben prüfen",
+        "en": "Check responses",
+        "fa": "بررسی پاسخ‌ها"
       },
       "columns": 1,
       "fields": [
         {
-          "id": "contact-name",
+          "id": "name",
           "type": "text",
           "label": {
             "de": "Vollständiger Name",
@@ -63,7 +64,6 @@
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -72,12 +72,12 @@
           }
         },
         {
-          "id": "contact-email",
+          "id": "email",
           "type": "email",
           "label": {
-            "de": "E-Mail",
-            "en": "Email",
-            "fa": "ایمیل"
+            "de": "E-Mail-Adresse",
+            "en": "Email address",
+            "fa": "نشانی ایمیل"
           },
           "placeholder": {
             "de": "",
@@ -99,7 +99,6 @@
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -108,12 +107,12 @@
           }
         },
         {
-          "id": "request-topic",
-          "type": "select",
+          "id": "message",
+          "type": "textarea",
           "label": {
-            "de": "Thema",
-            "en": "Topic",
-            "fa": "موضوع"
+            "de": "Nachricht",
+            "en": "Message",
+            "fa": "پیام"
           },
           "placeholder": {
             "de": "",
@@ -125,64 +124,16 @@
             "en": "",
             "fa": ""
           },
-          "required": true,
-          "options": [
-            {
-              "de": "Produktdemo",
-              "en": "Product demo",
-              "fa": "نمایش محصول"
-            },
-            {
-              "de": "Rückfrage",
-              "en": "Question",
-              "fa": "پرسش"
-            }
-          ],
-          "note": "",
-          "minLength": 0,
-          "maxLength": 0,
-          "tooltip": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "tooltipPlacement": "icon",
-          "pattern": "",
-          "patternMessage": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          }
-        },
-        {
-          "id": "contact-consent",
-          "type": "checkbox",
-          "label": {
-            "de": "Ich möchte eine Antwort zu meiner Anfrage.",
-            "en": "I would like a reply to my request.",
-            "fa": "مایلم پاسخ درخواست خود را دریافت کنم."
-          },
-          "placeholder": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "help": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "required": true,
+          "required": false,
           "options": [],
           "note": "",
           "minLength": 0,
-          "maxLength": 0,
+          "maxLength": 500,
           "tooltip": {
             "de": "",
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -193,16 +144,16 @@
       ],
       "buttons": [
         {
-          "id": "submit",
+          "id": "check",
           "label": {
-            "de": "Anfrage prüfen",
-            "en": "Check request",
-            "fa": "بررسی درخواست"
+            "de": "Eingaben prüfen",
+            "en": "Check responses",
+            "fa": "بررسی پاسخ‌ها"
           },
           "variant": "primary",
           "action": "submit",
           "cssClass": "",
-          "note": "Local validation and simulation only. Agree production delivery separately."
+          "note": ""
         },
         {
           "id": "reset",
@@ -211,26 +162,26 @@
             "en": "Reset",
             "fa": "بازنشانی"
           },
-          "variant": "secondary",
+          "variant": "ghost",
           "action": "reset",
           "cssClass": "",
-          "note": "Clear preview answers only."
+          "note": ""
         }
       ],
       "entries": {
-        "count": 25,
-        "seed": 1
+        "count": 8,
+        "seed": 11
       },
       "lists": [
         {
-          "id": "requests",
+          "id": "contact-requests",
           "title": {
             "de": "Kontaktanfragen",
             "en": "Contact requests",
             "fa": "درخواست‌های تماس"
           },
-          "columns": ["contact-name", "contact-email", "request-topic", "contact-consent"],
-          "searchFields": ["contact-name", "contact-email", "request-topic", "contact-consent"],
+          "columns": ["name", "email", "message"],
+          "searchFields": ["name", "email", "message"],
           "filters": [],
           "presets": [],
           "pageSize": 10,

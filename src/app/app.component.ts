@@ -1,3 +1,4 @@
+import { applicationExample, ApplicationExampleKind } from './application-examples';
 import { PreviewExportService } from './preview-export.service';
 import {
   Component,
@@ -17,7 +18,6 @@ import {
   BUTTON_VARIANTS,
   createButton,
   createField,
-  example,
   Field,
   FieldType,
   FIELD_TYPES,
@@ -36,7 +36,6 @@ import {
   allocateFieldId,
   LEAF_FIELD_TYPES,
   RepeatGroup,
-  ExampleKind,
 } from './project';
 import { ProjectStore } from './project.store';
 import { CollectionWorkspaceComponent } from './collection-workspace.component';
@@ -761,8 +760,8 @@ export class AppComponent implements OnInit {
     this.replaceDialog.nativeElement.close();
   }
   /** Treat examples as replacements so an existing working draft is never lost silently. */
-  loadExample(kind: ExampleKind): void {
-    this.requestReplace(example(kind));
+  loadExample(kind: ApplicationExampleKind): void {
+    this.requestReplace(applicationExample(kind));
   }
   /** Honor export-first and clear imported reviewer identity before replacing the draft. */
   confirmReplace(saveFirst = false): void {

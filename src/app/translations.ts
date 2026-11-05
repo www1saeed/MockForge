@@ -3,6 +3,30 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  exampleRolesHint: [
+    'Die Beispiele bereiten fachliche Zuständigkeiten für spätere Rollen vor. Aktionsschalter gelten für alle; sie ersetzen keine Benutzerrechte.',
+    'The examples prepare business responsibilities for future roles. Action switches apply to everyone; they do not provide user permissions.',
+  ],
+  exampleCollection: ['BEISPIELPROJEKTE', 'EXAMPLE PROJECTS'],
+  exampleLevel3: ['3 · Umfangreich', '3 · Extensive'],
+  exampleLevel2: ['2 · Aufbau', '2 · Intermediate'],
+  exampleLevel1: ['1 · Einstieg', '1 · Getting started'],
+  workspaceExampleText: [
+    'Anträge und Lieferanten als getrennte Formulare. Sieben Listen zeigen feste Filter, Lesesichten, eine Prüfwarteschlange sowie Tabellen- und Kartengruppen.',
+    'Requests and suppliers as separate forms. Seven lists demonstrate presets, read-only views, a review queue, and table/card groups.',
+  ],
+  groupsExampleText: [
+    'Ein Beschaffungsformular mit drei Listenansichten und einer wiederholbaren Positionstabelle direkt im Formular.',
+    'One purchase-request form with three list views and a repeatable line-item table inside the form.',
+  ],
+  starterExampleText: [
+    'Drei Felder, ein Formular und eine Liste: Kontaktanfragen erstellen, ansehen, bearbeiten und löschen.',
+    'Three fields, one form and one list: create, view, edit and delete contact requests.',
+  ],
+  workspaceExample: [
+    'Umfangreich · zwei Formulare, sieben Listen',
+    'Extensive · two forms, seven lists',
+  ],
   interfaceLanguage: ['Sprache der Oberfläche', 'Interface language'],
   standaloneExport: ['HTML-Vorschau herunterladen', 'Download HTML preview'],
   standaloneHint: [
@@ -206,11 +230,14 @@ export const copy = {
   ],
   completeExamples: ['Vollständige importierbare Beispiele', 'Complete importable examples'],
   examplesHint: [
-    'Diese fiktiven Beispiele enthalten alle Pflichtschlüssel. Die Kontaktanfrage zeigt Eingabetypen und Aktionen; das Gruppenbeispiel ergänzt Karten und eine optionale lückenlose Tabelle. JSON-Schlüssel bleiben Englisch.',
-    'These fictional examples contain every required key. The contact request shows controls and actions; the group example adds cards and an optional gapless table. JSON property names stay English.',
+    'Drei aktuelle Projekte: ein Kontaktformular mit Liste, ein Antrag mit drei Listen und Positionstabelle sowie zwei Formulare mit sieben Listen. Alle Dateien enthalten die Pflichtschlüssel und DE/EN/FA-Texte. JSON-Schlüssel bleiben Englisch.',
+    'Three current projects: a contact form and list, a request with three lists and a line-item table, and two forms with seven lists. All files include required keys and DE/EN/FA copy. JSON property names stay English.',
   ],
-  starterExample: ['Kontaktanfrage: eine Seite', 'Contact request: one page'],
-  groupsExample: ['Teamkarten und Positionstabelle', 'Team cards and line-item table'],
+  starterExample: ['Einfach · Kontaktformular mit Liste', 'Simple · contact form and list'],
+  groupsExample: [
+    'Aufbau · Antrag, Listen und Positionstabelle',
+    'Intermediate · request, lists and line-item table',
+  ],
   downloadJson: ['JSON herunterladen', 'Download JSON'],
   copyJson: ['JSON kopieren', 'Copy JSON'],
   rootContract: ['Projekt: alle Pflichtschlüssel', 'Project: all required keys'],
@@ -312,8 +339,8 @@ export const copy = {
   ],
   aiPreparation: ['Format-Anhang zuerst bereitstellen', 'Supply the format reference first'],
   aiPreparationText: [
-    'Lade den Anhang herunter und füge ihn dem Chat hinzu. Er enthält englische Typdefinitionen, Studio-Regeln und zwei vollständige Beispiele. Ergänze den Prompt mit Ziel, Zielgruppe, Feldern und gewünschten Sprachen.',
-    'Download and attach the kit to the chat. It contains English type declarations, Studio rules and two complete examples. Then complete a prompt with your goal, audience, fields and selected languages.',
+    'Lade den Anhang herunter und füge ihn dem Chat hinzu. Er enthält englische Typdefinitionen, Studio-Regeln und drei vollständige Beispiele. Ergänze den Prompt mit Ziel, Zielgruppe, Feldern und gewünschten Sprachen.',
+    'Download and attach the kit to the chat. It contains English type declarations, Studio rules and three complete examples. Then complete a prompt with your goal, audience, fields and selected languages.',
   ],
   downloadAuthoringKit: ['KI-Format-Anhang herunterladen', 'Download AI authoring kit'],
   authoringKitHint: [
@@ -853,12 +880,12 @@ export const copy = {
     'Local record, not authenticated approval. Share the JSON and brief with the product owner.',
   ],
   businessTitle: [
-    'Echte Geschäftsfragen. Konkrete Mockups.',
-    'Real business questions. Concrete mockups.',
+    'Vom einfachen Formular zum Anwendungsprojekt.',
+    'From a simple form to an application project.',
   ],
   businessLead: [
-    'Fiktive Szenarien für die Abstimmung im nächsten Kundengespräch.',
-    'Fictional scenarios for your next client alignment conversation.',
+    'Drei aufeinander aufbauende Projekte mit Formularen, Listen und bearbeitbaren Sitzungseinträgen.',
+    'Three progressive projects with forms, lists and editable session records.',
   ],
   saasTitle: ['SaaS · Demo-Anfrage', 'SaaS · Demo request'],
   saasText: [

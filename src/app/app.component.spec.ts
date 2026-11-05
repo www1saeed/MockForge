@@ -617,7 +617,7 @@ describe('Alignment workspace', (): void => {
     const dialog: HTMLDialogElement = fixture.nativeElement.querySelector('dialog');
     dialog.showModal = jest.fn();
     dialog.close = jest.fn();
-    app.loadExample('commerce');
+    app.loadExample('groups');
     expect(app.project().name).toContain('Orbit');
     app.cancelReplace();
     expect(app.pending()).toBeNull();

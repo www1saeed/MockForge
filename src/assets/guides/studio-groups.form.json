@@ -1,15 +1,15 @@
 {
   "format": "mockforge-studio",
   "schemaVersion": "2.1.0",
-  "name": "Example team and line items",
-  "owner": "",
-  "audience": "Prospective users (fictional example)",
-  "goal": "Agree which information a contact request needs.",
-  "scope": "Single-page local mockup. Submission and email delivery require production work.",
+  "name": "02 · Purchase requests",
+  "owner": "Fictional example product owner",
+  "audience": "Product owners and delivery teams reviewing a fictional prototype",
+  "goal": "Compare several views of one form while editing repeated line items directly in its table.",
+  "scope": "One request form, three list views and one repeated table (1–8 items). Lists show whole requests, not flattened child rows. No approval engine or role enforcement.",
   "theme": "bootstrap",
   "languages": ["de", "en"],
-  "decisions": "Team cards allow 1-3 entries; the optional continuous table allows 0-5. Groups cannot nest.",
-  "questions": "Agree numeric quantity limits and production totals; this format has no numeric minimum/maximum rules.",
+  "decisions": "All lists share requests and their repeated items. New requests has a fixed status preset; Overview disables modifications for every viewer. Planned later roles: requester prepares requests; purchasing processes them; observer reads overviews. A view preset is not row-level access control.",
+  "questions": "Which fields become read-only after submission? May requesters edit only their own records, and how will ownership be established? Who may change status or remove repeated positions? These policies are not enforced by this prototype.",
   "review": {
     "checks": [false, false, false, false, false],
     "reviewer": "",
@@ -17,31 +17,32 @@
   },
   "forms": [
     {
-      "id": "form-1",
+      "id": "requests",
+      "menu": true,
       "title": {
-        "de": "Team und Positionen",
-        "en": "Team and line items",
-        "fa": "تیم و اقلام"
+        "de": "Beschaffungsantrag",
+        "en": "Purchase request",
+        "fa": "درخواست خرید"
       },
       "description": {
-        "de": "Ein fiktives Beispiel zum Bearbeiten im Texteditor.",
-        "en": "A fictional example for text-editor authoring.",
-        "fa": "نمونه‌ای فرضی برای ویرایش در ویرایشگر متن."
+        "de": "Beschreibe deinen Bedarf und ergänze die Positionen in der Tabelle.",
+        "en": "Describe your needs and add line items in the table.",
+        "fa": "نیاز خود را شرح دهید و اقلام را در جدول وارد کنید."
       },
       "submit": {
-        "de": "Anfrage prüfen",
-        "en": "Check request",
-        "fa": "بررسی درخواست"
+        "de": "Eingaben prüfen",
+        "en": "Check responses",
+        "fa": "بررسی پاسخ‌ها"
       },
       "columns": 1,
       "fields": [
         {
-          "id": "contact-name",
+          "id": "request-title",
           "type": "text",
           "label": {
-            "de": "Vollständiger Name",
-            "en": "Full name",
-            "fa": "نام کامل"
+            "de": "Antragstitel",
+            "en": "Request title",
+            "fa": "عنوان درخواست"
           },
           "placeholder": {
             "de": "",
@@ -56,14 +57,13 @@
           "required": true,
           "options": [],
           "note": "",
-          "minLength": 2,
-          "maxLength": 80,
+          "minLength": 3,
+          "maxLength": 120,
           "tooltip": {
             "de": "",
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -72,12 +72,12 @@
           }
         },
         {
-          "id": "contact-email",
+          "id": "requester-email",
           "type": "email",
           "label": {
-            "de": "E-Mail",
-            "en": "Email",
-            "fa": "ایمیل"
+            "de": "E-Mail der anfragenden Person",
+            "en": "Requester email",
+            "fa": "ایمیل درخواست‌کننده"
           },
           "placeholder": {
             "de": "",
@@ -99,7 +99,6 @@
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -108,12 +107,12 @@
           }
         },
         {
-          "id": "request-topic",
+          "id": "department",
           "type": "select",
           "label": {
-            "de": "Thema",
-            "en": "Topic",
-            "fa": "موضوع"
+            "de": "Fachbereich",
+            "en": "Department",
+            "fa": "واحد سازمانی"
           },
           "placeholder": {
             "de": "",
@@ -128,14 +127,19 @@
           "required": true,
           "options": [
             {
-              "de": "Produktdemo",
-              "en": "Product demo",
-              "fa": "نمایش محصول"
+              "de": "Betrieb",
+              "en": "Operations",
+              "fa": "عملیات"
             },
             {
-              "de": "Rückfrage",
-              "en": "Question",
-              "fa": "پرسش"
+              "de": "IT",
+              "en": "IT",
+              "fa": "فناوری اطلاعات"
+            },
+            {
+              "de": "Finanzen",
+              "en": "Finance",
+              "fa": "مالی"
             }
           ],
           "note": "",
@@ -146,7 +150,6 @@
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -155,12 +158,12 @@
           }
         },
         {
-          "id": "contact-consent",
-          "type": "checkbox",
+          "id": "status",
+          "type": "select",
           "label": {
-            "de": "Ich möchte eine Antwort zu meiner Anfrage.",
-            "en": "I would like a reply to my request.",
-            "fa": "مایلم پاسخ درخواست خود را دریافت کنم."
+            "de": "Bearbeitungsstand",
+            "en": "Processing status",
+            "fa": "وضعیت پردازش"
           },
           "placeholder": {
             "de": "",
@@ -173,7 +176,23 @@
             "fa": ""
           },
           "required": true,
-          "options": [],
+          "options": [
+            {
+              "de": "Neu",
+              "en": "New",
+              "fa": "جدید"
+            },
+            {
+              "de": "In Prüfung",
+              "en": "In review",
+              "fa": "در حال بررسی"
+            },
+            {
+              "de": "Abgeschlossen",
+              "en": "Completed",
+              "fa": "تکمیل‌شده"
+            }
+          ],
           "note": "",
           "minLength": 0,
           "maxLength": 0,
@@ -182,7 +201,6 @@
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -191,128 +209,12 @@
           }
         },
         {
-          "id": "team-members",
-          "type": "group",
+          "id": "needed-by",
+          "type": "date",
           "label": {
-            "de": "Team",
-            "en": "Team",
-            "fa": "تیم"
-          },
-          "placeholder": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "help": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "required": true,
-          "options": [],
-          "note": "",
-          "minLength": 0,
-          "maxLength": 0,
-          "tooltip": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "tooltipPlacement": "icon",
-          "pattern": "",
-          "patternMessage": {
-            "de": "",
-            "en": "",
-            "fa": ""
-          },
-          "group": {
-            "layout": "cards",
-            "gapless": false,
-            "minItems": 1,
-            "maxItems": 3,
-            "fields": [
-              {
-                "id": "member-name",
-                "type": "text",
-                "label": {
-                  "de": "Name",
-                  "en": "Name",
-                  "fa": "نام"
-                },
-                "placeholder": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                },
-                "help": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                },
-                "required": true,
-                "options": [],
-                "note": "",
-                "minLength": 0,
-                "maxLength": 0,
-                "tooltip": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                },
-                "tooltipPlacement": "icon",
-                "pattern": "",
-                "patternMessage": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                }
-              },
-              {
-                "id": "member-email",
-                "type": "email",
-                "label": {
-                  "de": "E-Mail",
-                  "en": "Email",
-                  "fa": "ایمیل"
-                },
-                "placeholder": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                },
-                "help": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                },
-                "required": true,
-                "options": [],
-                "note": "",
-                "minLength": 0,
-                "maxLength": 0,
-                "tooltip": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                },
-                "tooltipPlacement": "icon",
-                "pattern": "",
-                "patternMessage": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
-                }
-              }
-            ]
-          }
-        },
-        {
-          "id": "line-items",
-          "type": "group",
-          "label": {
-            "de": "Positionen",
-            "en": "Line items",
-            "fa": "اقلام"
+            "de": "Benötigt am",
+            "en": "Needed by",
+            "fa": "تاریخ نیاز"
           },
           "placeholder": {
             "de": "",
@@ -334,7 +236,41 @@
             "en": "",
             "fa": ""
           },
-          "tooltipPlacement": "icon",
+          "pattern": "",
+          "patternMessage": {
+            "de": "",
+            "en": "",
+            "fa": ""
+          }
+        },
+        {
+          "id": "items",
+          "type": "group",
+          "label": {
+            "de": "Bestellpositionen",
+            "en": "Order line items",
+            "fa": "اقلام سفارش"
+          },
+          "placeholder": {
+            "de": "",
+            "en": "",
+            "fa": ""
+          },
+          "help": {
+            "de": "Eine Position pro Zeile. Die Zeilen gehören zum jeweiligen Antrag.",
+            "en": "One line item per row. Rows belong to their request.",
+            "fa": "در هر ردیف یک قلم؛ ردیف‌ها متعلق به همان درخواست‌اند."
+          },
+          "required": true,
+          "options": [],
+          "note": "These are repeated child rows, not a separate application list. Future requester/purchasing rights must be inherited from their parent request.",
+          "minLength": 0,
+          "maxLength": 0,
+          "tooltip": {
+            "de": "",
+            "en": "",
+            "fa": ""
+          },
           "pattern": "",
           "patternMessage": {
             "de": "",
@@ -344,8 +280,8 @@
           "group": {
             "layout": "table",
             "gapless": true,
-            "minItems": 0,
-            "maxItems": 5,
+            "minItems": 1,
+            "maxItems": 8,
             "fields": [
               {
                 "id": "item-code",
@@ -356,9 +292,9 @@
                   "fa": "کد کالا"
                 },
                 "placeholder": {
-                  "de": "",
-                  "en": "",
-                  "fa": ""
+                  "de": "IT-2048",
+                  "en": "IT-2048",
+                  "fa": "IT-2048"
                 },
                 "help": {
                   "de": "",
@@ -375,16 +311,50 @@
                   "en": "",
                   "fa": ""
                 },
-                "tooltipPlacement": "icon",
-                "pattern": "[A-Z]{3}",
+                "pattern": "[A-Z]{2}-[0-9]{4}",
                 "patternMessage": {
-                  "de": "Drei Großbuchstaben verwenden.",
-                  "en": "Use three uppercase letters.",
-                  "fa": "سه حرف بزرگ لاتین وارد کنید."
+                  "de": "Format: IT-2048",
+                  "en": "Format: IT-2048",
+                  "fa": "قالب: IT-2048"
                 }
               },
               {
-                "id": "item-quantity",
+                "id": "item-description",
+                "type": "text",
+                "label": {
+                  "de": "Bezeichnung",
+                  "en": "Description",
+                  "fa": "شرح"
+                },
+                "placeholder": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                },
+                "help": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                },
+                "required": true,
+                "options": [],
+                "note": "",
+                "minLength": 2,
+                "maxLength": 100,
+                "tooltip": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                },
+                "pattern": "",
+                "patternMessage": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                }
+              },
+              {
+                "id": "quantity",
                 "type": "number",
                 "label": {
                   "de": "Menge",
@@ -403,6 +373,57 @@
                 },
                 "required": true,
                 "options": [],
+                "note": "This format does not define numeric min/max; agree positive quantities and server-side validation later.",
+                "minLength": 0,
+                "maxLength": 0,
+                "tooltip": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                },
+                "pattern": "",
+                "patternMessage": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                }
+              },
+              {
+                "id": "category",
+                "type": "select",
+                "label": {
+                  "de": "Kategorie",
+                  "en": "Category",
+                  "fa": "دسته‌بندی"
+                },
+                "placeholder": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                },
+                "help": {
+                  "de": "",
+                  "en": "",
+                  "fa": ""
+                },
+                "required": true,
+                "options": [
+                  {
+                    "de": "Hardware",
+                    "en": "Hardware",
+                    "fa": "سخت‌افزار"
+                  },
+                  {
+                    "de": "Software",
+                    "en": "Software",
+                    "fa": "نرم‌افزار"
+                  },
+                  {
+                    "de": "Dienstleistung",
+                    "en": "Service",
+                    "fa": "خدمات"
+                  }
+                ],
                 "note": "",
                 "minLength": 0,
                 "maxLength": 0,
@@ -411,7 +432,6 @@
                   "en": "",
                   "fa": ""
                 },
-                "tooltipPlacement": "icon",
                 "pattern": "",
                 "patternMessage": {
                   "de": "",
@@ -425,16 +445,16 @@
       ],
       "buttons": [
         {
-          "id": "submit",
+          "id": "check",
           "label": {
-            "de": "Anfrage prüfen",
-            "en": "Check request",
-            "fa": "بررسی درخواست"
+            "de": "Eingaben prüfen",
+            "en": "Check responses",
+            "fa": "بررسی پاسخ‌ها"
           },
           "variant": "primary",
           "action": "submit",
           "cssClass": "",
-          "note": "Local validation and simulation only. Agree production delivery separately."
+          "note": ""
         },
         {
           "id": "reset",
@@ -443,10 +463,85 @@
             "en": "Reset",
             "fa": "بازنشانی"
           },
-          "variant": "secondary",
+          "variant": "ghost",
           "action": "reset",
           "cssClass": "",
-          "note": "Clear preview answers only."
+          "note": ""
+        }
+      ],
+      "entries": {
+        "count": 12,
+        "seed": 23
+      },
+      "lists": [
+        {
+          "id": "all-requests",
+          "title": {
+            "de": "Alle Anträge",
+            "en": "All requests",
+            "fa": "همهٔ درخواست‌ها"
+          },
+          "columns": ["request-title", "requester-email", "department", "status", "needed-by"],
+          "searchFields": ["request-title", "requester-email", "department", "status", "needed-by"],
+          "filters": ["department", "status"],
+          "presets": [],
+          "pageSize": 10,
+          "selectable": true,
+          "actions": {
+            "create": true,
+            "view": true,
+            "edit": true,
+            "delete": true
+          },
+          "sort": {
+            "fieldId": "request-title",
+            "direction": "asc"
+          }
+        },
+        {
+          "id": "new-requests",
+          "title": {
+            "de": "Neue Anträge",
+            "en": "New requests",
+            "fa": "درخواست‌های جدید"
+          },
+          "columns": ["request-title", "department", "needed-by"],
+          "searchFields": ["request-title", "department", "needed-by"],
+          "filters": ["department"],
+          "presets": [
+            {
+              "fieldId": "status",
+              "value": "0"
+            }
+          ],
+          "pageSize": 10,
+          "selectable": true,
+          "actions": {
+            "create": false,
+            "view": true,
+            "edit": true,
+            "delete": false
+          }
+        },
+        {
+          "id": "request-overview",
+          "title": {
+            "de": "Antragsübersicht · Lesesicht",
+            "en": "Request overview · read-only",
+            "fa": "نمای کلی درخواست‌ها · فقط خواندن"
+          },
+          "columns": ["request-title", "department", "status"],
+          "searchFields": ["request-title", "department", "status"],
+          "filters": ["department", "status"],
+          "presets": [],
+          "pageSize": 10,
+          "selectable": false,
+          "actions": {
+            "create": false,
+            "view": true,
+            "edit": false,
+            "delete": false
+          }
         }
       ]
     }

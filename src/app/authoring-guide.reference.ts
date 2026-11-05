@@ -1,14 +1,10 @@
-import starter from '../assets/guides/studio-starter.form.json';
-import groups from '../assets/guides/studio-groups.form.json';
+import { APPLICATION_EXAMPLES } from './application-examples';
 import rules from '../assets/guides/studio-authoring-rules.json';
 import { BUTTON_ACTIONS, BUTTON_VARIANTS, FIELD_TYPES, THEMES } from './project.model';
 import { CopyKey } from './translations';
 
 /** The displayed/downloadable examples and authoring kit share the same asset sources. */
-export const AUTHORING_EXAMPLES = [
-  { id: 'starter', title: 'starterExample', file: 'studio-starter.form.json', value: starter },
-  { id: 'groups', title: 'groupsExample', file: 'studio-groups.form.json', value: groups },
-] as const;
+export const AUTHORING_EXAMPLES = APPLICATION_EXAMPLES;
 export const AUTHORING_RULES = rules.rules
   .map((rule, index): string => `${index + 1}. ${rule}`)
   .join('\n');

@@ -1,3 +1,4 @@
+import { APPLICATION_EXAMPLES } from './application-examples';
 import { ButtonAction, ButtonVariant, FieldType, Theme } from './project.model';
 import { CopyKey } from './translations';
 
@@ -47,24 +48,13 @@ export const THEMES_COPY: readonly { id: Theme; name: string; description: CopyK
   { id: 'fluent', name: 'Fluent', description: 'fluentDesc' },
 ];
 
-export const SAMPLES = [
-  { id: 'saas', title: 'saasTitle', body: 'saasText', tag: 'B2B SOFTWARE', number: '01' },
-  { id: 'commerce', title: 'commerceTitle', body: 'commerceText', tag: 'E-COMMERCE', number: '02' },
-  {
-    id: 'agency',
-    title: 'agencyTitle',
-    body: 'agencyText',
-    tag: 'PROFESSIONAL SERVICES',
-    number: '03',
-  },
-  {
-    id: 'complex',
-    title: 'complexTitle',
-    body: 'complexText',
-    tag: 'COMPLEX WORKFLOW',
-    number: '04',
-  },
-] as const;
+export const SAMPLES = APPLICATION_EXAMPLES.map(({ id, title, body, tag, number }) => ({
+  id,
+  title,
+  body,
+  tag,
+  number,
+}));
 
 /** Explicit maps let TypeScript verify every supported button label at compile time. */
 export const VARIANT_COPY: Record<ButtonVariant, CopyKey> = {

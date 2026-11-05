@@ -835,18 +835,19 @@
       }
       @if (view() === 'examples') {
         <section id="workspace" class="content-page">
-          <p class="eyebrow">COMMERCIAL USE CASES</p>
+          <p class="eyebrow">{{ t('exampleCollection') }}</p>
           <h1>{{ t('businessTitle') }}</h1>
           <p class="page-lead">{{ t('businessLead') }}</p>
+          <p class="fine-print">{{ t('exampleRolesHint') }}</p>
           <div class="example-grid">
             @for (sample of samples; track sample.id) {
               <article class="example-card">
                 <div class="example-art" [class]="'example-art example-' + sample.id">
                   <span>{{ sample.number }}</span
-                  ><span>{{ sample.tag }}</span>
+                  ><span>{{ t(sample.tag) }}</span>
                 </div>
                 <div class="example-content">
-                  <span class="tiny-label">{{ sample.tag }}</span>
+                  <span class="tiny-label">{{ t(sample.tag) }}</span>
                   <h2>{{ t(sample.title) }}</h2>
                   <p>{{ t(sample.body) }}</p>
                   <button class="secondary-button" (click)="loadExample(sample.id)">

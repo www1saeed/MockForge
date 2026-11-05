@@ -47,7 +47,7 @@ const collectionContract = collectionAst.statements
   .join('\n\n');
 const { rules } = JSON.parse(await read('src/assets/guides/studio-authoring-rules.json'));
 const examples = await Promise.all(
-  ['studio-starter.form.json', 'studio-groups.form.json'].map(
+  ['studio-starter.form.json', 'studio-groups.form.json', 'studio-workspace.form.json'].map(
     async (file) =>
       `BEGIN EXAMPLE ${file}\n${JSON.stringify(JSON.parse(await read(`src/assets/guides/${file}`)), null, 2)}\nEND EXAMPLE ${file}`,
   ),
@@ -55,7 +55,7 @@ const examples = await Promise.all(
 const content = `MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.1.0
 
 Attach this UTF-8 text file to a chatbot together with your brief or current Studio export.
-This file is reference material, not an importable JSON file. The two complete examples below
+This file is reference material, not an importable JSON file. The three complete examples below
 are importable separately. The English TypeScript declarations describe JSON keys and types;
 output JSON, not TypeScript. Other MockForge editions use a different contract.
 New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.1.0".

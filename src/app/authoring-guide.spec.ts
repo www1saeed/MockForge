@@ -26,14 +26,16 @@ describe('Studio authoring references', (): void => {
         reviewer: '',
         approvedAt: null,
       });
-      const form = parsed.forms[0];
-      expect(form.title.fa).toMatch(/[\u0600-\u06ff]/);
-      for (const field of allFields(form.fields)) expect(field.label.fa).toMatch(/[\u0600-\u06ff]/);
-      const ids = allFields(form.fields).map((field): string => field.id);
-      expect(new Set(ids).size).toBe(ids.length);
-      expect(form.submit).toEqual(
-        form.buttons.find((button): boolean => button.action === 'submit')!.label,
-      );
+      for (const form of parsed.forms) {
+        expect(form.title.fa).toMatch(/[\u0600-\u06ff]/);
+        for (const field of allFields(form.fields))
+          expect(field.label.fa).toMatch(/[\u0600-\u06ff]/);
+        const ids = allFields(form.fields).map((field): string => field.id);
+        expect(new Set(ids).size).toBe(ids.length);
+        expect(form.submit).toEqual(
+          form.buttons.find((button): boolean => button.action === 'submit')!.label,
+        );
+      }
       expect(readFileSync(`src/assets/guides/${example.file}`, 'utf8')).toContain(
         '"schemaVersion": "2.1.0"',
       );

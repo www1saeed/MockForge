@@ -149,12 +149,12 @@ h1 {
   letter-spacing: 2px;
 }
 
-.example-commerce {
+.example-groups {
   background: #eee5f5;
   color: #6750a4;
 }
 
-.example-agency {
+.example-workspace {
   background: #e2ebf5;
   color: #0f6cbd;
 }
@@ -217,7 +217,7 @@ h1 {
   margin-inline: auto;
 }
 
-.example-agency span:last-child {
+.example-workspace span:last-child {
   color: var(--ink);
 }
 
