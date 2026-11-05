@@ -96,21 +96,25 @@ export interface FormButton {
   cssClass: string;
   note: string;
 }
-export interface Project {
+/** Reusable form specification; contains no project brief, review or response values. */
+export interface FormContent {
+  title: Text;
+  description: Text;
+  submit: Text;
+  columns: 1 | 2;
+  buttons: FormButton[];
+  fields: Field[];
+}
+/** Studio 1.x file contract, retained for the current editor and legacy imports. */
+export interface Project extends FormContent {
   schemaVersion: '1.3.0';
   name: string;
   owner: string;
   audience: string;
   goal: string;
   scope: string;
-  title: Text;
-  description: Text;
-  submit: Text;
   theme: Theme;
-  columns: 1 | 2;
   languages: Locale[];
-  buttons: FormButton[];
-  fields: Field[];
   decisions: string;
   questions: string;
   review: { checks: boolean[]; reviewer: string; approvedAt: string | null };
