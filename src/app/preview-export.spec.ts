@@ -58,4 +58,14 @@ describe('Standalone preview export boundary', () => {
       previewHtml(payload, { ...runtime, script: 'x'.repeat(PREVIEW_EXPORT_LIMITS.runtime) }),
     ).toThrow();
   });
+  it('bounds project strings and the expanded HTML after escaping', () => {
+    const project = parseApplicationProject(example('saas'))!;
+    project.name = 'x'.repeat(PREVIEW_EXPORT_LIMITS.project);
+    expect(() => capturePreview(project, 'de')).toThrow('Preview project too large');
+    project.name = '<'.repeat(800_000);
+    const payload = capturePreview(project, 'de');
+    expect(() => previewHtml(payload, { ...runtime, style: ' '.repeat(1_500_000) })).toThrow(
+      'Preview document too large',
+    );
+  });
 });
