@@ -39,15 +39,12 @@ Form mockups have no network submission, code generation, backend, CRM, payments
 ## Planned application-mockup expansion
 
 The November 5, 2026 expansion adds multiple forms, CRUD lists, application
-navigation and simulated roles in separate increments. Its staged domain
-foundation is implemented; these features are **not yet active in the editor**.
-The current import/export and persistence contract remains Studio 1.3.0.
-See the [architecture and implementation sequence](docs/ARCHITECTURE.md#staged-application-foundation-november-5-2026).
+navigation and simulated roles in separate increments. Multiple single-page forms are active in the editor, with whole-project persistence, import/export, handoff and review. The active application contract is Studio 2.0.0; legacy 1.0–1.3 files migrate. CRUD lists, navigation, roles and wizards remain future increments.
+See the [architecture and implementation sequence](docs/ARCHITECTURE.md#application-foundation-november-5-2026).
 
-The first increment defines a separate Studio 2.0.0 application draft, validates
+The implemented foundation defines a separate Studio 2.0.0 application contract, validates
 project-wide bounds, migrates legacy Studio forms without retaining an old
-acknowledgement, and provides immutable form operations. Runtime activation must
-integrate all-form review, handoff, import/export and persistence together; no
+acknowledgement, and provides immutable form operations. The runtime integrates all-form review, handoff, import/export and persistence together; no
 selected-form export may discard the rest of a project. DE/EN/FA, RTL, existing
 worker limits and recoverable storage failures remain requirements throughout.
 
@@ -59,7 +56,7 @@ worker limits and recoverable storage failures remain requirements throughout.
 - Shared, dismissible DE/EN/FA toast feedback covers information, successes, warnings and errors. Errors remain longer than ordinary notifications; hover/focus pauses expiry.
 
 - Public npm dependencies and static deployment.
-- Strict TypeScript and schema 1.3.0 validation with a one-megabyte import limit, at most two selected languages, 100-definition limit including group children, 20-button limit and 500-character pattern limit. Bound repeat rows/children, reject nesting and duplicate ids across the entire form. Upgrade this Studio's own 1.0.0, 1.1.0 and 1.2.0 files; preserve rejection of foreign editions.
+- Strict TypeScript and Studio 2.0.0 application validation with a one-megabyte import limit, at most two selected languages, 100-definition limit including group children, 20-button limit and 500-character pattern limit. Bound repeat rows/children, reject nesting and duplicate IDs within each form. Bound projects to 20 forms, 500 definitions and 100 buttons in total. Upgrade this Studio's own 1.0.0, 1.1.0, 1.2.0 and 1.3.0 files; preserve rejection of foreign editions.
 - Responsive shell without horizontal page overflow on mobile.
 - Visible labels, keyboard-operable actions and native modal focus management.
 - Selected-field reorder and trash actions beside the field list; a sticky, internally scrollable desktop preview during long editor sessions. Narrow screens use normal stacked flow.
@@ -100,7 +97,7 @@ worker limits and recoverable storage failures remain requirements throughout.
 ## Text-editor and AI authoring help
 
 - Provide separate navigable DE/EN/FA guides for manually authored JSON and AI-assisted form drafting. The existing methodology guide links to both; direct hashes, browser history and reload work.
-- Document the Studio 1.3.0 contract, all required root/field/group/button properties, supported enums, localized Text shape, IDs, constraints and import limitations. Do not imply compatibility with other MockForge editions or detailed JSON-path diagnostics.
+- Document the Studio 2.0.0 contract, all required root/form/field/group/button properties, supported enums, localized Text shape, IDs, constraints and import limitations. Do not imply compatibility with other MockForge editions or detailed JSON-path diagnostics.
 - Supply two complete importable JSON examples and selectable copy/download controls. Demonstrate ordinary fields, actions, cards and an optional continuous table.
 - Supply a downloadable UTF-8 authoring kit with the actual type contract, shared rules and both complete examples. Generate it from maintained sources and reject stale output in CI. Explain attachment versus publicly accessible URL and localhost restrictions.
 - Offer localized creation, targeted revision and repair briefs with shared format constraints. Do not automatically invoke an external model. Copy failures select text for manual copying; help never changes the current draft.
@@ -110,7 +107,7 @@ worker limits and recoverable storage failures remain requirements throughout.
 
 - Recognized root identity/address fields share one synthetic record; each repeat row has its own DE/EN/FA record. Native technical types precede exact normalized label, placeholder and help phrases. Conflicting recognized translations use generic text and report ambiguity. Report meaning/source and constraint/scenario adjustments.
 - Seed/profile/reference date and physical response structure reproduce data, including after reset/reload. Reordering definitions or preserving unrelated responses must not change identity values. Do not reconstruct generated identities from manual responses.
-- Expose a strict calendar reference date from 1000-01-01 to 9999-12-31, default 2026-01-01. Date fields receive it unchanged; no system-clock or relative-date dependency. Invalid settings block filling. Settings and diagnostics remain transient; schema remains 1.3.0.
+- Expose a strict calendar reference date from 1000-01-01 to 9999-12-31, default 2026-01-01. Date fields receive it unchanged; no system-clock or relative-date dependency. Invalid settings block filling. Settings and diagnostics remain transient; the internal renderer projection remains 1.3.0 while application files use 2.0.0.
 - Do not imply population realism, unique identities, real-world address correctness, persisted hints/examples or complete original-edition parity. Existing length/pattern and native validation rules still take precedence over record relationships.
 
 ### Bounded patterns and worker isolation

@@ -16,8 +16,8 @@ The in-app copy buttons append all shared format rules automatically. For the br
 
 ```text
 Read the attached MockForge Studio authoring kit first.
-Create a complete schema 1.3.0 draft for [business goal] used by [audience].
-Scope: one form page. Active languages: [one or two of de/en/fa].
+Create a complete ApplicationProject with format "mockforge-studio" and schema 2.0.0 for [business goal] used by [audience].
+Scope: [one or more named single-page forms]. Active languages: [one or two of de/en/fa].
 Fields, required rules and choices: [specific requirements].
 Repeatable data: [cards or table, entry bounds, child definitions].
 Buttons: [labels, local simulation and intended future production behavior].
@@ -32,7 +32,7 @@ After clarification, output only the complete JSON, without Markdown fences.
 Read the attached current Studio export and authoring kit.
 Requested changes: [specific changes]. Edit this exact file.
 Preserve unaffected properties, stable IDs, choices, decisions and inactive copy.
-Keep Studio schema 1.3.0 and the single-page model. New fields need unique IDs.
+Keep Studio schema 2.0.0 and preserve every form. Each form is a single page. Field IDs are unique within each form, including group children; form IDs are unique in the project.
 Reset review to five false checks, an empty reviewer and approvedAt: null.
 Record new open questions. Return the complete updated JSON, not a patch.
 ```

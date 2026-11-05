@@ -1,5 +1,33 @@
 # Code quality and test evidence
 
+## Current checkpoint — November 5, 2026
+
+**200 Studio tests pass: 152 Jest unit/component tests in 16 suites and all
+48 Chromium E2E journeys.** The final browser run uses two workers with zero
+retries, skipped, unexpected or flaky results. Ten Node selector checks pass
+separately; repeated smoke/focused runs do not increase the 200-test total.
+Coverage is 96.82% statements, 91.88% branches, 97.83% functions and 98.33% lines.
+ESLint, formatting, application/spec and E2E typechecks, 398 DE/EN/FA catalogue
+entries, authoring-kit synchronization and the production build pass.
+
+The initial bundle is **853.14 kB**, above the unchanged 700 kB warning and below
+the unchanged 1 MB failure budget. The full browser report is
+`reports/e2e/results.json`; HTML/JUnit/failure evidence uses the paths described
+in the contributor guide. The new multi-form browser journeys cover complete
+JSON round-trip, duplication/deletion, clipboard, all-form review and drafts,
+worker/generation disposal and Persian mobile accessibility. Desktop/Persian
+mobile workspace captures and revised desktop/mobile slides 13/14 were visually
+inspected. The current workspace image is refreshed in this increment.
+
+An initial full run exposed group-row resets caused by cloning unchanged form
+definitions during unrelated brief edits, plus an outdated standalone-deck
+expectation. The store now snapshots caller changes while reusing unchanged
+form/field identities, preserving the 36-response deferred-check regression.
+The corrected focused 19-test run and final complete 48-test run both pass.
+These are local results; the changed CI workflow has not run on GitHub.
+
+## Historical checkpoint — October 25, 2026
+
 **175 passing automated tests. 98.24% line coverage. All configured quality gates pass.**
 
 MockForge Studio is developed with documented Clean Code practices and substantial automated regression coverage for its current feature set. Complete local verification passed on **October 25, 2026**. Counts describe this checkpoint; rerun the commands after changes.

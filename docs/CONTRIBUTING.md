@@ -44,7 +44,7 @@ Tests should protect user behavior and specification boundaries. Inspect respons
 
 ## E2E organization and selection
 
-All 44 current Chromium journeys carry discovery-time metadata. Register each
+All 48 current Chromium journeys carry discovery-time metadata. Register each
 `e2e/*.spec.ts` in `e2e/test-catalogue.json`. Use `tagsFor` on every test with a
 stable, globally unique case ID, owning suite, one or more functional areas and
 the checks actually exercised. Case IDs must stay stable when titles or file
@@ -65,8 +65,8 @@ for mixed suites such as `studio` and `presentation`.
 
 Areas are `authoring`, `forms`, `lists`, `roles`, `navigation`, `preview`, `groups`,
 `transfer`, `persistence`, `review`, `shell`, `guide`, `presentation`, `test-data`
-and `patterns`. The future forms/lists/roles/navigation areas intentionally have
-no tests yet; requesting one fails until its journeys are implemented. Checks
+and `patterns`. The `forms` area covers the active multi-form journeys. The future
+lists/roles/navigation areas intentionally have no tests yet; requesting one fails until its journeys are implemented. Checks
 are `a11y`, `keyboard`, `responsive`, `i18n` and `performance`. The performance tag
 currently identifies the existing 500-record responsiveness observation; it does
 not establish a benchmark or a representative-device guarantee.
@@ -98,7 +98,7 @@ Selection is currently **explicit**, not inferred from Git changes. Add a
 conservative change-impact map after the application store/feature boundaries
 are integrated. Domain/store/shared styles must select their dependent journeys;
 unknown production paths must widen the run. Keep a full pre-release regression.
-As workflow steps expand, replace positional step selectors with stable step
+New multi-form journeys use `e2e/support/workspace.ts` and `data-step` identities. As workflow steps expand, migrate remaining positional selectors to stable step
 identities and introduce shared project/import/navigation fixtures. Add new
 feature suites for multiple forms, lists, roles and navigation rather than
 extending the mixed `studio.spec.ts` indefinitely. Test state must remain

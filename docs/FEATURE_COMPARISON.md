@@ -1,3 +1,7 @@
+# Current multi-form adaptation — November 5, 2026
+
+Studio now supports several independent single-page forms with create/duplicate/reorder/confirmed-delete, form-scoped clipboard, full-project JSON/Markdown and all-form review. Its own format is 2.0.0 with a mandatory `mockforge-studio` discriminator. The inspected original reference is `0b9b47e` (0.2.0 release candidate). CRUD lists, roles, application navigation, wizards and analysis/prompt generation remain subsequent Studio increments. No original code or private packages were copied, and no new original-edition test run is claimed. The comparisons below retain their dated historical scope; they are not a claim that Studio still writes 1.3.0 or has only one form. The browser batch API intentionally retains its legacy selected-form input.
+
 # Feature behavior comparison
 
 Historical baseline: inspected/tested on October 21, 2026, against original MockForge commit `0b84d116a50327b4ad6c098681bd5abed866f599`. Studio's feature commits are `8b09757` (clipboard), `3bc53dc` (preview data) and `6641712` (shell). The original repository was inspected and tested without source changes. The October 25 milestone also checks current reference commit `cf50030`, as recorded below. This comparison covers the requested feature areas, not the complete applications.
