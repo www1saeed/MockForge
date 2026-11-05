@@ -293,7 +293,7 @@ p {
   margin-bottom: 20px;
 }
 
-.replace-dialog[open] {
+.studio-dialog[open] {
   position: fixed;
   inset: 0;
   margin: auto;
@@ -305,16 +305,16 @@ p {
   width: calc(100% - 32px);
 }
 
-.replace-dialog::backdrop {
+.studio-dialog::backdrop {
   background: #112c3570;
 }
 
-.replace-dialog h2 {
+.studio-dialog h2 {
   font-size: 24px;
   margin-bottom: 14px;
 }
 
-.replace-dialog p {
+.studio-dialog p {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.8;

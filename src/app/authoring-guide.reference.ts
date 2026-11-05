@@ -30,25 +30,37 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
   {
     title: 'rootContract',
     rows: [
-      { names: 'schemaVersion', type: '"1.3.0"', description: 'versionRule' },
+      {
+        names: 'format, schemaVersion',
+        type: '"mockforge-studio", "2.0.0"',
+        description: 'versionRule',
+      },
       {
         names: 'name, owner, audience, goal, scope, decisions, questions',
         type: 'string',
         description: 'briefRule',
       },
-      {
-        names: 'title, description, submit',
-        type: 'Text = { de: string, en: string, fa: string }',
-        description: 'textRule',
-      },
       { names: 'languages', type: '("de" | "en" | "fa")[]', description: 'languageRule' },
-      { names: 'theme, columns', type: `${THEMES.join(' / ')}; 1 | 2`, description: 'layoutRule' },
-      { names: 'fields, buttons', type: 'Field[], FormButton[]', description: 'arrayRule' },
+      { names: 'theme', type: THEMES.join(' / '), description: 'layoutRule' },
+      { names: 'forms', type: 'ApplicationForm[1..20]', description: 'applicationFormsRule' },
       {
         names: 'review',
         type: '{ checks: boolean[5], reviewer: string, approvedAt: string | null }',
         description: 'reviewRule',
       },
+    ],
+  },
+  {
+    title: 'formContract',
+    rows: [
+      { names: 'id, menu?', type: 'safe unique form ID, boolean', description: 'formIdRule' },
+      {
+        names: 'title, description, submit',
+        type: 'Text = { de: string, en: string, fa: string }',
+        description: 'textRule',
+      },
+      { names: 'columns', type: '1 | 2', description: 'layoutRule' },
+      { names: 'fields, buttons', type: 'Field[], FormButton[]', description: 'arrayRule' },
     ],
   },
   {

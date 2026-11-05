@@ -24,7 +24,9 @@ import {
   handoff,
   Locale,
   LOCALES,
-  parseProject,
+  parseApplicationProject,
+  serializeApplicationProject,
+  ApplicationProject,
   Project,
   Text,
   validPattern,
@@ -81,9 +83,11 @@ import {
 })
 export class AppComponent implements OnInit {
   @ViewChild('replaceDialog', { static: true }) replaceDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('formDialog', { static: true }) formDialog!: ElementRef<HTMLDialogElement>;
   readonly store = inject(ProjectStore);
   readonly feedback = inject(FeedbackService);
   readonly project = this.store.project;
+  readonly previewSessions = computed(() => [{ id: this.store.formSession() }]);
   readonly locale = signal<Locale>('de');
   readonly view = signal<StudioView>('overview');
   readonly step = signal(0);
@@ -92,14 +96,27 @@ export class AppComponent implements OnInit {
   readonly previewFullWidth = signal(false);
   readonly previewLocale = signal<Locale>('de');
   readonly formLocales = LOCALES;
-  readonly patternDrafts = signal<Partial<Record<string, string>>>({});
+  private readonly draftsByForm = signal<Record<string, Partial<Record<string, string>>>>({});
+  readonly patternDrafts = computed(() => this.draftsByForm()[this.store.activeFormId()] ?? {});
+  readonly formMode = signal<'new' | 'duplicate'>('new');
+  readonly formTitle = signal<Text>({ de: '', en: '', fa: '' });
+  private formSource = '';
+  private formDialogSession = -1;
+  readonly formTitleValid = computed((): boolean =>
+    this.project().languages.every((lang): boolean => !!this.formTitle()[lang].trim()),
+  );
+  readonly formIndex = computed((): number =>
+    this.store
+      .application()
+      .forms.findIndex((form): boolean => form.id === this.store.activeFormId()),
+  );
   readonly buttonVariants = BUTTON_VARIANTS;
   readonly buttonActions = BUTTON_ACTIONS;
   readonly selectedId = signal('email');
   readonly rootListCollapsed = signal(false);
   readonly groupFieldsOpen = signal(false);
   readonly mobile = signal(false);
-  readonly pending = signal<Project | null>(null);
+  readonly pending = signal<ApplicationProject | null>(null);
   readonly leafFieldTypes = LEAF_FIELD_TYPES;
   readonly localizedFieldKeys = ['label', 'placeholder', 'help', 'tooltip'] as const;
   readonly navigation = NAVIGATION;
@@ -145,20 +162,33 @@ export class AppComponent implements OnInit {
         project.decisions,
         project.review.reviewer,
       ].every((value: string): boolean => !!value.trim()) &&
-      project.languages.every(
-        (lang: Locale): boolean =>
-          !!project.title[lang].trim() &&
-          allFields(project.fields).every(
-            (field: Field): boolean =>
-              !!field.label[lang].trim() &&
-              field.options.every((option: Text): boolean => !!option[lang].trim()),
-          ) &&
-          project.buttons.every((button: FormButton): boolean => !!button.label[lang].trim()),
+      project.languages.every((lang: Locale): boolean =>
+        this.store
+          .application()
+          .forms.every(
+            (form): boolean =>
+              !!form.title[lang].trim() &&
+              allFields(form.fields).every(
+                (field: Field): boolean =>
+                  !!field.label[lang].trim() &&
+                  field.options.every((option: Text): boolean => !!option[lang].trim()),
+              ) &&
+              form.buttons.every((button: FormButton): boolean => !!button.label[lang].trim()),
+          ),
       ) &&
       !project.questions.trim() &&
-      project.fields.length > 0 &&
-      project.buttons.length > 0 &&
-      allFields(project.fields).every((field: Field): boolean => !this.patternError(field)) &&
+      this.store
+        .application()
+        .forms.every(
+          (form): boolean =>
+            form.fields.length > 0 &&
+            form.buttons.length > 0 &&
+            allFields(form.fields).every(
+              (field): boolean =>
+                !supportsPattern(field) ||
+                validPattern(this.draftsByForm()[form.id]?.[field.id] ?? field.pattern),
+            ),
+        ) &&
       project.review.checks.every(Boolean)
     );
   });
@@ -176,6 +206,9 @@ export class AppComponent implements OnInit {
     });
     effect((): void => {
       if (this.store.restoreError()) this.feedback.notify('restoreError', 'error');
+    });
+    effect((): void => {
+      if (this.store.mutationError()) this.feedback.notify('applicationLimit', 'warning');
     });
   }
 
@@ -329,8 +362,8 @@ export class AppComponent implements OnInit {
     return this.t(ACTION_COPY[action]);
   }
   /** Persist an immutable specification edit and refresh legacy submit-copy compatibility. */
-  update(change: Partial<Project>): void {
-    this.store.update({
+  update(change: Partial<Project>): boolean {
+    return this.store.update({
       ...change,
       ...(change.buttons
         ? {
@@ -423,7 +456,7 @@ export class AppComponent implements OnInit {
           : [],
     };
     if (field.type === 'group') {
-      this.feedback.requestDelete(
+      this.requestDelete(
         `${field.label[this.locale()] || field.id} · ${this.t('groupFields')}`,
         (): void => {
           this.updateField(field.id, change);
@@ -455,7 +488,7 @@ export class AppComponent implements OnInit {
   changePattern(value: string): void {
     const field = this.selected();
     if (!field) return;
-    this.patternDrafts.update(
+    this.updatePatternDrafts(
       (drafts: Partial<Record<string, string>>): Partial<Record<string, string>> => ({
         ...drafts,
         [field.id]: value,
@@ -499,14 +532,15 @@ export class AppComponent implements OnInit {
       this.project().buttons.some((button: FormButton): boolean => button.id === `button-${suffix}`)
     )
       suffix++;
-    this.update({ buttons: [...this.project().buttons, createButton(`button-${suffix}`)] });
+    if (!this.update({ buttons: [...this.project().buttons, createButton(`button-${suffix}`)] }))
+      return;
     this.feedback.notify('buttonAdded', 'success');
   }
   /** Remove the addressed action without modifying field data or preview responses. */
   removeButton(index: number): void {
     const button = this.project().buttons[index];
     if (!button) return;
-    this.feedback.requestDelete(button.label[this.locale()] || button.id, (): void => {
+    this.requestDelete(button.label[this.locale()] || button.id, (): void => {
       this.update({
         buttons: this.project().buttons.filter(
           (item: FormButton): boolean => item.id !== button.id,
@@ -543,7 +577,7 @@ export class AppComponent implements OnInit {
     }
     const field = createField(type, this.nextFieldId());
     if (field.group) field.group.fields = [createField('text', this.nextFieldId([field.id]))];
-    this.update({ fields: [...this.project().fields, field] });
+    if (!this.update({ fields: [...this.project().fields, field] })) return;
     this.selectRootField(field.id);
     this.feedback.notify('fieldAdded', 'success');
   }
@@ -559,7 +593,7 @@ export class AppComponent implements OnInit {
       return;
     }
     // Capture stable identity; a later selection change must not change the target.
-    this.feedback.requestDelete(field.label[this.locale()] || field.id, (): void => {
+    this.requestDelete(field.label[this.locale()] || field.id, (): void => {
       this.update({
         fields: this.project()
           .fields.filter((item): boolean => item.id !== field.id)
@@ -619,19 +653,19 @@ export class AppComponent implements OnInit {
   /** A deleted id may be reused; its transient RegEx draft must not attach to a new field. */
   private clearFieldDrafts(fields: readonly Field[]): void {
     const removed = new Set(allFields(fields).map((field): string => field.id));
-    this.patternDrafts.update((drafts): Partial<Record<string, string>> =>
+    this.updatePatternDrafts((drafts): Partial<Record<string, string>> =>
       Object.fromEntries(Object.entries(drafts).filter(([id]): boolean => !removed.has(id))),
     );
   }
 
   /** Group limits apply to response rows, not to the number of specification fields. */
-  groupChange(change: Partial<RepeatGroup>): void {
+  groupChange(change: Partial<RepeatGroup>): boolean {
     const parent = this.editingGroup();
-    if (!parent?.group) return;
+    if (!parent?.group) return false;
     const group = { ...parent.group, ...change };
     group.maxItems = Math.max(1, Math.min(20, Math.trunc(Number(group.maxItems) || 1)));
     group.minItems = Math.max(0, Math.min(group.maxItems, Math.trunc(Number(group.minItems) || 0)));
-    this.update({
+    return this.update({
       fields: this.project().fields.map((field): Field =>
         field.id === parent.id ? { ...field, group, required: group.minItems > 0 } : field,
       ),
@@ -651,7 +685,7 @@ export class AppComponent implements OnInit {
       return;
     }
     const child = createField(type, this.nextFieldId());
-    this.groupChange({ fields: [...parent.group.fields, child] });
+    if (!this.groupChange({ fields: [...parent.group.fields, child] })) return;
     this.selectChildField(child.id);
     this.feedback.notify('fieldAdded', 'success');
   }
@@ -674,8 +708,10 @@ export class AppComponent implements OnInit {
     }
   }
   /** Stage a project and use the native modal for focus containment and cancellation. */
-  requestReplace(project: Project): void {
-    this.pending.set(project);
+  requestReplace(project: Project | ApplicationProject): void {
+    const next = parseApplicationProject(project);
+    if (!next) return;
+    this.pending.set(next);
     this.replaceDialog.nativeElement.showModal();
   }
   /** Discard pending replacement without changing the working specification. */
@@ -698,8 +734,8 @@ export class AppComponent implements OnInit {
       review: { checks: [false, false, false, false, false], reviewer: '', approvedAt: null },
     });
     this.cancelReplace();
-    this.patternDrafts.set({});
-    this.selectRootField(next.fields[0]?.id ?? '');
+    this.draftsByForm.set({});
+    this.resetFormEditor();
     this.openView('workspace');
     this.setStep(WORKFLOW.fields);
     this.feedback.notify('projectReplaced', 'success');
@@ -716,7 +752,7 @@ export class AppComponent implements OnInit {
     }
     try {
       const parsed: unknown = JSON.parse(await file.text());
-      const imported = parseProject(parsed);
+      const imported = parseApplicationProject(parsed);
       if (!imported) {
         this.feedback.notify('invalidImport', 'error');
         return;
@@ -741,16 +777,121 @@ export class AppComponent implements OnInit {
   }
   /** Export the saved specification; transient pattern drafts and responses stay private. */
   exportJson(): void {
-    this.download(JSON.stringify(this.project(), null, 2), 'application/json', 'json');
+    this.download(
+      serializeApplicationProject(this.store.application()),
+      'application/json',
+      'json',
+    );
     this.feedback.notify('jsonExported', 'info');
   }
   /** Render a framework-independent brief for product-owner and implementation discussions. */
   exportBrief(): void {
-    this.download(handoff(this.project()), 'text/markdown', 'md');
+    this.download(handoff(this.store.application()), 'text/markdown', 'md');
     this.feedback.notify('briefExported', 'info');
   }
   /** Open the workspace from the overview without rebuilding the specification. */
   scrollWorkspace(): void {
     this.openView('workspace');
+  }
+
+  private updatePatternDrafts(
+    update: (drafts: Partial<Record<string, string>>) => Partial<Record<string, string>>,
+  ): void {
+    const id = this.store.activeFormId();
+    this.draftsByForm.update((forms) => ({ ...forms, [id]: update(forms[id] ?? {}) }));
+  }
+
+  /** Guard destructive callbacks against a changed form/project, including switch-away-and-back. */
+  private requestDelete(
+    label: string,
+    confirm: () => void,
+    description: CopyKey = 'deleteDescription',
+  ): void {
+    const session = this.store.formSession();
+    this.feedback.requestDelete(
+      label,
+      (): void => {
+        if (session === this.store.formSession()) confirm();
+      },
+      description,
+    );
+  }
+
+  private resetFormEditor(): void {
+    this.feedback.cancelDelete();
+    this.selectRootField(this.project().fields[0]?.id ?? '');
+    this.previewFullWidth.set(false);
+  }
+
+  selectForm(id: string): void {
+    if (this.store.selectForm(id)) this.resetFormEditor();
+  }
+
+  openFormDialog(mode: 'new' | 'duplicate'): void {
+    this.formMode.set(mode);
+    this.formSource = this.store.activeFormId();
+    this.formDialogSession = this.store.formSession();
+    const title = this.project().title;
+    this.formTitle.set(
+      mode === 'new'
+        ? { de: '', en: '', fa: '' }
+        : {
+            de: `${title.de} (${translate('copySuffix', 'de')})`,
+            en: `${title.en} (${translate('copySuffix', 'en')})`,
+            fa: `${title.fa} (${translate('copySuffix', 'fa')})`,
+          },
+    );
+    this.formDialog.nativeElement.showModal();
+  }
+
+  setFormTitle(lang: Locale, value: string): void {
+    this.formTitle.update((title): Text => ({ ...title, [lang]: value }));
+  }
+
+  closeFormDialog(): void {
+    this.formDialogSession = -1;
+    this.formSource = '';
+    this.formDialog.nativeElement.close();
+  }
+
+  confirmForm(): void {
+    if (this.formDialogSession !== this.store.formSession()) {
+      this.closeFormDialog();
+      return;
+    }
+    if (!this.formTitleValid()) return;
+    const id =
+      this.formMode() === 'new'
+        ? this.store.addForm(this.formTitle())
+        : this.store.duplicateForm(this.formSource, this.formTitle());
+    if (!id) {
+      this.feedback.notify('applicationLimit', 'warning');
+      return;
+    }
+    this.closeFormDialog();
+    this.resetFormEditor();
+    this.feedback.notify('formAdded', 'success');
+  }
+
+  moveForm(direction: -1 | 1): void {
+    this.store.moveForm(this.store.activeFormId(), direction);
+  }
+
+  removeForm(): void {
+    if (this.store.application().forms.length === 1) return;
+    const id = this.store.activeFormId();
+    this.requestDelete(
+      this.project().title[this.locale()] || id,
+      (): void => {
+        if (this.store.removeForm(id)) {
+          this.draftsByForm.update((forms) =>
+            Object.fromEntries(Object.entries(forms).filter(([key]): boolean => key !== id)),
+          );
+          this.resetFormEditor();
+          this.feedback.notify('formDeleted', 'success');
+        }
+      },
+      'deleteFormDescription',
+    );
   }
 }

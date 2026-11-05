@@ -2,7 +2,7 @@ import { tagsFor } from './test-tags';
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
-import { validateProject } from '../src/app/project.validation';
+import { validateApplicationProject } from '../src/app/application-project';
 
 test(
   'separate text-editor and AI guides are linked and accessible in DE/EN/FA',
@@ -52,7 +52,7 @@ test(
       ).toBe(0);
       await expect(page.locator('.authoring-prompt')).toHaveCount(3);
       await page.locator('#prompt-create summary').click();
-      await expect(page.locator('#prompt-text-create')).toHaveValue(/schemaVersion "1.3.0"/);
+      await expect(page.locator('#prompt-text-create')).toHaveValue(/schemaVersion "2.0.0"/);
       expect(
         (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
           .violations,
@@ -84,8 +84,8 @@ test(
       const path = await download.path();
       if (!path) throw new Error('Missing downloaded example');
       const content: unknown = JSON.parse(await readFile(path, 'utf8'));
-      expect(validateProject(content)).toBe(true);
-      if (!validateProject(content)) throw new Error('Invalid authoring example');
+      expect(validateApplicationProject(content)).toBe(true);
+      if (!validateApplicationProject(content)) throw new Error('Invalid authoring example');
       await page.locator('app-authoring-guide > a[href="#workspace"]').click();
       await page.locator('input[type="file"]').setInputFiles(path);
       await expect(page.locator('.replace-dialog')).toBeVisible();
@@ -167,12 +167,15 @@ test(
     if (!path) throw new Error('Missing downloaded kit');
     const content = await readFile(path, 'utf8');
     expect(content).toContain('export interface Project');
+    expect(content).toContain('export interface ApplicationProject');
+    expect(content).toContain('SCHEMA 2.0.0');
     expect(content).toContain("schemaVersion: '1.3.0'");
     const examples = Array.from(
       content.matchAll(/BEGIN EXAMPLE ([^\n]+)\n([\s\S]*?)\nEND EXAMPLE \1/g),
     );
     expect(examples).toHaveLength(2);
-    for (const example of examples) expect(validateProject(JSON.parse(example[2]))).toBe(true);
+    for (const example of examples)
+      expect(validateApplicationProject(JSON.parse(example[2]))).toBe(true);
     await expect(page.locator('#authoring-kit-url')).toHaveValue(
       /\/assets\/guides\/studio-ai-authoring-kit\.txt$/,
     );

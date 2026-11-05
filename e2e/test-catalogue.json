@@ -18,6 +18,7 @@
   ],
   "checks": ["a11y", "keyboard", "responsive", "i18n", "performance"],
   "suites": {
+    "multi-form": ["forms", "authoring", "transfer", "persistence"],
     "authoring-guides": ["guide", "transfer"],
     "field-clipboard": ["authoring", "persistence"],
     "form-tooltips": ["authoring", "preview", "groups"],

@@ -176,10 +176,10 @@ test(
     const path = await download.path();
     if (!path) throw new Error('Missing grouped export');
     const project = JSON.parse(await readFile(path, 'utf8'));
-    const team = project.fields.find(
+    const team = project.forms[0].fields.find(
       (field: { id: string }): boolean => field.id === 'team-members',
     );
-    expect(project.schemaVersion).toBe('1.3.0');
+    expect(project.schemaVersion).toBe('2.0.0');
     expect(team.group).toMatchObject({ layout: 'table', minItems: 0, maxItems: 3, gapless: true });
     expect(team.group.fields.at(-1).label.en).toBe('Access type');
     await page.reload();

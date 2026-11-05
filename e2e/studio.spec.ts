@@ -183,10 +183,10 @@ test(
     const path = await (await downloadEvent).path();
     if (!path) throw new Error('Export missing');
     const exported = JSON.parse(await readFile(path, 'utf8'));
-    expect(exported.schemaVersion).toBe('1.3.0');
-    expect(exported.fields[0].pattern).toBe('[A-Z]{3}');
-    expect(exported.buttons[1].action).toBe('reset');
-    expect(exported.buttons[1].note).toBe('Clear only preview entries.');
+    expect(exported.schemaVersion).toBe('2.0.0');
+    expect(exported.forms[0].fields[0].pattern).toBe('[A-Z]{3}');
+    expect(exported.forms[0].buttons[1].action).toBe('reset');
+    expect(exported.forms[0].buttons[1].note).toBe('Clear only preview entries.');
     await page.reload();
     await page.locator('.workflow button').nth(3).click();
     await expect(page.locator('#field-tooltip-en')).toHaveValue('Exactly three uppercase letters');

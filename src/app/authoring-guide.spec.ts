@@ -7,7 +7,7 @@ import {
   AUTHORING_RULES,
 } from './authoring-guide.reference';
 import { allFields, LOCALES } from './project.model';
-import { parseProject, validateProject } from './project.validation';
+import { parseApplicationProject, validateApplicationProject } from './application-project';
 
 describe('Studio authoring references', (): void => {
   const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
@@ -18,24 +18,24 @@ describe('Studio authoring references', (): void => {
 
   it('ships complete importable examples without acknowledgement or duplicate field IDs', (): void => {
     for (const example of AUTHORING_EXAMPLES) {
-      expect(validateProject(example.value)).toBe(true);
-      const parsed = parseProject(JSON.parse(JSON.stringify(example.value)))!;
+      expect(validateApplicationProject(example.value)).toBe(true);
+      const parsed = parseApplicationProject(JSON.parse(JSON.stringify(example.value)))!;
       expect(parsed).not.toBeNull();
       expect(parsed.review).toEqual({
         checks: [false, false, false, false, false],
         reviewer: '',
         approvedAt: null,
       });
-      expect(parsed.title.fa).toMatch(/[\u0600-\u06ff]/);
-      for (const field of allFields(parsed.fields))
-        expect(field.label.fa).toMatch(/[\u0600-\u06ff]/);
-      const ids = allFields(parsed.fields).map((field): string => field.id);
+      const form = parsed.forms[0];
+      expect(form.title.fa).toMatch(/[\u0600-\u06ff]/);
+      for (const field of allFields(form.fields)) expect(field.label.fa).toMatch(/[\u0600-\u06ff]/);
+      const ids = allFields(form.fields).map((field): string => field.id);
       expect(new Set(ids).size).toBe(ids.length);
-      expect(parsed.submit).toEqual(
-        parsed.buttons.find((button): boolean => button.action === 'submit')!.label,
+      expect(form.submit).toEqual(
+        form.buttons.find((button): boolean => button.action === 'submit')!.label,
       );
       expect(readFileSync(`src/assets/guides/${example.file}`, 'utf8')).toContain(
-        '"schemaVersion": "1.3.0"',
+        '"schemaVersion": "2.0.0"',
       );
     }
   });

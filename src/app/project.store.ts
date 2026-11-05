@@ -1,28 +1,50 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import {
   allFields,
   allocateFieldId,
   Field,
   example,
-  parseProject,
+  parseApplicationProject,
+  validateApplicationProject,
+  ApplicationProject,
+  projectForForm,
+  addApplicationForm,
+  duplicateApplicationForm,
+  createApplicationForm,
+  allocateFormId,
+  removeApplicationForm,
+  moveApplicationForm,
+  Text,
   Project,
   STORAGE_KEY,
 } from './project';
 
 /**
- * Owns the single working specification and its local persistence boundary.
+ * Owns the complete application and a transient selected-form editor projection.
  * Specification edits invalidate review; preview responses never enter this service.
  * Storage failures preserve the signal state so the user can still export the draft.
  */
 @Injectable()
 export class ProjectStore {
-  readonly project = signal<Project>(example('saas'));
+  private readonly state = signal<ApplicationProject>(parseApplicationProject(example('saas'))!);
+  readonly application = this.state.asReadonly();
+  private readonly selectedForm = signal('form-1');
+  readonly activeFormId = this.selectedForm.asReadonly();
+  /** Remount response/worker owners on selection or wholesale project replacement. */
+  readonly formSession = signal(0);
+  readonly project = computed((): Project => projectForForm(this.state(), this.selectedForm())!);
+  readonly mutationError = signal(false);
   /** Internal authoring clipboard; never serialized with the specification. */
-  readonly clipboard = signal<{ mode: 'copy' | 'cut'; field: Field } | null>(null);
+  readonly clipboard = signal<{ mode: 'copy' | 'cut'; field: Field; formId: string } | null>(null);
 
   captureField(id: string, mode: 'copy' | 'cut'): void {
     const field = allFields(this.project().fields).find((item): boolean => item.id === id);
-    if (field) this.clipboard.set({ mode, field: JSON.parse(JSON.stringify(field)) as Field });
+    if (field)
+      this.clipboard.set({
+        mode,
+        field: JSON.parse(JSON.stringify(field)) as Field,
+        formId: this.activeFormId(),
+      });
   }
 
   clearClipboard(): void {
@@ -34,20 +56,27 @@ export class ProjectStore {
     const clip = this.clipboard();
     if (!clip) return null;
     const project = this.project();
-    const source = allFields(project.fields).find((item): boolean => item.id === clip.field.id);
+    const sourceForm = this.application().forms.find((form): boolean => form.id === clip.formId);
+    const source = allFields(sourceForm?.fields ?? []).find(
+      (item): boolean => item.id === clip.field.id,
+    );
     const field = clip.mode === 'cut' ? source : clip.field;
     const parent = parentId
       ? project.fields.find((item): boolean => item.id === parentId)
       : undefined;
     if (!field || (parentId && !parent?.group) || (parentId && field.type === 'group')) return null;
-    const oldParent = project.fields.find(
+    const oldParent = sourceForm?.fields.find(
       (item): boolean => !!item.group?.fields.some((child): boolean => child.id === field.id),
     );
-    const sameParent = oldParent?.id === parentId;
+    const sameForm = clip.formId === this.activeFormId();
+    const sameParent = sameForm && oldParent?.id === parentId;
     if (clip.mode === 'cut' && oldParent?.group?.fields.length === 1 && !sameParent) return null;
     if (parent?.group && parent.group.fields.length >= 20 && !(clip.mode === 'cut' && sameParent))
       return null;
-    if (clip.mode === 'copy' && allFields(project.fields).length + allFields([field]).length > 100)
+    if (
+      (clip.mode === 'copy' || !sameForm) &&
+      allFields(project.fields).length + allFields([field]).length > 100
+    )
       return null;
     const pasted = JSON.parse(JSON.stringify(field)) as Field;
     if (clip.mode === 'copy') {
@@ -56,9 +85,8 @@ export class ProjectStore {
         item.id = allocateFieldId(ids);
       }
     }
-    let fields = project.fields;
-    if (clip.mode === 'cut') {
-      fields = fields
+    const removeSource = (fields: Field[]): Field[] =>
+      fields
         .filter((item): boolean => item.id !== field.id)
         .map((item): Field =>
           item.group
@@ -71,6 +99,10 @@ export class ProjectStore {
               }
             : item,
         );
+    let fields = clip.mode === 'cut' && sameForm ? removeSource(project.fields) : project.fields;
+    if (clip.mode === 'cut' && !sameForm) {
+      const targetIds = new Set(allFields(fields).map((item): string => item.id));
+      if (allFields([pasted]).some((item): boolean => targetIds.has(item.id))) return null;
     }
     fields = parentId
       ? fields.map((item): Field =>
@@ -79,7 +111,17 @@ export class ProjectStore {
             : item,
         )
       : [...fields, pasted];
-    this.update({ fields });
+    const next: ApplicationProject = {
+      ...this.application(),
+      forms: this.application().forms.map((form) =>
+        form.id === this.activeFormId()
+          ? { ...form, fields }
+          : clip.mode === 'cut' && form.id === clip.formId
+            ? { ...form, fields: removeSource(form.fields) }
+            : form,
+      ),
+    };
+    if (!this.commit(next)) return null;
     if (clip.mode === 'cut') this.clearClipboard();
     return pasted.id;
   }
@@ -94,53 +136,158 @@ export class ProjectStore {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const parsed: unknown = JSON.parse(raw);
-      const restored = parseProject(parsed);
-      if (restored) this.project.set(restored);
-      else this.restoreError.set(true);
+      const restored = parseApplicationProject(parsed);
+      if (restored) {
+        this.state.set(restored);
+        this.selectedForm.set(restored.forms[0].id);
+        this.formSession.update((epoch): number => epoch + 1);
+        this.restoreError.set(false);
+      } else this.restoreError.set(true);
     } catch {
       this.restoreError.set(true);
     }
   }
 
   /** Acknowledgements cover one exact baseline and cannot survive a specification edit. */
-  update(change: Partial<Project>): void {
+  update(change: Partial<Project>): boolean {
     const current = this.project();
-    const next = {
+    const projected = {
       ...current,
-      ...change,
+      ...(JSON.parse(JSON.stringify(change)) as Partial<Project>),
       review: { ...current.review, checks: [false, false, false, false, false], approvedAt: null },
     };
-    this.project.set(next);
+    const next: ApplicationProject = {
+      ...this.application(),
+      name: projected.name,
+      owner: projected.owner,
+      audience: projected.audience,
+      goal: projected.goal,
+      scope: projected.scope,
+      theme: projected.theme,
+      languages: projected.languages,
+      decisions: projected.decisions,
+      questions: projected.questions,
+      forms: this.application().forms.map((form) =>
+        form.id === this.activeFormId()
+          ? {
+              ...form,
+              title: projected.title,
+              description: projected.description,
+              submit: projected.submit,
+              columns: projected.columns,
+              fields: projected.fields,
+              buttons: projected.buttons,
+            }
+          : form,
+      ),
+    };
+    return this.commit(next);
+  }
+
+  private commit(project: ApplicationProject): boolean {
+    const next: ApplicationProject = {
+      ...project,
+      review: { ...project.review, checks: [false, false, false, false, false], approvedAt: null },
+    };
+    if (!validateApplicationProject(next)) {
+      this.mutationError.set(true);
+      return false;
+    }
+    // Unchanged group definitions must keep their identity: cloning them resets
+    // mounted response rows and cancels otherwise-current deferred validation.
+    next.forms = next.forms.map((form) => {
+      const previous = this.application().forms.find((item): boolean => item.id === form.id);
+      if (!previous) return form;
+      if (JSON.stringify(form) === JSON.stringify(previous)) return previous;
+      return {
+        ...form,
+        fields: form.fields.map((field) => {
+          const old = previous.fields.find((item): boolean => item.id === field.id);
+          return old && JSON.stringify(old) === JSON.stringify(field) ? old : field;
+        }),
+      };
+    });
+    this.state.set(next);
+    this.mutationError.set(false);
     const clip = this.clipboard();
     if (
       clip?.mode === 'cut' &&
-      !allFields(next.fields).some((field): boolean => field.id === clip.field.id)
+      !allFields(next.forms.find((form): boolean => form.id === clip.formId)?.fields ?? []).some(
+        (field): boolean => field.id === clip.field.id,
+      )
     )
       this.clearClipboard();
     this.persist();
+    return true;
   }
 
   /** Callers validate imports and confirm replacement before handing ownership to the store. */
-  replace(project: Project): void {
+  replace(project: Project | ApplicationProject): boolean {
+    const next = parseApplicationProject(project);
+    if (!next) return false;
     this.clearClipboard();
     // The contract contains JSON values only; cloning also works in test DOMs.
-    this.project.set(JSON.parse(JSON.stringify(project)) as Project);
+    this.state.set(next);
+    this.selectedForm.set(next.forms[0].id);
+    this.formSession.update((epoch): number => epoch + 1);
+    this.mutationError.set(false);
     this.persist();
+    return true;
   }
 
   /** Copy the check array so caller-owned objects cannot silently alter the stored record. */
   updateReview(review: Project['review']): void {
-    this.project.set({ ...this.project(), review: { ...review, checks: [...review.checks] } });
+    this.state.set({ ...this.application(), review: { ...review, checks: [...review.checks] } });
     this.persist();
   }
 
   /** Persist synchronously for immediate reloads; quotas never discard in-memory edits. */
   persist(): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.project()));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.application()));
       this.storageError.set(false);
     } catch {
       this.storageError.set(true);
     }
+  }
+
+  /** Selection neither writes storage nor invalidates review. Answers are discarded by the host. */
+  selectForm(id: string): boolean {
+    if (
+      id === this.activeFormId() ||
+      !this.application().forms.some((form): boolean => form.id === id)
+    )
+      return false;
+    this.selectedForm.set(id);
+    this.formSession.update((epoch): number => epoch + 1);
+    return true;
+  }
+
+  addForm(title: Text): string | null {
+    const id = allocateFormId(this.application());
+    const next = addApplicationForm(this.application(), createApplicationForm(id, title));
+    if (!next || !this.commit(next)) return null;
+    this.selectForm(id);
+    return id;
+  }
+
+  duplicateForm(id: string, title: Text): string | null {
+    const next = duplicateApplicationForm(this.application(), id, title);
+    if (!next || !this.commit(next)) return null;
+    const newId = next.forms.at(-1)!.id;
+    this.selectForm(newId);
+    return newId;
+  }
+
+  removeForm(id: string): boolean {
+    const next = removeApplicationForm(this.application(), id);
+    if (!next || !this.commit(next)) return false;
+    if (id === this.activeFormId()) this.selectForm(next.forms[0].id);
+    return true;
+  }
+
+  moveForm(id: string, direction: -1 | 1): boolean {
+    const next = moveApplicationForm(this.application(), id, direction);
+    return !!next && this.commit(next);
   }
 }

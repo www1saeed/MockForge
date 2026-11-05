@@ -3,6 +3,97 @@ import { AppComponent } from './app.component';
 import { createButton, createField, example, FieldType } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('creates and duplicates named forms, protects cancelled/stale dialogs and resets editor selection', (): void => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const app = fixture.componentInstance;
+    const dialog = fixture.nativeElement.querySelector(
+      '[aria-labelledby="form-dialog-title"]',
+    ) as HTMLDialogElement;
+    dialog.showModal = jest.fn();
+    dialog.close = jest.fn();
+    app.openFormDialog('new');
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(1);
+    app.setFormTitle('de', 'Zweite');
+    app.setFormTitle('en', 'Second');
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(2);
+    expect(app.project().title.en).toBe('Second');
+    app.openFormDialog('duplicate');
+    app.confirmForm();
+    expect(app.project().title.en).toBe('Second (Copy)');
+    expect(app.store.application().forms).toHaveLength(3);
+    app.openFormDialog('new');
+    app.closeFormDialog();
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(3);
+    app.selectForm('form-1');
+    app.confirmForm();
+    expect(app.store.application().forms).toHaveLength(3);
+    const id = app.store.activeFormId();
+    app.selectForm('missing');
+    expect(app.store.activeFormId()).toBe(id);
+  });
+
+  test('review includes inactive forms and form-local invalid drafts while selection preserves review', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.update({ owner: 'Owner', questions: '' });
+    const id = app.store.duplicateForm('form-1', app.project().title)!;
+    app.selectRootField('name');
+    app.changePattern('[');
+    app.selectForm('form-1');
+    app.setReviewer('Reviewer');
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(false);
+    app.selectForm(id);
+    app.changePattern('');
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(true);
+    app.approve();
+    app.selectForm('form-1');
+    expect(app.project().review.approvedAt).not.toBeNull();
+    app.store.update({ title: { ...app.project().title, en: '' } });
+    app.selectForm(id);
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(false);
+  });
+
+  test('stale deletion callbacks cannot affect another form even when local IDs match', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    const second = app.store.duplicateForm('form-1', app.project().title)!;
+    app.selectForm('form-1');
+    app.selectRootField('name');
+    app.removeField();
+    const pending = app.feedback.deletion()!;
+    app.selectForm(second);
+    pending.confirm();
+    expect(app.project().fields.some((field): boolean => field.id === 'name')).toBe(true);
+    app.selectForm('form-1');
+    pending.confirm();
+    expect(app.project().fields.some((field): boolean => field.id === 'name')).toBe(true);
+    app.removeForm();
+    app.feedback.confirmDelete();
+    expect(app.store.application().forms).toHaveLength(1);
+    app.removeForm();
+    expect(app.feedback.deletion()).toBeNull();
+    expect(app.store.activeFormId()).toBe(second);
+    app.moveForm(-1);
+  });
+
+  test('exports every form with shared review and metadata instead of the selected projection', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.store.duplicateForm('form-1', { de: 'Zweite', en: 'Second', fa: 'دوم' });
+    const download = jest.spyOn(app, 'download').mockImplementation((): void => {});
+    app.exportJson();
+    const content = JSON.parse(download.mock.calls[0][0]);
+    expect(content.forms).toHaveLength(2);
+    expect(content.fields).toBeUndefined();
+    app.exportBrief();
+    expect(download.mock.calls[1][0]).toContain('## Form (form-1)');
+    expect(download.mock.calls[1][0]).toContain('## Form (form-2)');
+    expect(download.mock.calls[1][0]).toContain('Second');
+  });
   test('shell labels follow project identity with localized fallback', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.update({ name: '' });
@@ -224,9 +315,9 @@ describe('Alignment workspace', (): void => {
     app.changePattern('[');
     expect(app.selected()?.pattern).toBe('[A-Z]{3}');
     expect(app.patternError(app.selected()!)).toBe(true);
-    expect(JSON.parse(localStorage.getItem('mockforge-studio-v1')!).fields[0].pattern).toBe(
-      '[A-Z]{3}',
-    );
+    expect(
+      JSON.parse(localStorage.getItem('mockforge-studio-v1')!).forms[0].fields[0].pattern,
+    ).toBe('[A-Z]{3}');
     app.changePattern('[A-Z]{3}');
     expect(app.patternError(app.selected()!)).toBe(false);
     app.selectedId.set('missing');
