@@ -59,14 +59,17 @@ export class CollectionConfiguratorComponent
     this.patch({ appearance: { ...this.appearance(), ...change } });
   }
   column(id: string): CollectionColumnSetting {
-    return (
-      this.list()?.columnSettings?.find((c) => c.fieldId === id) ?? {
-        fieldId: id,
-        label: { de: '', en: '', fa: '' },
-        align: 'start',
-        sortable: true,
-      }
-    );
+    const column = this.list()?.columnSettings?.find((c) => c.fieldId === id) ?? {
+      fieldId: id,
+      label: { de: '', en: '', fa: '' },
+      align: 'start',
+      sortable: true,
+    };
+    return !this.field(id).group &&
+      !id.includes('/') &&
+      ['chips', 'count'].includes(column.display ?? '')
+      ? { ...column, display: 'text' }
+      : column;
   }
   columnPatch(id: string, change: Partial<CollectionColumnSetting>): void {
     this.patch({

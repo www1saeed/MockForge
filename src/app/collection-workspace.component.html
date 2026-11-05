@@ -87,8 +87,8 @@
               type="number"
               min="1"
               max="500"
-              [ngModel]="generationCount() ?? data.form().entries?.count ?? 25"
-              (ngModelChange)="generationCount.set($event)"
+              [ngModel]="generationCount()"
+              (ngModelChange)="setGenerationCount($event)"
           /></label>
           <p>{{ t('listLanguageHint') }}</p>
           @if (!generationValid()) {
@@ -284,6 +284,7 @@
                         [field]="field(id)"
                         [values]="record.values"
                         [locale]="contentLocale()"
+                        [uiLocale]="locale()"
                         [setting]="columnSetting(id)"
                       />
                     </td>
@@ -319,6 +320,8 @@
         <div
           class="collection-records"
           [class.collection-cards]="view.appearance?.layout === 'cards'"
+          [class.records-compact]="view.appearance?.density === 'compact'"
+          [class.records-hover]="view.appearance?.hover !== false"
         >
           @for (record of visible(); track record.id) {
             @if (view.appearance?.layout === 'accordion') {
@@ -356,12 +359,15 @@
           }
           <dl>
             @for (id of view.columns; track id) {
-              <dt>{{ columnHeading(id) }}</dt>
-              <dd>
+              <dt [style.text-align]="columnSetting(id)?.align ?? 'start'">
+                {{ columnHeading(id) }}
+              </dt>
+              <dd [style.text-align]="columnSetting(id)?.align ?? 'start'">
                 <app-collection-cell
                   [field]="field(id)"
                   [values]="record.values"
                   [locale]="contentLocale()"
+                  [uiLocale]="locale()"
                   [setting]="columnSetting(id)"
                 />
               </dd>

@@ -36,6 +36,14 @@ const setting: CollectionColumnSetting = {
   sortable: false,
 };
 describe('Grouped list projections', () => {
+  beforeEach(() => {
+    HTMLDialogElement.prototype.showModal = jest.fn(function (this: HTMLDialogElement): void {
+      this.setAttribute('open', '');
+    });
+    HTMLDialogElement.prototype.close = jest.fn(function (this: HTMLDialogElement): void {
+      this.removeAttribute('open');
+    });
+  });
   it('uses unambiguous root/group-child references for real saved rows and localized search/sort', () => {
     const project = parseApplicationProject(example('saas'))!,
       form = project.forms[0];
@@ -160,14 +168,30 @@ describe('Grouped list projections', () => {
     for (const display of ['table', 'cards', 'accordion']) {
       f.componentRef.setInput('setting', { ...setting, display, groupFields: ['name'] });
       f.detectChanges();
+      if (f.componentInstance.dialogMode()) {
+        f.componentInstance.openDetails();
+        f.detectChanges();
+      }
       expect(f.nativeElement.textContent).toContain('Notebook');
       expect(f.nativeElement.textContent).toContain('Pencil');
       expect(f.nativeElement.textContent).not.toContain('Quantity');
     }
     expect(f.nativeElement.querySelectorAll('details')).toHaveLength(2);
+    f.componentRef.setInput('setting', { ...setting, display: 'count', groupFields: ['name'] });
+    f.detectChanges();
+    f.componentInstance.openDetails();
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('dialog').open).toBe(true);
     f.componentRef.setInput('values', { items: [] });
     f.detectChanges();
+    expect(f.componentInstance.detailsOpen()).toBe(false);
+    expect(f.componentInstance.itemCount()).toBe(0);
+    f.componentInstance.openDetails();
+    f.detectChanges();
     expect(f.nativeElement.textContent).toContain('—');
+    const dialog = f.nativeElement.querySelector('dialog');
+    f.destroy();
+    expect(dialog.open).toBe(false);
   });
   it('supports child chips, badges, text, counts and localized choice labels without HTML interpretation', () => {
     TestBed.configureTestingModule({ imports: [CollectionCellComponent] });
@@ -178,8 +202,15 @@ describe('Grouped list projections', () => {
     for (const display of ['text', 'chips', 'badge', 'count']) {
       f.componentRef.setInput('setting', { ...setting, display });
       f.detectChanges();
+      if (f.componentInstance.dialogMode()) {
+        f.componentInstance.openDetails();
+        f.detectChanges();
+      }
       expect(f.nativeElement.querySelector('img')).toBeNull();
-      if (display === 'count') expect(f.nativeElement.textContent.trim()).toBe('2');
+      if (display === 'count')
+        expect(f.nativeElement.querySelector('.collection-group-trigger').textContent.trim()).toBe(
+          '2',
+        );
       else expect(f.nativeElement.textContent).toContain('<img src=x>');
     }
     f.componentRef.setInput('field', {
@@ -191,5 +222,9 @@ describe('Grouped list projections', () => {
     f.componentRef.setInput('setting', { ...setting, display: 'badge' });
     f.detectChanges();
     expect(f.nativeElement.textContent).toContain('باز');
+    f.componentRef.setInput('setting', { ...setting, display: 'count' });
+    f.detectChanges();
+    expect(f.componentInstance.mode()).toBe('text');
+    expect(f.nativeElement.querySelector('.collection-group-trigger')).toBeNull();
   });
 });

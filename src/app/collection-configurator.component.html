@@ -78,7 +78,8 @@
       }
       <button
         class="secondary-button"
-        aria-controls="live-preview"
+        [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
+        [disabled]="!previewVisible()"
         (click)="scroll('live-preview')"
       >
         {{ t('listPreview') }}
@@ -160,29 +161,31 @@
               <option value="accordion">{{ t('listLayoutAccordion') }}</option>
             </select></label
           >
-          <div class="collection-designs">
-            @for (design of designs; track design) {
-              <button
-                type="button"
-                [attr.aria-pressed]="appearance().design === design"
-                [class]="'collection-design design-' + design"
-                (click)="look({ design })"
-              >
-                <span class="design-lines" aria-hidden="true"><i></i><i></i><i></i></span
-                >{{
-                  t(
-                    design === 'plain'
-                      ? 'tablePlain'
-                      : design === 'striped'
-                        ? 'tableStriped'
-                        : design === 'bordered'
-                          ? 'tableBordered'
-                          : 'tableMinimal'
-                  )
-                }}
-              </button>
-            }
-          </div>
+          @if ((appearance().layout ?? 'table') === 'table') {
+            <div class="collection-designs">
+              @for (design of designs; track design) {
+                <button
+                  type="button"
+                  [attr.aria-pressed]="appearance().design === design"
+                  [class]="'collection-design design-' + design"
+                  (click)="look({ design })"
+                >
+                  <span class="design-lines" aria-hidden="true"><i></i><i></i><i></i></span
+                  >{{
+                    t(
+                      design === 'plain'
+                        ? 'tablePlain'
+                        : design === 'striped'
+                          ? 'tableStriped'
+                          : design === 'bordered'
+                            ? 'tableBordered'
+                            : 'tableMinimal'
+                    )
+                  }}
+                </button>
+              }
+            </div>
+          }
           <div class="collection-settings">
             <label
               >{{ t('tableDensity')
@@ -201,13 +204,16 @@
                 [ngModel]="appearance().hover"
                 (ngModelChange)="look({ hover: $event })"
               />{{ t('tableHover') }}</label
-            ><label
-              ><input
-                type="checkbox"
-                [ngModel]="appearance().stickyHeader"
-                (ngModelChange)="look({ stickyHeader: $event })"
-              />{{ t('tableSticky') }}</label
             >
+            @if ((appearance().layout ?? 'table') === 'table') {
+              <label
+                ><input
+                  type="checkbox"
+                  [ngModel]="appearance().stickyHeader"
+                  (ngModelChange)="look({ stickyHeader: $event })"
+                />{{ t('tableSticky') }}</label
+              >
+            }
           </div>
         </fieldset>
         <fieldset id="list-config-columns" tabindex="-1" class="collection-config">
@@ -244,17 +250,20 @@
                       (ngModelChange)="columnLabel(id, lang, $event)"
                   /></label>
                 }
+                @if ((appearance().layout ?? 'table') === 'table') {
+                  <label
+                    >{{ t('columnWidth')
+                    }}<input
+                      type="number"
+                      min="80"
+                      max="600"
+                      [ngModel]="column(id).width ?? null"
+                      (ngModelChange)="
+                        columnPatch(id, { width: $event === null ? undefined : $event })
+                      "
+                  /></label>
+                }
                 <label
-                  >{{ t('columnWidth')
-                  }}<input
-                    type="number"
-                    min="80"
-                    max="600"
-                    [ngModel]="column(id).width ?? null"
-                    (ngModelChange)="
-                      columnPatch(id, { width: $event === null ? undefined : $event })
-                    " /></label
-                ><label
                   >{{ t('columnAlign')
                   }}<select
                     [attr.aria-label]="t('columnAlign')"
@@ -282,8 +291,10 @@
                 >
                   <option value="text">{{ t('displayText') }}</option>
                   <option value="badge">{{ t('displayBadge') }}</option>
-                  <option value="chips">{{ t('displayChips') }}</option>
-                  <option value="count">{{ t('displayCount') }}</option>
+                  @if (field(id).group || id.includes('/')) {
+                    <option value="chips">{{ t('displayChips') }}</option>
+                    <option value="count">{{ t('displayCount') }}</option>
+                  }
                   @if (field(id).group) {
                     <option value="table">{{ t('listLayoutTable') }}</option>
                     <option value="cards">{{ t('listLayoutCards') }}</option>
@@ -292,7 +303,7 @@
                 </select></label
               >
               @if (field(id).group; as group) {
-                <fieldset>
+                <fieldset class="collection-group-field-settings">
                   <legend>{{ t('listGroupFields') }}</legend>
                   @for (child of group.fields; track child.id) {
                     <label
@@ -540,17 +551,31 @@
         </fieldset>
       </div>
       @if (previewVisible()) {
-        <aside id="live-preview" tabindex="-1" class="collection-live-preview">
-          <h3>{{ t('listPreview') }}</h3>
-          <app-collection-workspace [locale]="locale()" [previewOnly]="true" [listId]="view.id" />
+        <aside
+          id="live-preview"
+          tabindex="0"
+          class="collection-live-preview"
+          [attr.aria-label]="t('preview')"
+        >
+          <app-collection-workspace
+            [locale]="locale()"
+            [previewOnly]="true"
+            [listId]="view.id"
+            [syncFixtureCount]="true"
+            (fixtureCountChange)="entries('count', $event)"
+          />
         </aside>
       }
     </div>
   } @else {
     <p>{{ t('listEmptyConfig') }}</p>
     @if (previewVisible()) {
-      <aside id="live-preview" tabindex="-1" class="collection-live-preview">
-        <h3>{{ t('listPreview') }}</h3>
+      <aside
+        id="live-preview"
+        tabindex="0"
+        class="collection-live-preview"
+        [attr.aria-label]="t('preview')"
+      >
         <p>{{ t('listNoLists') }}</p>
       </aside>
     }

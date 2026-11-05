@@ -1,3 +1,5 @@
+import { By } from '@angular/platform-browser';
+import { CollectionWorkspaceComponent } from './collection-workspace.component';
 import { createField } from './project.model';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CollectionConfiguratorComponent } from './collection-configurator.component';
@@ -68,6 +70,19 @@ describe('Dedicated list configuration', () => {
     expect(c.list()?.appearance?.design).toBe('bordered');
     c.toggle('columns', 'name', false);
     expect(c.list()?.columnSettings).toEqual([]);
+    fixture.detectChanges();
+    const preview = fixture.debugElement.query(By.directive(CollectionWorkspaceComponent))
+      .componentInstance as CollectionWorkspaceComponent;
+    preview.setGenerationCount(9);
+    fixture.detectChanges();
+    expect(c.data.form().entries?.count).toBe(9);
+    c.entries('count', 4);
+    fixture.detectChanges();
+    expect(preview.generationCount()).toBe(4);
+    preview.setGenerationCount(0);
+    fixture.detectChanges();
+    expect(preview.generationValid()).toBe(false);
+    expect(c.data.form().entries?.count).toBe(4);
     c.store.updateCollections([]);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('#live-preview')).not.toBeNull();

@@ -285,7 +285,7 @@
 .collection-action:disabled {
   opacity: 0.55;
 }
-@media (max-width: 1500px) {
+@media (max-width: 1100px) {
   .collection-builder-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -489,4 +489,82 @@
 .collection-builder select,
 .collection-builder input {
   max-width: 100%;
+}
+/* Layout-specific options retain their values when switching back to tables. */
+.collection-records.records-hover > .collection-record:hover {
+  background: var(--accent-soft);
+}
+.collection-records.records-compact > .collection-record {
+  padding: 0.6rem;
+}
+.collection-records.records-compact .collection-record dt {
+  margin-top: 0.35rem;
+}
+.collection-records.records-compact .collection-record dd {
+  margin-bottom: 0.25rem;
+}
+.collection-group-field-settings label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-block: 0.6rem;
+}
+.collection-group-field-settings legend {
+  margin-bottom: 0.4rem;
+}
+.collection-group-trigger {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0.5rem 0.75rem;
+  color: var(--accent);
+  background: var(--paper);
+  font: inherit;
+  cursor: pointer;
+}
+.collection-group-dialog {
+  width: min(900px, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  background: var(--paper);
+  color: var(--ink);
+}
+.collection-group-dialog::backdrop {
+  background: #142c3870;
+}
+.collection-group-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.collection-group-dialog-heading h2 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+.collection-group-dialog .collection-group-scroll,
+.collection-group-dialog .collection-group-items {
+  max-height: none;
+}
+.collection-group-dialog .collection-group-scroll {
+  padding: 0.2rem;
+}
+.collection-live-preview {
+  max-height: calc(
+    100dvh - var(--header-height) - var(--footer-height) - 2 * var(--workspace-inset)
+  );
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  align-self: start;
+}
+.collection-live-preview > .collection-workspace {
+  border: 0;
+  border-radius: 0;
+  padding: 1rem;
 }

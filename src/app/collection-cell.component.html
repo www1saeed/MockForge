@@ -1,85 +1,118 @@
-@if (mode() === 'count') {
-  <span class="collection-badge">{{
-    field().group ? rows().length : raw() === undefined ? 0 : parts().length
-  }}</span>
-} @else if (field().group && mode() === 'table') {
-  <div
-    class="collection-group-scroll"
-    tabindex="0"
-    role="region"
-    [attr.aria-label]="field().label[locale()]"
+@if (dialogMode()) {
+  <button
+    type="button"
+    class="collection-group-trigger"
+    [class.collection-badge]="mode() === 'count'"
+    [attr.aria-label]="t('groupDetails') + ': ' + title() + ' (' + itemCount() + ')'"
+    aria-haspopup="dialog"
+    (click)="openDetails()"
   >
-    <table class="collection-group-table">
-      <caption class="visually-hidden">
-        {{
-          field().label[locale()]
-        }}
-      </caption>
-      <thead>
-        <tr>
-          @for (child of children(); track child.id) {
-            <th scope="col">{{ child.label[locale()] }}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of rows(); track $index) {
+    {{ mode() === 'count' ? itemCount() : t('groupDetails') + ' (' + itemCount() + ')' }}
+  </button>
+} @else {
+  <ng-container [ngTemplateOutlet]="valueBody" />
+}
+<dialog
+  #detailsDialog
+  class="collection-group-dialog"
+  [attr.aria-label]="title()"
+  (cancel)="closeDetails()"
+  (close)="detailsOpen.set(false)"
+>
+  @if (detailsOpen()) {
+    <div class="collection-group-dialog-heading">
+      <h2>{{ title() }}</h2>
+      <button type="button" class="secondary-button" (click)="closeDetails()">
+        {{ t('close') }}
+      </button>
+    </div>
+    <ng-container [ngTemplateOutlet]="valueBody" />
+  }
+</dialog>
+<ng-template #valueBody>
+  @if (renderMode() === 'count') {
+    <span class="collection-badge">{{
+      field().group ? rows().length : raw() === undefined ? 0 : itemCount()
+    }}</span>
+  } @else if (field().group && renderMode() === 'table') {
+    <div
+      class="collection-group-scroll"
+      tabindex="0"
+      role="region"
+      [attr.aria-label]="field().label[locale()]"
+    >
+      <table class="collection-group-table">
+        <caption class="visually-hidden">
+          {{
+            field().label[locale()]
+          }}
+        </caption>
+        <thead>
           <tr>
             @for (child of children(); track child.id) {
-              <td>{{ childValue(row, child) }}</td>
+              <th scope="col">{{ child.label[locale()] }}</th>
             }
           </tr>
-        } @empty {
-          <tr>
-            <td [attr.colspan]="children().length">—</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-} @else if (field().group && (mode() === 'cards' || mode() === 'accordion')) {
-  <div
-    class="collection-group-items"
-    tabindex="0"
-    role="group"
-    [attr.aria-label]="field().label[locale()]"
-  >
-    @for (row of rows(); track $index; let index = $index) {
-      @if (mode() === 'accordion') {
-        <details>
-          <summary>
-            {{ index + 1 }} · {{ children().length ? childValue(row, children()[0]) : '—' }}
-          </summary>
-          <dl>
+        </thead>
+        <tbody>
+          @for (row of rows(); track $index) {
+            <tr>
+              @for (child of children(); track child.id) {
+                <td>{{ childValue(row, child) }}</td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="children().length">—</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (field().group && (renderMode() === 'cards' || renderMode() === 'accordion')) {
+    <div
+      class="collection-group-items"
+      tabindex="0"
+      role="group"
+      [attr.aria-label]="field().label[locale()]"
+    >
+      @for (row of rows(); track $index; let index = $index) {
+        @if (renderMode() === 'accordion') {
+          <details>
+            <summary>
+              {{ index + 1 }} · {{ children().length ? childValue(row, children()[0]) : '—' }}
+            </summary>
+            <dl>
+              @for (child of children(); track child.id) {
+                <dt>{{ child.label[locale()] }}</dt>
+                <dd>{{ childValue(row, child) }}</dd>
+              }
+            </dl>
+          </details>
+        } @else {
+          <dl class="collection-group-card">
             @for (child of children(); track child.id) {
               <dt>{{ child.label[locale()] }}</dt>
               <dd>{{ childValue(row, child) }}</dd>
             }
           </dl>
-        </details>
-      } @else {
-        <dl class="collection-group-card">
-          @for (child of children(); track child.id) {
-            <dt>{{ child.label[locale()] }}</dt>
-            <dd>{{ childValue(row, child) }}</dd>
-          }
-        </dl>
+        }
+      } @empty {
+        <span>—</span>
       }
-    } @empty {
-      <span>—</span>
-    }
-  </div>
-} @else if (mode() === 'badge' || mode() === 'chips') {
-  <span
-    class="collection-chips"
-    tabindex="0"
-    role="group"
-    [attr.aria-label]="field().label[locale()]"
-  >
-    @for (part of parts(); track $index) {
-      <span class="collection-badge">{{ part }}</span>
-    }
-  </span>
-} @else {
-  <span>{{ parts().join(' · ') || '—' }}</span>
-}
+    </div>
+  } @else if (renderMode() === 'badge' || renderMode() === 'chips') {
+    <span
+      class="collection-chips"
+      tabindex="0"
+      role="group"
+      [attr.aria-label]="field().label[locale()]"
+    >
+      @for (part of parts(); track $index) {
+        <span class="collection-badge">{{ part }}</span>
+      }
+    </span>
+  } @else {
+    <span>{{ parts().join(' · ') || '—' }}</span>
+  }
+</ng-template>

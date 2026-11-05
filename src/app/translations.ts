@@ -3,6 +3,7 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  groupDetails: ['Gruppendetails anzeigen', 'Show group details'],
   listCountInvalid: [
     'Wähle eine ganze Anzahl von 1 bis 500.',
     'Choose a whole count from 1 to 500.',
@@ -20,8 +21,8 @@ export const copy = {
   listAddFixture: ['Einzelnen Testeintrag hinzufügen', 'Add one test record'],
   listMixedLanguages: ['Gemischt (aktive Formularsprachen)', 'Mixed (active form languages)'],
   listLanguageHint: [
-    'Die Datensprache bestimmt erzeugte Namen, Adressen und Texte. Gemischt verteilt die aktiven Sprachen abwechselnd. Auswahl, Anzahl und Antworten bleiben nur in dieser Sitzung.',
-    'Data language controls generated names, addresses and text. Mixed alternates active languages. Settings and answers remain in this session only.',
+    'Die Datensprache bestimmt erzeugte Namen, Adressen und Texte. Gemischt wechselt zwischen aktiven Sprachen. Im Konfigurator wird die Anzahl als Projektstandard gespeichert; in der Anwendungsvorschau gilt sie nur für diesen Lauf. Sprachwahl und Antworten bleiben in der Sitzung.',
+    'Data language controls generated names, addresses and text. Mixed cycles active languages. Authoring saves the count as the project default; application preview uses it for this run only. Language choice and answers remain in the session.',
   ],
   actionVariant: ['Button-Stil', 'Button style'],
   symbolPlus: ['Plus', 'Plus'],
@@ -45,10 +46,10 @@ export const copy = {
     'Benenne die Ansicht in den Projektsprachen. Lege Seitengröße, Anfangssortierung und Zeilenauswahl fest.',
     'Name the view in project languages. Set page size, initial sorting and row selection.',
   ],
-  listAppearance: ['Tabellen-Design', 'Table design'],
+  listAppearance: ['Darstellung & Verhalten', 'Layout & appearance'],
   listAppearanceHint: [
-    'Wähle Tabelle, Karten oder Akkordeon. Für Tabellen stehen Design, Zeilendichte, Hervorhebung und feste Kopfzeile bereit. Die Auswahl gilt auch für den HTML-Export.',
-    'Choose table, cards or accordion. Table designs also offer density, hover highlight and sticky headers. These settings also apply to HTML exports.',
+    'Wähle Tabelle, Karten oder Akkordeon. Dichte und Hervorhebung gelten für alle Ansichten; Tabellenstil und feste Kopfzeile nur für Tabellen. Die Auswahl gilt auch im HTML-Export.',
+    'Choose table, cards or accordion. Density and hover apply to all layouts; table styling and sticky headings apply only to tables. Export uses the same settings.',
   ],
   tablePlain: ['Klassisch', 'Classic'],
   tableStriped: ['Gestreift', 'Striped'],
@@ -60,8 +61,8 @@ export const copy = {
   tableHover: ['Zeile unter dem Zeiger hervorheben', 'Highlight hovered row'],
   tableSticky: ['Kopfzeile beim Scrollen festhalten', 'Keep column headings visible'],
   listColumnsHint: [
-    'Wähle Felder unten unter Filter & Felder. Hier ordnest du sichtbare Spalten und konfigurierst Überschrift, Breite, Ausrichtung und Sortierbarkeit. Gruppen und einzelne Unterfelder sind wählbar. Für Gruppen wählst du Unterfelder und Darstellung. Eine leere Überschrift verwendet die Feldbeschriftung.',
-    'Choose fields under Filters & fields below. Reorder visible columns and configure headings, width, alignment and sorting here. Groups and individual subfields are available; choose group children and display mode. Empty headings use field labels.',
+    'Wähle Felder unter Filter & Felder. Hier ordnest du Spalten und konfigurierst Überschrift, Ausrichtung und Sortierbarkeit. Breite gilt nur für Tabellen. Chips und Anzahl gehören zu wiederholbaren Gruppenwerten; strukturierte Gruppendetails öffnen im Dialog.',
+    'Choose fields under Filters & fields. Configure order, headings, alignment and sorting. Width applies only to tables. Chips and count are for repeated group values; structured group details open in a dialog.',
   ],
   listFiltersSection: ['Filter & Feldauswahl', 'Filters & fields'],
   listFiltersHint: [
