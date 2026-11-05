@@ -54,7 +54,10 @@ they do not insert list records. Use a list's Create action to save a record.
 Changing application screens discards unsaved native form answers and open record
 edits, cancels pending workers/generation and resets list queries/selection. A
 late save or destructive callback cannot affect a different screen or revive an
-old editor after leaving and returning. Complete saved session records survive
+old editor after leaving and returning. Shared confirmations from normal-form
+button simulations and repeat-row removal are also retired on screen/project
+changes and when leaving application preview. Current confirmations survive
+language or unrelated copy edits. Complete saved session records survive
 navigation and returning to the editor. Reload/project replacement clears records;
 deleting a form prunes its dataset. Read [the collection rules](COLLECTIONS.md) for
 staleness, confirmation, generation behavior and unchanged memory/check limits.

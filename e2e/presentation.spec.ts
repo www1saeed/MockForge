@@ -23,10 +23,10 @@ test(
     await expect(data).toContainText('Developer API: 1-500 records');
     await expect(shell).toContainText('The project name identifies the draft');
     await expect(shell).toContainText('Direct links support browser history');
-    await expect(quality).toContainText('242');
-    await expect(quality).toContainText('180 unit/component tests');
-    await expect(quality).toContainText('62 Chromium end-to-end tests');
-    await expect(quality).toContainText('97.71%');
+    await expect(quality).toContainText('245');
+    await expect(quality).toContainText('181 unit/component tests');
+    await expect(quality).toContainText('64 Chromium end-to-end tests');
+    await expect(quality).toContainText('97.72%');
     for (const slide of await page.locator('main section').all()) {
       const narration = await slide.getAttribute('data-narration');
       expect(narration!.length).toBeGreaterThan(200);
@@ -151,7 +151,7 @@ test(
     const html = await readFile(path, 'utf8');
     expect(html).toContain('data:image/png;base64,');
     expect(html).toContain('Cut waits for a valid destination');
-    expect(html).toContain('97.71%');
+    expect(html).toContain('97.72%');
     const { resolve } = await import('node:path');
     const { pathToFileURL } = await import('node:url');
     const savedPath = resolve('reports/saved-presentation.html');
