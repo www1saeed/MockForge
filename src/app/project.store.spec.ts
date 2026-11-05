@@ -9,6 +9,24 @@ import {
 } from './project';
 
 describe('ProjectStore', (): void => {
+  test('persists menu visibility as reviewed form configuration without changing selection', (): void => {
+    const store = new ProjectStore();
+    store.updateReview({
+      checks: [true, true, true, true, true],
+      reviewer: 'Owner',
+      approvedAt: '2026-11-05T12:00:00Z',
+    });
+    const id = store.activeFormId(),
+      session = store.formSession();
+    expect(store.setFormMenu(false)).toBe(true);
+    expect(store.application().forms[0].menu).toBe(false);
+    expect(store.project().review.approvedAt).toBeNull();
+    expect(store.activeFormId()).toBe(id);
+    expect(store.formSession()).toBe(session);
+    const restored = new ProjectStore();
+    restored.restore();
+    expect(restored.application().forms[0].menu).toBe(false);
+  });
   beforeEach((): void => {
     localStorage.clear();
   });

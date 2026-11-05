@@ -18,6 +18,7 @@
   ],
   "checks": ["a11y", "keyboard", "responsive", "i18n", "performance"],
   "suites": {
+    "application-navigation": ["navigation", "forms", "lists", "preview"],
     "collections": ["lists", "forms", "preview", "test-data"],
     "multi-form": ["forms", "authoring", "transfer", "persistence"],
     "authoring-guides": ["guide", "transfer"],

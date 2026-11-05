@@ -203,6 +203,13 @@
               </select>
             </div>
             <div class="form-manager-actions">
+              <label class="application-menu-setting"
+                ><input
+                  type="checkbox"
+                  [ngModel]="store.application().forms[formIndex()].menu !== false"
+                  (ngModelChange)="store.setFormMenu($event)"
+                />{{ t('applicationShowForm') }}</label
+              >
               <button
                 class="secondary-button"
                 [attr.aria-pressed]="listsOpen()"
@@ -817,6 +824,9 @@
             </div>
           }
         </section>
+      }
+      @if (view() === 'application') {
+        <app-application-preview [locale]="locale()" [route]="applicationRoute()" />
       }
       @if (view() === 'examples') {
         <section id="workspace" class="content-page">

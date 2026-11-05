@@ -3,7 +3,7 @@ import { CopyKey } from './translations';
 
 /** Shell navigation is independent of the form specification and its review record. */
 export type StudioView =
-  'overview' | 'workspace' | 'examples' | 'guide' | 'guide-json' | 'guide-ai';
+  'overview' | 'workspace' | 'application' | 'examples' | 'guide' | 'guide-json' | 'guide-ai';
 
 /** Named workflow positions keep visibility defaults understandable at their call sites. */
 export const WORKFLOW = { brief: 0, copy: 1, design: 2, fields: 3, review: 4 } as const;
@@ -27,6 +27,7 @@ export const CHECK_COPY: readonly CopyKey[] = ['check1', 'check2', 'check3', 'ch
 export const NAVIGATION = [
   { view: 'overview', path: 'M3 11l9-8 9 8 M5 10v11h5v-7h4v7h5V10' },
   { view: 'workspace', path: 'M3 4h18v16H3z M3 9h18 M9 9v11 M12 13h6 M12 17h4' },
+  { view: 'application', path: 'M3 4h18v16H3z M3 9h18 M8 9v11 M11 13h7 M11 17h4' },
   { view: 'examples', path: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
   { view: 'guide', path: 'M5 3h14v18H5z M8 7h8 M8 11h8 M8 15h5' },
   {

@@ -9,6 +9,9 @@ import {
 } from '@angular/core';
 import { ProjectStore } from './project.store';
 import { ApplicationForm } from './application-project';
+import { projectForForm } from './application-project';
+import { COLLECTION_VIEW } from './collection-view';
+import { CollectionSessionRegistry } from './collection-session.registry';
 import { COLLECTION_LIMITS } from './collection.model';
 import { CollectionRecord, collectionSignature, validRecordValues } from './collection-query';
 import { generateTestDataBatch } from './preview-data-batch';
@@ -18,13 +21,8 @@ import { ResponseValues } from './response-values';
 export const COLLECTION_GENERATOR = new InjectionToken('Collection generator', {
   factory: (): typeof generateTestDataBatch => generateTestDataBatch,
 });
-interface Dataset {
-  records: readonly CollectionRecord[];
-  signature: string;
-  revision: number;
-  skipped: number;
-}
 export interface RecordContext {
+  owner: number;
   session: number;
   formSession: number;
   formId: string;
@@ -38,16 +36,22 @@ export class CollectionSessionStore implements OnDestroy {
   private readonly project = inject(ProjectStore);
   private readonly checker = inject(PatternCheckService);
   private readonly generate = inject(COLLECTION_GENERATOR);
-  private readonly datasets = signal<ReadonlyMap<string, Dataset>>(new Map());
+  private readonly registry = inject(CollectionSessionRegistry);
+  private readonly datasets = this.registry.datasets;
+  private readonly scope = inject(COLLECTION_VIEW);
+  private readonly owner = this.registry.nextOwner();
+  readonly viewSession = this.scope.epoch;
   readonly busy = signal(false);
   readonly progress = signal(0);
   readonly notice = signal<'ready' | 'cancelled' | 'failed' | null>(null);
   private controller: AbortController | null = null;
-  private sequence = 0;
   private session = this.project.projectSession();
-  readonly form = computed(() =>
-    this.project.application().forms.find((f) => f.id === this.project.activeFormId())!,
+  readonly form = computed(
+    () =>
+      this.project.application().forms.find((f) => f.id === this.scope.formId()) ??
+      this.project.application().forms[0],
   );
+  readonly projection = computed(() => projectForForm(this.project.application(), this.form().id)!);
   readonly dataset = computed(() => this.datasets().get(this.form().id));
   readonly records = computed(() => this.dataset()?.records ?? []);
   readonly stale = computed(
@@ -60,17 +64,12 @@ export class CollectionSessionStore implements OnDestroy {
       if (session !== this.session) {
         this.session = session;
         this.cancel();
-        this.datasets.set(new Map());
         this.notice.set(null);
         this.progress.set(0);
       }
-      const ids = new Set(this.project.application().forms.map((f) => f.id));
-      const current = this.datasets();
-      if ([...current.keys()].some((id) => !ids.has(id)))
-        this.datasets.set(new Map([...current].filter(([id]) => ids.has(id))));
     });
     effect(() => {
-      this.project.formSession();
+      this.viewSession();
       this.project.application();
       if (this.controller && this.generationKey !== this.key()) this.cancel();
     });
@@ -81,7 +80,7 @@ export class CollectionSessionStore implements OnDestroy {
   private key(): string {
     return JSON.stringify([
       this.project.projectSession(),
-      this.project.formSession(),
+      this.viewSession(),
       this.form(),
       this.project.application().languages,
     ]);
@@ -89,8 +88,9 @@ export class CollectionSessionStore implements OnDestroy {
   private generationKey = '';
   context(): RecordContext {
     return {
+      owner: this.owner,
       session: this.project.projectSession(),
-      formSession: this.project.formSession(),
+      formSession: this.viewSession(),
       formId: this.form().id,
       revision: this.dataset()?.revision ?? 0,
       signature: this.signature(this.form()),
@@ -117,7 +117,7 @@ export class CollectionSessionStore implements OnDestroy {
     this.notice.set(null);
     try {
       const result = await this.generate(
-        this.project.project(),
+        this.projection(),
         {
           ...(this.form().entries ?? { count: 25, seed: 1 }),
           locale: this.project.application().languages[0],
@@ -142,7 +142,7 @@ export class CollectionSessionStore implements OnDestroy {
         return;
       }
       const records = result.records.map((record) => ({
-        id: `entry-${++this.sequence}`,
+        id: this.registry.nextId(),
         values: record.values,
       }));
       const skipped = result.records.reduce(
@@ -173,7 +173,7 @@ export class CollectionSessionStore implements OnDestroy {
       return false;
     if (id && !this.records().some((record) => record.id === id)) return false;
     const entry = {
-      id: id ?? `entry-${++this.sequence}`,
+      id: id ?? this.registry.nextId(),
       values: JSON.parse(JSON.stringify(values)) as ResponseValues,
     };
     const records = id

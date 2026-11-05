@@ -41,7 +41,7 @@ const FORM_KEYS = new Set([
 /** Field and button IDs are unique within this form, including its group children. */
 export interface ApplicationForm extends FormContent {
   id: string;
-  /** Omission keeps the form in the future application menu. */
+  /** Omission includes the form in the application menu; direct links still reach hidden forms. */
   menu?: boolean;
   lists?: CollectionList[];
   entries?: CollectionEntries;

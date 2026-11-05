@@ -1,6 +1,41 @@
 # Code quality and test evidence
 
-## CRUD lists checkpoint — November 5, 2026
+## Application navigation checkpoint — November 5, 2026
+
+**245 Studio tests pass: 181 Jest unit/component tests in 22 suites and 64
+Chromium journeys.** Ten E2E-selection Node tests pass separately. Coverage is
+95.96% statements, 90.71% branches, 96.90% functions and 97.72% lines against
+unchanged thresholds. Formatting, lint, spec/E2E types, 469 translations,
+authoring-kit synchronization, local documentation links and build pass.
+
+Seven navigation journeys cover independent editor/preview selection and drafts,
+shared CRUD for identical local IDs, hash reload/history, menu hiding/direct links,
+missing/empty routes, worker and generation cancellation, obsolete dialogs and
+Persian mobile Axe/keyboard focus. Component/domain cases cover route validation,
+shared revisions/owner guards, cursor-specific cancellation and menu persistence.
+Full browser evidence: `reports/pr7-review-fixes-e2e.json` plus the
+normal HTML/JUnit/JSON reports. The run has no retries, skips or flaky results.
+CI requires its own run after eventual push.
+
+The initial bundle is **927.59 kB**, above the existing 700 kB warning and below
+the unchanged 1 MB failure limit. No dependencies, schema or resource budgets were
+increased. Studio JSON stays 2.1.0; routing state and records remain transient.
+The actual fifteen-slide HTML deck and narration include application navigation;
+changed desktop/mobile content was visually inspected. The separate ignored PDF
+is an older export and must be regenerated before sharing.
+
+See [application behavior](APPLICATION_PREVIEW.md) for exact boundaries. This is
+in-app navigation; standalone application export, roles and wizard pages remain
+future increments. No original-edition tests or functional parity are claimed.
+
+PR #7 review correction retires shared normal-form and repeat-row confirmations
+on screen/project changes and application-preview disposal. Stale confirmation
+delivery cannot invoke the previous form action. Language, copy and same-screen
+updates retain current requests. One component and two browser regressions cover
+Back navigation, missing routes, editor return, project replacement and valid
+fresh confirmations. The original isolated reproduction failed against f3914c2.
+
+## Previous CRUD lists checkpoint — November 5, 2026
 
 **231 Studio tests pass: 174 Jest unit/component tests in 20 suites and 57
 Chromium journeys.** Ten Node E2E-selection checks pass separately. Coverage is

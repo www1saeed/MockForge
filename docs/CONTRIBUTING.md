@@ -65,7 +65,7 @@ for mixed suites such as `studio` and `presentation`.
 
 Areas are `authoring`, `forms`, `lists`, `roles`, `navigation`, `preview`, `groups`,
 `transfer`, `persistence`, `review`, `shell`, `guide`, `presentation`, `test-data`
-and `patterns`. The `forms` area covers the active multi-form journeys. The `lists` area covers `collections.spec.ts`. The future roles/navigation areas have no tests yet; requesting one fails until their journeys are implemented. Checks
+and `patterns`. The `forms` area covers the active multi-form journeys. The `lists` area covers `collections.spec.ts`. The `navigation` area covers `application-navigation.spec.ts`. The future roles area has no tests yet; requesting it fails until its journeys are implemented. Checks
 are `a11y`, `keyboard`, `responsive`, `i18n` and `performance`. The performance tag
 currently identifies the existing 500-record responsiveness observation; it does
 not establish a benchmark or a representative-device guarantee.
