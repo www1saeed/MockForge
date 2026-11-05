@@ -12,6 +12,7 @@ import {
   signal,
   ChangeDetectionStrategy,
   OnDestroy,
+  afterNextRender,
 } from '@angular/core';
 import {
   DataBoundary,
@@ -51,6 +52,12 @@ import { boundedPatternMatches, isBoundedPattern } from './preview-pattern';
 import { preparePatternData } from './preview-pattern-data';
 import { controlResponseScope, patternDataKey } from './preview-response';
 import { DATA_REASON_MESSAGES, patternFailureReason } from './preview-data-feedback';
+import {
+  ownResponse,
+  readRecordValues,
+  ResponseValues,
+  writeNativeResponse,
+} from './response-values';
 
 /** All actions are local; none of these messages represents a backend response. */
 const ACTION_MESSAGES: Record<Exclude<ButtonAction, 'none'>, CopyKey> = {
@@ -93,6 +100,10 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
   },
 })
 export class FormPreviewComponent implements OnDestroy {
+  @ViewChild('previewForm') previewForm!: ElementRef<HTMLFormElement>;
+  readonly recordMode = input(false);
+  readonly initialValues = input<ResponseValues | null>(null);
+  readonly recordSaved = output<ResponseValues>();
   @ViewChild('testDataDialog') testDataDialog!: ElementRef<HTMLDialogElement>;
   private readonly detector = inject(ChangeDetectorRef);
   readonly groups = viewChildren(RepeatGroupComponent);
@@ -395,6 +406,42 @@ export class FormPreviewComponent implements OnDestroy {
   );
 
   constructor() {
+    afterNextRender(() => {
+      if (!this.recordMode() || !this.initialValues()) return;
+      const values = this.initialValues()!;
+      for (const group of this.groups()) {
+        const rows = ownResponse(values, group.field().id);
+        if (Array.isArray(rows)) group.resizeForTestData(rows.length, true);
+      }
+      this.detector.detectChanges();
+      const form = this.previewForm.nativeElement;
+      for (const field of this.project().fields) {
+        if (field.group) {
+          const rows = ownResponse(values, field.id);
+          const group = this.groups().find((group) => group.field().id === field.id);
+          group?.rows().forEach((row, index) => {
+            for (const child of field.group!.fields)
+              writeNativeResponse(
+                form.elements.namedItem(`preview-${field.id}:${row.id}:${child.id}`),
+                Array.isArray(rows) && rows[index] ? ownResponse(rows[index], child.id) : undefined,
+              );
+          });
+        } else
+          writeNativeResponse(
+            form.elements.namedItem(`preview-${field.id}`),
+            ownResponse(values, field.id),
+          );
+      }
+      this.filling = true;
+      try {
+        for (const control of Array.from(form.elements)) {
+          control.dispatchEvent(new Event('input', { bubbles: true }));
+          control.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      } finally {
+        this.filling = false;
+      }
+    });
     effect((): void => {
       const signature = this.signature();
       if (this.generation && signature !== this.generationSignature) this.cancelGeneration();
@@ -497,6 +544,18 @@ export class FormPreviewComponent implements OnDestroy {
 
   /** Execute only after validation or explicit confirmation of a delete simulation. */
   private completeAction(button: FormButton, form: HTMLFormElement): void {
+    if (this.recordMode() && button.action === 'save') {
+      this.recordSaved.emit(
+        readRecordValues(
+          form,
+          this.project().fields,
+          new Map(
+            this.groups().map((group) => [group.field().id, group.rows().map((row) => row.id)]),
+          ),
+        ),
+      );
+      return;
+    }
     if (button.action === 'none') return;
 
     if (button.action === 'reset') {
@@ -525,10 +584,28 @@ export class FormPreviewComponent implements OnDestroy {
   /** Enter-key submission uses the first configured submit action, if one exists. */
   submit(event: Event): void {
     event.preventDefault();
+    if (this.recordMode() && event.target instanceof HTMLFormElement) {
+      this.saveRecord(event.target);
+      return;
+    }
     const button = this.project().buttons.find(
       (button: FormButton): boolean => button.action === 'submit',
     );
     if (button && event.target instanceof HTMLFormElement) this.runButton(button, event.target);
+  }
+
+  saveRecord(form: HTMLFormElement): void {
+    this.runButton(
+      {
+        id: 'record-save',
+        label: { de: '', en: '', fa: '' },
+        variant: 'primary',
+        action: 'save',
+        cssClass: '',
+        note: '',
+      },
+      form,
+    );
   }
 
   /** The imported/saved pattern is already compiled successfully by domain validation. */

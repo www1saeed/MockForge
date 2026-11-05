@@ -1,34 +1,36 @@
-<div class="preview-toolbar">
-  <span class="tiny-label"
-    ><span class="live-dot" aria-hidden="true"></span>{{ t('preview') }}</span
-  >
-  <div class="locale-toggle" [attr.aria-label]="t('previewLanguage')">
-    @for (lang of project().languages; track lang) {
+@if (!recordMode()) {
+  <div class="preview-toolbar">
+    <span class="tiny-label"
+      ><span class="live-dot" aria-hidden="true"></span>{{ t('preview') }}</span
+    >
+    <div class="locale-toggle" [attr.aria-label]="t('previewLanguage')">
+      @for (lang of project().languages; track lang) {
+        <button
+          [class.selected]="language() === lang"
+          [attr.aria-pressed]="language() === lang"
+          (click)="localeChange.emit(lang)"
+        >
+          {{ lang.toUpperCase() }}
+        </button>
+      }
+    </div>
+    <div class="device-toggle">
       <button
-        [class.selected]="language() === lang"
-        [attr.aria-pressed]="language() === lang"
-        (click)="localeChange.emit(lang)"
+        [class.selected]="!mobile()"
+        [attr.aria-pressed]="!mobile()"
+        (click)="mobileChange.emit(false)"
       >
-        {{ lang.toUpperCase() }}
+        {{ t('desktop') }}</button
+      ><button
+        [class.selected]="mobile()"
+        [attr.aria-pressed]="mobile()"
+        (click)="mobileChange.emit(true)"
+      >
+        {{ t('mobile') }}
       </button>
-    }
+    </div>
   </div>
-  <div class="device-toggle">
-    <button
-      [class.selected]="!mobile()"
-      [attr.aria-pressed]="!mobile()"
-      (click)="mobileChange.emit(false)"
-    >
-      {{ t('desktop') }}</button
-    ><button
-      [class.selected]="mobile()"
-      [attr.aria-pressed]="mobile()"
-      (click)="mobileChange.emit(true)"
-    >
-      {{ t('mobile') }}
-    </button>
-  </div>
-</div>
+}
 <div class="test-data-toolbar" role="group" [attr.aria-label]="t('testData')">
   <button
     type="button"
@@ -139,14 +141,20 @@
         }
       </div>
       <div class="preview-buttons">
-        @for (button of project().buttons; track button.id) {
-          <button
-            type="button"
-            [class]="'btn preview-submit button-' + button.variant + ' ' + button.cssClass"
-            (click)="runButton(button, previewForm)"
-          >
-            {{ text(button.label) }}
+        @if (recordMode()) {
+          <button type="button" class="primary-button" (click)="saveRecord(previewForm)">
+            {{ t('recordSave') }}
           </button>
+        } @else {
+          @for (button of project().buttons; track button.id) {
+            <button
+              type="button"
+              [class]="'btn preview-submit button-' + button.variant + ' ' + button.cssClass"
+              (click)="runButton(button, previewForm)"
+            >
+              {{ text(button.label) }}
+            </button>
+          }
         }
       </div>
     </form>
