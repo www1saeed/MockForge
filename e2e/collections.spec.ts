@@ -156,9 +156,9 @@ test(
       .locator('.collection-dialog')
       .getByRole('button', { name: 'Schließen', exact: true })
       .click();
-    await page.locator('#active-form').selectOption('second');
+    await page.locator('#list-source-form').selectOption('second');
     await expect(page.locator('.collection-preview tbody')).not.toContainText('Bob');
-    await page.locator('#active-form').selectOption('form-1');
+    await page.locator('#list-source-form').selectOption('form-1');
     await expect(page.locator('.collection-preview tbody')).toContainText('Bob');
     await page
       .locator('.collection-preview')
@@ -263,8 +263,8 @@ test(
     await expect(page.locator('.collection-preview')).toContainText('4 Einträge');
     await page.getByRole('button', { name: 'Sitzungseinträge leeren', exact: true }).click();
     await page.keyboard.press('Escape');
-    await page.locator('#active-form').selectOption('second');
-    await page.locator('#active-form').selectOption('form-1');
+    await page.locator('#list-source-form').selectOption('second');
+    await page.locator('#list-source-form').selectOption('form-1');
     await expect(page.locator('.collection-preview')).toContainText('4 Einträge');
   },
 );

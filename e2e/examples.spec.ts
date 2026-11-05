@@ -49,7 +49,7 @@ test(
     await dialog.locator('#preview-email').fill('ada@example.org');
     await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
     await expect(dialog).not.toBeVisible();
-    await expect(page.locator('.collection-table tbody')).toContainText('Ada Example');
+    await expect(page.locator('.collection-table > tbody')).toContainText('Ada Example');
     await expect(page.getByRole('button', { name: 'Bearbeiten', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Löschen', exact: true })).toBeVisible();
   },
@@ -89,16 +89,23 @@ test(
     await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
     await expect(dialog).not.toBeVisible();
     await page.locator('.application-menu a[href$="/new-requests"]').click();
-    await expect(page.locator('.collection-table tbody')).toContainText('Laptop request');
+    await expect(page.locator('.collection-preview .collection-records')).toContainText(
+      'Laptop request',
+    );
     await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
     await expect(rows).toHaveCount(2);
     await expect(rows.nth(1).locator('[data-field-id="item-description"]')).toHaveValue('Monitor');
     await dialog.locator('#preview-status').selectOption('1');
     await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
     await expect(dialog).not.toBeVisible();
-    await expect(page.locator('.collection-table tbody')).not.toContainText('Laptop request');
+    await expect(page.locator('.collection-preview .collection-records')).not.toContainText(
+      'Laptop request',
+    );
     await page.locator('.application-menu a[href$="/request-overview"]').click();
-    await expect(page.locator('.collection-table tbody')).toContainText('Laptop request');
+    await page.locator('.collection-record > summary').click();
+    await expect(page.locator('.collection-preview .collection-records')).toContainText(
+      'Laptop request',
+    );
     for (const name of ['Eintrag erstellen', 'Bearbeiten', 'Löschen'])
       await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Ansehen', exact: true })).toBeVisible();
@@ -146,9 +153,7 @@ test(
       'rgb(97, 97, 97)',
     );
     await preview.locator('.application-menu a[href$="/supplier-directory"]').click();
-    await expect(preview.locator('.collection-table tbody')).toContainText(
-      'Keine passenden Einträge.',
-    );
+    await expect(preview.locator('.collection-records')).toContainText('Keine passenden Einträge.');
     await expect(
       preview.getByRole('button', { name: 'Eintrag erstellen', exact: true }),
     ).toHaveCount(0);

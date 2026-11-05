@@ -52,7 +52,7 @@ test(
       ).toBe(0);
       await expect(page.locator('.authoring-prompt')).toHaveCount(3);
       await page.locator('#prompt-create summary').click();
-      await expect(page.locator('#prompt-text-create')).toHaveValue(/schemaVersion "2.2.0"/);
+      await expect(page.locator('#prompt-text-create')).toHaveValue(/schemaVersion "2.3.0"/);
       expect(
         (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
           .violations,
@@ -168,7 +168,7 @@ test(
     const content = await readFile(path, 'utf8');
     expect(content).toContain('export interface Project');
     expect(content).toContain('export interface ApplicationProject');
-    expect(content).toContain('SCHEMA 2.2.0');
+    expect(content).toContain('SCHEMA 2.3.0');
     expect(content).toContain("schemaVersion: '1.3.0'");
     const examples = Array.from(
       content.matchAll(/BEGIN EXAMPLE ([^\n]+)\n([\s\S]*?)\nEND EXAMPLE \1/g),

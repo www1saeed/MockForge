@@ -168,7 +168,7 @@ test(
     const team = project.forms[0].fields.find(
       (field: { id: string }): boolean => field.id === 'team-members',
     );
-    expect(project.schemaVersion).toBe('2.2.0');
+    expect(project.schemaVersion).toBe('2.3.0');
     expect(team.group).toMatchObject({ layout: 'table', minItems: 0, maxItems: 3, gapless: true });
     expect(team.group.fields.at(-1).label.en).toBe('Access type');
     await page.reload();
