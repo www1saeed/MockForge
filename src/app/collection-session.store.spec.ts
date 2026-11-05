@@ -63,6 +63,7 @@ describe('Session record ownership', () => {
   });
   it('keeps separate form records through selection and clears on whole-project replacement', () => {
     data.save({ name: 'First' }, data.context());
+    const abandoned = data.context();
     const first = project.activeFormId();
     project.addForm(text('Zweit', 'Second', 'دوم'));
     TestBed.tick();
@@ -72,6 +73,7 @@ describe('Session record ownership', () => {
     project.selectForm(first);
     TestBed.tick();
     expect(data.records()[0].values['name']).toBe('First');
+    expect(data.remove([data.records()[0].id], abandoned)).toBe(false);
     project.replace(project.application());
     TestBed.tick();
     expect(data.records()).toHaveLength(0);
@@ -139,5 +141,12 @@ describe('Session record ownership', () => {
       expect(data.save({ name: String(index) }, data.context())).toBe(true);
     expect(data.save({ name: 'One too many' }, data.context())).toBe(false);
     expect(data.records()).toHaveLength(500);
+    for (const expected of [500, 0]) {
+      project.addForm(text('Weiter', 'Another'));
+      TestBed.tick();
+      project.update({ fields: [createField('text', 'name')] });
+      for (let index = 0; index < 500; index++) data.save({ name: String(index) }, data.context());
+      expect(data.records()).toHaveLength(expected);
+    }
   });
 });

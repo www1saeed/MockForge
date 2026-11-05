@@ -1,0 +1,459 @@
+<section
+  class="collection-workspace"
+  [attr.dir]="locale() === 'fa' ? 'rtl' : 'ltr'"
+  [attr.aria-label]="t('listsTitle')"
+>
+  <h3>{{ t('listsTitle') }}</h3>
+  <p>{{ t('listsHint') }}</p>
+  <div class="collection-tools">
+    <label for="active-list">{{ t('activeList') }}</label>
+    <select id="active-list" [ngModel]="list()?.id ?? ''" (ngModelChange)="selected.set($event)">
+      @for (item of lists(); track item.id) {
+        <option [value]="item.id">{{ text(item.title) || item.id }}</option>
+      }
+    </select>
+    <button class="secondary-button" (click)="add()" [disabled]="lists().length >= 10">
+      {{ t('listAdd') }}
+    </button>
+    @if (list()) {
+      <button class="secondary-button" (click)="duplicate()" [disabled]="lists().length >= 10">
+        {{ t('listDuplicate') }}
+      </button>
+      <button
+        class="secondary-button"
+        (click)="move(-1)"
+        [attr.aria-label]="t('listMoveUp')"
+        [disabled]="lists()[0] === list()"
+      >
+        ↑
+      </button>
+      <button
+        class="secondary-button"
+        (click)="move(1)"
+        [attr.aria-label]="t('listMoveDown')"
+        [disabled]="lists()[lists().length - 1] === list()"
+      >
+        ↓
+      </button>
+      <button class="secondary-button" (click)="removeList()">{{ t('listRemove') }}</button>
+    }
+  </div>
+  @if (list(); as view) {
+    <details class="collection-config">
+      <summary>{{ t('listConfigure') }}</summary>
+      <div class="collection-settings">
+        @for (lang of store.application().languages; track lang) {
+          <label
+            >{{ t('listTitle') }} · {{ lang.toUpperCase()
+            }}<input [ngModel]="view.title[lang]" (ngModelChange)="title($event, lang)"
+          /></label>
+        }
+        <label
+          >{{ t('listPageSize')
+          }}<input
+            type="number"
+            min="1"
+            max="100"
+            [ngModel]="view.pageSize"
+            (ngModelChange)="patch({ pageSize: $event })"
+        /></label>
+        <label
+          >{{ t('listCount')
+          }}<input
+            type="number"
+            min="1"
+            max="500"
+            [ngModel]="data.form().entries?.count ?? 25"
+            (ngModelChange)="entries('count', $event)"
+        /></label>
+        <label
+          >{{ t('dataSeed')
+          }}<input
+            type="number"
+            min="0"
+            max="999999"
+            [ngModel]="data.form().entries?.seed ?? 1"
+            (ngModelChange)="entries('seed', $event)"
+        /></label>
+        <label
+          >{{ t('listDefaultSort')
+          }}<select [ngModel]="view.sort?.fieldId ?? ''" (ngModelChange)="defaultSort($event)">
+            <option value="">—</option>
+            @for (id of view.columns; track id) {
+              <option [value]="id">{{ text(field(id).label) }}</option>
+            }
+          </select></label
+        >
+        @if (view.sort; as sort) {
+          <label
+            >{{ t('listDirection')
+            }}<select
+              [ngModel]="sort.direction"
+              (ngModelChange)="patch({ sort: { fieldId: sort.fieldId, direction: $event } })"
+            >
+              <option value="asc">{{ t('listAscending') }}</option>
+              <option value="desc">{{ t('listDescending') }}</option>
+            </select></label
+          >
+        }
+      </div>
+      <div class="collection-scroll">
+        <table class="collection-table">
+          <caption>
+            {{
+              t('listFields')
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th>{{ t('label') }}</th>
+              <th>{{ t('listColumn') }}</th>
+              <th>{{ t('listSearch') }}</th>
+              <th>{{ t('listFilter') }}</th>
+              <th>{{ t('listPreset') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (field of leaves(); track field.id) {
+              <tr>
+                <th scope="row">{{ text(field.label) || field.id }}</th>
+                <td>
+                  <input
+                    type="checkbox"
+                    [attr.aria-label]="t('listColumn') + ': ' + text(field.label)"
+                    [ngModel]="view.columns.includes(field.id)"
+                    (ngModelChange)="toggle('columns', field.id, $event)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="checkbox"
+                    [attr.aria-label]="t('listSearch') + ': ' + text(field.label)"
+                    [ngModel]="view.searchFields.includes(field.id)"
+                    (ngModelChange)="toggle('searchFields', field.id, $event)"
+                  />
+                </td>
+                <td>
+                  @if (
+                    field.type === 'checkbox' || field.type === 'select' || field.type === 'radio'
+                  ) {
+                    <input
+                      type="checkbox"
+                      [attr.aria-label]="t('listFilter') + ': ' + text(field.label)"
+                      [ngModel]="view.filters.includes(field.id)"
+                      (ngModelChange)="toggle('filters', field.id, $event)"
+                    />
+                  }
+                </td>
+                <td>
+                  @if (
+                    field.type === 'checkbox' || field.type === 'select' || field.type === 'radio'
+                  ) {
+                    <select
+                      [attr.aria-label]="t('listPreset') + ': ' + text(field.label)"
+                      [ngModel]="presetValue(field.id)"
+                      (ngModelChange)="preset(field, $event)"
+                    >
+                      <option value="">{{ t('listAny') }}</option>
+                      @if (field.type === 'checkbox') {
+                        <option value="true">{{ t('recordTrue') }}</option>
+                        <option value="false">{{ t('recordFalse') }}</option>
+                      } @else {
+                        @for (option of field.options; track $index) {
+                          <option [value]="'' + $index">{{ text(option) }}</option>
+                        }
+                      }
+                    </select>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="collection-tools">
+        <label
+          ><input
+            type="checkbox"
+            [ngModel]="view.selectable"
+            (ngModelChange)="patch({ selectable: $event })"
+          />{{ t('listSelectable') }}</label
+        >
+        @for (key of actions; track key) {
+          <label
+            ><input
+              type="checkbox"
+              [ngModel]="view.actions[key]"
+              (ngModelChange)="action(key, $event)"
+            />{{
+              t(
+                key === 'create'
+                  ? 'recordNew'
+                  : key === 'view'
+                    ? 'recordView'
+                    : key === 'edit'
+                      ? 'recordEdit'
+                      : 'recordDelete'
+              )
+            }}</label
+          >
+        }
+      </div>
+    </details>
+    <div class="collection-tools collection-fixtures">
+      <button class="secondary-button" (click)="regenerate()" [disabled]="data.busy()">
+        {{ t('listGenerate') }}
+      </button>
+      <button
+        class="secondary-button"
+        (click)="clear()"
+        [disabled]="data.busy() || !data.records().length"
+      >
+        {{ t('listClear') }}
+      </button>
+      @if (data.busy()) {
+        <span role="status">{{ data.progress() }} / {{ data.form().entries?.count ?? 25 }}</span
+        ><button class="secondary-button" (click)="data.cancel()">{{ t('cancel') }}</button>
+      }
+    </div>
+    @if (data.notice(); as notice) {
+      <p role="status">
+        {{
+          t(
+            notice === 'failed'
+              ? 'listGenerationFailed'
+              : notice === 'cancelled'
+                ? 'dataCancelled'
+                : 'listGenerated'
+          )
+        }}
+      </p>
+    }
+    @if (data.dataset()?.skipped) {
+      <p role="status">{{ t('listSkipped') }} {{ data.dataset()!.skipped }}</p>
+    }
+    @if (data.stale()) {
+      <p class="collection-warning" role="status">{{ t('listStale') }}</p>
+    }
+    <section
+      class="collection-preview"
+      [attr.aria-label]="t('listPreview')"
+      [attr.lang]="contentLocale()"
+      [attr.dir]="contentLocale() === 'fa' ? 'rtl' : 'ltr'"
+    >
+      <h3>{{ text(view.title) }}</h3>
+      <div class="collection-tools">
+        @if (view.searchFields.length) {
+          <label
+            >{{ t('listSearch')
+            }}<input type="search" [ngModel]="search()" (ngModelChange)="searchFor($event)"
+          /></label>
+        }
+        @for (id of view.filters; track id) {
+          <label
+            >{{ text(field(id).label)
+            }}<select
+              [attr.aria-label]="text(field(id).label)"
+              [ngModel]="filters().has(id) ? '' + filters().get(id) : ''"
+              (ngModelChange)="filter(field(id), $event)"
+            >
+              <option value="">{{ t('listAny') }}</option>
+              @if (field(id).type === 'checkbox') {
+                <option value="true">{{ t('recordTrue') }}</option>
+                <option value="false">{{ t('recordFalse') }}</option>
+              } @else {
+                @for (option of field(id).options; track $index) {
+                  <option [value]="'' + $index">{{ text(option) }}</option>
+                }
+              }
+            </select></label
+          >
+        }
+        @if (view.actions.create) {
+          <button
+            class="primary-button"
+            (click)="open('new')"
+            [disabled]="data.stale() || data.busy()"
+          >
+            {{ t('recordNew') }}
+          </button>
+        }
+      </div>
+      <p role="status">
+        {{ matches().length }} {{ t('listRecords') }} · {{ t('listSelected') }}
+        {{ selectedIds().length }}
+      </p>
+      @if (view.selectable && pageSelected() && selectedIds().length < matches().length) {
+        <button class="text-button" (click)="selectAll()">
+          {{ t('listSelectAll') }} ({{ matches().length }})
+        </button>
+      }
+      @if (view.selectable && selectedIds().length && view.actions.delete) {
+        <button
+          class="secondary-button"
+          (click)="remove(selectedIds())"
+          [disabled]="data.stale() || data.busy()"
+        >
+          {{ t('listDeleteSelected') }}
+        </button>
+      }
+      <div class="collection-scroll">
+        <table class="collection-table">
+          <caption>
+            {{
+              text(view.title)
+            }}
+          </caption>
+          <thead>
+            <tr>
+              @if (view.selectable) {
+                <th>
+                  <input
+                    type="checkbox"
+                    [attr.aria-label]="t('listSelectPage')"
+                    [ngModel]="pageSelected()"
+                    (ngModelChange)="selectPage($event)"
+                  />
+                </th>
+              }
+              @for (id of view.columns; track id) {
+                <th
+                  scope="col"
+                  [attr.aria-sort]="
+                    (sort() ?? view.sort)?.fieldId === id
+                      ? (sort() ?? view.sort)?.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  "
+                >
+                  <button class="text-button" (click)="order(id)">
+                    {{ text(field(id).label) || id }}
+                  </button>
+                </th>
+              }
+              <th scope="col">{{ t('listActions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (record of visible(); track record.id) {
+              <tr>
+                @if (view.selectable) {
+                  <td>
+                    <input
+                      type="checkbox"
+                      [attr.aria-label]="t('listSelectRecord') + ' ' + record.id"
+                      [ngModel]="selection().has(record.id)"
+                      (ngModelChange)="select(record.id, $event)"
+                    />
+                  </td>
+                }
+                @for (id of view.columns; track id) {
+                  <td>{{ value(record, field(id)) }}</td>
+                }
+                <td>
+                  <div class="collection-tools">
+                    @if (view.actions.view) {
+                      <button
+                        class="text-button"
+                        (click)="open('view', record)"
+                        [disabled]="data.stale() || data.busy()"
+                      >
+                        {{ t('recordView') }}
+                      </button>
+                    }
+                    @if (view.actions.edit) {
+                      <button
+                        class="text-button"
+                        (click)="open('edit', record)"
+                        [disabled]="data.stale() || data.busy()"
+                      >
+                        {{ t('recordEdit') }}
+                      </button>
+                    }
+                    @if (view.actions.delete) {
+                      <button
+                        class="text-button"
+                        (click)="remove([record.id])"
+                        [disabled]="data.stale() || data.busy()"
+                      >
+                        {{ t('recordDelete') }}
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="view.columns.length + (view.selectable ? 2 : 1)">
+                  {{ t('listEmpty') }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="collection-tools">
+        <button
+          class="secondary-button"
+          [disabled]="currentPage() === 0"
+          (click)="page.set(currentPage() - 1)"
+        >
+          {{ t('listPrevious') }}</button
+        ><span>{{ currentPage() + 1 }} / {{ pages() }}</span
+        ><button
+          class="secondary-button"
+          [disabled]="currentPage() + 1 >= pages()"
+          (click)="page.set(currentPage() + 1)"
+        >
+          {{ t('listNext') }}
+        </button>
+      </div>
+    </section>
+  } @else {
+    <p>{{ t('listNoLists') }}</p>
+  }
+</section>
+<dialog
+  #recordDialog
+  class="collection-dialog"
+  [attr.aria-label]="t('listRecordDialog')"
+  (cancel)="close()"
+>
+  <button class="secondary-button" (click)="close()">{{ t('close') }}</button>
+  @if (editing(); as editor) {
+    @if (editor.mode === 'view') {
+      @if (editor.record; as record) {
+        <h3>{{ t('recordView') }}</h3>
+        <dl>
+          @for (field of data.form().fields; track field.id) {
+            <dt>{{ text(field.label) }}</dt>
+            <dd>
+              @if (field.group) {
+                @for (row of groupRows(record, field); track $index) {
+                  <dl>
+                    @for (child of field.group.fields; track child.id) {
+                      <dt>{{ text(child.label) }}</dt>
+                      <dd>{{ value({ id: '', values: row }, child) }}</dd>
+                    }
+                  </dl>
+                }
+              } @else {
+                {{ value(record, field) }}
+              }
+            </dd>
+          }
+        </dl>
+      }
+    } @else {
+      <app-form-preview
+        [project]="store.project()"
+        [uiLocale]="locale()"
+        [locale]="contentLocale()"
+        [recordMode]="true"
+        [initialValues]="editor.record?.values ?? null"
+        (recordSaved)="save($event)"
+      />
+    }
+  }
+</dialog>

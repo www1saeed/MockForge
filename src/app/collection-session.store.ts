@@ -61,6 +61,8 @@ export class CollectionSessionStore implements OnDestroy {
         this.session = session;
         this.cancel();
         this.datasets.set(new Map());
+        this.notice.set(null);
+        this.progress.set(0);
       }
       const ids = new Set(this.project.application().forms.map((f) => f.id));
       const current = this.datasets();

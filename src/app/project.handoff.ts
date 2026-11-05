@@ -86,6 +86,20 @@ export function handoff(project: Project | ApplicationProject): string {
         ...form.fields.map((field: Field): string => renderField(field, language)),
         '## Buttons',
         ...form.buttons.map((button: FormButton): string => renderButton(button, language)),
+        ...('lists' in form && form.lists
+          ? form.lists.flatMap((list) => [
+              `## List (${inline(list.id)})`,
+              localized('Title', list.title),
+              `Columns: ${list.columns.join(', ')}; Search fields: ${list.searchFields.join(', ')}; Filters: ${list.filters.join(', ')}`,
+              `Fixed filters (AND): ${JSON.stringify(list.presets)}; Sort: ${JSON.stringify(list.sort ?? null)}`,
+              `Page size: ${list.pageSize}; Selection: ${list.selectable}; Actions: ${JSON.stringify(list.actions)}`,
+            ])
+          : []),
+        ...('entries' in form && form.entries
+          ? [
+              `Session generation: count ${form.entries.count}; seed ${form.entries.seed}. Responses are not exported.`,
+            ]
+          : []),
       ]),
       '## Decisions',
       project.decisions || 'None recorded',
