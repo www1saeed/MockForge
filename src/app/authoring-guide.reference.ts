@@ -28,7 +28,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
     rows: [
       {
         names: 'format, schemaVersion',
-        type: '"mockforge-studio", "2.1.0"',
+        type: '"mockforge-studio", "2.2.0"',
         description: 'versionRule',
       },
       {
@@ -67,6 +67,11 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
   {
     title: 'listContract',
     rows: [
+      {
+        names: 'appearance?, columnSettings?, actionSettings?, actionOrder?',
+        type: 'bounded table/column/button presentation',
+        description: 'listAppearanceHint',
+      },
       {
         names: 'id, title',
         type: 'safe form-local list ID, Text',

@@ -93,6 +93,7 @@ export function handoff(project: Project | ApplicationProject): string {
               `Columns: ${list.columns.join(', ')}; Search fields: ${list.searchFields.join(', ')}; Filters: ${list.filters.join(', ')}`,
               `Fixed filters (AND): ${JSON.stringify(list.presets)}; Sort: ${JSON.stringify(list.sort ?? null)}`,
               `Page size: ${list.pageSize}; Selection: ${list.selectable}; Actions: ${JSON.stringify(list.actions)}`,
+              `Appearance: ${JSON.stringify(list.appearance ?? null)}; Columns: ${JSON.stringify(list.columnSettings ?? [])}; Action presentation: ${JSON.stringify(list.actionSettings ?? {})}; Order: ${JSON.stringify(list.actionOrder ?? [])}`,
             ])
           : []),
         ...('entries' in form && form.entries

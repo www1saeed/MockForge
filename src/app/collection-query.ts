@@ -53,7 +53,12 @@ export function queryCollection(
         )),
   );
   const sort = query.sort ?? list.sort;
-  if (sort && list.columns.includes(sort.fieldId) && fields.has(sort.fieldId)) {
+  if (
+    sort &&
+    list.columns.includes(sort.fieldId) &&
+    fields.has(sort.fieldId) &&
+    list.columnSettings?.find((column) => column.fieldId === sort.fieldId)?.sortable !== false
+  ) {
     const collator = new Intl.Collator(locale, { numeric: true, sensitivity: 'base' });
     const field = fields.get(sort.fieldId)!;
     result.sort((left, right): number => {

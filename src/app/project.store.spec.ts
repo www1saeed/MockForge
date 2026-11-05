@@ -130,7 +130,7 @@ describe('ProjectStore', (): void => {
     localStorage.setItem(STORAGE_KEY, raw);
     const store = new ProjectStore();
     store.restore();
-    expect(store.application().schemaVersion).toBe('2.1.0');
+    expect(store.application().schemaVersion).toBe('2.2.0');
     const group = store.project().fields.find((field): boolean => !!field.group)!;
     expect(store.project().review.approvedAt).toBeNull();
     expect(localStorage.getItem(STORAGE_KEY)).toBe(raw);

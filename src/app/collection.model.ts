@@ -1,3 +1,10 @@
+import {
+  CollectionAppearance,
+  CollectionColumnSetting,
+  CollectionActionSetting,
+  CollectionActionKind,
+  validCollectionPresentation,
+} from './collection-presentation';
 import { Field, Text } from './project.model';
 
 export const COLLECTION_LIMITS = {
@@ -18,6 +25,10 @@ export interface CollectionPreset {
 }
 /** A view over the session records of its own form; no response data is serialized here. */
 export interface CollectionList {
+  appearance?: CollectionAppearance;
+  columnSettings?: CollectionColumnSetting[];
+  actionSettings?: Partial<Record<CollectionActionKind, CollectionActionSetting>>;
+  actionOrder?: CollectionActionKind[];
   id: string;
   title: Text;
   columns: string[];
@@ -98,6 +109,10 @@ export function validCollections(
         'selectable',
         'actions',
         'sort',
+        'appearance',
+        'columnSettings',
+        'actionSettings',
+        'actionOrder',
       ]) ||
       typeof list['id'] !== 'string' ||
       !/^[a-z][a-z0-9_-]{0,63}$/.test(list['id']) ||
@@ -113,6 +128,7 @@ export function validCollections(
       typeof list['selectable'] !== 'boolean'
     )
       return false;
+    if (!validCollectionPresentation(list)) return false;
     ids.add(list['id']);
     const actions = list['actions'];
     if (
@@ -189,6 +205,13 @@ export function pruneCollections(
     const next = {
       ...list,
       columns,
+      ...(list.columnSettings
+        ? {
+            columnSettings: list.columnSettings.filter((column) =>
+              columns.includes(column.fieldId),
+            ),
+          }
+        : {}),
       searchFields: list.searchFields.filter((id): boolean => leaves.has(id)),
       filters: list.filters.filter(
         (id): boolean => leaves.has(id) && collectionChoice(leaves.get(id)!),

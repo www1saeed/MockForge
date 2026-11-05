@@ -1,16 +1,16 @@
-MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.1.0
+MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.2.0
 
 Attach this UTF-8 text file to a chatbot together with your brief or current Studio export.
 This file is reference material, not an importable JSON file. The three complete examples below
 are importable separately. The English TypeScript declarations describe JSON keys and types;
 output JSON, not TypeScript. Other MockForge editions use a different contract.
-New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.1.0".
+New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.2.0".
 Project below describes the legacy 1.3.0 single-form import/renderer contract only.
 
 AUTHORING RULES
 1. Read the attached studio-ai-authoring-kit.txt and the current user brief. If the attachment or URL cannot be read, ask for its text rather than pretending to have read it.
 2. Clarify essential ambiguities before producing the final file. Use synthetic examples. Record production requirements and agreed assumptions in scope, decisions, questions or field/button note.
-3. Output one complete MockForge Studio ApplicationProject with format "mockforge-studio", schemaVersion "2.1.0" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.
+3. Output one complete MockForge Studio ApplicationProject with format "mockforge-studio", schemaVersion "2.2.0" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.
 4. Every localized Text has de, en and fa string properties, including empty inactive translations. Activate one or two unique languages from de/en/fa. Provide useful copy in every selected language.
 5. Use 1-20 forms with unique stable form IDs. Each form has id, title, description, submit, columns, fields and buttons. Field IDs are unique within their form including group children; button IDs are unique within their form. IDs match ^[a-z][a-z0-9_-]{0,63}$. Preserve existing IDs. Copies within a form need fresh field IDs; duplicating a whole form keeps local IDs and needs a new form ID. Optional form menu defaults to true. false hides the form menu link but not its lists or direct links; this is presentation, not authorization. Application navigation uses stable form/list hash links without storing routes or answers in JSON.
 6. Per form: at most 100 field definitions including group children, 20 buttons and 100 choices per field. Per project: at most 500 definitions and 100 buttons in total. Keep arrays even when empty. select/radio need non-empty Text options; do not invent separate value keys.
@@ -121,6 +121,30 @@ export interface Project extends FormContent {
   questions: string;
   review: { checks: boolean[]; reviewer: string; approvedAt: string | null };
 }
+export const TABLE_DESIGNS = ['plain', 'striped', 'bordered', 'minimal'] as const;
+export const COLLECTION_ACTIONS = ['create', 'view', 'edit', 'delete'] as const;
+export const ACTION_ICONS = ['plus', 'eye', 'edit', 'trash', 'arrow'] as const;
+export type CollectionActionKind = (typeof COLLECTION_ACTIONS)[number];
+export interface CollectionAppearance {
+  design: (typeof TABLE_DESIGNS)[number];
+  density: 'comfortable' | 'compact';
+  hover: boolean;
+  stickyHeader: boolean;
+}
+export interface CollectionColumnSetting {
+  fieldId: string;
+  label: Text;
+  align: 'start' | 'center' | 'end';
+  sortable: boolean;
+  width?: number;
+}
+export interface CollectionActionSetting {
+  label: Text;
+  variant: 'primary' | 'secondary' | 'ghost' | 'danger';
+  display: 'text' | 'icon' | 'both';
+  icon: (typeof ACTION_ICONS)[number];
+}
+
 export const COLLECTION_LIMITS = {
   listsPerForm: 10,
   listsPerProject: 50,
@@ -142,6 +166,10 @@ export interface CollectionPreset {
 
 /** A view over the session records of its own form; no response data is serialized here. */
 export interface CollectionList {
+  appearance?: CollectionAppearance;
+  columnSettings?: CollectionColumnSetting[];
+  actionSettings?: Partial<Record<CollectionActionKind, CollectionActionSetting>>;
+  actionOrder?: CollectionActionKind[];
   id: string;
   title: Text;
   columns: string[];
@@ -154,7 +182,7 @@ export interface CollectionList {
   sort?: { fieldId: string; direction: 'asc' | 'desc' };
 }
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.1.0';
+export const APPLICATION_SCHEMA_VERSION = '2.2.0';
 
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 
@@ -189,7 +217,7 @@ END STUDIO TYPE CONTRACT
 BEGIN EXAMPLE studio-starter.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "name": "01 · Contact desk",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -397,6 +425,44 @@ BEGIN EXAMPLE studio-starter.form.json
             "view": true,
             "edit": true,
             "delete": true
+          },
+          "appearance": {
+            "design": "plain",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": true
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         }
       ]
@@ -408,7 +474,7 @@ END EXAMPLE studio-starter.form.json
 BEGIN EXAMPLE studio-groups.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "name": "02 · Purchase requests",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -928,6 +994,44 @@ BEGIN EXAMPLE studio-groups.form.json
           "sort": {
             "fieldId": "request-title",
             "direction": "asc"
+          },
+          "appearance": {
+            "design": "plain",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": true
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -963,6 +1067,44 @@ BEGIN EXAMPLE studio-groups.form.json
             "view": true,
             "edit": true,
             "delete": false
+          },
+          "appearance": {
+            "design": "striped",
+            "density": "compact",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -994,6 +1136,44 @@ BEGIN EXAMPLE studio-groups.form.json
             "view": true,
             "edit": false,
             "delete": false
+          },
+          "appearance": {
+            "design": "bordered",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         }
       ]
@@ -1005,7 +1185,7 @@ END EXAMPLE studio-groups.form.json
 BEGIN EXAMPLE studio-workspace.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "name": "03 · Procurement workspace",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -1839,6 +2019,44 @@ BEGIN EXAMPLE studio-workspace.form.json
           "sort": {
             "fieldId": "request-title",
             "direction": "asc"
+          },
+          "appearance": {
+            "design": "plain",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": true
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -1874,6 +2092,44 @@ BEGIN EXAMPLE studio-workspace.form.json
             "view": true,
             "edit": true,
             "delete": false
+          },
+          "appearance": {
+            "design": "striped",
+            "density": "compact",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -1905,6 +2161,44 @@ BEGIN EXAMPLE studio-workspace.form.json
             "view": true,
             "edit": false,
             "delete": false
+          },
+          "appearance": {
+            "design": "bordered",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -1944,6 +2238,44 @@ BEGIN EXAMPLE studio-workspace.form.json
             "view": true,
             "edit": true,
             "delete": false
+          },
+          "appearance": {
+            "design": "minimal",
+            "density": "compact",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         }
       ]
@@ -2257,6 +2589,44 @@ BEGIN EXAMPLE studio-workspace.form.json
             "view": true,
             "edit": true,
             "delete": true
+          },
+          "appearance": {
+            "design": "plain",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": true
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -2292,6 +2662,44 @@ BEGIN EXAMPLE studio-workspace.form.json
             "view": true,
             "edit": true,
             "delete": false
+          },
+          "appearance": {
+            "design": "striped",
+            "density": "compact",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         },
         {
@@ -2320,6 +2728,44 @@ BEGIN EXAMPLE studio-workspace.form.json
             "view": true,
             "edit": false,
             "delete": false
+          },
+          "appearance": {
+            "design": "bordered",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": false
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         }
       ]

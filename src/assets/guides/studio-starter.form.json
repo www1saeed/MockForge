@@ -1,6 +1,6 @@
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "name": "01 · Contact desk",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -191,6 +191,44 @@
             "view": true,
             "edit": true,
             "delete": true
+          },
+          "appearance": {
+            "design": "plain",
+            "density": "comfortable",
+            "hover": true,
+            "stickyHeader": true
+          },
+          "actionSettings": {
+            "view": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "ghost",
+              "display": "both",
+              "icon": "eye"
+            },
+            "edit": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "secondary",
+              "display": "both",
+              "icon": "edit"
+            },
+            "delete": {
+              "label": {
+                "de": "",
+                "en": "",
+                "fa": ""
+              },
+              "variant": "danger",
+              "display": "icon",
+              "icon": "trash"
+            }
           }
         }
       ]

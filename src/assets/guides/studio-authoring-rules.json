@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "rules": [
     "Read the attached studio-ai-authoring-kit.txt and the current user brief. If the attachment or URL cannot be read, ask for its text rather than pretending to have read it.",
     "Clarify essential ambiguities before producing the final file. Use synthetic examples. Record production requirements and agreed assumptions in scope, decisions, questions or field/button note.",
-    "Output one complete MockForge Studio ApplicationProject with format \"mockforge-studio\", schemaVersion \"2.1.0\" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.",
+    "Output one complete MockForge Studio ApplicationProject with format \"mockforge-studio\", schemaVersion \"2.2.0\" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.",
     "Every localized Text has de, en and fa string properties, including empty inactive translations. Activate one or two unique languages from de/en/fa. Provide useful copy in every selected language.",
     "Use 1-20 forms with unique stable form IDs. Each form has id, title, description, submit, columns, fields and buttons. Field IDs are unique within their form including group children; button IDs are unique within their form. IDs match ^[a-z][a-z0-9_-]{0,63}$. Preserve existing IDs. Copies within a form need fresh field IDs; duplicating a whole form keeps local IDs and needs a new form ID. Optional form menu defaults to true. false hides the form menu link but not its lists or direct links; this is presentation, not authorization. Application navigation uses stable form/list hash links without storing routes or answers in JSON.",
     "Per form: at most 100 field definitions including group children, 20 buttons and 100 choices per field. Per project: at most 500 definitions and 100 buttons in total. Keep arrays even when empty. select/radio need non-empty Text options; do not invent separate value keys.",

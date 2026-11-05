@@ -37,7 +37,7 @@ describe('Studio authoring references', (): void => {
         );
       }
       expect(readFileSync(`src/assets/guides/${example.file}`, 'utf8')).toContain(
-        '"schemaVersion": "2.1.0"',
+        '"schemaVersion": "2.2.0"',
       );
     }
   });
