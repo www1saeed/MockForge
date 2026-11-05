@@ -139,3 +139,5 @@ Export one offline HTML file using the existing application/form/list renderers,
 ### Expanded list acceptance
 
 Lists support root, group and group/child columns; selectable group children and table/card/accordion/text/chip/count rendering, plus leaf badges. All three list layouts retain shared CRUD/query/selection semantics. The list tab uses a source-form selector, its own preview/device/language and test-data toolbars, workspace visibility/full-width controls and session-only selected/mixed-language generation with atomic single append. Roles, independent flattened group collections, conditional visibility and backend access remain later work.
+
+List usability: table-specific controls appear only for tables; density/hover/alignment also affect cards/accordions. Chips/count apply to repeated values, with native dialogs for structured/count group details. Group field labels have spaced rows. The preview scrolls independently. Valid authoring preview/default counts are synchronized, invalid drafts block generation, and confirmation keeps its original count/language snapshot.

@@ -1,5 +1,13 @@
 # Code quality and test evidence
 
+## List usability checkpoint — November 5, 2026
+
+**283 Studio tests pass: 206 Jest cases in 28 suites plus 77 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.70% statements, 90.05% branches, 95.99% functions, 97.45% lines. Format/lint/app+spec+E2E types, 549 translations, synchronized kit, local documentation references and production build pass. Initial bundle901.23kB; unchanged700kB warning/1MB failure. No new dependency, schema revision or resource-budget increase.
+
+A new count regression plus extended parent/child assertions cover default/preview synchronization, invalid drafts, unrelated edits, source changes and immutable confirmation options. Existing group cases cover lazy dialogs, selected children, input/disposal cleanup, empty counts and text-only legacy compatibility. The new browser journey verifies layout-specific controls, spacing, live density/hover/alignment, exact replacement counts and independently scrolling preview. Extended group journeys exercise Close/Escape/focus, actual offline files and Persian mobile dialog Axe/bounds. The duplicate preview heading is removed.
+
+Final full report: reports/pr8-list-usability-final-e2e.json. Current HTML deck remains15slides; its quality figures/narration are updated and desktop/mobile inspected. Previous ignored PDF is a separate export. CI needs its own run after user push.
+
 ## Grouped lists and language-aware fixtures — November 5, 2026
 
 **281 Studio tests pass: 205 Jest cases in 28 suites and 76 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.66% statements, 90.17% branches, 95.90% functions and 97.41% lines. Format/lint/app+spec+E2E types, 548 translations, synchronized authoring kit, local documentation targets and production build pass. Full browser evidence: reports/pr8-expanded-lists-final-e2e.json; CI needs its own run after push.
