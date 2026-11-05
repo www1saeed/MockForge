@@ -29,9 +29,9 @@
   outline: 2px solid var(--accent);
 }
 main {
-  max-width: 1440px;
+  max-width: none;
   margin: auto;
-  padding: 1rem;
+  padding: 0;
 }
 .standalone-licenses {
   margin: 1rem;
@@ -39,4 +39,116 @@ main {
 .standalone-licenses pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+.standalone-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  min-height: 80px;
+}
+.standalone-brand {
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--ink);
+  text-decoration: none;
+  max-width: 28rem;
+  overflow-wrap: anywhere;
+}
+.standalone-header > span {
+  font-size: 0.8rem;
+  color: var(--muted);
+  max-width: 30rem;
+}
+.standalone-application {
+  padding: 0;
+  max-width: none;
+}
+.standalone-application .application-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: calc(100dvh - 80px);
+}
+.standalone-application .application-sidebar {
+  padding: 1rem;
+  background: var(--nav);
+  color: white;
+}
+.standalone-application .application-menu {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100dvh - 120px);
+  overflow: auto;
+}
+.standalone-application .application-menu a {
+  color: #eaf3f5;
+  border-color: #38505b;
+}
+.standalone-application .application-kind {
+  color: #bdcfd6;
+}
+.standalone-application .application-menu a[aria-current='page'] {
+  color: var(--ink);
+  background: var(--accent-soft);
+}
+.standalone-application .application-menu a[aria-current='page'] .application-kind {
+  color: var(--muted);
+}
+.standalone-application .application-frame {
+  padding: 2rem;
+  border: 0;
+  border-radius: 0;
+  min-width: 0;
+}
+.standalone-application .preview-panel {
+  padding: 0;
+  background: transparent;
+}
+.standalone-application .browser-frame {
+  border: 0;
+  box-shadow: none;
+}
+.standalone-application .rendered-form {
+  padding: 1.5rem;
+}
+.application-menu-toggle {
+  display: none;
+}
+@media (max-width: 760px) {
+  .standalone-header {
+    position: static;
+  }
+  .standalone-application .application-layout {
+    display: block;
+  }
+  .standalone-application .application-menu {
+    position: static;
+    display: none;
+    max-height: none;
+    margin-top: 1rem;
+  }
+  .standalone-application .application-menu.menu-open {
+    display: flex;
+  }
+  .application-menu-toggle {
+    display: block;
+  }
+  .standalone-application .application-frame {
+    padding: 1rem;
+  }
+  .standalone-application .rendered-form {
+    padding: 1rem;
+  }
+}
+.standalone-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.standalone-title {
+  max-width: 32rem;
+  max-height: 3.5rem;
+  overflow: hidden;
 }

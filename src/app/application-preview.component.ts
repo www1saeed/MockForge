@@ -56,6 +56,7 @@ export class ApplicationPreviewComponent implements OnDestroy {
   readonly route = input<ApplicationRoute>({ kind: 'home' });
   readonly selectedLocale = signal<Locale | null>(null);
   readonly mobile = signal(false);
+  readonly menuOpen = signal(false);
   readonly language = computed(() => {
     const requested = this.selectedLocale() ?? this.locale();
     return this.store.application().languages.includes(requested)

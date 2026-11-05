@@ -39,7 +39,11 @@ function workerFactory(): () => Worker | null {
     { provide: PATTERN_WORKER_FACTORY, useFactory: workerFactory },
   ],
   template: ` <header class="standalone-header">
-      <strong>MockForge</strong>
+      <h1 class="standalone-title">
+        <a class="standalone-brand" [href]="documentUrl + '#application'">{{
+          store.application().name || 'MockForge'
+        }}</a>
+      </h1>
       <span>{{ hint() }}</span>
       <nav [attr.aria-label]="languageLabel()">
         @for (language of languages; track language) {
@@ -60,6 +64,7 @@ function workerFactory(): () => Worker | null {
     <app-feedback [locale]="locale()" />`,
 })
 export class StandalonePreviewComponent {
+  readonly documentUrl = window.location.href.split('#')[0];
   readonly store = inject(ProjectStore);
   readonly languages = LOCALES;
   readonly locale = signal<Locale>('en');

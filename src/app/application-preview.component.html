@@ -1,63 +1,96 @@
-<section class="application-workspace" [attr.aria-label]="t('application')">
-  <div class="application-intro">
-    <h1>{{ store.application().name || t('application') }}</h1>
-    <p>{{ t('applicationHint') }}</p>
-    @if (!standalone()) {
-      <a class="secondary-button" [href]="documentUrl + '#workspace'">{{ t('applicationBack') }}</a>
-      <button
-        class="secondary-button"
-        type="button"
-        [disabled]="exporting()"
-        (click)="exportRequested.emit()"
+<section
+  [class.standalone-application]="standalone()"
+  class="application-workspace"
+  [attr.aria-label]="t('application')"
+>
+  @if (!standalone()) {
+    <div class="application-intro">
+      <h1>{{ store.application().name || t('application') }}</h1>
+      <p>{{ t('applicationHint') }}</p>
+      @if (!standalone()) {
+        <a class="secondary-button" [href]="documentUrl + '#workspace'">{{
+          t('applicationBack')
+        }}</a>
+        <button
+          class="secondary-button"
+          type="button"
+          [disabled]="exporting()"
+          (click)="exportRequested.emit()"
+        >
+          {{ t('standaloneExport') }}
+        </button>
+      }
+    </div>
+  }
+  <div class="application-layout">
+    <aside class="application-sidebar">
+      @if (standalone()) {
+        <button
+          class="secondary-button application-menu-toggle"
+          [attr.aria-expanded]="menuOpen()"
+          aria-controls="standalone-navigation"
+          (click)="menuOpen.set(!menuOpen())"
+        >
+          {{ t('applicationMenu') }}
+        </button>
+      }
+      <nav
+        id="standalone-navigation"
+        [class.menu-open]="menuOpen()"
+        class="application-menu"
+        [attr.aria-label]="t('applicationMenu')"
       >
-        {{ t('standaloneExport') }}
-      </button>
-    }
-  </div>
-  <div
-    class="application-frame"
-    [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
-    [attr.lang]="language()"
-  >
-    <nav class="application-menu" [attr.aria-label]="t('applicationMenu')">
-      @for (item of menu(); track href(item)) {
-        <a [href]="documentUrl + href(item)" [attr.aria-current]="active(item) ? 'page' : null">
-          <span class="application-kind">{{
-            t(item.kind === 'form' ? 'applicationForm' : 'applicationList')
-          }}</span>
-          {{ title(item) }}
-        </a>
-      }
-    </nav>
-    @if (target(); as screen) {
-      <h2 #screenTitle tabindex="-1">{{ title(screen) }}</h2>
-      @for (session of sessions(); track session.id) {
-        @if (screen.kind === 'form') {
-          <app-form-preview
-            [project]="data.projection()"
-            [uiLocale]="locale()"
-            [locale]="language()"
-            [mobile]="mobile()"
-            (localeChange)="selectedLocale.set($event)"
-            (mobileChange)="mobile.set($event)"
-          />
-        } @else {
-          <app-collection-workspace
-            [locale]="locale()"
-            [contentLanguage]="language()"
-            [previewOnly]="true"
-            [listId]="screen.listId"
-          />
+        @for (item of menu(); track href(item)) {
+          <a
+            (click)="menuOpen.set(false)"
+            [href]="documentUrl + href(item)"
+            [attr.aria-current]="active(item) ? 'page' : null"
+          >
+            <span class="application-kind">{{
+              t(item.kind === 'form' ? 'applicationForm' : 'applicationList')
+            }}</span>
+            {{ title(item) }}
+          </a>
         }
+      </nav>
+    </aside>
+    <div
+      class="application-frame"
+      [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
+      [attr.lang]="language()"
+    >
+      @if (target(); as screen) {
+        <h2 #screenTitle tabindex="-1">{{ title(screen) }}</h2>
+        @for (session of sessions(); track session.id) {
+          @if (screen.kind === 'form') {
+            <app-form-preview
+              [project]="data.projection()"
+              [uiLocale]="locale()"
+              [locale]="language()"
+              [mobile]="mobile()"
+              [applicationMode]="standalone()"
+              (localeChange)="selectedLocale.set($event)"
+              (mobileChange)="mobile.set($event)"
+            />
+          } @else {
+            <app-collection-workspace
+              [locale]="locale()"
+              [contentLanguage]="language()"
+              [previewOnly]="true"
+              [standalone]="standalone()"
+              [listId]="screen.listId"
+            />
+          }
+        }
+      } @else {
+        <h2 #screenTitle tabindex="-1">
+          {{ t(route().kind === 'home' ? 'applicationEmpty' : 'applicationMissing') }}
+        </h2>
+        <p>{{ t(standalone() ? 'standaloneRecovery' : 'applicationRecovery') }}</p>
+        <a class="secondary-button" [href]="documentUrl + '#application'">{{
+          t('applicationHome')
+        }}</a>
       }
-    } @else {
-      <h2 #screenTitle tabindex="-1">
-        {{ t(route().kind === 'home' ? 'applicationEmpty' : 'applicationMissing') }}
-      </h2>
-      <p>{{ t(standalone() ? 'standaloneRecovery' : 'applicationRecovery') }}</p>
-      <a class="secondary-button" [href]="documentUrl + '#application'">{{
-        t('applicationHome')
-      }}</a>
-    }
+    </div>
   </div>
 </section>
