@@ -33,6 +33,7 @@
     "repeat-groups": ["groups", "authoring", "preview"],
     "shell-context": ["shell"],
     "studio": ["authoring", "preview", "transfer", "persistence", "review", "shell"],
-    "standalone-preview": ["transfer", "navigation", "lists", "preview"]
+    "standalone-preview": ["transfer", "navigation", "lists", "preview"],
+    "examples": ["authoring", "forms", "lists", "groups"]
   }
 }

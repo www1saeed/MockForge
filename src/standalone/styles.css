@@ -1,6 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import '../styles/foundation.css';
 @import '../styles/preview.css';
+@import '../styles/presets.css';
 @import '../styles/feedback.css';
 @import '../styles/repeat-groups.css';
 @import '../styles/collections.css';
