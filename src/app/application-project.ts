@@ -8,7 +8,7 @@ import {
 } from './collection.model';
 
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.2.0';
+export const APPLICATION_SCHEMA_VERSION = '2.3.0';
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 const PROJECT_KEYS = new Set([
   'format',
@@ -202,7 +202,7 @@ export function parseApplicationProject(value: unknown): ApplicationProject | nu
   }
   if (
     record(value) &&
-    value['schemaVersion'] === '2.1.0' &&
+    (value['schemaVersion'] === '2.1.0' || value['schemaVersion'] === '2.2.0') &&
     value['format'] === 'mockforge-studio'
   ) {
     const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };

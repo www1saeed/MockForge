@@ -1,6 +1,6 @@
 import { Field, Locale } from './project.model';
 import { ApplicationForm } from './application-project';
-import { CollectionList, validCollectionValue } from './collection.model';
+import { CollectionList, collectionFields, validCollectionValue } from './collection.model';
 import { ownResponse, ResponseValues } from './response-values';
 import { responseLengthViolation } from './response-constraints';
 import { translate } from './translations';
@@ -15,10 +15,26 @@ export interface CollectionQuery {
   sort?: { fieldId: string; direction: 'asc' | 'desc' };
 }
 
+export function collectionValue(values: ResponseValues, id: string): unknown {
+  const [parent, child] = id.split('/');
+  const value = ownResponse(values, parent);
+  return child && Array.isArray(value) ? value.map((row) => ownResponse(row, child)) : value;
+}
 export function formatRecordValue(field: Field, value: unknown, locale: Locale): string {
   if (value === undefined || value === '') return '—';
   if (typeof value === 'boolean') return translate(value ? 'recordTrue' : 'recordFalse', locale);
-  if (Array.isArray(value)) return String(value.length);
+  if (Array.isArray(value))
+    return field.group
+      ? value
+          .map((row) =>
+            field
+              .group!.fields.map((child) =>
+                formatRecordValue(child, ownResponse(row, child.id), locale),
+              )
+              .join(' · '),
+          )
+          .join(' | ') || '—'
+      : value.map((item) => formatRecordValue(field, item, locale)).join(' · ') || '—';
   if (typeof value !== 'string') return '—';
   if (field.type === 'radio' || field.type === 'select')
     return field.options[Number(value)]?.[locale] ?? '—';
@@ -33,7 +49,7 @@ export function queryCollection(
   query: CollectionQuery,
   locale: Locale,
 ): CollectionRecord[] {
-  const fields = new Map(form.fields.map((field) => [field.id, field]));
+  const fields = new Map(collectionFields(form.fields).map((field) => [field.id, field]));
   const matches = (record: CollectionRecord, id: string, value: string | boolean): boolean =>
     ownResponse(record.values, id) === value;
   const search = query.search.trim().toLocaleLowerCase(locale);
@@ -47,7 +63,7 @@ export function queryCollection(
         list.searchFields.some(
           (id): boolean =>
             fields.has(id) &&
-            formatRecordValue(fields.get(id)!, ownResponse(record.values, id), locale)
+            formatRecordValue(fields.get(id)!, collectionValue(record.values, id), locale)
               .toLocaleLowerCase(locale)
               .includes(search),
         )),
@@ -62,8 +78,8 @@ export function queryCollection(
     const collator = new Intl.Collator(locale, { numeric: true, sensitivity: 'base' });
     const field = fields.get(sort.fieldId)!;
     result.sort((left, right): number => {
-      const a = ownResponse(left.values, field.id),
-        b = ownResponse(right.values, field.id);
+      const a = collectionValue(left.values, field.id),
+        b = collectionValue(right.values, field.id);
       const order =
         field.type === 'number' &&
         typeof a === 'string' &&

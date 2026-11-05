@@ -74,7 +74,7 @@ describe('Collection configuration contract', (): void => {
     expect(validateApplicationProject(project)).toBe(true);
     form.fields.push(createField('group', 'people'));
     list.columns.push('people');
-    expect(validateApplicationProject(project)).toBe(false);
+    expect(validateApplicationProject(project)).toBe(true);
   });
   it('prunes changed/deleted references while preserving surviving order and source ownership', (): void => {
     const select = createField('select', 'choice');

@@ -10,6 +10,7 @@ import { createField, text, STORAGE_KEY } from './project';
 
 describe('Session record ownership', () => {
   let data: CollectionSessionStore, project: ProjectStore;
+  let request: { locale: string; locales: string[]; count: number };
   let resolve: (result: BatchResult) => void, options: BatchOptions;
   const result = (status: BatchResult['status'] = 'complete'): BatchResult => ({
     status,
@@ -29,10 +30,11 @@ describe('Session record ownership', () => {
           provide: COLLECTION_GENERATOR,
           useValue: (
             _project: unknown,
-            _request: unknown,
+            generatedRequest: typeof request,
             opts: BatchOptions,
           ): Promise<BatchResult> => {
             options = opts;
+            request = generatedRequest;
             return new Promise((done) => {
               resolve = done;
             });
@@ -44,6 +46,25 @@ describe('Session record ownership', () => {
     project.update({ fields: [createField('text', 'name')] });
     data = TestBed.inject(CollectionSessionStore);
     TestBed.tick();
+  });
+  it('forwards selected/mixed locales and appends one record atomically without replacing existing answers', async () => {
+    data.save({ name: 'Manual' }, data.context());
+    const pending = data.regenerate(data.context(), ['en', 'fa'], 1, true);
+    expect(data.records()[0].values['name']).toBe('Manual');
+    expect(request).toMatchObject({ locale: 'fa', locales: ['fa', 'en'], count: 1 });
+    resolve(result());
+    await pending;
+    expect(data.records().map((record) => record.values['name'])).toEqual(['Manual', 'Generated']);
+    const before = data.records();
+    const cancelled = data.regenerate(data.context(), ['de'], 1, true);
+    data.cancel();
+    resolve(result());
+    await cancelled;
+    expect(data.records()).toBe(before);
+    await data.regenerate(data.context(), [], 1, true);
+    expect(data.records()).toBe(before);
+    await data.regenerate(data.context(), ['de'], 501, true);
+    expect(data.records()).toBe(before);
   });
   it('creates, edits and deletes without touching specification, storage or approval', () => {
     project.updateReview({

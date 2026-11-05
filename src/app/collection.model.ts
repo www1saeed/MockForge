@@ -44,6 +44,21 @@ export interface CollectionList {
 export function collectionLeaves(fields: readonly Field[]): Field[] {
   return fields.filter((field): boolean => field.type !== 'group');
 }
+/** Root fields and unambiguous group/child paths; persisted response IDs remain unchanged. */
+export function collectionFields(fields: readonly Field[]): Field[] {
+  return fields.flatMap((field) => [
+    field,
+    ...(field.group?.fields.map((child) => ({
+      ...child,
+      id: field.id + '/' + child.id,
+      label: {
+        de: field.label.de + ' / ' + child.label.de,
+        en: field.label.en + ' / ' + child.label.en,
+        fa: field.label.fa + ' / ' + child.label.fa,
+      },
+    })) ?? []),
+  ]);
+}
 export function collectionChoice(field: Field): boolean {
   return ['select', 'radio', 'checkbox'].includes(field.type);
 }
@@ -86,13 +101,15 @@ export function validCollections(
   if (!Array.isArray(lists) || lists.length > COLLECTION_LIMITS.listsPerForm) return false;
   const leaves = new Map(collectionLeaves(fields).map((field) => [field.id, field]));
   const ids = new Set<string>();
+  const columnsById = new Map(collectionFields(fields).map((field) => [field.id, field]));
   const references = (value: unknown, filter = false): value is string[] =>
     Array.isArray(value) &&
     value.length <= COLLECTION_LIMITS.columns &&
     new Set(value).size === value.length &&
     value.every(
       (id: unknown): boolean =>
-        typeof id === 'string' && leaves.has(id) && (!filter || collectionChoice(leaves.get(id)!)),
+        typeof id === 'string' &&
+        (filter ? leaves.has(id) && collectionChoice(leaves.get(id)!) : columnsById.has(id)),
     );
   for (const list of lists as unknown[]) {
     if (!record(list)) return false;
@@ -129,6 +146,18 @@ export function validCollections(
     )
       return false;
     if (!validCollectionPresentation(list)) return false;
+    for (const setting of (list['columnSettings'] ?? []) as CollectionColumnSetting[]) {
+      const field = columnsById.get(setting.fieldId)!;
+      if (
+        setting.groupFields !== undefined &&
+        (!field.group ||
+          !setting.groupFields.length ||
+          setting.groupFields.some((id) => !field.group!.fields.some((child) => child.id === id)))
+      )
+        return false;
+      if (!field.group && ['table', 'cards', 'accordion'].includes(setting.display ?? 'text'))
+        return false;
+    }
     ids.add(list['id']);
     const actions = list['actions'];
     if (
@@ -201,18 +230,33 @@ export function pruneCollections(
   if (!lists) return undefined;
   const leaves = new Map(collectionLeaves(fields).map((field) => [field.id, field]));
   return lists.map((list) => {
-    const columns = list.columns.filter((id): boolean => leaves.has(id));
+    const available = new Map(collectionFields(fields).map((field) => [field.id, field]));
+    const columns = list.columns.filter((id): boolean => available.has(id));
     const next = {
       ...list,
       columns,
       ...(list.columnSettings
         ? {
-            columnSettings: list.columnSettings.filter((column) =>
-              columns.includes(column.fieldId),
-            ),
+            columnSettings: list.columnSettings
+              .filter((column) => columns.includes(column.fieldId))
+              .map((column) => {
+                const field = available.get(column.fieldId)!;
+                const groupFields = column.groupFields?.filter((id) =>
+                  field.group?.fields.some((child) => child.id === id),
+                );
+                const rest = { ...column };
+                delete rest.groupFields;
+                return {
+                  ...rest,
+                  ...(!field.group && ['table', 'cards', 'accordion'].includes(rest.display ?? '')
+                    ? { display: 'text' as const }
+                    : {}),
+                  ...(groupFields?.length ? { groupFields } : {}),
+                };
+              }),
           }
         : {}),
-      searchFields: list.searchFields.filter((id): boolean => leaves.has(id)),
+      searchFields: list.searchFields.filter((id): boolean => available.has(id)),
       filters: list.filters.filter(
         (id): boolean => leaves.has(id) && collectionChoice(leaves.get(id)!),
       ),

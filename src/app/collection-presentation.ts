@@ -6,6 +6,7 @@ export const ACTION_ICONS = ['plus', 'eye', 'edit', 'trash', 'arrow'] as const;
 export type CollectionActionKind = (typeof COLLECTION_ACTIONS)[number];
 export interface CollectionAppearance {
   design: (typeof TABLE_DESIGNS)[number];
+  layout?: 'table' | 'cards' | 'accordion';
   density: 'comfortable' | 'compact';
   hover: boolean;
   stickyHeader: boolean;
@@ -16,6 +17,8 @@ export interface CollectionColumnSetting {
   align: 'start' | 'center' | 'end';
   sortable: boolean;
   width?: number;
+  display?: 'text' | 'badge' | 'chips' | 'count' | 'table' | 'cards' | 'accordion';
+  groupFields?: string[];
 }
 export interface CollectionActionSetting {
   label: Text;
@@ -63,7 +66,9 @@ export function validCollectionPresentation(list: Record<string, unknown>): bool
   if (
     appearance !== undefined &&
     (!object(appearance) ||
-      !keys(appearance, ['design', 'density', 'hover', 'stickyHeader']) ||
+      !keys(appearance, ['design', 'density', 'hover', 'stickyHeader', 'layout']) ||
+      (appearance['layout'] !== undefined &&
+        !['table', 'cards', 'accordion'].includes(String(appearance['layout']))) ||
       !TABLE_DESIGNS.includes(appearance['design'] as CollectionAppearance['design']) ||
       !['comfortable', 'compact'].includes(String(appearance['density'])) ||
       typeof appearance['hover'] !== 'boolean' ||
@@ -77,9 +82,26 @@ export function validCollectionPresentation(list: Record<string, unknown>): bool
     for (const column of columns) {
       if (
         !object(column) ||
-        !keys(column, ['fieldId', 'label', 'align', 'sortable', 'width']) ||
+        !keys(column, [
+          'fieldId',
+          'label',
+          'align',
+          'sortable',
+          'width',
+          'display',
+          'groupFields',
+        ]) ||
         !(list['columns'] as unknown[]).includes(column['fieldId']) ||
         ids.has(column['fieldId']) ||
+        (column['display'] !== undefined &&
+          !['text', 'badge', 'chips', 'count', 'table', 'cards', 'accordion'].includes(
+            String(column['display']),
+          )) ||
+        (column['groupFields'] !== undefined &&
+          (!Array.isArray(column['groupFields']) ||
+            column['groupFields'].length > 20 ||
+            new Set(column['groupFields']).size !== column['groupFields'].length ||
+            !column['groupFields'].every((id) => typeof id === 'string'))) ||
         !label(column['label']) ||
         !['start', 'center', 'end'].includes(String(column['align'])) ||
         typeof column['sortable'] !== 'boolean' ||
