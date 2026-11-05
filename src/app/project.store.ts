@@ -6,6 +6,7 @@ import {
   example,
   parseApplicationProject,
   validateApplicationProject,
+  validateProject,
   ApplicationProject,
   projectForForm,
   addApplicationForm,
@@ -18,6 +19,7 @@ import {
   Project,
   STORAGE_KEY,
 } from './project';
+import { CollectionEntries, CollectionList, pruneCollections } from './collection.model';
 
 /**
  * Owns the complete application and a transient selected-form editor projection.
@@ -32,6 +34,8 @@ export class ProjectStore {
   readonly activeFormId = this.selectedForm.asReadonly();
   /** Remount response/worker owners on selection or wholesale project replacement. */
   readonly formSession = signal(0);
+  /** Records belong to one loaded application; selecting a form does not change this identity. */
+  readonly projectSession = signal(0);
   readonly project = computed((): Project => projectForForm(this.state(), this.selectedForm())!);
   readonly mutationError = signal(false);
   /** Internal authoring clipboard; never serialized with the specification. */
@@ -139,6 +143,7 @@ export class ProjectStore {
       const restored = parseApplicationProject(parsed);
       if (restored) {
         this.state.set(restored);
+        this.projectSession.update((epoch): number => epoch + 1);
         this.selectedForm.set(restored.forms[0].id);
         this.formSession.update((epoch): number => epoch + 1);
         this.restoreError.set(false);
@@ -185,8 +190,18 @@ export class ProjectStore {
   }
 
   private commit(project: ApplicationProject): boolean {
+    if (
+      !project.forms.every((form): boolean => validateProject(projectForForm(project, form.id)))
+    ) {
+      this.mutationError.set(true);
+      return false;
+    }
     const next: ApplicationProject = {
       ...project,
+      forms: project.forms.map((form) => ({
+        ...form,
+        ...(form.lists ? { lists: pruneCollections(form.fields, form.lists) } : {}),
+      })),
       review: { ...project.review, checks: [false, false, false, false, false], approvedAt: null },
     };
     if (!validateApplicationProject(next)) {
@@ -229,6 +244,7 @@ export class ProjectStore {
     // The contract contains JSON values only; cloning also works in test DOMs.
     this.state.set(next);
     this.selectedForm.set(next.forms[0].id);
+    this.projectSession.update((epoch): number => epoch + 1);
     this.formSession.update((epoch): number => epoch + 1);
     this.mutationError.set(false);
     this.persist();
@@ -289,5 +305,25 @@ export class ProjectStore {
   moveForm(id: string, direction: -1 | 1): boolean {
     const next = moveApplicationForm(this.application(), id, direction);
     return !!next && this.commit(next);
+  }
+
+  updateCollections(lists: CollectionList[], entries?: CollectionEntries): boolean {
+    const next: ApplicationProject = {
+      ...this.application(),
+      forms: this.application().forms.map((form) =>
+        form.id === this.activeFormId()
+          ? {
+              ...form,
+              lists: JSON.parse(JSON.stringify(lists)) as CollectionList[],
+              ...(entries ? { entries: { ...entries } } : {}),
+            }
+          : form,
+      ),
+    };
+    if (!validateApplicationProject(next)) {
+      this.mutationError.set(true);
+      return false;
+    }
+    return this.commit(next);
   }
 }

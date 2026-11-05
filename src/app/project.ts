@@ -12,3 +12,4 @@ export * from './project.handoff';
 // Application persistence uses 2.0.0; the legacy renderer projection remains 1.3.0.
 export * from './application-project';
 export * from './application-forms';
+export * from './collection.model';

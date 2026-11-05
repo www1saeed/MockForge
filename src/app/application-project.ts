@@ -1,8 +1,14 @@
 import { allFields, FormContent, Project } from './project.model';
 import { parseProject, validateProject } from './project.validation';
+import {
+  CollectionEntries,
+  CollectionList,
+  COLLECTION_LIMITS,
+  validCollections,
+} from './collection.model';
 
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.0.0';
+export const APPLICATION_SCHEMA_VERSION = '2.1.0';
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 const PROJECT_KEYS = new Set([
   'format',
@@ -28,6 +34,8 @@ const FORM_KEYS = new Set([
   'columns',
   'fields',
   'buttons',
+  'lists',
+  'entries',
 ]);
 
 /** Field and button IDs are unique within this form, including its group children. */
@@ -35,6 +43,8 @@ export interface ApplicationForm extends FormContent {
   id: string;
   /** Omission keeps the form in the future application menu. */
   menu?: boolean;
+  lists?: CollectionList[];
+  entries?: CollectionEntries;
 }
 
 /** Project-level configuration and review; preview answers never belong here. */
@@ -112,7 +122,7 @@ function formProject(
 
 /**
  * Validate bounded multi-form configuration before flattening any group definitions.
- * Future lists, roles and flows are rejected until their own validation is implemented.
+ * Roles and flows remain rejected until their own validation is implemented.
  */
 export function validateApplicationProject(value: unknown): value is ApplicationProject {
   if (
@@ -131,6 +141,7 @@ export function validateApplicationProject(value: unknown): value is Application
   const ids = new Set<string>();
   let definitions = 0;
   let buttons = 0;
+  let listCount = 0;
   for (const form of value['forms'] as unknown[]) {
     if (
       !record(form) ||
@@ -139,16 +150,18 @@ export function validateApplicationProject(value: unknown): value is Application
       !/^[a-z][a-z0-9_-]{0,63}$/.test(form['id']) ||
       ids.has(form['id']) ||
       (form['menu'] !== undefined && typeof form['menu'] !== 'boolean') ||
-      form['lists'] !== undefined ||
       form['flow'] !== undefined ||
       form['access'] !== undefined
     )
       return false;
     const projected = formProject(value, form);
     if (!validateProject(projected)) return false;
+    if (!validCollections(projected.fields, form['lists'], form['entries'])) return false;
     ids.add(form['id']);
     definitions += allFields(projected.fields).length;
     buttons += projected.buttons.length;
+    listCount += (form['lists'] as CollectionList[] | undefined)?.length ?? 0;
+    if (listCount > COLLECTION_LIMITS.listsPerProject) return false;
     if (definitions > APPLICATION_LIMITS.definitions || buttons > APPLICATION_LIMITS.buttons)
       return false;
   }
@@ -167,6 +180,26 @@ function snapshot<T>(value: T): T {
  */
 export function parseApplicationProject(value: unknown): ApplicationProject | null {
   if (validateApplicationProject(value)) return snapshot(value);
+  if (
+    record(value) &&
+    value['schemaVersion'] === '2.0.0' &&
+    value['format'] === 'mockforge-studio'
+  ) {
+    if (
+      !Array.isArray(value['forms']) ||
+      value['forms'].some(
+        (form: unknown): boolean =>
+          !record(form) || form['lists'] !== undefined || form['entries'] !== undefined,
+      )
+    )
+      return null;
+    const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };
+    if (!validateApplicationProject(next)) return null;
+    return snapshot({
+      ...next,
+      review: { ...next.review, checks: [false, false, false, false, false], approvedAt: null },
+    });
+  }
   const legacy = parseProject(value);
   if (!legacy) return null;
   const {

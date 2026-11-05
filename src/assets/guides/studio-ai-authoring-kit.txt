@@ -1,16 +1,16 @@
-MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.0.0
+MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.1.0
 
 Attach this UTF-8 text file to a chatbot together with your brief or current Studio export.
 This file is reference material, not an importable JSON file. The two complete examples below
 are importable separately. The English TypeScript declarations describe JSON keys and types;
 output JSON, not TypeScript. Other MockForge editions use a different contract.
-New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.0.0".
+New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.1.0".
 Project below describes the legacy 1.3.0 single-form import/renderer contract only.
 
 AUTHORING RULES
 1. Read the attached studio-ai-authoring-kit.txt and the current user brief. If the attachment or URL cannot be read, ask for its text rather than pretending to have read it.
 2. Clarify essential ambiguities before producing the final file. Use synthetic examples. Record production requirements and agreed assumptions in scope, decisions, questions or field/button note.
-3. Output one complete MockForge Studio ApplicationProject with format "mockforge-studio", schemaVersion "2.0.0" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.
+3. Output one complete MockForge Studio ApplicationProject with format "mockforge-studio", schemaVersion "2.1.0" and all required properties. The old Project 1.3.0 type is only an import/renderer view. Do not use another MockForge edition.
 4. Every localized Text has de, en and fa string properties, including empty inactive translations. Activate one or two unique languages from de/en/fa. Provide useful copy in every selected language.
 5. Use 1-20 forms with unique stable form IDs. Each form has id, title, description, submit, columns, fields and buttons. Field IDs are unique within their form including group children; button IDs are unique within their form. IDs match ^[a-z][a-z0-9_-]{0,63}$. Preserve existing IDs. Copies within a form need fresh field IDs; duplicating a whole form keeps local IDs and needs a new form ID.
 6. Per form: at most 100 field definitions including group children, 20 buttons and 100 choices per field. Per project: at most 500 definitions and 100 buttons in total. Keep arrays even when empty. select/radio need non-empty Text options; do not invent separate value keys.
@@ -18,7 +18,7 @@ AUTHORING RULES
 8. Keep every field property: id, type, label, placeholder, help, required, options, note, minLength, maxLength, tooltip, pattern and patternMessage. Optional tooltipPlacement is title/icon/info. Lengths are integers 0?10000; maxLength 0 means no maximum. Keep minLength <= nonzero maxLength.
 9. Patterns are whole-value Unicode-v expressions without slash delimiters, at most 500 characters; double backslashes in JSON. Only text/email/url/textarea use patterns. No configured numeric min/max rules, conditional visibility or nested groups exist.
 10. Each form button has id, label, variant, action, cssClass, note. Variants: primary/secondary/ghost/danger. Actions: submit/validate/save/reset/cancel/delete/next/back/none. cssClass contains existing class tokens matching [a-zA-Z0-9_\s-]{0,200}. Each form keeps legacy submit equal to its first submit button label, or empty Text if none.
-11. Project theme is bootstrap/material/carbon/fluent. Each form has columns 1 or 2 and is a single page; next/back simulate navigation. Material/Carbon/Fluent are inspired previews. Project brief, languages, theme and review are shared by all forms. Optional form menu is retained configuration for future application navigation; no lists, roles, flows or inter-form relations are implemented yet.
+11. Project theme is bootstrap/material/carbon/fluent; form columns is 1 or 2. Forms remain single-page. Each form optionally has lists and entries preferences. Lists reference only their own root leaf fields, with at most 10 lists per form, 50 per project, 20 columns/search fields/filters/presets per list. Choice presets use option-index strings; checkbox presets use booleans. entries.count is 1-500, entries.seed is an integer 0-999999. Actual generated or edited records are never included in JSON. No roles, wizard flows, group columns or relations between forms are implemented.
 12. Reset review to {"checks":[false,false,false,false,false],"reviewer":"","approvedAt":null}. A generated file cannot establish approval. Do not add preview answers, test-data settings, clipboard state, credentials, backend code or unrecognized properties.
 13. Check syntax, types, IDs, localized strings, bounds and the complete contract before output. Do not claim to have tested an import unless you actually ran it. The user must import and review the file in Studio.
 14. Final output: complete JSON only, without Markdown fences, comments, trailing commas, placeholders or omitted sections. Offer a UTF-8 .form.json attachment if supported. Keep the file below 1 MiB.
@@ -121,8 +121,40 @@ export interface Project extends FormContent {
   questions: string;
   review: { checks: boolean[]; reviewer: string; approvedAt: string | null };
 }
+export const COLLECTION_LIMITS = {
+  listsPerForm: 10,
+  listsPerProject: 50,
+  columns: 20,
+  recordsPerForm: 500,
+  recordsPerProject: 1000,
+  retainedUnits: 2000000,
+} as const;
+
+export interface CollectionEntries {
+  count: number;
+  seed: number;
+}
+
+export interface CollectionPreset {
+  fieldId: string;
+  value: string | boolean;
+}
+
+/** A view over the session records of its own form; no response data is serialized here. */
+export interface CollectionList {
+  id: string;
+  title: Text;
+  columns: string[];
+  searchFields: string[];
+  filters: string[];
+  presets: CollectionPreset[];
+  pageSize: number;
+  selectable: boolean;
+  actions: { create: boolean; view: boolean; edit: boolean; delete: boolean };
+  sort?: { fieldId: string; direction: 'asc' | 'desc' };
+}
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.0.0';
+export const APPLICATION_SCHEMA_VERSION = '2.1.0';
 
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 
@@ -131,6 +163,8 @@ export interface ApplicationForm extends FormContent {
   id: string;
   /** Omission keeps the form in the future application menu. */
   menu?: boolean;
+  lists?: CollectionList[];
+  entries?: CollectionEntries;
 }
 
 /** Project-level configuration and review; preview answers never belong here. */
@@ -155,7 +189,7 @@ END STUDIO TYPE CONTRACT
 BEGIN EXAMPLE studio-starter.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.0.0",
+  "schemaVersion": "2.1.0",
   "name": "Example contact request",
   "owner": "",
   "audience": "Prospective users (fictional example)",
@@ -389,7 +423,7 @@ END EXAMPLE studio-starter.form.json
 BEGIN EXAMPLE studio-groups.form.json
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.0.0",
+  "schemaVersion": "2.1.0",
   "name": "Example team and line items",
   "owner": "",
   "audience": "Prospective users (fictional example)",

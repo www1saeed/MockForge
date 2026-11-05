@@ -35,7 +35,7 @@ describe('Studio authoring references', (): void => {
         form.buttons.find((button): boolean => button.action === 'submit')!.label,
       );
       expect(readFileSync(`src/assets/guides/${example.file}`, 'utf8')).toContain(
-        '"schemaVersion": "2.0.0"',
+        '"schemaVersion": "2.1.0"',
       );
     }
   });

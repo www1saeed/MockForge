@@ -27,6 +27,24 @@ const applicationContract = applicationAst.statements
   )
   .map((node) => node.getFullText(applicationAst).trim())
   .join('\n\n');
+const collection = await read('src/app/collection.model.ts');
+const collectionAst = ts.createSourceFile(
+  'collection.model.ts',
+  collection,
+  ts.ScriptTarget.Latest,
+  true,
+);
+const collectionContract = collectionAst.statements
+  .filter(
+    (node) =>
+      ts.isInterfaceDeclaration(node) ||
+      (ts.isVariableStatement(node) &&
+        node.declarationList.declarations.some(
+          (declaration) => declaration.name.getText(collectionAst) === 'COLLECTION_LIMITS',
+        )),
+  )
+  .map((node) => node.getFullText(collectionAst).trim())
+  .join('\n\n');
 const { rules } = JSON.parse(await read('src/assets/guides/studio-authoring-rules.json'));
 const examples = await Promise.all(
   ['studio-starter.form.json', 'studio-groups.form.json'].map(
@@ -34,13 +52,13 @@ const examples = await Promise.all(
       `BEGIN EXAMPLE ${file}\n${JSON.stringify(JSON.parse(await read(`src/assets/guides/${file}`)), null, 2)}\nEND EXAMPLE ${file}`,
   ),
 );
-const content = `MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.0.0
+const content = `MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.1.0
 
 Attach this UTF-8 text file to a chatbot together with your brief or current Studio export.
 This file is reference material, not an importable JSON file. The two complete examples below
 are importable separately. The English TypeScript declarations describe JSON keys and types;
 output JSON, not TypeScript. Other MockForge editions use a different contract.
-New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.0.0".
+New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.1.0".
 Project below describes the legacy 1.3.0 single-form import/renderer contract only.
 
 AUTHORING RULES
@@ -48,6 +66,7 @@ ${rules.map((rule, index) => `${index + 1}. ${rule}`).join('\n')}
 
 BEGIN STUDIO TYPE CONTRACT
 ${contract.trim()}
+${collectionContract}
 ${applicationContract}
 END STUDIO TYPE CONTRACT
 

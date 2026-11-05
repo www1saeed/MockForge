@@ -1,6 +1,6 @@
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.0.0",
+  "schemaVersion": "2.1.0",
   "name": "Example contact request",
   "owner": "",
   "audience": "Prospective users (fictional example)",

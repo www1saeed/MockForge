@@ -32,7 +32,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
     rows: [
       {
         names: 'format, schemaVersion',
-        type: '"mockforge-studio", "2.0.0"',
+        type: '"mockforge-studio", "2.1.0"',
         description: 'versionRule',
       },
       {

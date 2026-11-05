@@ -12,6 +12,7 @@ import {
   ResponseControl,
 } from './preview-test-data';
 import { responseLengthViolation } from './response-constraints';
+import { readNativeResponse as readResponse, ResponseValues } from './response-values';
 
 export const BATCH_LIMITS = Object.freeze({
   records: 500,
@@ -32,7 +33,7 @@ export interface BatchRequest {
   rows?: 'minimum' | 'maximum';
   chunkSize?: number;
 }
-export type BatchValues = Record<string, string | boolean | Record<string, string | boolean>[]>;
+export type BatchValues = ResponseValues;
 export interface BatchRecord {
   index: number;
   seed: number;
@@ -289,14 +290,6 @@ function batchForm(fields: readonly Field[], rows: ReadonlyMap<string, number>):
       }
     }
   return form;
-}
-
-function readResponse(control: Element | RadioNodeList | null): string | boolean {
-  if (control instanceof HTMLInputElement) {
-    if (control.type === 'checkbox') return control.checked;
-    if (control.type === 'radio') return control.checked ? control.value : '';
-  }
-  return (control as ResponseControl | RadioNodeList | null)?.value ?? '';
 }
 
 function batchValues(

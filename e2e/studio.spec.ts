@@ -183,7 +183,7 @@ test(
     const path = await (await downloadEvent).path();
     if (!path) throw new Error('Export missing');
     const exported = JSON.parse(await readFile(path, 'utf8'));
-    expect(exported.schemaVersion).toBe('2.0.0');
+    expect(exported.schemaVersion).toBe('2.1.0');
     expect(exported.forms[0].fields[0].pattern).toBe('[A-Z]{3}');
     expect(exported.forms[0].buttons[1].action).toBe('reset');
     expect(exported.forms[0].buttons[1].note).toBe('Clear only preview entries.');
