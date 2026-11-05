@@ -563,7 +563,7 @@
                               ><input
                                 id="field-pattern"
                                 maxlength="500"
-                                [ngModel]="patternDrafts()[field.id] ?? field.pattern"
+                                [ngModel]="patternDrafts().get(field.id) ?? field.pattern"
                                 (ngModelChange)="changePattern($event)"
                                 [attr.aria-invalid]="patternError(field)"
                                 aria-describedby="pattern-hint"

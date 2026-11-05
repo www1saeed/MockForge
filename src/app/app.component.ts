@@ -96,8 +96,12 @@ export class AppComponent implements OnInit {
   readonly previewFullWidth = signal(false);
   readonly previewLocale = signal<Locale>('de');
   readonly formLocales = LOCALES;
-  private readonly draftsByForm = signal<Record<string, Partial<Record<string, string>>>>({});
-  readonly patternDrafts = computed(() => this.draftsByForm()[this.store.activeFormId()] ?? {});
+  private readonly draftsByForm = signal<ReadonlyMap<string, ReadonlyMap<string, string>>>(
+    new Map(),
+  );
+  readonly patternDrafts = computed(
+    () => this.draftsByForm().get(this.store.activeFormId()) ?? new Map<string, string>(),
+  );
   readonly formMode = signal<'new' | 'duplicate'>('new');
   readonly formTitle = signal<Text>({ de: '', en: '', fa: '' });
   private formSource = '';
@@ -186,7 +190,7 @@ export class AppComponent implements OnInit {
             allFields(form.fields).every(
               (field): boolean =>
                 !supportsPattern(field) ||
-                validPattern(this.draftsByForm()[form.id]?.[field.id] ?? field.pattern),
+                validPattern(this.draftsByForm().get(form.id)?.get(field.id) ?? field.pattern),
             ),
         ) &&
       project.review.checks.every(Boolean)
@@ -488,19 +492,15 @@ export class AppComponent implements OnInit {
   changePattern(value: string): void {
     const field = this.selected();
     if (!field) return;
-    this.updatePatternDrafts(
-      (drafts: Partial<Record<string, string>>): Partial<Record<string, string>> => ({
-        ...drafts,
-        [field.id]: value,
-      }),
-    );
+    this.updatePatternDrafts((drafts) => new Map(drafts).set(field.id, value));
     if (validPattern(value)) this.fieldChange({ pattern: value });
     else this.store.update({});
   }
   /** Inactive rules cannot block review after switching to a type without pattern support. */
   patternError(field: Field): boolean {
     return (
-      this.supportsPattern(field) && !validPattern(this.patternDrafts()[field.id] ?? field.pattern)
+      this.supportsPattern(field) &&
+      !validPattern(this.patternDrafts().get(field.id) ?? field.pattern)
     );
   }
   /** Update one button by position while preserving every other immutable action definition. */
@@ -653,8 +653,8 @@ export class AppComponent implements OnInit {
   /** A deleted id may be reused; its transient RegEx draft must not attach to a new field. */
   private clearFieldDrafts(fields: readonly Field[]): void {
     const removed = new Set(allFields(fields).map((field): string => field.id));
-    this.updatePatternDrafts((drafts): Partial<Record<string, string>> =>
-      Object.fromEntries(Object.entries(drafts).filter(([id]): boolean => !removed.has(id))),
+    this.updatePatternDrafts(
+      (drafts) => new Map([...drafts].filter(([id]): boolean => !removed.has(id))),
     );
   }
 
@@ -734,7 +734,7 @@ export class AppComponent implements OnInit {
       review: { checks: [false, false, false, false, false], reviewer: '', approvedAt: null },
     });
     this.cancelReplace();
-    this.draftsByForm.set({});
+    this.draftsByForm.set(new Map());
     this.resetFormEditor();
     this.openView('workspace');
     this.setStep(WORKFLOW.fields);
@@ -795,10 +795,10 @@ export class AppComponent implements OnInit {
   }
 
   private updatePatternDrafts(
-    update: (drafts: Partial<Record<string, string>>) => Partial<Record<string, string>>,
+    update: (drafts: ReadonlyMap<string, string>) => ReadonlyMap<string, string>,
   ): void {
     const id = this.store.activeFormId();
-    this.draftsByForm.update((forms) => ({ ...forms, [id]: update(forms[id] ?? {}) }));
+    this.draftsByForm.update((forms) => new Map(forms).set(id, update(forms.get(id) ?? new Map())));
   }
 
   /** Guard destructive callbacks against a changed form/project, including switch-away-and-back. */
@@ -884,9 +884,11 @@ export class AppComponent implements OnInit {
       this.project().title[this.locale()] || id,
       (): void => {
         if (this.store.removeForm(id)) {
-          this.draftsByForm.update((forms) =>
-            Object.fromEntries(Object.entries(forms).filter(([key]): boolean => key !== id)),
-          );
+          this.draftsByForm.update((forms) => {
+            const next = new Map(forms);
+            next.delete(id);
+            return next;
+          });
           this.resetFormEditor();
           this.feedback.notify('formDeleted', 'success');
         }

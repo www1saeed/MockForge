@@ -1,8 +1,38 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { createButton, createField, example, FieldType } from './project';
+import { createButton, createField, example, FieldType, parseApplicationProject } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('safe form and field IDs cannot inherit pattern drafts and still participate in review', async (): Promise<void> => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const app = fixture.componentInstance;
+    for (const [formId, fieldId] of [
+      ['constructor', 'name'],
+      ['form-1', 'constructor'],
+      ['constructor', 'constructor'],
+    ]) {
+      const project = parseApplicationProject(example('saas'))!;
+      project.forms[0].id = formId;
+      project.forms[0].fields = [createField('text', fieldId)];
+      app.store.replace(project);
+      app.selectRootField(fieldId);
+      app.view.set('workspace');
+      app.setStep(3);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      expect(fixture.nativeElement.querySelector('#field-pattern').value).toBe('');
+      expect(app.patternError(app.selected()!)).toBe(false);
+      app.changePattern('[');
+      expect(app.patternError(app.selected()!)).toBe(true);
+      app.changePattern('');
+      expect(app.patternError(app.selected()!)).toBe(false);
+      app.update({ owner: 'Owner', questions: '' });
+      app.setReviewer('Reviewer');
+      for (let index = 0; index < 5; index++) app.setCheck(index, true);
+      expect(app.canApprove()).toBe(true);
+    }
+  });
   test('creates and duplicates named forms, protects cancelled/stale dialogs and resets editor selection', (): void => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
@@ -176,7 +206,7 @@ describe('Alignment workspace', (): void => {
     expect(app.selectedId()).toBe(app.editingGroup()?.group?.fields[0].id);
     app.closeGroupFields();
     expect(app.selectedId()).toBe(groupId);
-    expect(app.patternDrafts()[childId]).toBeUndefined();
+    expect(app.patternDrafts().get(childId)).toBeUndefined();
     expect(app.selected()?.group?.fields).toHaveLength(1);
     app.selectedId.set(app.selected()!.group!.fields[0].id);
     app.removeField();

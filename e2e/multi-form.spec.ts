@@ -11,6 +11,43 @@ import { tagsFor } from './test-tags';
 import { dismissToasts, goToStep, openProject } from './support/workspace';
 
 test(
+  'reserved-looking form and field IDs display only their own pattern drafts',
+  { tag: tagsFor('multi-form', 'forms-draft-keys', { areas: ['forms', 'authoring', 'patterns'] }) },
+  async ({ page }): Promise<void> => {
+    const project = parseApplicationProject(sample('saas'))!;
+    project.forms[0].id = 'constructor';
+    project.forms[0].fields = [
+      { ...createField('text', 'name'), label: text('Namensfeld', 'Name field', 'نام') },
+      {
+        ...createField('text', 'constructor'),
+        label: text('Konstruktorfeld', 'Constructor field', 'سازنده'),
+      },
+    ];
+    project.forms.push({ ...project.forms[0], id: 'second' });
+    await openProject(page, project);
+    await goToStep(page, 'fields');
+    await expect(page.locator('#field-pattern')).toHaveValue('');
+    await page.locator('#field-pattern').fill('[');
+    await page.locator('#active-form').selectOption('second');
+    await expect(page.locator('#field-pattern')).toHaveValue('');
+    await page.locator('#active-form').selectOption('constructor');
+    await expect(page.locator('#field-pattern')).toHaveValue('[');
+    await page
+      .locator('.root-field-list .field-row')
+      .filter({ hasText: 'Konstruktorfeld' })
+      .click();
+    await expect(page.locator('#field-pattern')).toHaveValue('');
+    await page.locator('#field-pattern').fill('[A-Z]{2}');
+    await page.locator('#active-form').selectOption('second');
+    await page
+      .locator('.root-field-list .field-row')
+      .filter({ hasText: 'Konstruktorfeld' })
+      .click();
+    await expect(page.locator('#field-pattern')).toHaveValue('');
+  },
+);
+
+test(
   'legacy drafts become independent forms with complete round-trip, clipboard and confirmed deletion',
   { tag: tagsFor('multi-form', 'forms-roundtrip', { checks: ['i18n', 'keyboard'] }) },
   async ({ page }): Promise<void> => {
