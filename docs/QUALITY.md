@@ -1,6 +1,16 @@
 # Code quality and test evidence
 
-## Standalone HTML checkpoint — November 5, 2026
+## Progressive examples checkpoint — November 5, 2026
+
+**262 Studio tests pass: 191 Jest unit/component tests in 25 suites and 71 Chromium journeys.** Ten E2E selector Node checks pass separately. Jest coverage is 95.93% statements, 90.60% branches, 96.67% functions and 97.78% lines. Format/lint/app+spec+E2E types, 484 translations, authoring-kit synchronization, 131 local documentation targets and production build pass. Schema, dependencies, worker/generation limits and build budgets remain unchanged.
+
+The current three-level gallery, JSON guide, downloads and authoring kit share the same canonical 2.1.0 assets. Three unit cases cover valid progressive configurations/translations, detached nested data and the planned-role/current-capability boundary. Four permanent examples journeys exercise real gallery replacement, simple CRUD, repeated position save/restoration, presets/read-only views, independent datasets for two forms, complete offline export with Fluent styles and Persian mobile Axe/layout. Existing authoring journeys now download/import all three files and validate the expanded kit. Full browser evidence: `reports/pr8-examples-final-e2e.json`; 206.53 seconds with two workers, no retries/skips/flaky/unexpected results. CI requires its own run after push.
+
+[Example intent and future-role planning](EXAMPLES.md) distinguish business responsibility from actual authorization. Roles, own-record restrictions and hidden-field security are not implemented. All current viewers share the same configured list capabilities. The separate legacy seed is retained for existing behavior and compatibility tests. Gallery cards and updated slides were inspected desktop/mobile. The current fifteen-slide HTML deck and narration are updated; the older ignored PDF remains a separate export.
+
+Studio initial bundle is **958.43 kB**, above the existing 700 kB warning and below the unchanged 1 MB failure budget. The separately loaded runtime is 1,138,219 serialized UTF-16 units and includes the same theme styles as Studio. Generated and production-copied runtime assets match.
+
+## Previous standalone HTML checkpoint — November 5, 2026
 
 **255 Studio tests pass: 188 Jest unit/component tests in 24 suites and 67 Chromium journeys.** Ten E2E selector Node checks pass separately. Jest coverage of `src/app/*.ts` is 95.94% statements, 90.64% branches, 96.65% functions and 97.77% lines. The standalone bootstrap is exercised in Chromium, outside that Jest coverage scope. Formatting, lint, application/spec/E2E types, 475 translations, authoring-kit synchronization, 121 local documentation links and build pass.
 

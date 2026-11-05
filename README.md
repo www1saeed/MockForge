@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 255 passing automated tests: 188 unit/component tests and 67 end-to-end tests.** Verified on November 5, 2026, with **97.77% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 262 passing automated tests: 191 unit/component tests and 71 end-to-end tests.** Verified on November 5, 2026, with **97.78% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -37,14 +37,13 @@ The [agreement template](docs/IMPLEMENTATION_AGREEMENT_TEMPLATE.md) extends the 
 
 ## Commercial conversations
 
-| Example                     | Decision to agree with the owner                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| SaaS demo request           | Which data qualifies a lead, and what response do we promise?                                                       |
-| Commerce return             | Which reasons are allowed, and is this a return request or a refund promise?                                        |
-| Agency inquiry              | Which budget/start-date choices help prepare the first conversation?                                                |
-| Atlas project & procurement | Which stakeholders and line items can repeat, what are their limits, and which approval rules belong in production? |
+| Example | What to agree with the owner |
+| --- | --- |
+| Contact desk | Three fields and one list: which data is needed, who follows up, and who may change it later? |
+| Purchase requests | One form, three list views and a repeatable item table: which limits, statuses and processing actions matter? |
+| Procurement workspace | Two forms and seven lists: how do request handling, supplier maintenance and later role responsibilities differ? |
 
-These are fictional examples for customer discussions. See [positioning and arguments](docs/POSITIONING.md), the [15-minute demo](docs/SALES_DEMO.md) and the [fifteen-slide presentation](src/assets/presentation.html).
+These three progressive projects share the same files in the gallery, JSON reference and authoring kit. See [example walkthroughs and future-role planning](docs/EXAMPLES.md). They are fictional examples for customer discussions. See [positioning and arguments](docs/POSITIONING.md), the [15-minute demo](docs/SALES_DEMO.md) and the [fifteen-slide presentation](src/assets/presentation.html).
 
 **Bring one form idea. Agree on the details together before committing implementation effort.**
 
@@ -83,7 +82,7 @@ The directory can be moved beside the original mockforge workspace. Start a new 
 - Configurable buttons: localized labels, primary/secondary/ghost/danger appearance, behavior, CSS classes, developer notes and order. Validation, submission, saving, cancellation, deletion and next/back actions are local simulations; reset clears preview inputs.
 - Real Bootstrap form styling plus Material, Carbon and Fluent inspired visual presets.
 - German, English and Persian UI with instant switching. Persian uses RTL layout and the bundled IranSans webfont; the Studio UI and form preview can use different directions.
-- Commercial demos: SaaS lead qualification, commerce returns, agency inquiries and the large Atlas project/procurement request with every field type, team cards and a line-item table.
+- Progressive examples: a simple contact form/list, requests with three views and repeated positions, and two forms with seven lists and planned role responsibilities.
 - LocalStorage persistence, JSON import/export and a Markdown implementation brief.
 - Review checklist with reviewer name and timestamp. Specification edits invalidate the review.
 - Native modal replacement confirmation with export-before-replace and cancel options.
@@ -95,7 +94,7 @@ See [authoring instructions](docs/AUTHORING_TOOLS.md) for copy/cut/paste and see
 
 ## Author forms in a text editor or with AI
 
-The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 2.1.0 and offers complete contact/group examples to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
+The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 2.1.0 and offers the same three progressive contact/request/workspace projects to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
 
 See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and format kit](docs/AI_AUTHORING.md). The original MockForge edition uses a different JSON contract.
 
@@ -111,7 +110,7 @@ The review record is local and unauthenticated. It supports an actual conversati
 
 JSON exports use Studio schema **2.1.0** with `format: "mockforge-studio"` and `forms[]`. Studio 2.0.0 applications migrate with review cleared; existing Studio 1.0.0–1.3.0 drafts become one-form applications on restore/import; missing Persian values start empty and 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. One or two of the three supported form languages can be active, while inactive copy remains stored. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
 
-Repeat groups support one level of up to 20 child fields and 0–20 entries, with at least one child definition. The total specification limit of 100 counts groups and children together. Preview entries validate independently and use distinct radio groups. Removing an entry asks for confirmation; resetting responses returns groups to their minimum count. Response values are never persisted or exported. The Atlas example contains 26 field definitions: 12 regular fields, two groups and 12 child fields. Its team limit is 1–8 and its procurement limit is 1–12. Pricing, totals and finance approval remain production requirements to agree separately.
+Repeat groups support one level of up to 20 child fields and 0–20 entries, with at least one child definition. Each form allows 100 definitions counting groups and children together; the application allows 500 definitions across at most 20 forms. Preview entries validate independently and use distinct radio groups. Removing an entry asks for confirmation; resetting responses returns groups to their minimum count. Response values are never persisted or exported. The extensive application example has 24 definitions across two forms, including a 1–8-item table and optional 0–4 contact cards. Pricing, totals and finance approval remain production requirements to agree separately.
 
 ## Verify
 

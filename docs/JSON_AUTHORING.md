@@ -11,10 +11,11 @@ Open **Design a form in a text editor** in Studio's navigation, or use `/#guide-
 
 ## Complete files
 
-- [Contact request](../src/assets/guides/studio-starter.form.json): text, email, select, checkbox, a submit simulation and reset.
-- [Team cards and line-item table](../src/assets/guides/studio-groups.form.json): the contact request plus required team cards and an optional continuous table. Children have unique IDs; the item-code pattern demonstrates a localized error message.
+- [Contact desk](../src/assets/guides/studio-starter.form.json): three fields and one CRUD list.
+- [Purchase requests](../src/assets/guides/studio-groups.form.json): one form, three views of the same records and a repeated line-item table inside the form.
+- [Procurement workspace](../src/assets/guides/studio-workspace.form.json): two forms and seven lists, fixed presets/read-only views, a repeated table and optional contact cards.
 
-These are fictional examples, not customer projects. Both files include all required root and field keys, DE/EN/FA text objects, selected DE/EN form languages and an unacknowledged review record. Inactive Persian copy is retained and can be selected in Studio.
+All three files include the current application contract, complete DE/EN/FA copy, initially active DE/EN and an unacknowledged review record. They are the same canonical sources as the live gallery and authoring kit. See [the walkthrough and future-role boundaries](EXAMPLES.md). Roles/access properties remain unsupported; business responsibilities in notes do not enforce permissions.
 
 ## Contract reference
 

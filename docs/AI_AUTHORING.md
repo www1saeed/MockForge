@@ -4,7 +4,7 @@ Open **Design a form with AI** in the navigation, or `/#guide-ai`. The DE/EN/FA 
 
 ## Supply the format before asking for a draft
 
-Download [studio-ai-authoring-kit.txt](../src/assets/guides/studio-ai-authoring-kit.txt) and attach it to your chosen chatbot together with your brief or the current Studio export. The kit contains the actual English type contract, authoring rules and both complete examples. It is reference text, not an importable project or a generic JSON Schema document.
+Download [studio-ai-authoring-kit.txt](../src/assets/guides/studio-ai-authoring-kit.txt) and attach it to your chosen chatbot together with your brief or the current Studio export. The kit contains the actual English type contract, authoring rules and all three complete examples. It is reference text, not an importable project or a generic JSON Schema document.
 
 The page also displays a copyable URL. An external chatbot normally cannot access localhost or private URLs. Attach the downloaded file when the resource is not publicly accessible. If the chatbot cannot read an attachment, supply its text rather than assuming it has read the format.
 
@@ -52,7 +52,7 @@ I will import and review the file in Studio afterwards.
 
 ## Import and verify
 
-Save only the complete JSON as UTF-8 `.form.json`. Export the existing draft, import the result and confirm replacement. The two [complete examples](JSON_AUTHORING.md#complete-files) demonstrate the expected structure. Check active copy, required fields, pattern feedback, group limits, button simulations and mobile behavior. Agree the draft and production scope with the product owner before recording a new local review.
+Save only the complete JSON as UTF-8 `.form.json`. Export the existing draft, import the result and confirm replacement. The three [complete examples](JSON_AUTHORING.md#complete-files) demonstrate the expected structure. Check active copy, required fields, pattern feedback, group limits, button simulations and mobile behavior. Agree the draft and production scope with the product owner before recording a new local review.
 
 Important constraints: every localized object has `de`, `en` and `fa`; at most two languages are active; options are Text arrays; field IDs include children in their uniqueness check. Groups cannot nest. Studio uses `group.layout: "cards" | "table"`, `minItems`, `maxItems`, optional `gapless` and `group.fields`. It does not use the original edition's wizard or group properties. Generated answers, clipboard data, credentials and real integrations never belong in the output. AI output does not authenticate an acknowledgement or prove correctness.
 

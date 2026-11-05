@@ -124,3 +124,7 @@ Preserve worker backpressure at callers: large-table Submit must pass on its fir
 ## Standalone preview changes
 
 `npm start` and `npm run build` regenerate the separate AOT preview runtime before serving/packaging Studio. Restart the dev server after changing shared preview code to refresh exports. Never commit generated bundles; test the downloaded file offline rather than testing an HTML template alone. The `standalone-preview` suite belongs to transfer/navigation/lists/preview; selection discovery remains build-free. See [the runtime contract](STANDALONE_PREVIEW.md).
+
+## Updating examples
+
+Edit the canonical JSON in `src/assets/guides`; `application-examples.ts` supplies gallery and authoring metadata and validated copies. Preserve stable form/list IDs so future rights can target those scopes. Keep planned roles in brief/questions instead of inventing schema properties or permission guarantees. Regenerate the authoring kit and run the `examples` and authoring-guide browser suites. See [example intent and boundaries](EXAMPLES.md).

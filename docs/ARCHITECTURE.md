@@ -181,7 +181,7 @@ The DE/EN/FA in-app guide presents the new authoring, data and shell workflows w
 
 ## Text-editor and AI authoring guides
 
-The hash views `guide-json` and `guide-ai` preserve the shell and never mutate ProjectStore. AuthoringGuideComponent owns a selectable copy fallback and locale/mode-scoped status. It resolves the kit URL against document.baseURI, retaining static deployment prefixes. It sends no network request to any external chatbot. Complete JSON assets are shared by the displayed examples and downloads, and imported with TypeScript resolveJsonModule. Prompt tasks are localized; the exact English contract rules remain common. The TXT kit includes the model's actual type declarations and the same examples. CI checks its deterministic regeneration. Unit tests validate both examples and exact kit content; browser tests use the real download/import boundary, accessibility scans in three locales and clipboard denial fallback.
+The hash views `guide-json` and `guide-ai` preserve the shell and never mutate ProjectStore. AuthoringGuideComponent owns a selectable copy fallback and locale/mode-scoped status. It resolves the kit URL against document.baseURI, retaining static deployment prefixes. It sends no network request to any external chatbot. Complete JSON assets are shared by the displayed examples and downloads, and imported with TypeScript resolveJsonModule. Prompt tasks are localized; the exact English contract rules remain common. The TXT kit includes the model's actual type declarations and the same examples. CI checks its deterministic regeneration. Unit tests validate all three examples and exact kit content; browser tests use the real download/import boundary, accessibility scans in three locales and clipboard denial fallback.
 
 ## Boundary generation and response constraints
 
@@ -224,3 +224,7 @@ Manual pattern dispatch is now serialized centrally in FormPreviewComponent for 
 ## Standalone preview runtime
 
 `preview-export.ts` validates/captures a sanitized application and assembles escaped HTML. `PreviewExportService` owns lazy runtime loading, deadlines, stale-project guards and downloads. `src/standalone/main.ts` bootstraps the same `ApplicationPreviewComponent` and collection registry with a store whose restore/persist methods are inert and a Blob-backed worker factory. The application component emits export requests to Studio; the standalone build never imports the download service or Studio editor. The separate AOT build is packaged into one inline script/CSS/worker asset before Studio starts or builds. See [build, session, security and size limits](STANDALONE_PREVIEW.md).
+
+## Progressive example catalogue
+
+`application-examples.ts` owns the current three-level catalogue, backed by the same JSON assets used in the authoring guide, downloads and generated kit. Its factory validates/detaches complete 2.1.0 applications. Gallery metadata is shared through `SAMPLES`; loading stages a whole-application replacement instead of a legacy single-form projection. Legacy fixtures remain separate for compatibility and the initial draft. Planned role responsibilities are brief/questions text; current list capabilities and presets do not introduce an access schema. See [example boundaries](EXAMPLES.md).
