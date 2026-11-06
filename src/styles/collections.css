@@ -568,3 +568,79 @@
   border-radius: 0;
   padding: 1rem;
 }
+/* Finite badge palette is shared with the offline runtime. */
+[data-badge-color='neutral'] {
+  --badge-bg: #f1f5f9;
+  --badge-ink: #334155;
+}
+[data-badge-color='blue'] {
+  --badge-bg: #dbeafe;
+  --badge-ink: #1e3a8a;
+}
+[data-badge-color='green'] {
+  --badge-bg: #dcfce7;
+  --badge-ink: #14532d;
+}
+[data-badge-color='amber'] {
+  --badge-bg: #fef3c7;
+  --badge-ink: #78350f;
+}
+[data-badge-color='red'] {
+  --badge-bg: #fee2e2;
+  --badge-ink: #7f1d1d;
+}
+[data-badge-color='violet'] {
+  --badge-bg: #ede9fe;
+  --badge-ink: #4c1d95;
+}
+.collection-badge[data-badge-color],
+.collection-group-chip {
+  color: var(--badge-ink);
+  background: var(--badge-bg);
+  border-color: var(--badge-ink);
+}
+.collection-group-chips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-height: 320px;
+  overflow: auto;
+  max-width: 100%;
+}
+.collection-group-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid;
+  border-radius: 0.7rem;
+  min-width: 0;
+  max-width: 100%;
+}
+.collection-chip-index {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.collection-group-chip dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+  margin: 0;
+  min-width: 0;
+}
+.collection-group-chip dl > div {
+  min-width: 0;
+  max-width: 100%;
+}
+.collection-group-chip dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.collection-group-chip dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}

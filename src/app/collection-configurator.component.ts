@@ -10,6 +10,8 @@ import {
   DEFAULT_APPEARANCE,
   TABLE_DESIGNS,
   ACTION_ICONS,
+  BADGE_COLORS,
+  BadgeColor,
 } from './collection-presentation';
 import { Locale } from './project.model';
 @Component({
@@ -28,6 +30,7 @@ export class CollectionConfiguratorComponent
   readonly host: ElementRef<HTMLElement> = inject(ElementRef);
   readonly activeSection = signal('basics');
   readonly designs = TABLE_DESIGNS;
+  readonly badgeColors = BADGE_COLORS;
   readonly icons = ACTION_ICONS;
   readonly variants = ['primary', 'secondary', 'ghost', 'danger'] as const;
   readonly sections = [
@@ -79,6 +82,17 @@ export class CollectionConfiguratorComponent
         ? { sort: undefined }
         : {}),
     });
+  }
+  tColor(color: BadgeColor): string {
+    const keys = {
+      neutral: 'badgeNeutral',
+      blue: 'badgeBlue',
+      green: 'badgeGreen',
+      amber: 'badgeAmber',
+      red: 'badgeRed',
+      violet: 'badgeViolet',
+    } as const;
+    return this.t(keys[color]);
   }
   groupSelection(id: string): readonly string[] {
     return this.column(id).groupFields ?? this.field(id).group!.fields.map((field) => field.id);
