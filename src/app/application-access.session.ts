@@ -16,6 +16,7 @@ export const COLLECTION_ACCESS = new InjectionToken<CollectionAccess>('Collectio
 @Injectable()
 export class ApplicationAccessSession implements CollectionAccess {
   private readonly store = inject(ProjectStore);
+  private readonly selectionEpoch = signal(0);
   private readonly selected = signal<string | null>(null);
   readonly roleId = computed(() => {
     const roles = this.store.application().roles ?? [];
@@ -27,6 +28,7 @@ export class ApplicationAccessSession implements CollectionAccess {
     JSON.stringify([
       this.store.projectSession(),
       this.roleId(),
+      this.selectionEpoch(),
       (this.store.application().roles ?? []).map((role) => [role.id, role.rights]),
       this.store
         .application()
@@ -44,7 +46,10 @@ export class ApplicationAccessSession implements CollectionAccess {
     });
   }
   select(id: string): void {
-    if (this.store.application().roles?.some((role) => role.id === id)) this.selected.set(id);
+    if (id === this.roleId() || !this.store.application().roles?.some((role) => role.id === id))
+      return;
+    this.selected.set(id);
+    this.selectionEpoch.update((epoch) => epoch + 1);
   }
   rights(formId: string, listId?: string): AccessRights {
     return resolveAccess(this.store.application(), this.roleId(), formId, listId);

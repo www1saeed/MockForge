@@ -92,6 +92,13 @@
   min-width: 0;
 }
 .role-switcher select {
+  min-height: 44px;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
   width: 100%;
   min-width: 0;
 }

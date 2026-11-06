@@ -157,6 +157,11 @@ describe('Role scoped session writes', () => {
     await data.regenerate(context, ['de'], 1, true);
     expect(generate).not.toHaveBeenCalled();
     expect(data.records()[0]).toBe(record);
+    access.select('editor');
+    expect(data.current(old)).toBe(false);
+    const live = data.context(list);
+    access.select('editor');
+    expect(data.current(live)).toBe(true);
   });
   it('retires in-flight generation on role/policy changes and keeps transient roles out of persisted configuration', async () => {
     const { store, access, data, complete } = setup(),
