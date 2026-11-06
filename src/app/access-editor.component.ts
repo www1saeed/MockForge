@@ -3,6 +3,7 @@ import {
   FIELD_MODES,
   FieldMode,
   FieldPolicy,
+  FieldAccess,
   fieldPolicy,
   ownFieldMode,
   resolveFieldModes,
@@ -196,28 +197,24 @@ export class AccessEditorComponent implements OnDestroy {
           !this.roles().some((item) => item.id === role.id)
         )
           return;
-        const prune = (policy: AccessPolicy | undefined): AccessPolicy | undefined =>
-          policy
-            ? Object.fromEntries(Object.entries(policy).filter(([id]) => id !== role.id))
-            : undefined;
+        const prune = <T>(policy: Record<string, T> | undefined): Record<string, T> | undefined => {
+          if (!policy) return undefined;
+          const remaining = Object.entries(policy).filter(([id]) => id !== role.id);
+          return remaining.length ? Object.fromEntries(remaining) : undefined;
+        };
         this.store.configureAccess(
           this.roles().filter((item) => item.id !== role.id),
           this.store.application().forms.map((form) => ({
             ...form,
             access: prune(form.access),
-            fieldDefaults: form.fieldDefaults
-              ? Object.fromEntries(
-                  Object.entries(form.fieldDefaults).filter(([id]) => id !== role.id),
-                )
-              : undefined,
-            fieldAccess: form.fieldAccess
-              ? Object.fromEntries(
-                  Object.entries(form.fieldAccess).map(([ref, policy]) => [
-                    ref,
-                    Object.fromEntries(Object.entries(policy).filter(([id]) => id !== role.id)),
-                  ]),
-                )
-              : undefined,
+            fieldDefaults: prune(form.fieldDefaults),
+            fieldAccess: ((): FieldAccess | undefined => {
+              const entries = Object.entries(form.fieldAccess ?? {}).flatMap(([ref, policy]) => {
+                const remaining = prune(policy);
+                return remaining ? [[ref, remaining] as const] : [];
+              });
+              return entries.length ? Object.fromEntries(entries) : undefined;
+            })(),
             lists: form.lists?.map((list) => ({ ...list, access: prune(list.access) })),
           })),
           this.users().filter((user) => user.roleId !== role.id),

@@ -128,7 +128,9 @@ export class FormPreviewComponent implements OnDestroy {
     return fieldMode(this.fieldModes(), id) !== 'editable';
   }
   groupLocked(field: Field): boolean {
-    return lockedGroup(field, this.modeSnapshot());
+    return (
+      this.readOnly(field.id) || (!!this.initialValues() && lockedGroup(field, this.modeSnapshot()))
+    );
   }
   readonly recordMode = input(false);
   readonly applicationMode = input(false);

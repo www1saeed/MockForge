@@ -161,6 +161,51 @@ describe('Authorized record and actor sessions', () => {
   });
 });
 describe('Native field protection and preset authoring', () => {
+  it('allows new mixed-access rows at zero and nonzero minimums but locks saved and wholly readonly groups', async () => {
+    TestBed.configureTestingModule({ imports: [FormPreviewComponent] });
+    const f = TestBed.createComponent(FormPreviewComponent),
+      p = fixture();
+    f.componentRef.setInput('project', { ...example('saas'), fields: [p.forms[0].fields[2]] });
+    f.componentRef.setInput('fieldModes', { 'items/code': 'readonly' });
+    f.componentRef.setInput('recordMode', true);
+    f.detectChanges();
+    await f.whenStable();
+    const group = f.componentInstance.groups()[0];
+    expect(group.structureReadOnly()).toBe(false);
+    group.addEntry();
+    f.detectChanges();
+    expect(group.rows()).toHaveLength(2);
+    group.removeEntry(group.rows()[0].id);
+    TestBed.inject(FeedbackService).confirmDelete();
+    expect(group.rows()).toHaveLength(1);
+    expect(group.resizeForTestData(3, true)).toBe(true);
+    const source = f.componentInstance.project();
+    f.componentRef.setInput('project', {
+      ...source,
+      fields: source.fields.map((field) => ({ ...field, group: { ...field.group!, minItems: 0 } })),
+    });
+    f.detectChanges();
+    await f.whenStable();
+    const optional = f.componentInstance.groups()[0];
+    expect(optional.rows()).toHaveLength(0);
+    optional.addEntry();
+    f.detectChanges();
+    expect(optional.rows()).toHaveLength(1);
+    expect(f.nativeElement.querySelector('[data-field-id="code"]').disabled).toBe(true);
+    f.componentRef.setInput('initialValues', { items: [{ product: 'Old', code: 'KEEP' }] });
+    f.detectChanges();
+    await f.whenStable();
+    expect(f.componentInstance.groups()[0].structureReadOnly()).toBe(true);
+    f.componentRef.setInput('initialValues', null);
+    f.componentRef.setInput('fieldModes', {
+      items: 'readonly',
+      'items/code': 'readonly',
+      'items/product': 'readonly',
+    });
+    f.detectChanges();
+    await f.whenStable();
+    expect(f.componentInstance.groups()[0].structureReadOnly()).toBe(true);
+  });
   beforeEach(() => {
     HTMLDialogElement.prototype.close = jest.fn();
   });
@@ -225,6 +270,14 @@ describe('Native field protection and preset authoring', () => {
     expect(c.role()?.fieldMode).toBe('editable');
     c.selected.set('user');
     c.fieldRule(c.store.activeFormId(), 'name', 'readonly');
+    const form = c.store.application().forms[0];
+    c.store.configureAccess(c.roles(), [
+      {
+        ...form,
+        fieldDefaults: { user: 'editable' },
+        fieldAccess: { ...form.fieldAccess, email: { user: 'hidden', visitor: 'readonly' } },
+      },
+    ]);
     expect(c.fieldEffective(c.store.activeFormId(), 'name')).toBe('readonly');
     c.addUser();
     expect(c.users()).toHaveLength(4);
@@ -233,5 +286,12 @@ describe('Native field protection and preset authoring', () => {
     TestBed.inject(FeedbackService).confirmDelete();
     expect(c.users().some((user) => user.roleId === 'user')).toBe(false);
     expect(c.roles().some((role) => role.id === 'admin')).toBe(true);
+    const remaining = c.store.application().forms[0];
+    expect(remaining.fieldDefaults).toBeUndefined();
+    expect(remaining.fieldAccess).toEqual({ email: { visitor: 'readonly' } });
+    c.selected.set('visitor');
+    c.remove();
+    TestBed.inject(FeedbackService).confirmDelete();
+    expect(c.store.application().forms[0].fieldAccess).toBeUndefined();
   });
 });
