@@ -62,7 +62,7 @@ describe('Simulated access contract and resolver', () => {
       { roles: [roles[0], roles[0]] },
       { roles: [{ ...roles[0], rights: { open: true } }] },
       { roles: [{ ...roles[0], id: '../role' }] },
-      { roles: [{ ...roles[0], label: { de: '', en: 'Reader', fa: '' } }] },
+      { roles: [{ ...roles[0], label: { de: 'Reader', en: 'Reader' } }] },
       { roles: [{ ...roles[0], secret: 'x' }] },
       { roles: Array.from({ length: 11 }, (_, i) => ({ ...roles[0], id: 'r' + i })) },
     ])

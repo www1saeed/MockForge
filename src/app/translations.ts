@@ -3,6 +3,14 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  roleNamesIncomplete: [
+    'Rollennamen fehlen in aktiven Sprachen. Ergänze sie unter Rollen & Rechte.',
+    'Role names are missing in active languages. Complete them under Roles & rights.',
+  ],
+  roleNameRequired: [
+    'Ein Rollenname in dieser Sprache fehlt. Ergänze ihn vor der Review-Freigabe.',
+    'A role name in this language is missing. Complete it before review approval.',
+  ],
   rolesTitle: ['Rollen & Rechte', 'Roles & rights'],
   rolesHint: [
     'Konfiguriere simulierte Rollen für diese Anwendung. Ohne Rollen sind alle Bildschirme und aktivierten Aktionen verfügbar.',

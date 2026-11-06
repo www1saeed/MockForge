@@ -2,6 +2,9 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  roleNamesIncomplete:
+    'نام نقش در برخی زبان‌های فعال خالی است. آن را در بخش نقش‌ها و دسترسی‌ها تکمیل کنید.',
+  roleNameRequired: 'نام نقش در این زبان خالی است. پیش از تأیید بازبینی آن را تکمیل کنید.',
   rolesTitle: 'نقش‌ها و دسترسی‌ها',
   rolesHint:
     'نقش‌های شبیه‌سازی‌شده را برای این برنامه تنظیم کنید. بدون نقش، همهٔ صفحه‌ها و عملیات فعال در دسترس‌اند.',

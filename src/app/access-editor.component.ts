@@ -17,6 +17,7 @@ import {
   ApplicationRole,
   ROLE_LIMIT,
   resolveAccess,
+  roleOverrides,
 } from './application-access';
 import { CopyKey, translate } from './translations';
 import { Locale } from './project.model';
@@ -110,7 +111,7 @@ export class AccessEditorComponent implements OnDestroy {
     const role = this.role();
     if (!role || !['inherit', 'allow', 'deny'].includes(value)) return;
     const patch = (policy: AccessPolicy | undefined): AccessPolicy => {
-      const own = { ...policy?.[role.id] };
+      const own = { ...roleOverrides(policy, role.id) };
       if (value === 'inherit') delete own[key];
       else own[key] = value === 'allow';
       const next = { ...policy };
@@ -133,7 +134,7 @@ export class AccessEditorComponent implements OnDestroy {
     this.store.configureAccess(this.roles(), forms);
   }
   choice(policy: AccessPolicy | undefined, key: AccessRight): string {
-    const value = policy?.[this.role()!.id]?.[key];
+    const value = roleOverrides(policy, this.role()!.id)?.[key];
     return value === undefined ? 'inherit' : value ? 'allow' : 'deny';
   }
   effective(formId: string, listId: string | undefined, key: AccessRight): boolean {
@@ -144,7 +145,7 @@ export class AccessEditorComponent implements OnDestroy {
     if (!role) return;
     const session = this.store.projectSession();
     this.feedback.requestDelete(
-      role.label[this.locale()],
+      role.label[this.locale()].trim() || role.id,
       () => {
         if (
           this.store.projectSession() !== session ||

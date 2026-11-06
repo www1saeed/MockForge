@@ -38,18 +38,14 @@ function rights(value: unknown, complete: boolean): boolean {
     (!complete || ACCESS_RIGHTS.every((key) => typeof value[key] === 'boolean'))
   );
 }
-function roleLabel(value: unknown, languages: readonly string[]): boolean {
+function roleLabel(value: unknown): boolean {
   return (
     object(value) &&
     Object.keys(value).every((key) => ['de', 'en', 'fa'].includes(key)) &&
-    ['de', 'en', 'fa'].every((key) => typeof value[key] === 'string' && value[key].length <= 256) &&
-    languages.every((key) => typeof value[key] === 'string' && value[key].trim().length > 0)
+    ['de', 'en', 'fa'].every((key) => typeof value[key] === 'string' && value[key].length <= 256)
   );
 }
-export function validRoles(
-  value: unknown,
-  languages: readonly string[],
-): value is ApplicationRole[] | undefined {
+export function validRoles(value: unknown): value is ApplicationRole[] | undefined {
   if (value === undefined) return true;
   return (
     Array.isArray(value) &&
@@ -61,10 +57,17 @@ export function validRoles(
         Object.keys(role).every((key) => ['id', 'label', 'rights'].includes(key)) &&
         typeof role['id'] === 'string' &&
         /^[a-z][a-z0-9_-]{0,63}$/.test(role['id']) &&
-        roleLabel(role['label'], languages) &&
+        roleLabel(role['label']) &&
         rights(role['rights'], true),
     )
   );
+}
+/** Only explicit JSON entries are overrides; safe IDs can also name Object members. */
+export function roleOverrides(
+  policy: AccessPolicy | undefined,
+  roleId: string,
+): Partial<AccessRights> | undefined {
+  return policy && Object.hasOwn(policy, roleId) ? policy[roleId] : undefined;
 }
 export function validAccessPolicy(
   value: unknown,
@@ -92,8 +95,10 @@ export function resolveAccess(
   const roles = project.roles ?? [];
   const role = roles.find((role) => role.id === roleId);
   if (roles.length && !role) return { ...DENY_RIGHTS };
-  const base = role ? { ...role.rights, ...form.access?.[role.id] } : { ...ALLOW_RIGHTS };
-  const resolved = role && list ? { ...base, ...list.access?.[role.id] } : base;
+  const base = role
+    ? { ...role.rights, ...roleOverrides(form.access, role.id) }
+    : { ...ALLOW_RIGHTS };
+  const resolved = role && list ? { ...base, ...roleOverrides(list.access, role.id) } : base;
   const open = base.open && resolved.open;
   return Object.fromEntries(
     ACCESS_RIGHTS.map((key) => [

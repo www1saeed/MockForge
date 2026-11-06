@@ -9,7 +9,7 @@
       <label for="configured-role">{{ t('roleSelect') }}</label>
       <select id="configured-role" [ngModel]="current.id" (ngModelChange)="selected.set($event)">
         @for (item of roles(); track item.id) {
-          <option [value]="item.id">{{ item.label[locale()] || item.id }}</option>
+          <option [value]="item.id">{{ item.label[locale()].trim() || item.id }}</option>
         }
       </select>
       <button class="text-button" (click)="remove()">{{ t('roleRemove') }}</button>
@@ -24,10 +24,18 @@
           }}<input
             [attr.aria-label]="t('roleName') + ' ' + lang.toUpperCase()"
             required
+            [attr.aria-invalid]="!current.label[lang].trim() ? 'true' : null"
+            [attr.aria-describedby]="!current.label[lang].trim() ? 'role-name-error-' + lang : null"
             maxlength="256"
             [ngModel]="current.label[lang]"
             (ngModelChange)="label(lang, $event)"
-        /></label>
+          />
+          @if (!current.label[lang].trim()) {
+            <small [id]="'role-name-error-' + lang" class="role-name-error">{{
+              t('roleNameRequired')
+            }}</small>
+          }
+        </label>
       }
     </fieldset>
     <fieldset class="role-defaults">
@@ -56,7 +64,7 @@
           }}
           ·
           {{
-            current.label[locale()]
+            current.label[locale()].trim() || current.id
           }}
         </caption>
         <thead>

@@ -135,7 +135,7 @@ export function validateApplicationProject(value: unknown): value is Application
     Object.keys(value).some((key): boolean => !PROJECT_KEYS.has(key)) ||
     value['format'] !== 'mockforge-studio' ||
     value['schemaVersion'] !== APPLICATION_SCHEMA_VERSION ||
-    !validRoles(value['roles'], Array.isArray(value['languages']) ? value['languages'] : []) ||
+    !validRoles(value['roles']) ||
     value['fields'] !== undefined ||
     value['buttons'] !== undefined ||
     !Array.isArray(value['forms']) ||

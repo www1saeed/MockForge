@@ -33,7 +33,7 @@
             (ngModelChange)="access.select($event)"
           >
             @for (role of store.application().roles; track role.id) {
-              <option [value]="role.id">{{ role.label[language()] || role.id }}</option>
+              <option [value]="role.id">{{ role.label[language()].trim() || role.id }}</option>
             }
           </select>
           <p class="fine-print">{{ t('roleSimulationHint') }}</p>

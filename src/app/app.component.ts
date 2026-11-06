@@ -178,6 +178,11 @@ export class AppComponent implements OnInit {
   readonly availableFieldTypes = computed((): readonly FieldType[] =>
     this.editingGroup() && this.selected()?.type !== 'group' ? LEAF_FIELD_TYPES : FIELD_TYPES,
   );
+  readonly roleNamesComplete = computed(() =>
+    (this.store.application().roles ?? []).every((role) =>
+      this.store.application().languages.every((lang) => !!role.label[lang].trim()),
+    ),
+  );
   readonly canApprove = computed((): boolean => {
     const project = this.project();
     return (
@@ -190,6 +195,7 @@ export class AppComponent implements OnInit {
         project.decisions,
         project.review.reviewer,
       ].every((value: string): boolean => !!value.trim()) &&
+      this.roleNamesComplete() &&
       project.languages.every((lang: Locale): boolean =>
         this.store
           .application()
