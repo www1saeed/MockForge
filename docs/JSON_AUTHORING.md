@@ -58,3 +58,5 @@ Application navigation uses [transient form/list hash links](APPLICATION_PREVIEW
 The authoring UI offers chips/count only for repeated group values/paths; scalar roots offer text/badge. Historical scalar chips/count tokens in valid 2.3 files remain accepted and fall back to text. Group table/card/count contents open in accessible dialogs, without adding JSON properties. Layout-specific table settings remain stored when another layout is selected.
 
 Optional roles/access and finite badgeColor tokens are documented in the generated kit. Roles have open/create/view/edit/delete defaults; form/list access contains per-role partial overrides. Badge colors: neutral, blue, green, amber, red, violet.
+
+Role label strings may be empty in a draft. Complete every active-language role name before review approval. Language switches preserve missing copy and the role editor reports it beside the relevant input.

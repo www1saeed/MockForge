@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 307 passing automated tests: 224 unit/component tests and 83 end-to-end tests.** Verified on November 6, 2026, with **97.57% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 314 passing automated tests: 229 unit/component tests and 85 end-to-end tests.** Verified on November 6, 2026, with **97.55% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 

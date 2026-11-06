@@ -24,7 +24,7 @@ The Studio authoring workspace remains unrestricted so authors can inspect and c
 
 ## Studio 2.4 contract
 
-`roles?: ApplicationRole[]` contains safe unique IDs, localized `label` and complete boolean `rights` for open/create/view/edit/delete. Each form/list can have `access?: AccessPolicy`, keyed only by existing role IDs and containing partial rights. Unknown roles/rules, non-booleans, duplicate IDs, missing active names and more than ten roles are rejected. Existing form/list/resource limits stay unchanged.
+`roles?: ApplicationRole[]` contains safe unique IDs, localized `label` and complete boolean `rights` for open/create/view/edit/delete. Each form/list can have `access?: AccessPolicy`, keyed only by existing role IDs and containing partial rights. Unknown roles/rules, non-booleans, duplicate IDs, malformed/oversized Text objects and more than ten roles are rejected. Empty role-name translations are valid draft copy. Activating a language preserves the empty value rather than rejecting the language change or inventing a translation. The editor persists every draft and shows a field-level error; Review requires a nonempty trimmed name for every active language. Pickers and deletion confirmations fall back to the role ID when the selected translation is blank. Existing form/list/resource limits stay unchanged.
 
 Supported 2.3 and earlier Studio files migrate with approval cleared and no invented roles. New role policies and badge colors cannot be relabelled as older formats. JSON, Markdown handoff, examples and the generated authoring kit retain role definitions and overrides; generated answers and the selected role never belong to the specification. The renderer/batch projection remains 1.3.0.
 
@@ -33,3 +33,5 @@ The extensive workspace example includes Coordinator (full rights), Purchasing (
 ## Verification
 
 Pure/unit tests cover bounded imports/migration, inheritance and parent gates, disabled actions, role authoring/deletion, direct store operations, stale callbacks and late generation. Browser cases in `e2e/roles.spec.ts` cover the actual editor/matrix, persistence, direct routes, shared records, role switching, badge/chip presentation, offline storage/network isolation and Persian mobile Axe/layout. Run `npm run e2e -- --area roles`; full Chromium regression remains the default.
+
+Policy lookup uses only own JSON entries, including for role IDs such as constructor. A role with no available menu screens sees the blocked state at application home; a genuinely empty application menu retains its empty state. Access edits detach incoming roles/policy maps while sharing unchanged, store-owned form and field definitions.
