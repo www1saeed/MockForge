@@ -115,3 +115,5 @@ The preview has its own keyboard-focusable, bounded vertical scroller. Wide work
 ## Badge colors and repeated-row chips
 
 For badge, chips or count columns, select a Badge color: Neutral, Blue, Green, Amber, Red or Violet. The palette uses paired background/text colors and survives layout changes, persistence and offline export. Color is a column presentation setting, not a condition or permission. Group chips show each saved row as a numbered item with the selected child labels and values; text wraps, logical spacing supports RTL and the bounded list supports keyboard scrolling. Scalar badge text and child-path chips share the palette.
+
+Role-hidden preset fields keep their fixed AND conditions over complete session records. Display/search/reader filters and sort still omit hidden fields; field visibility does not broaden a configured collection. New records may create repeated rows with protected children; editing existing protected rows keeps their structure fixed.
