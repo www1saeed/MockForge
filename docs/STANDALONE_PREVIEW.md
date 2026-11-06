@@ -82,3 +82,5 @@ Axe/layout. Unit tests cover capture/privacy/escaping/limits, obsolete project
 captures, asset retry and disposal. Full browser regression remains the default.
 
 Role definitions and form/list policies are retained in offline captures; selected roles are not. The first configured role starts each new session. Role changes enforce the same shared screen/action checks and retire unsaved work. Badge palettes and labelled repeated-row chips use the same components and styles as Studio. See [roles and boundaries](ROLE_ACCESS.md).
+
+Offline applications share the same demo-user picker and hidden/readonly/editable field policies as Studio application preview. Progressive examples start as Visitor; choose Admin for unrestricted fields, subject to disabled list actions. Exported user definitions contain no credentials. Actor selection and accepted records reset on reload. See [roles and field policies](ROLE_ACCESS.md).

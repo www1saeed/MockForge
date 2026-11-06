@@ -38,7 +38,7 @@ buttons still simulate their configured actions; they do not insert list records
 
 ## Persistence, stale data and cancellation
 
-Studio 2.4.0 JSON stores optional `lists` and `entries` preferences inside each
+Studio 2.5.0 JSON stores optional `lists` and `entries` preferences inside each
 form. Storage, JSON, Markdown and review include configuration only. Manual and
 generated records, record IDs, selection, page, queries and open details are never
 persisted or exported. Switching forms or returning to the form editor retains
@@ -102,7 +102,7 @@ The Project & design page combines briefing, language/copy and form styling. The
 
 Four table designs (classic, striped, cell-bordered, minimal) combine with comfortable/compact density, hover highlight and a locally scrolling sticky header. Existing CRUD actions have per-project-language labels, primary/secondary/ghost/danger variants, built-in icons and text/icon/both display. Row actions can be reordered; Create remains in the toolbar and Delete also applies to selection. Disabled actions remain guarded in handlers. No arbitrary CSS, icon URLs or custom server actions are introduced. Simulated screen/CRUD rules are described in [Roles & rights](ROLE_ACCESS.md).
 
-Studio 2.4.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.2.0 and 2.1.0 imports retain their list configuration with review acknowledgement reset. Older declarations are validated against their historical capabilities before migration: 2.1 supports leaf lists, 2.2 adds table/column/action presentation, and 2.3 adds group projections, display modes and list layouts. Relabeling newer settings as an older version is rejected. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.
+Studio 2.5.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.2.0 and 2.1.0 imports retain their list configuration with review acknowledgement reset. Older declarations are validated against their historical capabilities before migration: 2.1 supports leaf lists, 2.2 adds table/column/action presentation, and 2.3 adds group projections, display modes and list layouts. Relabeling newer settings as an older version is rejected. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.
 
 ## Group values and layout
 

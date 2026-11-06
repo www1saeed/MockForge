@@ -127,4 +127,4 @@ Preserve worker backpressure at callers: large-table Submit must pass on its fir
 
 ## Updating examples
 
-Edit the canonical JSON in `src/assets/guides`; `application-examples.ts` supplies gallery and authoring metadata and validated copies. Preserve stable form/list IDs so future rights can target those scopes. Use the validated roles/access contract for screen and CRUD simulations; keep field rights, ownership and production authorization questions in the brief. Regenerate the authoring kit and run the `examples` and authoring-guide browser suites. See [example intent and boundaries](EXAMPLES.md).
+Edit the canonical JSON in `src/assets/guides`; `application-examples.ts` supplies gallery and authoring metadata and validated copies. Preserve stable form/list IDs so future rights can target those scopes. Use the validated roles/access contract for screen and CRUD simulations; configure simulated field rights; keep ownership and production authorization questions in the brief. Regenerate the authoring kit and run the `examples` and authoring-guide browser suites. See [example intent and boundaries](EXAMPLES.md).

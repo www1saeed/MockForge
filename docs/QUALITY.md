@@ -1,5 +1,12 @@
 # Code quality and test evidence
 
+## Field policies and demo profiles checkpoint — November 6, 2026
+
+240 Jest tests in 32 suites pass. Coverage is 95.07% statements, 90.22% branches, 95.57% functions and 97.11% lines against unchanged thresholds. Four new browser journeys cover preset profiles, field inheritance, hidden queries/details, protected controls and repeated values, Admin action limits, actor changes and offline Persian mobile accessibility.
+
+Production initial bundle is 940.03 kB, below the unchanged 1 MB failure limit (700 kB warning). Static checks cover 605 translations, the synchronized authoring kit, spec/E2E types, formatting, lint, 146 documentation links and 89 registered browser cases. Studio 2.5 adds bounded demo users and field policies; renderer/batch remains 1.3. No dependency or resource-budget changes. Final full browser evidence is recorded at `reports/field-access-final-e2e.json`; CI must run after push.
+
+
 ## PR #9 review corrections — November 6, 2026
 
 **314 Studio tests pass: 229 Jest cases in 30 suites and 85 registered Chromium journeys.** Ten selector checks remain separate. Coverage: 95.70% statements, 90.45% branches, 96.30% functions, 97.55% lines. Five new unit/component cases cover missing-language role drafts and review gating, live empty inputs/storage, constructor inheritance and dialog labels, defensive policy ownership/reference stability and denied versus empty home states. Two browser journeys exercise real language activation, input errors/reload/approval, own policy lookups and blocked home in both in-app and offline previews.
