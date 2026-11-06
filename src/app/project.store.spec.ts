@@ -11,6 +11,44 @@ import {
 } from './project';
 
 describe('ProjectStore', (): void => {
+  test('retains unchanged field policy identity and prunes removed root and child references', () => {
+    const store = new ProjectStore(),
+      p = parseApplicationProject(example('saas'))!;
+    p.roles = [{ id: 'reader', label: text('Lesen', 'Read'), rights: { ...ALLOW_RIGHTS } }];
+    p.forms[0].fields = [
+      createField('text', 'name'),
+      {
+        ...createField('group', 'items'),
+        group: {
+          layout: 'table',
+          minItems: 0,
+          maxItems: 3,
+          fields: [createField('text', 'code'), createField('text', 'product')],
+        },
+      },
+    ];
+    p.forms[0].fieldAccess = { name: { reader: 'readonly' }, 'items/code': { reader: 'hidden' } };
+    expect(store.replace(p)).toBe(true);
+    const original = store.application().forms[0].fieldAccess;
+    expect(store.update({ description: text('Neu', 'New') })).toBe(true);
+    expect(store.application().forms[0].fieldAccess).toBe(original);
+    const fields = store.project().fields;
+    expect(
+      store.update({
+        fields: fields
+          .filter((field) => field.id !== 'name')
+          .map((field) => ({
+            ...field,
+            group: {
+              ...field.group!,
+              fields: field.group!.fields.filter((child) => child.id !== 'code'),
+            },
+          })),
+      }),
+    ).toBe(true);
+    expect(store.application().forms[0].fieldAccess).toEqual({});
+    expect(original).toEqual({ name: { reader: 'readonly' }, 'items/code': { reader: 'hidden' } });
+  });
   test('owns access patches without cloning untouched forms or field definitions and rejects foreign scopes atomically', () => {
     const store = new ProjectStore();
     store.update({ fields: [createField('text', 'name'), createField('group', 'items')] });

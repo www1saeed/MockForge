@@ -204,19 +204,20 @@ export class ProjectStore {
       ...project,
       forms: policyOnly
         ? project.forms
-        : project.forms.map((form) => ({
-            ...form,
-            ...(form.fieldAccess
-              ? {
-                  fieldAccess: Object.fromEntries(
-                    Object.entries(form.fieldAccess).filter(([id]) =>
-                      collectionFields(form.fields).some((field) => field.id === id),
-                    ),
-                  ),
-                }
-              : {}),
-            ...(form.lists ? { lists: pruneCollections(form.fields, form.lists) } : {}),
-          })),
+        : project.forms.map((form) => {
+            let access = form.fieldAccess;
+            if (access) {
+              const refs = new Set(collectionFields(form.fields).map((field) => field.id));
+              const entries = Object.entries(access);
+              const retained = entries.filter(([id]) => refs.has(id));
+              if (retained.length !== entries.length) access = Object.fromEntries(retained);
+            }
+            return {
+              ...form,
+              ...(form.fieldAccess ? { fieldAccess: access } : {}),
+              ...(form.lists ? { lists: pruneCollections(form.fields, form.lists) } : {}),
+            };
+          }),
       review: { ...project.review, checks: [false, false, false, false, false], approvedAt: null },
     };
     if (!validateApplicationProject(next)) {
@@ -378,15 +379,15 @@ export class ProjectStore {
       if (patch === form) return form;
       const access = ownPolicy(patch.access, form.access);
       const fieldDefaults =
-        patch.fieldDefaults === form.fieldDefaults
-          ? form.fieldDefaults
-          : (JSON.parse(JSON.stringify(patch.fieldDefaults ?? {})) as NonNullable<
+        patch.fieldDefaults === form.fieldDefaults || patch.fieldDefaults === undefined
+          ? patch.fieldDefaults
+          : (JSON.parse(JSON.stringify(patch.fieldDefaults)) as NonNullable<
               ApplicationForm['fieldDefaults']
             >);
       const fieldAccess =
-        patch.fieldAccess === form.fieldAccess
-          ? form.fieldAccess
-          : (JSON.parse(JSON.stringify(patch.fieldAccess ?? {})) as FieldAccess);
+        patch.fieldAccess === form.fieldAccess || patch.fieldAccess === undefined
+          ? patch.fieldAccess
+          : (JSON.parse(JSON.stringify(patch.fieldAccess)) as FieldAccess);
       const lists = form.lists?.map((list) => {
         const policy = patch.lists!.find((item) => item.id === list.id)!.access;
         return policy === list.access ? list : { ...list, access: ownPolicy(policy, list.access) };
