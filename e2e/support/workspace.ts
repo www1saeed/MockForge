@@ -20,7 +20,7 @@ export async function openProject(
 /** Workflow identity is stable even when new steps are inserted. */
 export async function goToStep(
   page: Page,
-  key: 'brief' | 'copy' | 'design' | 'fields' | 'review' | 'lists',
+  key: 'brief' | 'copy' | 'design' | 'fields' | 'review' | 'lists' | 'roles',
 ): Promise<void> {
   await page
     .locator(

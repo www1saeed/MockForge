@@ -28,7 +28,7 @@ test(
   },
   async ({ page }, info) => {
     await open(page);
-    await expect(page.locator('.workflow button')).toHaveCount(4);
+    await expect(page.locator('.workflow button')).toHaveCount(5);
     await goToStep(page, 'brief');
     await expect(page.locator('#project-name')).toBeVisible();
     await expect(page.locator('#title-de')).toBeVisible();

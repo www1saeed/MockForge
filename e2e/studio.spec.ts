@@ -183,7 +183,7 @@ test(
     const path = await (await downloadEvent).path();
     if (!path) throw new Error('Export missing');
     const exported = JSON.parse(await readFile(path, 'utf8'));
-    expect(exported.schemaVersion).toBe('2.3.0');
+    expect(exported.schemaVersion).toBe('2.4.0');
     expect(exported.forms[0].fields[0].pattern).toBe('[A-Z]{3}');
     expect(exported.forms[0].buttons[1].action).toBe('reset');
     expect(exported.forms[0].buttons[1].note).toBe('Clear only preview entries.');
@@ -360,8 +360,8 @@ test(
     await page.goto('/#workspace');
     for (const locale of ['DE', 'EN']) {
       await page.locator('.topbar').getByRole('button', { name: locale, exact: true }).click();
-      for (let step = 0; step < 4; step++) {
-        await page.locator('.workflow button').nth(step).click();
+      for (const tab of await page.locator('.workflow button').all()) {
+        await tab.click();
         const results = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
           .analyze();

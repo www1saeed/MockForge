@@ -36,6 +36,7 @@
     "standalone-preview": ["transfer", "navigation", "lists", "preview"],
     "examples": ["authoring", "forms", "lists", "groups"],
     "list-configurator": ["authoring", "lists", "transfer"],
-    "list-views": ["lists", "groups", "preview", "test-data"]
+    "list-views": ["lists", "groups", "preview", "test-data"],
+    "roles": ["roles", "navigation", "lists", "authoring"]
   }
 }
