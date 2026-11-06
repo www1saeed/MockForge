@@ -93,11 +93,12 @@ function fixture(): NonNullable<ReturnType<typeof parseApplicationProject>> {
   };
   return p;
 }
-async function seed(page: Page): Promise<void> {
+async function seed(page: Page, name = 'Alpha', approved = false): Promise<void> {
   await page.locator('#preview-user').selectOption('admin-demo');
   await page.getByRole('button', { name: 'Eintrag erstellen', exact: true }).click();
   const dialog = page.locator('.collection-dialog');
-  await dialog.locator('#preview-name').fill('Alpha');
+  await dialog.locator('#preview-name').fill(name);
+  if (approved) await dialog.locator('#preview-approved').check();
   await dialog.locator('#preview-secret').fill('AAAAA');
   await dialog.locator('#preview-locked').fill('LOCKED');
   await dialog.locator('[data-field-id="product"]').fill('Notebook');
@@ -106,6 +107,97 @@ async function seed(page: Page): Promise<void> {
   await dialog.locator('[data-field-id="quantity"]').fill('2');
   await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
 }
+
+test(
+  'hidden preset fields still constrain in-app and offline lists',
+  {
+    tag: tagsFor('field-access', 'field-review-hidden-presets', {
+      areas: ['roles', 'lists', 'transfer'],
+    }),
+  },
+  async ({ page, browser }, info) => {
+    const p = fixture(),
+      form = p.forms[0],
+      list = form.lists![0];
+    form.fieldAccess!.approved = { visitor: 'hidden' };
+    list.presets = [{ fieldId: 'approved', value: true }];
+    list.filters = ['approved'];
+    list.searchFields = ['name', 'approved'];
+    await openProject(page, p);
+    await page.goto('/#application/list/form-1/list-1');
+    const assertPreset = async (target: Page): Promise<void> => {
+      await seed(target, 'Included', true);
+      await seed(target, 'Excluded', false);
+      await target.locator('#preview-user').selectOption('visitor-demo');
+      const rows = target.locator('.collection-preview tbody tr:has(app-collection-cell)');
+      await expect(rows).toHaveCount(1);
+      await expect(rows).toContainText('Included');
+      await expect(target.getByRole('columnheader', { name: 'Freigabe', exact: true })).toHaveCount(
+        0,
+      );
+      await target.getByRole('searchbox', { name: 'Suche', exact: true }).fill('Excluded');
+      await expect(rows).toHaveCount(0);
+      await target.getByRole('searchbox', { name: 'Suche', exact: true }).fill('');
+      await expect(rows).toHaveCount(1);
+      await target.locator('.application-menu a[href$="readonly-list"]').click();
+      await expect(rows).toHaveCount(2);
+      await target.locator('.application-menu a[href$="list-1"]').click();
+      await expect(rows).toHaveCount(1);
+    };
+    await assertPreset(page);
+    const pending = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'HTML-Vorschau herunterladen', exact: true }).click();
+    const path = info.outputPath('hidden-presets.html');
+    await (await pending).saveAs(path);
+    const context = await browser.newContext({ offline: true }),
+      offline = await context.newPage();
+    await offline.goto(pathToFileURL(path).href + '#application/list/form-1/list-1');
+    await assertPreset(offline);
+    await context.close();
+  },
+);
+
+test(
+  'new mixed-access groups allow optional and required rows while saved rows remain protected',
+  {
+    tag: tagsFor('field-access', 'field-review-create-rows', {
+      areas: ['roles', 'lists', 'forms', 'groups'],
+    }),
+  },
+  async ({ page }) => {
+    for (const minimum of [0, 1]) {
+      const p = fixture();
+      p.forms[0].fields.find((field) => field.id === 'items')!.group!.minItems = minimum;
+      await openProject(page, p);
+      await page.goto('/#application/list/form-1/list-1');
+      await page.locator('#preview-user').selectOption('user-demo');
+      await page.getByRole('button', { name: 'Eintrag erstellen', exact: true }).click();
+      const dialog = page.locator('.collection-dialog');
+      await expect(dialog.locator('.repeat-table tbody tr')).toHaveCount(minimum);
+      await expect(dialog.locator('.repeat-add')).toBeEnabled();
+      for (let i = minimum; i < 2; i++) await dialog.locator('.repeat-add').click();
+      await expect(dialog.locator('.repeat-table tbody tr')).toHaveCount(2);
+      await dialog.locator('.repeat-remove').last().click();
+      await page.getByRole('button', { name: 'Ja, löschen', exact: true }).click();
+      await expect(dialog.locator('.repeat-table tbody tr')).toHaveCount(1);
+      await dialog.locator('.repeat-add').click();
+      await dialog.locator('#preview-name').fill('Two rows');
+      await dialog.locator('[data-field-id="product"]').nth(0).fill('First');
+      await dialog.locator('[data-field-id="product"]').nth(1).fill('Second');
+      await expect(dialog.locator('[data-field-id="code"]').first()).toBeDisabled();
+      await expect(dialog.locator('[data-field-id="private-code"]')).toHaveCount(0);
+      await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
+      await expect(dialog).not.toBeVisible();
+      await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
+      await expect(dialog.locator('.repeat-table tbody tr')).toHaveCount(2);
+      await expect(dialog.locator('.repeat-add')).toBeDisabled();
+      for (const button of await dialog.locator('.repeat-remove').all())
+        await expect(button).toBeDisabled();
+      await expect(dialog.locator('[data-field-id="product"]').nth(1)).toHaveValue('Second');
+      await page.keyboard.press('Escape');
+    }
+  },
+);
 
 test(
   'preset users and field inheritance are editable while Admin cannot be downgraded',

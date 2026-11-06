@@ -63,6 +63,8 @@ describe('Field access and predefined actors', () => {
     const p = fixture(),
       f = p.forms[0];
     f.fieldAccess!.approved = { visitor: 'hidden' };
+    f.fields.push(createField('checkbox', 'accepted'));
+    f.fieldAccess!.accepted = { visitor: 'hidden' };
     const source = {
       ...f.lists![0],
       columns: ['name', 'approved'],
@@ -71,7 +73,7 @@ describe('Field access and predefined actors', () => {
       sort: { fieldId: 'approved', direction: 'asc' as const },
       presets: [
         { fieldId: 'approved', value: true },
-        { fieldId: 'secret', value: 'A' },
+        { fieldId: 'accepted', value: true },
       ],
     };
     const fields = projectFields(f.fields, resolveFieldModes(p, 'visitor', f.id));
@@ -86,9 +88,9 @@ describe('Field access and predefined actors', () => {
         { ...f, fields },
         projected,
         [
-          { id: 'match', values: { name: 'One', approved: true, secret: 'A' } },
-          { id: 'wrong-status', values: { name: 'Two', approved: false, secret: 'A' } },
-          { id: 'wrong-secret', values: { name: 'Three', approved: true, secret: 'B' } },
+          { id: 'match', values: { name: 'One', approved: true, accepted: true } },
+          { id: 'wrong-status', values: { name: 'Two', approved: false, accepted: true } },
+          { id: 'wrong-second', values: { name: 'Three', approved: true, accepted: false } },
           { id: 'missing', values: { name: 'Four' } },
         ],
         { search: '', filters: new Map() },
