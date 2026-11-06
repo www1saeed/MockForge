@@ -3,6 +3,57 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  roleNamesIncomplete: [
+    'Rollennamen fehlen in aktiven Sprachen. Ergänze sie unter Rollen & Rechte.',
+    'Role names are missing in active languages. Complete them under Roles & rights.',
+  ],
+  roleNameRequired: [
+    'Ein Rollenname in dieser Sprache fehlt. Ergänze ihn vor der Review-Freigabe.',
+    'A role name in this language is missing. Complete it before review approval.',
+  ],
+  rolesTitle: ['Rollen & Rechte', 'Roles & rights'],
+  rolesHint: [
+    'Konfiguriere simulierte Rollen für diese Anwendung. Ohne Rollen sind alle Bildschirme und aktivierten Aktionen verfügbar.',
+    'Configure simulated roles for this application. Without roles, all screens and enabled actions are available.',
+  ],
+  roleAdd: ['Rolle hinzufügen', 'Add role'],
+  roleSelect: ['Rolle konfigurieren', 'Configure role'],
+  roleRemove: ['Rolle entfernen', 'Remove role'],
+  roleName: ['Rollenname', 'Role name'],
+  roleDefaults: ['Standardrechte der Rolle', 'Default role rights'],
+  roleInheritanceHint: [
+    'Formulare erben von der Rolle, Listen vom Formular. Explizite Einstellungen überschreiben geerbte Rechte. Ein gesperrtes Formular sperrt auch seine Listen; deaktivierte Listenaktionen bleiben gesperrt. Effektive Rechte stehen unter jeder Auswahl.',
+    'Forms inherit from the role; lists inherit from their form. Explicit settings override inherited rights. A blocked form also blocks its lists; disabled list actions remain blocked. Effective rights appear below each selector.',
+  ],
+  roleRemoveHint: [
+    'Die Rolle und ihre Überschreibungen werden entfernt. Ohne verbleibende Rollen ist die Anwendung wieder uneingeschränkt.',
+    'The role and its overrides will be removed. With no roles remaining the application becomes unrestricted.',
+  ],
+  rolesDisabled: [
+    'Keine Rollen eingerichtet: Die Vorschau ist uneingeschränkt. Neue Rollen starten mit Öffnen- und Ansehen-Rechten.',
+    'No roles configured: preview is unrestricted. New roles start with open and view rights.',
+  ],
+  rightsMatrix: ['Berechtigungsmatrix', 'Rights matrix'],
+  roleScreen: ['Formular / Liste', 'Form / list'],
+  accessOpen: ['Öffnen', 'Open'],
+  accessInherit: ['Erben', 'Inherit'],
+  accessAllow: ['Erlauben', 'Allow'],
+  accessDeny: ['Sperren', 'Deny'],
+  accessAllowed: ['Effektiv: erlaubt', 'Effective: allowed'],
+  accessBlocked: ['Effektiv: gesperrt', 'Effective: blocked'],
+  accessDenied: ['Für diese Rolle gesperrt', 'Blocked for this role'],
+  simulatedRole: ['Simulierte Rolle', 'Simulated role'],
+  roleSimulationHint: [
+    'Nur eine Simulation. Keine echte Anmeldung oder serverseitige Zugriffskontrolle.',
+    'Simulation only. No real sign-in or server-side authorization.',
+  ],
+  badgeColor: ['Badge-Farbe', 'Badge color'],
+  badgeNeutral: ['Neutral', 'Neutral'],
+  badgeBlue: ['Blau', 'Blue'],
+  badgeGreen: ['Grün', 'Green'],
+  badgeAmber: ['Bernstein', 'Amber'],
+  badgeRed: ['Rot', 'Red'],
+  badgeViolet: ['Violett', 'Violet'],
   listRetainedLimit: [
     'Die erzeugten Daten überschreiten das Speicherlimit dieser Sitzung. Verringere Anzahl oder Umfang der Daten.',
     'Generated data exceeds the session storage budget. Reduce the count or data size.',
@@ -324,8 +375,8 @@ export const copy = {
     'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
   ],
   studioFormatNotice: [
-    'Studio-Format 2.3.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
-    'Studio format 2.3.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
+    'Studio-Format 2.4.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
+    'Studio format 2.4.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
   ],
   authoringWorkflow: [
     'Vom Texteditor zur geprüften Vorschau',

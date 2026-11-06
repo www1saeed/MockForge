@@ -4,7 +4,7 @@
 
 An **open-source form prototyping studio**, licensed under MIT.
 
-**Built with documented Clean Code practices and backed by 293 passing automated tests: 214 unit/component tests and 79 end-to-end tests.** Verified on November 6, 2026, with **97.55% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
+**Built with documented Clean Code practices and backed by 314 passing automated tests: 229 unit/component tests and 85 end-to-end tests.** Verified on November 6, 2026, with **97.55% line coverage**. Ten E2E selector checks pass separately. Formatting, ESLint, translation validation and the production build also pass. See the [quality report](docs/QUALITY.md) for reproducible checks and their scope.
 
 **Your requirements shape the product before the first implementation sprint.**
 
@@ -94,7 +94,7 @@ See [authoring instructions](docs/AUTHORING_TOOLS.md) for copy/cut/paste and see
 
 ## Author forms in a text editor or with AI
 
-The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 2.3.0 and offers the same three progressive contact/request/workspace projects to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
+The navigation provides separate **Design a form in a text editor** (`/#guide-json`) and **Design a form with AI** (`/#guide-ai`) pages in DE/EN/FA. The text-editor guide explains Studio JSON 2.4.0 and offers the same three progressive contact/request/workspace projects to copy or download. The AI guide supplies a format kit and reusable creation, revision and repair prompts. Import and review the result locally; Studio never uploads your project to an AI service automatically.
 
 See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and format kit](docs/AI_AUTHORING.md). The original MockForge edition uses a different JSON contract.
 
@@ -108,7 +108,7 @@ See [text-editor instructions](docs/JSON_AUTHORING.md) and [AI prompts and forma
 
 The review record is local and unauthenticated. It supports an actual conversation and explicit agreement outside the app. Imports reset review status. Preview inputs are not persisted or submitted. Backend integration, email delivery, refunds and CRM workflows are outside this mockup tool.
 
-JSON exports use Studio schema **2.3.0** with `format: "mockforge-studio"` and `forms[]`. Studio 2.0.0, 2.1.0 and 2.2.0 applications migrate with review cleared; existing Studio 1.0.0–1.3.0 drafts become one-form applications on restore/import; missing Persian values start empty and 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. One or two of the three supported form languages can be active, while inactive copy remains stored. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
+JSON exports use Studio schema **2.4.0** with `format: "mockforge-studio"` and `forms[]`. Studio 2.0.0, 2.1.0, 2.2.0 and 2.3.0 applications migrate with review cleared; existing Studio 1.0.0–1.3.0 drafts become one-form applications on restore/import; missing Persian values start empty and 1.0.0 also receives a submit button from its old label. Upgraded acknowledgements are cleared. Files from the original MockForge edition remain incompatible. One or two of the three supported form languages can be active, while inactive copy remains stored. Invalid RegEx edits remain in the editor until corrected; the last valid rule stays in the saved specification.
 
 Repeat groups support one level of up to 20 child fields and 0–20 entries, with at least one child definition. Each form allows 100 definitions counting groups and children together; the application allows 500 definitions across at most 20 forms. Preview entries validate independently and use distinct radio groups. Removing an entry asks for confirmation; resetting responses returns groups to their minimum count. Response values are never persisted or exported. The extensive application example has 24 definitions across two forms, including a 1–8-item table and optional 0–4 contact cards. Pricing, totals and finance approval remain production requirements to agree separately.
 
@@ -163,8 +163,10 @@ Test valid, empty and deliberately invalid responses, exact text limits, one cha
 
 ### Coherent preview records
 
-First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. The browser batch API continues to accept a legacy 1.3.0 selected-form projection; application JSON is 2.3.0. Persisted semantic hints/examples remain future work. See [the tools guide](docs/AUTHORING_TOOLS.md).
+First/last/full name, email, company and address components now share one fictional record per root form or group row. Conservative DE/EN/FA label recognition falls back to exact placeholder/help phrases; the report identifies sources, conflicting translations and constraint adjustments. Choose a seed and reference date to reproduce a walkthrough, including after reset. Existing manual answers remain protected and are not used to reconstruct identities. The browser batch API continues to accept a legacy 1.3.0 selected-form projection; application JSON is 2.4.0. Persisted semantic hints/examples remain future work. See [the tools guide](docs/AUTHORING_TOOLS.md).
 
 ### Bounded pattern examples and isolated checks
 
 Generate finite identifier patterns, or verify a known fixture against a deferred pattern in a disposable local worker. Manual uncertain patterns use the same isolation. Time/size limits stay visible; pending or failed checks cannot submit successfully. Cancel or edit to discard pending generation before answers/rows change. No arbitrary pattern synthesis or schema change is introduced. See [the exact limits](docs/AUTHORING_TOOLS.md).
+
+Simulated [roles and inherited rights](docs/ROLE_ACCESS.md) control application screens and CRUD actions, including the offline export. The role matrix and temporary picker preserve unrestricted authoring. Lists also offer six badge colors and numbered, labelled chips for repeated rows.

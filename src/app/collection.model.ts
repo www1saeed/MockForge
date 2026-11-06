@@ -1,3 +1,4 @@
+import type { AccessPolicy } from './application-access';
 import {
   CollectionAppearance,
   CollectionColumnSetting,
@@ -26,6 +27,7 @@ export interface CollectionPreset {
 /** A view over the session records of its own form; no response data is serialized here. */
 export interface CollectionList {
   appearance?: CollectionAppearance;
+  access?: AccessPolicy;
   columnSettings?: CollectionColumnSetting[];
   actionSettings?: Partial<Record<CollectionActionKind, CollectionActionSetting>>;
   actionOrder?: CollectionActionKind[];
@@ -127,6 +129,7 @@ export function validCollections(
         'actions',
         'sort',
         'appearance',
+        'access',
         'columnSettings',
         'actionSettings',
         'actionOrder',

@@ -1,3 +1,4 @@
+import { ALLOW_RIGHTS, AccessRights } from './application-access';
 import {
   Component,
   ChangeDetectorRef,
@@ -142,6 +143,7 @@ export class FormPreviewComponent implements OnDestroy {
   private signature(): string {
     return JSON.stringify([
       this.project(),
+      this.operationRights(),
       this.uiLocale(),
       this.locale(),
       this.dataLocale(),
@@ -392,6 +394,21 @@ export class FormPreviewComponent implements OnDestroy {
 
   readonly feedback = inject(FeedbackService);
   readonly project = input.required<Project>();
+  readonly operationRights = input<Readonly<AccessRights>>(ALLOW_RIGHTS);
+  readonly allowedButtons = computed(() =>
+    this.project().buttons.filter((button) => this.buttonAllowed(button)),
+  );
+  buttonAllowed(button: FormButton): boolean {
+    const right =
+      button.action === 'submit'
+        ? 'create'
+        : button.action === 'save'
+          ? 'edit'
+          : button.action === 'delete'
+            ? 'delete'
+            : 'open';
+    return this.operationRights().open && this.operationRights()[right];
+  }
   readonly uiLocale = input<Locale>('de');
   readonly locale = input<Locale>('de');
   readonly mobile = input(false);
@@ -504,6 +521,7 @@ export class FormPreviewComponent implements OnDestroy {
    * Reset is intentionally limited to response controls and their custom validity.
    */
   runButton(button: FormButton, form: HTMLFormElement): void {
+    if (!this.buttonAllowed(button)) return;
     this.cancelGeneration();
     if (!VALIDATING_ACTIONS.includes(button.action)) {
       this.afterValidation(button, form);
@@ -536,6 +554,7 @@ export class FormPreviewComponent implements OnDestroy {
   }
 
   private afterValidation(button: FormButton, form: HTMLFormElement): void {
+    if (!this.buttonAllowed(button)) return;
     if (VALIDATING_ACTIONS.includes(button.action) && !form.reportValidity()) {
       this.feedback.notify('previewInvalid', 'warning');
       return;
@@ -555,6 +574,7 @@ export class FormPreviewComponent implements OnDestroy {
 
   /** Execute only after validation or explicit confirmation of a delete simulation. */
   private completeAction(button: FormButton, form: HTMLFormElement): void {
+    if (!this.buttonAllowed(button)) return;
     if (this.recordMode() && button.action === 'save') {
       this.recordSaved.emit(
         readRecordValues(
@@ -599,7 +619,7 @@ export class FormPreviewComponent implements OnDestroy {
       this.saveRecord(event.target);
       return;
     }
-    const button = this.project().buttons.find(
+    const button = this.allowedButtons().find(
       (button: FormButton): boolean => button.action === 'submit',
     );
     if (button && event.target instanceof HTMLFormElement) this.runButton(button, event.target);

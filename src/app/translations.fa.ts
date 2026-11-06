@@ -2,6 +2,41 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  roleNamesIncomplete:
+    'نام نقش در برخی زبان‌های فعال خالی است. آن را در بخش نقش‌ها و دسترسی‌ها تکمیل کنید.',
+  roleNameRequired: 'نام نقش در این زبان خالی است. پیش از تأیید بازبینی آن را تکمیل کنید.',
+  rolesTitle: 'نقش‌ها و دسترسی‌ها',
+  rolesHint:
+    'نقش‌های شبیه‌سازی‌شده را برای این برنامه تنظیم کنید. بدون نقش، همهٔ صفحه‌ها و عملیات فعال در دسترس‌اند.',
+  roleAdd: 'افزودن نقش',
+  roleSelect: 'تنظیم نقش',
+  roleRemove: 'حذف نقش',
+  roleName: 'نام نقش',
+  roleDefaults: 'دسترسی‌های پیش‌فرض نقش',
+  roleInheritanceHint:
+    'فرم‌ها از نقش و فهرست‌ها از فرم ارث می‌برند. تنظیم صریح جایگزین دسترسی ارثی می‌شود. فرم مسدود، فهرست‌هایش را نیز مسدود می‌کند؛ عملیات غیرفعال همچنان مسدود است. دسترسی مؤثر زیر هر انتخاب آمده است.',
+  roleRemoveHint:
+    'نقش و تنظیم‌های ویژهٔ آن حذف می‌شوند. بدون نقش، برنامه دوباره بدون محدودیت خواهد بود.',
+  rolesDisabled:
+    'نقشی تنظیم نشده است: پیش‌نمایش بدون محدودیت است. نقش جدید با دسترسی بازکردن و مشاهده ایجاد می‌شود.',
+  rightsMatrix: 'ماتریس دسترسی',
+  roleScreen: 'فرم / فهرست',
+  accessOpen: 'بازکردن',
+  accessInherit: 'ارث‌بری',
+  accessAllow: 'مجاز',
+  accessDeny: 'مسدود',
+  accessAllowed: 'مؤثر: مجاز',
+  accessBlocked: 'مؤثر: مسدود',
+  accessDenied: 'برای این نقش مسدود است',
+  simulatedRole: 'نقش شبیه‌سازی‌شده',
+  roleSimulationHint: 'فقط شبیه‌سازی است. ورود واقعی یا کنترل دسترسی سرور وجود ندارد.',
+  badgeColor: 'رنگ نشان',
+  badgeNeutral: 'خنثی',
+  badgeBlue: 'آبی',
+  badgeGreen: 'سبز',
+  badgeAmber: 'کهربایی',
+  badgeRed: 'قرمز',
+  badgeViolet: 'بنفش',
   listRetainedLimit:
     'داده‌های تولیدشده از سقف حافظهٔ نشست بیشتر است. تعداد یا اندازهٔ داده را کم کنید.',
   listProjectLimit:

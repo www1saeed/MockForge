@@ -1,3 +1,4 @@
+import { AccessEditorComponent } from './access-editor.component';
 import { applicationExample, ApplicationExampleKind } from './application-examples';
 import { PreviewExportService } from './preview-export.service';
 import {
@@ -85,6 +86,7 @@ import {
     FeedbackComponent,
     AuthoringGuideComponent,
     CollectionConfiguratorComponent,
+    AccessEditorComponent,
     ApplicationPreviewComponent,
   ],
   providers: [
@@ -110,6 +112,7 @@ export class AppComponent implements OnInit {
   readonly view = signal<StudioView>('overview');
   readonly applicationRoute = signal<ApplicationRoute>({ kind: 'home' });
   readonly step = signal(0);
+  readonly rolesOpen = computed(() => this.step() === WORKFLOW.roles);
   readonly listsOpen = computed(() => this.step() === WORKFLOW.lists);
   readonly previewVisible = signal(false);
   /** View-only expansion preserves the mounted preview and its unsaved response values. */
@@ -175,6 +178,11 @@ export class AppComponent implements OnInit {
   readonly availableFieldTypes = computed((): readonly FieldType[] =>
     this.editingGroup() && this.selected()?.type !== 'group' ? LEAF_FIELD_TYPES : FIELD_TYPES,
   );
+  readonly roleNamesComplete = computed(() =>
+    (this.store.application().roles ?? []).every((role) =>
+      this.store.application().languages.every((lang) => !!role.label[lang].trim()),
+    ),
+  );
   readonly canApprove = computed((): boolean => {
     const project = this.project();
     return (
@@ -187,6 +195,7 @@ export class AppComponent implements OnInit {
         project.decisions,
         project.review.reviewer,
       ].every((value: string): boolean => !!value.trim()) &&
+      this.roleNamesComplete() &&
       project.languages.every((lang: Locale): boolean =>
         this.store
           .application()

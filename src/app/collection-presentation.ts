@@ -1,5 +1,7 @@
 import { Text } from './project.model';
 
+export const BADGE_COLORS = ['neutral', 'blue', 'green', 'amber', 'red', 'violet'] as const;
+export type BadgeColor = (typeof BADGE_COLORS)[number];
 export const TABLE_DESIGNS = ['plain', 'striped', 'bordered', 'minimal'] as const;
 export const COLLECTION_ACTIONS = ['create', 'view', 'edit', 'delete'] as const;
 export const ACTION_ICONS = ['plus', 'eye', 'edit', 'trash', 'arrow'] as const;
@@ -19,6 +21,7 @@ export interface CollectionColumnSetting {
   width?: number;
   display?: 'text' | 'badge' | 'chips' | 'count' | 'table' | 'cards' | 'accordion';
   groupFields?: string[];
+  badgeColor?: BadgeColor;
 }
 export interface CollectionActionSetting {
   label: Text;
@@ -90,9 +93,12 @@ export function validCollectionPresentation(list: Record<string, unknown>): bool
           'width',
           'display',
           'groupFields',
+          'badgeColor',
         ]) ||
         !(list['columns'] as unknown[]).includes(column['fieldId']) ||
         ids.has(column['fieldId']) ||
+        (column['badgeColor'] !== undefined &&
+          !BADGE_COLORS.includes(column['badgeColor'] as BadgeColor)) ||
         (column['display'] !== undefined &&
           !['text', 'badge', 'chips', 'count', 'table', 'cards', 'accordion'].includes(
             String(column['display']),

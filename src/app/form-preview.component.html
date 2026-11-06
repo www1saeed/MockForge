@@ -157,7 +157,7 @@
             {{ t('recordSave') }}
           </button>
         } @else {
-          @for (button of project().buttons; track button.id) {
+          @for (button of allowedButtons(); track button.id) {
             <button
               type="button"
               [class]="'btn preview-submit button-' + button.variant + ' ' + button.cssClass"

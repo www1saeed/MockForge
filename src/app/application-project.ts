@@ -1,3 +1,4 @@
+import { ApplicationRole, AccessPolicy, validRoles, validAccessPolicy } from './application-access';
 import { allFields, FormContent, Project } from './project.model';
 import { parseProject, validateProject } from './project.validation';
 import {
@@ -8,7 +9,7 @@ import {
 } from './collection.model';
 
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.3.0';
+export const APPLICATION_SCHEMA_VERSION = '2.4.0';
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 const PROJECT_KEYS = new Set([
   'format',
@@ -21,6 +22,7 @@ const PROJECT_KEYS = new Set([
   'theme',
   'languages',
   'forms',
+  'roles',
   'decisions',
   'questions',
   'review',
@@ -36,6 +38,7 @@ const FORM_KEYS = new Set([
   'buttons',
   'lists',
   'entries',
+  'access',
 ]);
 
 /** Field and button IDs are unique within this form, including its group children. */
@@ -43,6 +46,7 @@ export interface ApplicationForm extends FormContent {
   id: string;
   /** Omission includes the form in the application menu; direct links still reach hidden forms. */
   menu?: boolean;
+  access?: AccessPolicy;
   lists?: CollectionList[];
   entries?: CollectionEntries;
 }
@@ -60,6 +64,7 @@ export interface ApplicationProject {
   theme: Project['theme'];
   languages: Project['languages'];
   forms: ApplicationForm[];
+  roles?: ApplicationRole[];
   decisions: string;
   questions: string;
   review: Project['review'];
@@ -122,7 +127,7 @@ function formProject(
 
 /**
  * Validate bounded multi-form configuration before flattening any group definitions.
- * Roles and flows remain rejected until their own validation is implemented.
+ * Simulated role policies are validated separately; flows remain rejected.
  */
 export function validateApplicationProject(value: unknown): value is ApplicationProject {
   if (
@@ -130,7 +135,7 @@ export function validateApplicationProject(value: unknown): value is Application
     Object.keys(value).some((key): boolean => !PROJECT_KEYS.has(key)) ||
     value['format'] !== 'mockforge-studio' ||
     value['schemaVersion'] !== APPLICATION_SCHEMA_VERSION ||
-    value['roles'] !== undefined ||
+    !validRoles(value['roles']) ||
     value['fields'] !== undefined ||
     value['buttons'] !== undefined ||
     !Array.isArray(value['forms']) ||
@@ -151,12 +156,18 @@ export function validateApplicationProject(value: unknown): value is Application
       ids.has(form['id']) ||
       (form['menu'] !== undefined && typeof form['menu'] !== 'boolean') ||
       form['flow'] !== undefined ||
-      form['access'] !== undefined
+      !validAccessPolicy(form['access'], (value['roles'] ?? []) as ApplicationRole[])
     )
       return false;
     const projected = formProject(value, form);
     if (!validateProject(projected)) return false;
     if (!validCollections(projected.fields, form['lists'], form['entries'])) return false;
+    if (
+      ((form['lists'] ?? []) as CollectionList[]).some(
+        (list) => !validAccessPolicy(list.access, (value['roles'] ?? []) as ApplicationRole[]),
+      )
+    )
+      return false;
     ids.add(form['id']);
     definitions += allFields(projected.fields).length;
     buttons += projected.buttons.length;
@@ -175,7 +186,18 @@ function snapshot<T>(value: T): T {
 
 /** Older declarations admit only the features released in that version. */
 function supportsApplicationVersion(project: ApplicationProject, version: string): boolean {
+  if (project.roles !== undefined) return false;
   return project.forms.every((form) => {
+    if (
+      form.access !== undefined ||
+      (form.lists ?? []).some(
+        (list) =>
+          list.access !== undefined ||
+          (list.columnSettings ?? []).some((column) => column.badgeColor !== undefined),
+      )
+    )
+      return false;
+    if (version === '2.3.0') return true;
     if (version === '2.0.0') return form.lists === undefined && form.entries === undefined;
     const roots = new Set(
       form.fields.filter((field) => field.type !== 'group').map((field) => field.id),
@@ -211,7 +233,8 @@ export function parseApplicationProject(value: unknown): ApplicationProject | nu
     value['format'] === 'mockforge-studio' &&
     (value['schemaVersion'] === '2.0.0' ||
       value['schemaVersion'] === '2.1.0' ||
-      value['schemaVersion'] === '2.2.0')
+      value['schemaVersion'] === '2.2.0' ||
+      value['schemaVersion'] === '2.3.0')
   ) {
     const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };
     if (

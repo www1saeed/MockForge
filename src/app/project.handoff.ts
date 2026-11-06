@@ -68,6 +68,13 @@ export function handoff(project: Project | ApplicationProject): string {
   return (
     [
       `# ${inline(project.name)}`,
+      ...('roles' in project
+        ? [
+            '## Simulated roles',
+            JSON.stringify(project.roles ?? []),
+            'Inherited form/list rights are preview simulations, not server authorization.',
+          ]
+        : []),
       '## Product brief',
       `Owner: ${inline(project.owner)}`,
       `Audience: ${inline(project.audience)}`,
@@ -77,6 +84,9 @@ export function handoff(project: Project | ApplicationProject): string {
         'forms' in project && 'id' in form ? `## Form (${inline(form.id)})` : '## Form',
         ...('menu' in form
           ? [`Application menu: ${form.menu === false ? 'Hidden' : 'Included'}`]
+          : []),
+        ...('access' in form
+          ? [`Form access overrides: ${JSON.stringify(form.access ?? {})}`]
           : []),
         `Design: ${design}`,
         `Languages: ${project.languages.join(', ')}`,
@@ -90,6 +100,7 @@ export function handoff(project: Project | ApplicationProject): string {
           ? form.lists.flatMap((list) => [
               `## List (${inline(list.id)})`,
               localized('Title', list.title),
+              `List access overrides: ${JSON.stringify(list.access ?? {})}`,
               `Columns: ${list.columns.join(', ')}; Search fields: ${list.searchFields.join(', ')}; Filters: ${list.filters.join(', ')}`,
               `Fixed filters (AND): ${JSON.stringify(list.presets)}; Sort: ${JSON.stringify(list.sort ?? null)}`,
               `Page size: ${list.pageSize}; Selection: ${list.selectable}; Actions: ${JSON.stringify(list.actions)}`,

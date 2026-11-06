@@ -92,7 +92,8 @@ export class CollectionWorkspaceComponent
       : [value && languages.includes(value) ? value : this.contentLocale()];
   }
   appendOne(): void {
-    void this.data.regenerate(this.data.context(), this.dataLanguages(), 1, true);
+    if (!this.fixturesAllowed()) return;
+    void this.data.regenerate(this.data.context(this.list()?.id), this.dataLanguages(), 1, true);
   }
   columnHeading(id: string): string {
     return (
@@ -106,9 +107,18 @@ export class CollectionWorkspaceComponent
   columnSetting(id: string): CollectionColumnSetting | undefined {
     return this.list()?.columnSettings?.find((column) => column.fieldId === id);
   }
+  allowed(action: CollectionActionKind): boolean {
+    return !!this.list()?.actions[action] && this.data.allowed(action, this.list()?.id);
+  }
+  fixturesAllowed(replace = false): boolean {
+    return (
+      this.data.allowed('create', this.list()?.id) &&
+      (!replace || !this.data.records().length || this.data.allowed('delete', this.list()?.id))
+    );
+  }
   rowActions(): CollectionActionKind[] {
     return [...(this.list()?.actionOrder ?? this.actions)].filter(
-      (kind) => kind !== 'create' && this.list()?.actions[kind],
+      (kind) => kind !== 'create' && this.allowed(kind),
     );
   }
   readonly search = signal('');
@@ -164,6 +174,7 @@ export class CollectionWorkspaceComponent
     super();
     effect(() => {
       this.data.viewSession();
+      void this.data.context(this.list()?.id).accessKey;
       this.list();
       this.data.dataset();
       this.contentLocale();
@@ -221,8 +232,8 @@ export class CollectionWorkspaceComponent
     this.selection.set(new Set(this.matches().map((record) => record.id)));
   }
   regenerate(): void {
-    if (!this.generationValid()) return;
-    const context = this.data.context(),
+    if (!this.generationValid() || !this.fixturesAllowed(true)) return;
+    const context = this.data.context(this.list()?.id),
       count = this.generationCount()!,
       languages = this.dataLanguages();
     const generate = (): void => {
@@ -241,7 +252,8 @@ export class CollectionWorkspaceComponent
     );
   }
   clear(): void {
-    const context = this.data.context();
+    if (!this.data.allowed('delete', this.list()?.id)) return;
+    const context = this.data.context(this.list()?.id);
     this.feedback.requestDelete(
       this.t('listClear'),
       () => {
@@ -251,12 +263,13 @@ export class CollectionWorkspaceComponent
     );
   }
   remove(ids: string[]): void {
-    const context = this.data.context(),
+    if (!this.allowed('delete')) return;
+    const context = this.data.context(this.list()?.id),
       list = this.list();
     this.feedback.requestDelete(
       `${ids.length} ${this.t('listRecords')}`,
       () => {
-        if (this.list() === list && list?.actions.delete && this.data.current(context))
+        if (this.list() === list && this.allowed('delete') && this.data.current(context))
           this.data.remove(ids, context);
       },
       'listDeleteRecordsDescription',
@@ -264,15 +277,15 @@ export class CollectionWorkspaceComponent
   }
   open(mode: 'new' | 'edit' | 'view', record?: CollectionRecord): void {
     const action = mode === 'new' ? 'create' : mode;
-    if (!this.list()?.actions[action] || this.data.stale() || this.data.busy()) return;
-    this.editing.set({ mode, record, context: this.data.context() });
+    if (!this.allowed(action) || this.data.stale() || this.data.busy()) return;
+    this.editing.set({ mode, record, context: this.data.context(this.list()?.id) });
     this.dialog.nativeElement.showModal();
   }
   save(values: ResponseValues): void {
     const editor = this.editing();
     if (!editor || editor.mode === 'view') return;
     if (
-      this.list()?.actions[editor.mode === 'new' ? 'create' : 'edit'] &&
+      this.allowed(editor.mode === 'new' ? 'create' : 'edit') &&
       this.data.save(values, editor.context, editor.record?.id)
     )
       this.close();

@@ -1,5 +1,19 @@
 # Code quality and test evidence
 
+## PR #9 review corrections — November 6, 2026
+
+**314 Studio tests pass: 229 Jest cases in 30 suites and 85 registered Chromium journeys.** Ten selector checks remain separate. Coverage: 95.70% statements, 90.45% branches, 96.30% functions, 97.55% lines. Five new unit/component cases cover missing-language role drafts and review gating, live empty inputs/storage, constructor inheritance and dialog labels, defensive policy ownership/reference stability and denied versus empty home states. Two browser journeys exercise real language activation, input errors/reload/approval, own policy lookups and blocked home in both in-app and offline previews.
+
+Production build passes at 922.49kB initial size against unchanged 700kB warning / 1MB failure. No schema, dependency or resource-budget changes. Lint/format/app+spec+E2E types, 582 translations, kit and local documentation links are checked. Final full evidence: reports/pr9-review-fixes-final-e2e.json; 262.41s, two workers, zero retries/skips/flaky/unexpected/report errors. CI requires its own run after push.
+
+
+## Simulated roles, badge colors and group chips — November 6, 2026
+
+**307 Studio tests pass: 224 Jest cases in 30 suites plus 83 registered Chromium journeys.** Ten selector checks remain separate. Coverage: 95.69% statements, 90.06% branches, 96.23% functions, 97.57% lines. Ten new unit/component cases cover bounded role imports, inherited effective rights, parent/action gates, historical feature checks, authoring/deletion, store writes and late generation, direct-route/confirmation cleanup and rapid role round-trip invalidation, normal form simulation guards and colored structured group chips. Four new browser journeys cover the matrix, real CRUD/role switching, palette persistence across layouts and actual offline Persian mobile Axe/storage/network isolation. Existing workflow tests include all five tabs.
+
+Full evidence: reports/roles-final-e2e.json; 236.71 seconds, two workers, zero retries/skips/flaky/unexpected/report errors. Format/lint/app+spec+E2E types, 580 translations, synchronized kit and local documentation links are checked. Production initial bundle: 920.55 kB against unchanged 700kB warning / 1MB failure budgets; 142 local documentation targets pass. Studio 2.4 adds bounded roles/access and badge colors; the legacy renderer/batch projection remains 1.3. No dependency, worker or generation budget increase. CI requires its own run after push.
+
+
 ## PR #8 review corrections — November 6, 2026
 
 **293 Studio tests pass: 214 Jest cases in 28 suites and 79 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.84% statements, 90.38% branches, 96.08% functions, 97.55% lines. Eight new unit/component regressions cover stale append rejection, per-form/project/retained-size limits and concurrent capacity changes, explicit unsorted order, selected-child queries, historical import capabilities, implicit single-child selection and stable dialog scopes. Two new browser journeys exercise card/accordion sorting/search and the single-child checkbox.

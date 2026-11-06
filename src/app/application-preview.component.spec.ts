@@ -1,3 +1,4 @@
+import { ALLOW_RIGHTS } from './application-access';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { CollectionWorkspaceComponent } from './collection-workspace.component';
@@ -123,5 +124,91 @@ describe('Application preview cursor', () => {
     fixture.detectChanges();
     TestBed.tick();
     expect(component.target()).toBeNull();
+  });
+  it('gates direct routes, filters menus and retires dialogs on a transient role switch while copy edits retain scope', () => {
+    TestBed.configureTestingModule({ providers: [ProjectStore, CollectionSessionRegistry] });
+    const store = TestBed.inject(ProjectStore),
+      form = store.activeFormId();
+    store.configureAccess(
+      [
+        { id: 'editor', label: text('Editor', 'Editor', 'ویرایشگر'), rights: { ...ALLOW_RIGHTS } },
+        {
+          id: 'reader',
+          label: text('Lesend', 'Reader', 'خواننده'),
+          rights: { ...ALLOW_RIGHTS, edit: false, delete: false },
+        },
+      ],
+      store.application().forms.map((f) => ({ ...f, access: { reader: { open: false } } })),
+    );
+    const fixture = TestBed.createComponent(ApplicationPreviewComponent);
+    fixture.componentRef.setInput('route', { kind: 'form', formId: form });
+    fixture.detectChanges();
+    TestBed.tick();
+    const c = fixture.componentInstance,
+      feedback = TestBed.inject(FeedbackService),
+      confirmation = jest.fn();
+    feedback.requestDelete('Live', confirmation);
+    const epoch = c.scope.epoch(),
+      before = store.application();
+    store.configureAccess(
+      before.roles!.map((role) => ({
+        ...role,
+        label: { ...role.label, de: role.label.de + ' copy' },
+      })),
+    );
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(c.scope.epoch()).toBe(epoch);
+    expect(feedback.deletion()).not.toBeNull();
+    const saved = JSON.stringify(store.application());
+    c.access.select('reader');
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(c.target()).toBeNull();
+    expect(c.denied()).toBe(true);
+    expect(c.menu()).toEqual([]);
+    expect(fixture.nativeElement.textContent).toContain('Für diese Rolle gesperrt');
+    expect(feedback.deletion()).toBeNull();
+    feedback.confirmDelete();
+    expect(confirmation).not.toHaveBeenCalled();
+    expect(JSON.stringify(store.application())).toBe(saved);
+    c.access.select('editor');
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(c.target()?.formId).toBe(form);
+  });
+  it('distinguishes a role denied home from a genuinely empty menu and missing routes', () => {
+    TestBed.configureTestingModule({ providers: [ProjectStore, CollectionSessionRegistry] });
+    const store = TestBed.inject(ProjectStore);
+    store.configureAccess([
+      {
+        id: 'blocked',
+        label: text('Gesperrt', 'Blocked', 'مسدود'),
+        rights: { open: false, view: false, create: false, edit: false, delete: false },
+      },
+      { id: 'editor', label: text('Editor', 'Editor', 'ویرایشگر'), rights: { ...ALLOW_RIGHTS } },
+    ]);
+    const f = TestBed.createComponent(ApplicationPreviewComponent);
+    f.detectChanges();
+    TestBed.tick();
+    const c = f.componentInstance;
+    expect(c.target()).toBeNull();
+    expect(c.denied()).toBe(true);
+    expect(f.nativeElement.querySelector('.application-frame h2').textContent).toContain(
+      'Für diese Rolle gesperrt',
+    );
+    c.access.select('editor');
+    f.detectChanges();
+    TestBed.tick();
+    expect(c.target()).not.toBeNull();
+    expect(c.denied()).toBe(false);
+    store.setFormMenu(false);
+    f.detectChanges();
+    TestBed.tick();
+    expect(c.target()).toBeNull();
+    expect(c.denied()).toBe(false);
+    f.componentRef.setInput('route', { kind: 'missing' });
+    f.detectChanges();
+    expect(c.denied()).toBe(false);
   });
 });

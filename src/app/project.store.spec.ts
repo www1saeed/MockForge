@@ -1,3 +1,5 @@
+import { ALLOW_RIGHTS } from './application-access';
+import { createCollectionList } from './collection.model';
 import { ProjectStore } from './project.store';
 import {
   example,
@@ -9,6 +11,61 @@ import {
 } from './project';
 
 describe('ProjectStore', (): void => {
+  test('owns access patches without cloning untouched forms or field definitions and rejects foreign scopes atomically', () => {
+    const store = new ProjectStore();
+    store.update({ fields: [createField('text', 'name'), createField('group', 'items')] });
+    store.updateCollections([createCollectionList(store.project().fields, [])]);
+    const own = store.activeFormId();
+    store.addForm(text('Second', 'Second'));
+    store.selectForm(own);
+    const roles = [
+        { id: 'editor', label: text('Editor', 'Editor', 'ویرایشگر'), rights: { ...ALLOW_RIGHTS } },
+      ],
+      before = store.application().forms;
+    expect(store.configureAccess(roles)).toBe(true);
+    expect(store.application().forms[0]).toBe(before[0]);
+    expect(store.application().forms[1]).toBe(before[1]);
+    roles[0].label.de = 'Caller edit';
+    roles[0].rights.delete = false;
+    expect(store.application().roles![0].label.de).toBe('Editor');
+    expect(store.application().roles![0].rights.delete).toBe(true);
+    const access = { editor: { view: false } },
+      listAccess = { editor: { edit: false } },
+      live = store.application();
+    expect(
+      store.configureAccess(
+        live.roles!,
+        live.forms.map((form) =>
+          form.id === own
+            ? {
+                ...form,
+                access,
+                lists: form.lists!.map((list) => ({ ...list, access: listAccess })),
+              }
+            : form,
+        ),
+      ),
+    ).toBe(true);
+    expect(store.application().forms[0].fields).toBe(before[0].fields);
+    expect(store.application().forms[1]).toBe(before[1]);
+    access.editor.view = true;
+    listAccess.editor.edit = true;
+    expect(store.application().forms[0].access!.editor.view).toBe(false);
+    expect(store.application().forms[0].lists![0].access!.editor.edit).toBe(false);
+    const valid = store.application();
+    for (const forms of [
+      [],
+      [valid.forms[0], valid.forms[0]],
+      valid.forms.map((form, index) => (index ? { ...form, id: 'foreign' } : form)),
+      valid.forms.map((form, index) => (index ? form : { ...form, lists: [] })),
+      valid.forms.map((form, index) =>
+        index ? form : { ...form, lists: form.lists!.map((list) => ({ ...list, id: 'foreign' })) },
+      ),
+    ]) {
+      expect(store.configureAccess(valid.roles!, forms)).toBe(false);
+      expect(store.application()).toBe(valid);
+    }
+  });
   test('persists menu visibility as reviewed form configuration without changing selection', (): void => {
     const store = new ProjectStore();
     store.updateReview({
@@ -130,7 +187,7 @@ describe('ProjectStore', (): void => {
     localStorage.setItem(STORAGE_KEY, raw);
     const store = new ProjectStore();
     store.restore();
-    expect(store.application().schemaVersion).toBe('2.3.0');
+    expect(store.application().schemaVersion).toBe('2.4.0');
     const group = store.project().fields.find((field): boolean => !!field.group)!;
     expect(store.project().review.approvedAt).toBeNull();
     expect(localStorage.getItem(STORAGE_KEY)).toBe(raw);

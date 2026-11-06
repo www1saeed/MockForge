@@ -1,0 +1,116 @@
+<section class="access-editor" [attr.aria-label]="t('rolesTitle')">
+  <h2>{{ t('rolesTitle') }}</h2>
+  <p>{{ t('rolesHint') }}</p>
+  <div class="role-actions">
+    <button class="secondary-button" (click)="add()" [disabled]="roles().length >= limit">
+      {{ t('roleAdd') }}
+    </button>
+    @if (role(); as current) {
+      <label for="configured-role">{{ t('roleSelect') }}</label>
+      <select id="configured-role" [ngModel]="current.id" (ngModelChange)="selected.set($event)">
+        @for (item of roles(); track item.id) {
+          <option [value]="item.id">{{ item.label[locale()].trim() || item.id }}</option>
+        }
+      </select>
+      <button class="text-button" (click)="remove()">{{ t('roleRemove') }}</button>
+    }
+  </div>
+  @if (role(); as current) {
+    <fieldset class="role-labels">
+      <legend>{{ t('roleName') }}</legend>
+      @for (lang of store.application().languages; track lang) {
+        <label
+          >{{ lang.toUpperCase()
+          }}<input
+            [attr.aria-label]="t('roleName') + ' ' + lang.toUpperCase()"
+            required
+            [attr.aria-invalid]="!current.label[lang].trim() ? 'true' : null"
+            [attr.aria-describedby]="!current.label[lang].trim() ? 'role-name-error-' + lang : null"
+            maxlength="256"
+            [ngModel]="current.label[lang]"
+            (ngModelChange)="label(lang, $event)"
+          />
+          @if (!current.label[lang].trim()) {
+            <small [id]="'role-name-error-' + lang" class="role-name-error">{{
+              t('roleNameRequired')
+            }}</small>
+          }
+        </label>
+      }
+    </fieldset>
+    <fieldset class="role-defaults">
+      <legend>{{ t('roleDefaults') }}</legend>
+      @for (key of rights; track key) {
+        <label class="check-row"
+          ><input
+            type="checkbox"
+            [ngModel]="current.rights[key]"
+            (ngModelChange)="defaultRight(key, $event)"
+          />{{ rightLabel(key) }}</label
+        >
+      }
+    </fieldset>
+    <p>{{ t('roleInheritanceHint') }}</p>
+    <div
+      class="access-matrix-scroll"
+      tabindex="0"
+      role="region"
+      [attr.aria-label]="t('rightsMatrix')"
+    >
+      <table class="access-matrix">
+        <caption>
+          {{
+            t('rightsMatrix')
+          }}
+          ·
+          {{
+            current.label[locale()].trim() || current.id
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ t('roleScreen') }}</th>
+            @for (key of rights; track key) {
+              <th scope="col">{{ rightLabel(key) }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr [class.role-list-row]="row.listId">
+              <th scope="row">
+                {{ row.label[locale()] || row.id }}<small>{{ row.id }}</small>
+              </th>
+              @for (key of rights; track key) {
+                <td>
+                  <label
+                    ><span class="visually-hidden"
+                      >{{ row.label[locale()] || row.id }} · {{ rightLabel(key) }}</span
+                    >
+                    <select
+                      [ngModel]="choice(row.policy, key)"
+                      (ngModelChange)="override(row.formId, row.listId, key, $event)"
+                    >
+                      <option value="inherit">{{ t('accessInherit') }}</option>
+                      <option value="allow">{{ t('accessAllow') }}</option>
+                      <option value="deny">{{ t('accessDeny') }}</option>
+                    </select></label
+                  >
+                  <small
+                    class="effective-right"
+                    [class.right-denied]="!effective(row.formId, row.listId, key)"
+                    >{{
+                      t(effective(row.formId, row.listId, key) ? 'accessAllowed' : 'accessBlocked')
+                    }}</small
+                  >
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <p>{{ t('rolesDisabled') }}</p>
+  }
+</section>

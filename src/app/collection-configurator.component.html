@@ -302,6 +302,20 @@
                   }
                 </select></label
               >
+              @if (['badge', 'chips', 'count'].includes(column(id).display ?? '')) {
+                <label
+                  >{{ t('badgeColor') }}
+                  <select
+                    [attr.aria-label]="t('badgeColor') + ': ' + text(field(id).label)"
+                    [ngModel]="column(id).badgeColor ?? 'neutral'"
+                    (ngModelChange)="columnPatch(id, { badgeColor: $event })"
+                  >
+                    @for (color of badgeColors; track color) {
+                      <option [value]="color">{{ tColor(color) }}</option>
+                    }
+                  </select>
+                </label>
+              }
               @if (field(id).group; as group) {
                 <fieldset class="collection-group-field-settings">
                   <legend>{{ t('listGroupFields') }}</legend>

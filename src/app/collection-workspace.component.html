@@ -41,18 +41,22 @@
       <button
         class="secondary-button"
         (click)="regenerate()"
-        [disabled]="data.busy() || !generationValid()"
+        [disabled]="data.busy() || !generationValid() || !fixturesAllowed(true)"
       >
         {{ t('listGenerate') }}
       </button>
       <button
         class="secondary-button"
         (click)="clear()"
-        [disabled]="data.busy() || !data.records().length"
+        [disabled]="data.busy() || !data.records().length || !data.allowed('delete', view.id)"
       >
         {{ t('listClear') }}
       </button>
-      <button class="secondary-button" [disabled]="!data.canAppend()" (click)="appendOne()">
+      <button
+        class="secondary-button"
+        [disabled]="!data.canAppend() || !fixturesAllowed()"
+        (click)="appendOne()"
+      >
         {{ t('listAddFixture') }}
       </button>
       <button
@@ -162,7 +166,7 @@
             </select></label
           >
         }
-        @if (view.actions.create) {
+        @if (allowed('create')) {
           <app-collection-action
             [setting]="button('create')"
             [label]="actionLabel('create')"
@@ -214,7 +218,7 @@
           {{ t('listSelectAll') }} ({{ matches().length }})
         </button>
       }
-      @if (view.selectable && selectedIds().length && view.actions.delete) {
+      @if (view.selectable && selectedIds().length && allowed('delete')) {
         <app-collection-action
           [setting]="button('delete')"
           [label]="button('delete').label[contentLocale()].trim() || t('listDeleteSelected')"

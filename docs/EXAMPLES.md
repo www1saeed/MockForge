@@ -3,7 +3,7 @@
 Open **Business examples** and choose a project. Replacement always asks for
 confirmation; export the current draft first or cancel to keep it. The gallery,
 JSON-authoring guide, downloadable JSON files and AI authoring kit all use the
-same three Studio 2.3.0 application snapshots. Every example includes DE/EN/FA
+same three Studio 2.4.0 application snapshots. Every example includes DE/EN/FA
 copy, with German/English initially active and no recorded approval.
 
 | Level | Forms and lists | What to try |
@@ -26,32 +26,11 @@ are 8 contacts, 12 requests in the middle example, and 18 requests/10 suppliers 
 the extensive example. They start empty and generated values remain session-only.
 JSON/Markdown retain configuration; offline HTML starts with fresh record sessions.
 
-## Preparing future user roles
+## Simulated roles and remaining policy questions
 
-Stable form/list IDs, explicit status fields and separate request/supplier forms
-give the later role increment concrete boundaries. The following is a **planning
-matrix**, recorded in the examples' brief/questions; it is not active authorization.
+The workspace now demonstrates three active simulated roles: Coordinator (all enabled actions), Purchasing (edit without delete and supplier creation), and Observer (read requests, supplier screens blocked). Select a role in application preview or the offline export. The first two examples stay unrestricted. See [role inheritance and limits](ROLE_ACCESS.md). Existing overview/directory action switches remain effective for every role. Presets do not enforce ownership and View still shows the complete record. Contact responsibility fields remain business labels.
 
-| Planned role | Intended responsibility | Questions for the later implementation |
-| --- | --- | --- |
-| Coordinator (simple example) | Maintain contact requests | Which users may see email addresses or delete a request? |
-| Requester | Create and maintain own request drafts and their positions | How is ownership established? Which fields/rows become read-only after submission? |
-| Purchasing | Process requests and maintain supplier master data | Who may change status, approve amounts or delete records? |
-| Observer | Read overviews and directories | Which fields may appear in lists, full record dialogs and exports? |
-
-`request-overview` and `supplier-directory` turn off create/edit/delete and
-selection while retaining View. `new-requests` and `active-suppliers` demonstrate
-fixed presets; `review-queue` combines in-review status and high priority. Every
-current viewer sees the same configured views and switches. A preset, hidden menu
-item, omitted table column or read-only list is not a user permission or an
-own-record restriction. View dialogs currently expose the complete record.
-Contact **Business responsibility** choices describe people, never application roles.
-
-No `roles`, `access`, login credentials, invented user identities or unsupported
-policy properties are inserted into the project JSON. The later role resolver
-must cover parent-inherited repeat-row rights, full record dialogs, field visibility,
-read-only value preservation, configured actions and handler checks. Real production
-authorization and identity must be implemented on the server too.
+Field visibility/read-only rules, record ownership, user identity, status transitions and production server authorization are future decisions. No credentials or selected actor are stored.
 
 ## Source and verification
 

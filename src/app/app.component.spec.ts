@@ -3,6 +3,33 @@ import { AppComponent } from './app.component';
 import { createButton, createField, example, FieldType, parseApplicationProject } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('saves incomplete role copy and permits language activation while keeping approval blocked until names are complete', (): void => {
+    const app = TestBed.createComponent(AppComponent).componentInstance;
+    app.update({ owner: 'Owner', questions: '' });
+    const role = {
+      id: 'buyer',
+      label: { de: 'Einkauf', en: 'Purchasing', fa: '' },
+      rights: { open: true, view: true, create: false, edit: false, delete: false },
+    };
+    app.store.configureAccess([role]);
+    app.setReviewer('Reviewer');
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(true);
+    app.store.update({ languages: ['de', 'fa'] });
+    expect(app.project().languages).toEqual(['de', 'fa']);
+    expect(app.store.mutationError()).toBe(false);
+    expect(app.roleNamesComplete()).toBe(false);
+    app.store.update({ languages: ['de', 'en'] });
+    app.store.configureAccess([{ ...role, label: { ...role.label, de: '' } }]);
+    app.setReviewer('Reviewer');
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(false);
+    app.approve();
+    expect(app.project().review.approvedAt).toBeNull();
+    app.store.configureAccess([role]);
+    for (let index = 0; index < 5; index++) app.setCheck(index, true);
+    expect(app.canApprove()).toBe(true);
+  });
   test('cross-form cuts move invalid drafts and cannot contaminate reused source IDs', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.addField();

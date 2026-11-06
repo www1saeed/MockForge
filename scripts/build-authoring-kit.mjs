@@ -27,6 +27,25 @@ const applicationContract = applicationAst.statements
   )
   .map((node) => node.getFullText(applicationAst).trim())
   .join('\n\n');
+const access = await read('src/app/application-access.ts');
+const accessAst = ts.createSourceFile(
+  'application-access.ts',
+  access,
+  ts.ScriptTarget.Latest,
+  true,
+);
+const accessContract = accessAst.statements
+  .filter(
+    (node) =>
+      ts.isInterfaceDeclaration(node) ||
+      ts.isTypeAliasDeclaration(node) ||
+      (ts.isVariableStatement(node) &&
+        node.declarationList.declarations.some((d) =>
+          ['ACCESS_RIGHTS', 'ROLE_LIMIT'].includes(d.name.getText(accessAst)),
+        )),
+  )
+  .map((node) => node.getFullText(accessAst).trim())
+  .join('\n\n');
 const collection = await read('src/app/collection.model.ts');
 const collectionAst = ts.createSourceFile(
   'collection.model.ts',
@@ -47,7 +66,7 @@ const collectionContract = collectionAst.statements
   .join('\n\n');
 const presentation = await read('src/app/collection-presentation.ts');
 const presentationContract = presentation.slice(
-  presentation.indexOf('export const TABLE_DESIGNS'),
+  presentation.indexOf('export const BADGE_COLORS'),
   presentation.indexOf('export const DEFAULT_APPEARANCE'),
 );
 const { rules } = JSON.parse(await read('src/assets/guides/studio-authoring-rules.json'));
@@ -57,13 +76,13 @@ const examples = await Promise.all(
       `BEGIN EXAMPLE ${file}\n${JSON.stringify(JSON.parse(await read(`src/assets/guides/${file}`)), null, 2)}\nEND EXAMPLE ${file}`,
   ),
 );
-const content = `MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.3.0
+const content = `MOCKFORGE STUDIO AI AUTHORING KIT — SCHEMA 2.4.0
 
 Attach this UTF-8 text file to a chatbot together with your brief or current Studio export.
 This file is reference material, not an importable JSON file. The three complete examples below
 are importable separately. The English TypeScript declarations describe JSON keys and types;
 output JSON, not TypeScript. Other MockForge editions use a different contract.
-New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.3.0".
+New files use ApplicationProject with format "mockforge-studio" and schemaVersion "2.4.0".
 Project below describes the legacy 1.3.0 single-form import/renderer contract only.
 
 AUTHORING RULES
@@ -73,6 +92,7 @@ BEGIN STUDIO TYPE CONTRACT
 ${contract.trim()}
 ${presentationContract}
 ${collectionContract}
+${accessContract}
 ${applicationContract}
 END STUDIO TYPE CONTRACT
 

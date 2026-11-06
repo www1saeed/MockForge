@@ -80,3 +80,5 @@ answer/record exclusion, check real-worker timeout and recovery, retain repeat
 rows through locale changes, render hostile HTML as text and check Persian mobile
 Axe/layout. Unit tests cover capture/privacy/escaping/limits, obsolete project
 captures, asset retry and disposal. Full browser regression remains the default.
+
+Role definitions and form/list policies are retained in offline captures; selected roles are not. The first configured role starts each new session. Role changes enforce the same shared screen/action checks and retire unsaved work. Badge palettes and labelled repeated-row chips use the same components and styles as Studio. See [roles and boundaries](ROLE_ACCESS.md).

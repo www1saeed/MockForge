@@ -40,7 +40,7 @@ describe('Current application example catalogue', () => {
     first.forms[0].fields.find((field) => field.group)!.group!.fields[0].label.de = 'Changed child';
     expect(applicationExample('workspace')).toEqual(APPLICATION_EXAMPLES[2].value);
   });
-  it('prepares business responsibilities and read-only views without inventing role contracts', () => {
+  it('demonstrates simulated roles while preserving per-view action restrictions', () => {
     const project = applicationExample('workspace');
     for (const form of project.forms) {
       const readOnly = form.lists!.find(
@@ -48,9 +48,13 @@ describe('Current application example catalogue', () => {
       )!;
       expect(readOnly.actions.view).toBe(true);
       expect(readOnly.selectable).toBe(false);
-      expect(form).not.toHaveProperty('access');
     }
-    expect(project).not.toHaveProperty('roles');
+    expect(project.roles?.map((role) => role.id)).toEqual([
+      'coordinator',
+      'purchasing',
+      'observer',
+    ]);
+    expect(project.forms[1].access?.['observer'].open).toBe(false);
     expect(project.decisions).toContain('not role permissions');
     expect(project.questions).toContain('server authorization');
     const queue = project.forms[0].lists!.find((list) => list.id === 'review-queue')!;

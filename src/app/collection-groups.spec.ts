@@ -139,7 +139,7 @@ describe('Grouped list projections', () => {
     };
     f.lists = [list];
     const old = { ...p, schemaVersion: '2.1.0' };
-    expect(parseApplicationProject(old)?.schemaVersion).toBe('2.3.0');
+    expect(parseApplicationProject(old)?.schemaVersion).toBe('2.4.0');
     const presented = { ...list, columnSettings: [{ ...setting, fieldId: 'rootname' }] };
     f.lists = [presented];
     expect(parseApplicationProject({ ...p, schemaVersion: '2.2.0' })).not.toBeNull();
@@ -164,7 +164,7 @@ describe('Grouped list projections', () => {
     }
     f.lists = [list];
     expect(parseApplicationProject({ ...p, schemaVersion: '2.0.0' })).toBeNull();
-    expect(p.schemaVersion).toBe('2.3.0');
+    expect(p.schemaVersion).toBe('2.4.0');
   });
   it('preserves an open projected-child dialog through equivalent field and value clones', () => {
     TestBed.configureTestingModule({ imports: [CollectionCellComponent] });
@@ -272,5 +272,31 @@ describe('Grouped list projections', () => {
     f.detectChanges();
     expect(f.componentInstance.mode()).toBe('text');
     expect(f.nativeElement.querySelector('.collection-group-trigger')).toBeNull();
+  });
+  it('renders colored badges and numbered group chips with selected labels and no hidden children', () => {
+    TestBed.configureTestingModule({ imports: [CollectionCellComponent] });
+    const f = TestBed.createComponent(CollectionCellComponent);
+    f.componentRef.setInput('field', group);
+    f.componentRef.setInput('values', values);
+    f.componentRef.setInput('locale', 'en');
+    f.componentRef.setInput('setting', {
+      ...setting,
+      display: 'chips',
+      groupFields: ['name'],
+      badgeColor: 'violet',
+    });
+    f.detectChanges();
+    expect(f.nativeElement.querySelectorAll('ol > li')).toHaveLength(2);
+    expect(f.nativeElement.querySelectorAll('dt')[0].textContent).toBe('Item');
+    expect(f.nativeElement.querySelectorAll('[data-badge-color="violet"]')).toHaveLength(2);
+    expect(f.nativeElement.textContent).not.toContain('Quantity');
+    f.componentRef.setInput('field', createField('text', 'name'));
+    f.componentRef.setInput('values', { name: '<script>' });
+    f.componentRef.setInput('setting', { ...setting, display: 'badge', badgeColor: 'red' });
+    f.detectChanges();
+    expect(
+      f.nativeElement.querySelector('.collection-badge').getAttribute('data-badge-color'),
+    ).toBe('red');
+    expect(f.nativeElement.querySelector('script')).toBeNull();
   });
 });

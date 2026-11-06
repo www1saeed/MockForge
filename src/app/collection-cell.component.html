@@ -3,6 +3,7 @@
     type="button"
     class="collection-group-trigger"
     [class.collection-badge]="mode() === 'count'"
+    [attr.data-badge-color]="setting()?.badgeColor ?? 'neutral'"
     [attr.aria-label]="t('groupDetails') + ': ' + title() + ' (' + itemCount() + ')'"
     aria-haspopup="dialog"
     (click)="openDetails()"
@@ -33,7 +34,7 @@
 }
 <ng-template #valueBody>
   @if (renderMode() === 'count') {
-    <span class="collection-badge">{{
+    <span class="collection-badge" [attr.data-badge-color]="setting()?.badgeColor ?? 'neutral'">{{
       field().group ? rows().length : raw() === undefined ? 0 : itemCount()
     }}</span>
   } @else if (field().group && renderMode() === 'table') {
@@ -103,6 +104,27 @@
         <span>—</span>
       }
     </div>
+  } @else if (field().group && renderMode() === 'chips') {
+    <ol tabindex="0" class="collection-group-chips" [attr.aria-label]="field().label[locale()]">
+      @for (row of rows(); track $index; let index = $index) {
+        <li
+          class="collection-group-chip"
+          [attr.data-badge-color]="setting()?.badgeColor ?? 'neutral'"
+        >
+          <span class="collection-chip-index" aria-hidden="true">{{ index + 1 }}</span>
+          <dl>
+            @for (child of children(); track child.id) {
+              <div>
+                <dt>{{ child.label[locale()] }}</dt>
+                <dd>{{ childValue(row, child) }}</dd>
+              </div>
+            }
+          </dl>
+        </li>
+      } @empty {
+        <li>—</li>
+      }
+    </ol>
   } @else if (renderMode() === 'badge' || renderMode() === 'chips') {
     <span
       class="collection-chips"
@@ -111,7 +133,11 @@
       [attr.aria-label]="field().label[locale()]"
     >
       @for (part of parts(); track $index) {
-        <span class="collection-badge">{{ part }}</span>
+        <span
+          class="collection-badge"
+          [attr.data-badge-color]="setting()?.badgeColor ?? 'neutral'"
+          >{{ part }}</span
+        >
       }
     </span>
   } @else {
