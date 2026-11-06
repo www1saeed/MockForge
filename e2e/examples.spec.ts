@@ -27,6 +27,7 @@ async function load(page: Page, kind: ApplicationExampleKind): Promise<void> {
 }
 async function application(page: Page): Promise<void> {
   await page.locator('.sidebar a[href="#application"]').click();
+  await page.locator('#preview-user').selectOption('admin-demo');
 }
 
 test(
@@ -146,6 +147,7 @@ test(
     const context = await browser.newContext({ offline: true });
     const preview = await context.newPage();
     await preview.goto(pathToFileURL(destination).href);
+    await preview.locator('#preview-user').selectOption('admin-demo');
     await expect(preview.locator('.application-menu a')).toHaveCount(9);
     await expect(preview.locator('.rendered-form')).toHaveClass(/theme-fluent/);
     await expect(preview.locator('#preview-request-title')).toHaveCSS(
