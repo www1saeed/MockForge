@@ -1,5 +1,11 @@
 # Code quality and test evidence
 
+## PR #8 review corrections — November 6, 2026
+
+**293 Studio tests pass: 214 Jest cases in 28 suites and 79 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.84% statements, 90.38% branches, 96.08% functions, 97.55% lines. Eight new unit/component regressions cover stale append rejection, per-form/project/retained-size limits and concurrent capacity changes, explicit unsorted order, selected-child queries, historical import capabilities, implicit single-child selection and stable dialog scopes. Two new browser journeys exercise card/accordion sorting/search and the single-child checkbox.
+
+Production build passes at 903.27 kB initial size against unchanged 700 kB warning / 1 MB failure. No dependency, schema or resource-budget changes. Format/lint/types, 552 translations, kit synchronization and local documentation references are checked. Full browser evidence: reports/pr8-review-fixes-final-e2e.json; 241.32 seconds, two workers, no retries/skips/flaky/unexpected results or report errors. CI needs its own run after push.
+
 ## List usability checkpoint — November 5, 2026
 
 **283 Studio tests pass: 206 Jest cases in 28 suites plus 77 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.70% statements, 90.05% branches, 95.99% functions, 97.45% lines. Format/lint/app+spec+E2E types, 549 translations, synchronized kit, local documentation references and production build pass. Initial bundle901.23kB; unchanged700kB warning/1MB failure. No new dependency, schema revision or resource-budget increase.
