@@ -1,3 +1,4 @@
+import { FieldModes, fieldMode } from './field-access';
 import {
   Component,
   effect,
@@ -36,6 +37,11 @@ interface PreviewRow {
 export class RepeatGroupComponent {
   readonly feedback = inject(FeedbackService);
   readonly field = input.required<Field>();
+  readonly fieldModes = input<FieldModes>({});
+  readonly structureReadOnly = input(false);
+  readOnly(child: Field): boolean {
+    return fieldMode(this.fieldModes(), this.field().id + '/' + child.id) !== 'editable';
+  }
   readonly locale = input.required<Locale>();
   readonly resetToken = input(0);
   readonly patternInput = output<PatternInput>();
@@ -66,7 +72,7 @@ export class RepeatGroupComponent {
 
   addEntry(): void {
     const group = this.field().group;
-    if (!group || this.rows().length >= group.maxItems) return;
+    if (this.structureReadOnly() || !group || this.rows().length >= group.maxItems) return;
     this.rows.update((rows): PreviewRow[] => [...rows, { id: ++this.sequence }]);
     this.responsesChanged.emit();
     this.feedback.notify('entryAdded', 'info');
@@ -74,6 +80,13 @@ export class RepeatGroupComponent {
 
   /** Never discard existing responses without the explicit replace setting. */
   resizeForTestData(count: number, replace: boolean): boolean {
+    if (this.structureReadOnly()) return false;
+    return this.resize(count, replace);
+  }
+  restoreRows(count: number): void {
+    this.resize(count, true);
+  }
+  private resize(count: number, replace: boolean): boolean {
     const bounds = this.field().group!;
     const target = Math.max(bounds.minItems, Math.min(bounds.maxItems, count));
     if (target < this.rows().length && !replace) return false;
@@ -90,11 +103,13 @@ export class RepeatGroupComponent {
   removeEntry(row: number): void {
     const group = this.field().group;
     const position = this.rows().findIndex((entry): boolean => entry.id === row) + 1;
-    if (!group || this.rows().length <= group.minItems || !position) return;
+    if (this.structureReadOnly() || !group || this.rows().length <= group.minItems || !position)
+      return;
     this.feedback.requestDelete(
       `${this.text(this.field().label)} · ${this.t('entry')} ${position}`,
       (): void => {
         if (
+          this.structureReadOnly() ||
           this.rows().length <= (this.field().group?.minItems ?? 0) ||
           !this.rows().some((entry): boolean => entry.id === row)
         )

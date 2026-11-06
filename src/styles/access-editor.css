@@ -101,3 +101,29 @@ app-access-editor {
   color: var(--ink);
   font-weight: 700;
 }
+
+.demo-users {
+  display: grid;
+  gap: 1rem;
+  margin-block: 1rem;
+}
+.demo-user {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  min-inline-size: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.demo-user label {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+  max-width: 100%;
+}
+.demo-user input,
+.demo-user select {
+  max-width: 100%;
+  min-width: 0;
+}

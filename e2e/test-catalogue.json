@@ -37,6 +37,7 @@
     "examples": ["authoring", "forms", "lists", "groups"],
     "list-configurator": ["authoring", "lists", "transfer"],
     "list-views": ["lists", "groups", "preview", "test-data"],
-    "roles": ["roles", "navigation", "lists", "authoring"]
+    "roles": ["roles", "navigation", "lists", "authoring"],
+    "field-access": ["roles", "forms", "lists", "groups", "preview"]
   }
 }

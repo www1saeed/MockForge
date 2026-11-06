@@ -72,6 +72,7 @@ export function handoff(project: Project | ApplicationProject): string {
         ? [
             '## Simulated roles',
             JSON.stringify(project.roles ?? []),
+            `Demo users: ${JSON.stringify('users' in project ? (project.users ?? []) : [])}`,
             'Inherited form/list rights are preview simulations, not server authorization.',
           ]
         : []),
@@ -87,6 +88,12 @@ export function handoff(project: Project | ApplicationProject): string {
           : []),
         ...('access' in form
           ? [`Form access overrides: ${JSON.stringify(form.access ?? {})}`]
+          : []),
+        ...('fieldDefaults' in form || 'fieldAccess' in form
+          ? [
+              `Field defaults: ${JSON.stringify(form.fieldDefaults ?? {})}`,
+              `Field overrides: ${JSON.stringify(form.fieldAccess ?? {})}`,
+            ]
           : []),
         `Design: ${design}`,
         `Languages: ${project.languages.join(', ')}`,

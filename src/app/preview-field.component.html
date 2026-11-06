@@ -12,7 +12,8 @@
       [attr.data-field-id]="field().id"
       dir="auto"
       rows="3"
-      [required]="field().required"
+      [required]="field().required && !readOnly()"
+      [disabled]="readOnly()"
       [placeholder]="text(field().placeholder)"
       [attr.minlength]="field().minLength || null"
       (input)="patternInput.emit({ event: $event, field: field() })"
@@ -26,7 +27,8 @@
       [id]="controlId()"
       [name]="controlId()"
       [attr.data-field-id]="field().id"
-      [required]="field().required"
+      [required]="field().required && !readOnly()"
+      [disabled]="readOnly()"
       [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null"
     >
       <option value="">{{ t('choose') }}</option>
@@ -43,7 +45,8 @@
         [id]="controlId()"
         [name]="controlId()"
         [attr.data-field-id]="field().id"
-        [required]="field().required"
+        [required]="field().required && !readOnly()"
+        [disabled]="readOnly()"
         [attr.aria-describedby]="field().help[locale()] ? 'help-' + controlId() : null"
       /><app-field-title [field]="field()" [locale]="locale()" [enabled]="showTooltip()" />
     </label>
@@ -61,7 +64,8 @@
             [name]="controlId()"
             [attr.data-field-id]="field().id"
             [value]="$index"
-            [required]="field().required"
+            [required]="field().required && !readOnly()"
+            [disabled]="readOnly()"
           />{{ text(option) }}</label
         >
       }
@@ -78,7 +82,8 @@
       [id]="controlId()"
       [name]="controlId()"
       [attr.data-field-id]="field().id"
-      [required]="field().required"
+      [required]="field().required && !readOnly()"
+      [disabled]="readOnly()"
       [placeholder]="text(field().placeholder)"
       [attr.minlength]="field().minLength || null"
       (input)="patternInput.emit({ event: $event, field: field() })"

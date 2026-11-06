@@ -433,7 +433,7 @@
       @if (editor.record; as record) {
         <h3>{{ t('recordView') }}</h3>
         <dl>
-          @for (field of data.form().fields; track field.id) {
+          @for (field of data.renderForm().fields; track field.id) {
             <dt>{{ text(field.label) }}</dt>
             <dd>
               @if (field.group) {
@@ -455,6 +455,7 @@
     } @else {
       <app-form-preview
         [project]="data.projection()"
+        [fieldModes]="data.fieldModes()"
         [uiLocale]="locale()"
         [locale]="contentLocale()"
         [recordMode]="true"

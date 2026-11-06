@@ -183,6 +183,11 @@ export class AppComponent implements OnInit {
       this.store.application().languages.every((lang) => !!role.label[lang].trim()),
     ),
   );
+  readonly userNamesComplete = computed(() =>
+    (this.store.application().users ?? []).every((user) =>
+      this.store.application().languages.every((lang) => !!user.name[lang].trim()),
+    ),
+  );
   readonly canApprove = computed((): boolean => {
     const project = this.project();
     return (
@@ -196,6 +201,7 @@ export class AppComponent implements OnInit {
         project.review.reviewer,
       ].every((value: string): boolean => !!value.trim()) &&
       this.roleNamesComplete() &&
+      this.userNamesComplete() &&
       project.languages.every((lang: Locale): boolean =>
         this.store
           .application()

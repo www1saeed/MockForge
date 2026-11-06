@@ -49,6 +49,7 @@
                   <td>
                     <app-preview-field
                       [field]="child"
+                      [readOnly]="readOnly(child)"
                       [locale]="locale()"
                       [controlId]="controlId(row.id, child)"
                       [showTooltip]="false"
@@ -60,7 +61,7 @@
                   <button
                     type="button"
                     class="repeat-remove"
-                    [disabled]="rows().length <= group.minItems"
+                    [disabled]="structureReadOnly() || rows().length <= group.minItems"
                     [attr.aria-label]="t('removeEntry') + ' ' + (index + 1)"
                     [appBootstrapTooltip]="
                       rows().length > group.minItems ? t('removeEntry') + ' ' + (index + 1) : null
@@ -99,7 +100,7 @@
               <button
                 type="button"
                 class="repeat-remove"
-                [disabled]="rows().length <= group.minItems"
+                [disabled]="structureReadOnly() || rows().length <= group.minItems"
                 [attr.aria-label]="t('removeEntry') + ' ' + (index + 1)"
                 [appBootstrapTooltip]="
                   rows().length > group.minItems ? t('removeEntry') + ' ' + (index + 1) : null
@@ -123,6 +124,7 @@
               @for (child of group.fields; track child.id) {
                 <app-preview-field
                   [field]="child"
+                  [readOnly]="readOnly(child)"
                   [locale]="locale()"
                   [controlId]="controlId(row.id, child)"
                   [showTooltip]="index === 0"
@@ -143,7 +145,7 @@
     <button
       type="button"
       class="btn repeat-add"
-      [disabled]="rows().length >= group.maxItems"
+      [disabled]="structureReadOnly() || rows().length >= group.maxItems"
       (click)="addEntry()"
     >
       + {{ t('addEntry') }}

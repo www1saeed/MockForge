@@ -1,3 +1,14 @@
+import { accessPresets } from './access-presets';
+import {
+  FIELD_MODES,
+  FieldMode,
+  FieldPolicy,
+  FieldAccess,
+  fieldPolicy,
+  ownFieldMode,
+  resolveFieldModes,
+} from './field-access';
+import { collectionFields } from './collection.model';
 import {
   Component,
   computed,
@@ -15,6 +26,7 @@ import {
   AccessPolicy,
   AccessRight,
   ApplicationRole,
+  USER_LIMIT,
   ROLE_LIMIT,
   resolveAccess,
   roleOverrides,
@@ -33,6 +45,39 @@ export class AccessEditorComponent implements OnDestroy {
   readonly store = inject(ProjectStore);
   private readonly feedback = inject(FeedbackService);
   readonly locale = input<Locale>('de');
+  readonly fieldModes = FIELD_MODES;
+  readonly users = computed(() => this.store.application().users ?? []);
+  readonly userLimit = USER_LIMIT;
+  readonly presetNotice = signal<CopyKey | null>(null);
+  readonly presetsComplete = computed(() => {
+    const p = accessPresets();
+    return (
+      p.roles.every((role) =>
+        this.roles().some((item) => item.id === role.id && item.preset === role.preset),
+      ) &&
+      p.users.every((user) =>
+        this.users().some((item) => item.id === user.id && item.roleId === user.roleId),
+      )
+    );
+  });
+  readonly fieldRows = computed(() =>
+    this.store.application().forms.flatMap((form) => [
+      {
+        id: form.id,
+        formId: form.id,
+        ref: undefined as string | undefined,
+        label: form.title,
+        policy: form.fieldDefaults,
+      },
+      ...collectionFields(form.fields).map((field) => ({
+        id: form.id + '/' + field.id,
+        formId: form.id,
+        ref: field.id,
+        label: field.label,
+        policy: fieldPolicy(form.fieldAccess, field.id),
+      })),
+    ]),
+  );
   readonly rights = ACCESS_RIGHTS;
   readonly limit = ROLE_LIMIT;
   readonly selected = signal('');
@@ -100,7 +145,7 @@ export class AccessEditorComponent implements OnDestroy {
   }
   defaultRight(key: AccessRight, value: boolean): void {
     const role = this.role();
-    if (!role) return;
+    if (!role || role.preset === 'admin') return;
     this.store.configureAccess(
       this.roles().map((item) =>
         item.id === role.id ? { ...item, rights: { ...item.rights, [key]: value } } : item,
@@ -109,7 +154,7 @@ export class AccessEditorComponent implements OnDestroy {
   }
   override(formId: string, listId: string | undefined, key: AccessRight, value: string): void {
     const role = this.role();
-    if (!role || !['inherit', 'allow', 'deny'].includes(value)) return;
+    if (!role || role.preset === 'admin' || !['inherit', 'allow', 'deny'].includes(value)) return;
     const patch = (policy: AccessPolicy | undefined): AccessPolicy => {
       const own = { ...roleOverrides(policy, role.id) };
       if (value === 'inherit') delete own[key];
@@ -152,20 +197,166 @@ export class AccessEditorComponent implements OnDestroy {
           !this.roles().some((item) => item.id === role.id)
         )
           return;
-        const prune = (policy: AccessPolicy | undefined): AccessPolicy | undefined =>
-          policy
-            ? Object.fromEntries(Object.entries(policy).filter(([id]) => id !== role.id))
-            : undefined;
+        const prune = <T>(policy: Record<string, T> | undefined): Record<string, T> | undefined => {
+          if (!policy) return undefined;
+          const remaining = Object.entries(policy).filter(([id]) => id !== role.id);
+          return remaining.length ? Object.fromEntries(remaining) : undefined;
+        };
         this.store.configureAccess(
           this.roles().filter((item) => item.id !== role.id),
           this.store.application().forms.map((form) => ({
             ...form,
             access: prune(form.access),
+            fieldDefaults: prune(form.fieldDefaults),
+            fieldAccess: ((): FieldAccess | undefined => {
+              const entries = Object.entries(form.fieldAccess ?? {}).flatMap(([ref, policy]) => {
+                const remaining = prune(policy);
+                return remaining ? [[ref, remaining] as const] : [];
+              });
+              return entries.length ? Object.fromEntries(entries) : undefined;
+            })(),
             lists: form.lists?.map((list) => ({ ...list, access: prune(list.access) })),
           })),
+          this.users().filter((user) => user.roleId !== role.id),
         );
       },
       'roleRemoveHint',
+    );
+  }
+
+  installPresets(): void {
+    if (this.presetsComplete()) return;
+    const p = accessPresets();
+    if (
+      p.roles.some((role) =>
+        this.roles().some((item) => item.id === role.id && item.preset !== role.preset),
+      ) ||
+      p.users.some((user) =>
+        this.users().some((item) => item.id === user.id && item.roleId !== user.roleId),
+      )
+    ) {
+      this.presetNotice.set('presetConflict');
+      return;
+    }
+    const roles = [
+        ...this.roles(),
+        ...p.roles.filter((role) => !this.roles().some((item) => item.id === role.id)),
+      ],
+      users = [
+        ...this.users(),
+        ...p.users.filter((user) => !this.users().some((item) => item.id === user.id)),
+      ];
+    if (roles.length > ROLE_LIMIT || users.length > USER_LIMIT) {
+      this.presetNotice.set('presetLimit');
+      return;
+    }
+    if (this.store.configureAccess(roles, undefined, users))
+      this.presetNotice.set('presetsInstalled');
+  }
+  modeLabel(mode: FieldMode): string {
+    const keys = {
+      hidden: 'fieldHidden',
+      readonly: 'fieldReadonly',
+      editable: 'fieldEditable',
+    } as const;
+    return this.t(keys[mode]);
+  }
+  defaultMode(mode: FieldMode): void {
+    const role = this.role();
+    if (!role || role.preset === 'admin' || !FIELD_MODES.includes(mode)) return;
+    this.store.configureAccess(
+      this.roles().map((item) => (item.id === role.id ? { ...item, fieldMode: mode } : item)),
+    );
+  }
+  fieldChoice(policy: FieldPolicy | undefined): string {
+    return ownFieldMode(policy, this.role()!.id) ?? 'inherit';
+  }
+  fieldEffective(formId: string, ref: string | undefined): FieldMode {
+    const role = this.role();
+    if (!role) return 'hidden';
+    if (role.preset === 'admin') return 'editable';
+    const form = this.store.application().forms.find((form) => form.id === formId)!;
+    return ref
+      ? resolveFieldModes(this.store.application(), role.id, formId)[ref]
+      : (ownFieldMode(form.fieldDefaults, role.id) ?? role.fieldMode ?? 'editable');
+  }
+  fieldRule(formId: string, ref: string | undefined, value: string): void {
+    const role = this.role();
+    if (
+      !role ||
+      role.preset === 'admin' ||
+      (value !== 'inherit' && !FIELD_MODES.includes(value as FieldMode))
+    )
+      return;
+    const patch = (policy: FieldPolicy | undefined): FieldPolicy => {
+      const next = { ...policy };
+      if (value === 'inherit') delete next[role.id];
+      else next[role.id] = value as FieldMode;
+      return next;
+    };
+    const forms = this.store.application().forms.map((form) => {
+      if (form.id !== formId) return form;
+      if (!ref) return { ...form, fieldDefaults: patch(form.fieldDefaults) };
+      const access = { ...form.fieldAccess },
+        policy = patch(fieldPolicy(form.fieldAccess, ref));
+      if (Object.keys(policy).length)
+        Object.defineProperty(access, ref, {
+          value: policy,
+          enumerable: true,
+          writable: true,
+          configurable: true,
+        });
+      else delete access[ref];
+      return { ...form, fieldAccess: access };
+    });
+    this.store.configureAccess(this.roles(), forms);
+  }
+  addUser(): void {
+    const role = this.role();
+    if (!role || this.users().length >= USER_LIMIT) return;
+    let n = 1;
+    while (this.users().some((user) => user.id === 'demo-' + n)) n++;
+    this.store.configureAccess(this.roles(), undefined, [
+      ...this.users(),
+      {
+        id: 'demo-' + n,
+        name: { de: 'Demo-Benutzer ' + n, en: 'Demo user ' + n, fa: 'کاربر نمونه ' + n },
+        roleId: role.id,
+      },
+    ]);
+  }
+  userName(id: string, lang: Locale, value: string): void {
+    this.store.configureAccess(
+      this.roles(),
+      undefined,
+      this.users().map((user) =>
+        user.id === id ? { ...user, name: { ...user.name, [lang]: value } } : user,
+      ),
+    );
+  }
+  userRole(id: string, roleId: string): void {
+    if (!this.roles().some((role) => role.id === roleId)) return;
+    this.store.configureAccess(
+      this.roles(),
+      undefined,
+      this.users().map((user) => (user.id === id ? { ...user, roleId } : user)),
+    );
+  }
+  removeUser(id: string): void {
+    const user = this.users().find((user) => user.id === id);
+    if (!user) return;
+    const session = this.store.projectSession();
+    this.feedback.requestDelete(
+      user.name[this.locale()].trim() || user.id,
+      () => {
+        if (session !== this.store.projectSession()) return;
+        this.store.configureAccess(
+          this.roles(),
+          undefined,
+          this.users().filter((item) => item.id !== id),
+        );
+      },
+      'userRemoveHint',
     );
   }
   ngOnDestroy(): void {

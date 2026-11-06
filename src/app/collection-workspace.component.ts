@@ -132,7 +132,7 @@ export class CollectionWorkspaceComponent
   readonly matches = computed(() =>
     this.list()
       ? queryCollection(
-          this.data.form(),
+          this.data.renderForm(),
           this.list()!,
           this.data.records(),
           {

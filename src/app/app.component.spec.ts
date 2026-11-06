@@ -1,8 +1,30 @@
+import { accessPresets } from './access-presets';
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { createButton, createField, example, FieldType, parseApplicationProject } from './project';
 
 describe('Alignment workspace', (): void => {
+  test('requires demo names in active languages for review without blocking language activation', () => {
+    const app = TestBed.createComponent(AppComponent).componentInstance,
+      p = accessPresets();
+    app.update({ owner: 'Owner', questions: '' });
+    app.store.configureAccess(p.roles, undefined, p.users);
+    app.setReviewer('Reviewer');
+    for (let i = 0; i < 5; i++) app.setCheck(i, true);
+    expect(app.canApprove()).toBe(true);
+    const users = p.users.map((user, index) =>
+      index ? user : { ...user, name: { ...user.name, de: '', fa: '' } },
+    );
+    app.store.configureAccess(p.roles, undefined, users);
+    for (let i = 0; i < 5; i++) app.setCheck(i, true);
+    expect(app.userNamesComplete()).toBe(false);
+    expect(app.canApprove()).toBe(false);
+    app.store.update({ languages: ['de', 'fa'] });
+    expect(app.project().languages).toEqual(['de', 'fa']);
+    expect(app.store.mutationError()).toBe(false);
+    app.store.configureAccess(p.roles, undefined, p.users);
+    expect(app.userNamesComplete()).toBe(true);
+  });
   test('saves incomplete role copy and permits language activation while keeping approval blocked until names are complete', (): void => {
     const app = TestBed.createComponent(AppComponent).componentInstance;
     app.update({ owner: 'Owner', questions: '' });

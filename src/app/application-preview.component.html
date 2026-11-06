@@ -24,6 +24,21 @@
   }
   <div class="application-layout">
     <aside class="application-sidebar">
+      @if (store.application().users?.length) {
+        <div class="role-switcher">
+          <label for="preview-user">{{ t('simulatedUser') }}</label>
+          <select
+            id="preview-user"
+            [ngModel]="access.userId() ?? ''"
+            (ngModelChange)="access.selectUser($event)"
+          >
+            <option value="" disabled>{{ t('freeRole') }}</option>
+            @for (user of store.application().users; track user.id) {
+              <option [value]="user.id">{{ user.name[language()].trim() || user.id }}</option>
+            }
+          </select>
+        </div>
+      }
       @if (store.application().roles?.length) {
         <div class="role-switcher">
           <label for="preview-role">{{ t('simulatedRole') }}</label>
@@ -80,6 +95,7 @@
           @if (screen.kind === 'form') {
             <app-form-preview
               [project]="data.projection()"
+              [fieldModes]="data.fieldModes()"
               [operationRights]="formRights()"
               [uiLocale]="locale()"
               [locale]="language()"

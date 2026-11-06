@@ -793,6 +793,9 @@
                       (ngModelChange)="setReviewer($event)"
                     />
                     <p class="fine-print">{{ t('approveHint') }}</p>
+                    @if (!userNamesComplete()) {
+                      <p role="status">{{ t('userNamesIncomplete') }}</p>
+                    }
                     @if (!roleNamesComplete()) {
                       <p role="status">{{ t('roleNamesIncomplete') }}</p>
                     }

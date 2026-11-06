@@ -3,7 +3,7 @@
 Open **Business examples** and choose a project. Replacement always asks for
 confirmation; export the current draft first or cancel to keep it. The gallery,
 JSON-authoring guide, downloadable JSON files and AI authoring kit all use the
-same three Studio 2.4.0 application snapshots. Every example includes DE/EN/FA
+same three Studio 2.5.0 application snapshots. Every example includes DE/EN/FA
 copy, with German/English initially active and no recorded approval.
 
 | Level | Forms and lists | What to try |
@@ -28,9 +28,9 @@ JSON/Markdown retain configuration; offline HTML starts with fresh record sessio
 
 ## Simulated roles and remaining policy questions
 
-The workspace now demonstrates three active simulated roles: Coordinator (all enabled actions), Purchasing (edit without delete and supplier creation), and Observer (read requests, supplier screens blocked). Select a role in application preview or the offline export. The first two examples stay unrestricted. See [role inheritance and limits](ROLE_ACCESS.md). Existing overview/directory action switches remain effective for every role. Presets do not enforce ownership and View still shows the complete record. Contact responsibility fields remain business labels.
+The workspace now demonstrates three active simulated roles: Coordinator (all enabled actions), Purchasing (edit without delete and supplier creation), and Observer (read requests, supplier screens blocked). Select a role in application preview or the offline export. All three examples also include the standard Visitor/User/Admin profiles. See [role inheritance and limits](ROLE_ACCESS.md). Existing overview/directory action switches remain effective for every role. Presets do not enforce ownership; field policies also constrain record details. Contact responsibility fields remain business labels.
 
-Field visibility/read-only rules, record ownership, user identity, status transitions and production server authorization are future decisions. No credentials or selected actor are stored.
+Field visibility/read-only rules are configurable. Record ownership, authenticated identity, status transitions and production server authorization remain future decisions. No credentials or selected actor are stored.
 
 ## Source and verification
 
@@ -48,3 +48,5 @@ independent form datasets, offline export/theme and Persian mobile accessibility
 The authoring-guide journeys download/import all three assets and inspect the kit.
 
 The intermediate/extensive examples also demonstrate table, cards and accordion list layouts, badges, selected group subfields and group/child column paths. The repeated items still belong to their form's records. Switch preview/data language or choose Mixed to generate the supported active-language profiles.
+
+All three current examples include Visitor, User and Admin demo users. They start with Visitor; choose Admin for full CRUD walkthroughs. The workspace also retains its business roles and demonstrates hidden contact information and protected repeated item codes. These are simulated policies, without ownership or server authorization.

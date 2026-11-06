@@ -3,6 +3,53 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  simulatedUser: ['Simulierter Benutzer', 'Simulated user'],
+  freeRole: ['Freie Rollenauswahl', 'Free role selection'],
+  installPresets: ['Besucher / User / Admin hinzufügen', 'Add Visitor / User / Admin'],
+  presetConflict: [
+    'Eine Vorgaben-ID ist bereits anderweitig belegt. Vorhandene Rollen und Benutzer bleiben unverändert.',
+    'A preset ID is already used by another definition. Existing roles and users are unchanged.',
+  ],
+  presetLimit: [
+    'Für die Vorgaben fehlen freie Rollen- oder Benutzerplätze.',
+    'Not enough role or user capacity for these presets.',
+  ],
+  presetsInstalled: [
+    'Vordefinierte Rollen und Demo-Benutzer sind eingerichtet.',
+    'Preset roles and demo users are configured.',
+  ],
+  adminFullHint: [
+    'Admin hat immer volle Formular- und Feldrechte. Ausdrücklich deaktivierte Listenaktionen bleiben deaktiviert.',
+    'Admin always has full form and field rights. Explicitly disabled list actions stay disabled.',
+  ],
+  defaultFieldMode: ['Standard-Feldrecht der Rolle', 'Default role field mode'],
+  fieldRights: ['Feldrechte', 'Field rights'],
+  fieldRightsHint: [
+    'Formularvorgaben gelten für alle Felder. Gruppen begrenzen ihre Unterfelder: Ausgeblendet und Nur lesbar können darunter nicht aufgehoben werden. Geschützte Unterfelder sperren die Zeilenstruktur.',
+    'Form defaults apply to all fields. Groups cap their children: Hidden and Read-only cannot be relaxed below them. Protected children lock the row structure.',
+  ],
+  fieldHidden: ['Ausgeblendet', 'Hidden'],
+  fieldReadonly: ['Nur lesbar', 'Read-only'],
+  fieldEditable: ['Bearbeitbar', 'Editable'],
+  fieldSetting: ['Einstellung', 'Setting'],
+  effectiveFieldMode: ['Effektives Feldrecht', 'Effective field mode'],
+  demoUsers: ['Demo-Benutzer', 'Demo users'],
+  demoUsersHint: [
+    'Passwortlose, fiktive Benutzer wählen jeweils eine Rolle. Die aktive Auswahl bleibt nur in der Sitzung; es gibt keine echte Anmeldung oder Eigentümerprüfung.',
+    'Fictional passwordless users each select one role. The active selection is session-only; there is no real sign-in or ownership check.',
+  ],
+  addDemoUser: ['Demo-Benutzer hinzufügen', 'Add demo user'],
+  userName: ['Benutzername', 'User name'],
+  assignedRole: ['Zugeordnete Rolle', 'Assigned role'],
+  removeDemoUser: ['Demo-Benutzer entfernen', 'Remove demo user'],
+  userRemoveHint: [
+    'Nur die Demo-Definition wird entfernt. Gespeicherte Sitzungseinträge bleiben erhalten.',
+    'Only the demo definition is removed. Saved session records remain intact.',
+  ],
+  userNamesIncomplete: [
+    'Demo-Benutzernamen fehlen in aktiven Sprachen. Ergänze sie unter Rollen & Rechte.',
+    'Demo-user names are missing in active languages. Complete them under Roles & rights.',
+  ],
   roleNamesIncomplete: [
     'Rollennamen fehlen in aktiven Sprachen. Ergänze sie unter Rollen & Rechte.',
     'Role names are missing in active languages. Complete them under Roles & rights.',
@@ -26,8 +73,8 @@ export const copy = {
     'Forms inherit from the role; lists inherit from their form. Explicit settings override inherited rights. A blocked form also blocks its lists; disabled list actions remain blocked. Effective rights appear below each selector.',
   ],
   roleRemoveHint: [
-    'Die Rolle und ihre Überschreibungen werden entfernt. Ohne verbleibende Rollen ist die Anwendung wieder uneingeschränkt.',
-    'The role and its overrides will be removed. With no roles remaining the application becomes unrestricted.',
+    'Die Rolle, ihre zugeordneten Demo-Benutzer und ihre Überschreibungen werden entfernt. Ohne Rollen ist die Anwendung uneingeschränkt.',
+    'The role, its assigned demo users and its overrides will be removed. Without roles the application is unrestricted.',
   ],
   rolesDisabled: [
     'Keine Rollen eingerichtet: Die Vorschau ist uneingeschränkt. Neue Rollen starten mit Öffnen- und Ansehen-Rechten.',
@@ -375,8 +422,8 @@ export const copy = {
     'Give a chatbot the Studio contract and a concrete brief. Download the authoring kit and use the copyable prompts. Check the resulting draft in Studio.',
   ],
   studioFormatNotice: [
-    'Studio-Format 2.4.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
-    'Studio format 2.4.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
+    'Studio-Format 2.5.0 mit format "mockforge-studio" und forms. Ältere Studio-Dateien werden migriert; andere Editionen bleiben inkompatibel. Keine Produktionsanbindung oder bestätigte Review.',
+    'Studio format 2.5.0 uses format "mockforge-studio" and forms. Legacy Studio files migrate; other editions remain incompatible. No production integration or certified review.',
   ],
   authoringWorkflow: [
     'Vom Texteditor zur geprüften Vorschau',

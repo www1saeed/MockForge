@@ -86,7 +86,7 @@ Use a field with `DE-[A-Z]{2}\d{4}` to show bounded synthesis. Then use a name f
 
 ## Multi-form walkthrough
 
-Add a named second form, copy a field into it, switch back to show independent definitions, then export JSON or Markdown containing both forms. Show that reviewing only a complete form cannot approve a project whose other form is incomplete. Explain that preview answers reset when switching. This demonstrates multiple single-page forms. Continue with the CRUD and connected-screen walkthroughs below; roles remain a later increment.
+Add a named second form, copy a field into it, switch back to show independent definitions, then export JSON or Markdown containing both forms. Show that reviewing only a complete form cannot approve a project whose other form is incomplete. Explain that preview answers reset when switching. This demonstrates multiple single-page forms. Continue with the CRUD and connected-screen walkthroughs below; simulated roles and field policies are available in the rights workflow.
 
 ## Optional CRUD walkthrough
 
@@ -102,4 +102,4 @@ In Application preview choose **Download HTML preview**, then open the downloade
 
 ## Choose the example depth
 
-Start with Contact desk (three fields/one list), move to Purchase requests (three views and an in-form position table), then use Procurement workspace for two forms/seven views. The [example guide](EXAMPLES.md) explains the shared snapshots and planned coordinator/requester/purchasing/observer responsibilities. Explicitly demonstrate that presets/read-only views are current view settings, while user roles and ownership restrictions remain later work.
+Start with Contact desk (three fields/one list), move to Purchase requests (three views and an in-form position table), then use Procurement workspace for two forms/seven views. The [example guide](EXAMPLES.md) explains the shared snapshots and planned coordinator/requester/purchasing/observer responsibilities. Choose Admin for the full walkthrough, then Visitor and User to demonstrate screen/action and field policies. Explain that authenticated identity and ownership restrictions still require production work.
