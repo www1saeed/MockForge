@@ -229,8 +229,8 @@ export function pruneCollections(
 ): CollectionList[] | undefined {
   if (!lists) return undefined;
   const leaves = new Map(collectionLeaves(fields).map((field) => [field.id, field]));
+  const available = new Map(collectionFields(fields).map((field) => [field.id, field]));
   return lists.map((list) => {
-    const available = new Map(collectionFields(fields).map((field) => [field.id, field]));
     const columns = list.columns.filter((id): boolean => available.has(id));
     const next = {
       ...list,

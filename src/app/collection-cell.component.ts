@@ -53,12 +53,22 @@ export class CollectionCellComponent implements OnDestroy {
         : 'text'
       : this.mode(),
   );
+  private readonly detailScope = computed(() =>
+    JSON.stringify({
+      id: this.field().id,
+      type: this.field().type,
+      locale: this.locale(),
+      mode: this.mode(),
+      title: this.title(),
+      children: this.children().map((child) => [child.id, child.type, child.label[this.locale()]]),
+      values: this.field().group
+        ? this.rows().map((row) => this.children().map((child) => this.childValue(row, child)))
+        : this.parts(),
+    }),
+  );
   constructor() {
     effect(() => {
-      this.field();
-      this.values();
-      this.setting();
-      this.locale();
+      this.detailScope();
       untracked(() => this.closeDetails());
     });
   }

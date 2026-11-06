@@ -80,23 +80,12 @@ describe('Grouped list projections', () => {
     form.lists = [{ ...list, columns: ['items/missing'] }];
     expect(validateApplicationProject(project)).toBe(false);
   });
-  it('rejects malformed or foreign group presentation while migrating 2.2 without approval', () => {
+  it('rejects malformed or foreign group presentation', () => {
     const project = parseApplicationProject(example('saas'))!,
       form = project.forms[0];
     form.fields = [group];
     const list = { ...createCollectionList(form.fields, []), columns: ['items'] };
     form.lists = [list];
-    expect(
-      parseApplicationProject({
-        ...project,
-        schemaVersion: '2.2.0',
-        review: {
-          ...project.review,
-          checks: [true, true, true, true, true],
-          approvedAt: '2026-11-05T00:00:00Z',
-        },
-      })?.review.approvedAt,
-    ).toBeNull();
     for (const change of [
       { display: 'iframe' },
       { groupFields: [] },
@@ -138,6 +127,63 @@ describe('Grouped list projections', () => {
       { ...list, columnSettings: [{ ...setting, display: 'cards', groupFields: ['name'] }] },
     ];
     expect(validateApplicationProject(project)).toBe(true);
+  });
+  it('validates features against their declared historical version without rejecting genuine 2.2 presentation', () => {
+    const p = parseApplicationProject(example('saas'))!,
+      f = p.forms[0];
+    f.fields = [createField('text', 'rootname'), group];
+    const list = {
+      ...createCollectionList(f.fields, []),
+      columns: ['rootname'],
+      searchFields: ['rootname'],
+    };
+    f.lists = [list];
+    const old = { ...p, schemaVersion: '2.1.0' };
+    expect(parseApplicationProject(old)?.schemaVersion).toBe('2.3.0');
+    const presented = { ...list, columnSettings: [{ ...setting, fieldId: 'rootname' }] };
+    f.lists = [presented];
+    expect(parseApplicationProject({ ...p, schemaVersion: '2.2.0' })).not.toBeNull();
+    expect(parseApplicationProject({ ...p, schemaVersion: '2.1.0' })).toBeNull();
+    for (const extra of [
+      {
+        appearance: {
+          design: 'plain',
+          density: 'compact',
+          hover: true,
+          stickyHeader: false,
+          layout: 'cards',
+        },
+      },
+      { columnSettings: [{ ...setting, fieldId: 'rootname', display: 'badge' }] },
+      { columnSettings: [{ ...setting, groupFields: ['rootname'] }] },
+      { columns: ['items'] },
+      { searchFields: ['items/name'] },
+    ]) {
+      f.lists = [{ ...list, ...extra } as typeof list];
+      expect(parseApplicationProject({ ...p, schemaVersion: '2.2.0' })).toBeNull();
+    }
+    f.lists = [list];
+    expect(parseApplicationProject({ ...p, schemaVersion: '2.0.0' })).toBeNull();
+    expect(p.schemaVersion).toBe('2.3.0');
+  });
+  it('preserves an open projected-child dialog through equivalent field and value clones', () => {
+    TestBed.configureTestingModule({ imports: [CollectionCellComponent] });
+    const f = TestBed.createComponent(CollectionCellComponent);
+    f.componentRef.setInput('field', collectionFields([group])[1]);
+    f.componentRef.setInput('values', values);
+    f.componentRef.setInput('locale', 'en');
+    f.componentRef.setInput('setting', { ...setting, display: 'count' });
+    f.detectChanges();
+    f.componentInstance.openDetails();
+    f.detectChanges();
+    f.componentRef.setInput('field', JSON.parse(JSON.stringify(collectionFields([group])[1])));
+    f.componentRef.setInput('values', JSON.parse(JSON.stringify(values)));
+    f.componentRef.setInput('setting', { ...setting, display: 'count', width: 200 });
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('dialog').open).toBe(true);
+    f.componentRef.setInput('values', { items: [{ name: 'Changed', quantity: '2' }] });
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('dialog').open).toBe(false);
   });
   it('prunes removed child paths/settings and safely adapts a group changed into a leaf', () => {
     const list = {

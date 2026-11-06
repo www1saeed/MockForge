@@ -173,6 +173,32 @@ function snapshot<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
+/** Older declarations admit only the features released in that version. */
+function supportsApplicationVersion(project: ApplicationProject, version: string): boolean {
+  return project.forms.every((form) => {
+    if (version === '2.0.0') return form.lists === undefined && form.entries === undefined;
+    const roots = new Set(
+      form.fields.filter((field) => field.type !== 'group').map((field) => field.id),
+    );
+    return (form.lists ?? []).every((list) => {
+      if (![...list.columns, ...list.searchFields].every((id) => roots.has(id))) return false;
+      if (version === '2.1.0')
+        return (
+          list.appearance === undefined &&
+          list.columnSettings === undefined &&
+          list.actionSettings === undefined &&
+          list.actionOrder === undefined
+        );
+      return (
+        list.appearance?.layout === undefined &&
+        (list.columnSettings ?? []).every(
+          (column) => column.display === undefined && column.groupFields === undefined,
+        )
+      );
+    });
+  });
+}
+
 /**
  * Read only Studio formats. Migrate all supported 1.x files through the established
  * legacy parser, then wrap their complete form and invalidate the old review baseline.
@@ -182,31 +208,17 @@ export function parseApplicationProject(value: unknown): ApplicationProject | nu
   if (validateApplicationProject(value)) return snapshot(value);
   if (
     record(value) &&
-    value['schemaVersion'] === '2.0.0' &&
-    value['format'] === 'mockforge-studio'
+    value['format'] === 'mockforge-studio' &&
+    (value['schemaVersion'] === '2.0.0' ||
+      value['schemaVersion'] === '2.1.0' ||
+      value['schemaVersion'] === '2.2.0')
   ) {
+    const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };
     if (
-      !Array.isArray(value['forms']) ||
-      value['forms'].some(
-        (form: unknown): boolean =>
-          !record(form) || form['lists'] !== undefined || form['entries'] !== undefined,
-      )
+      !validateApplicationProject(next) ||
+      !supportsApplicationVersion(next, value['schemaVersion'])
     )
       return null;
-    const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };
-    if (!validateApplicationProject(next)) return null;
-    return snapshot({
-      ...next,
-      review: { ...next.review, checks: [false, false, false, false, false], approvedAt: null },
-    });
-  }
-  if (
-    record(value) &&
-    (value['schemaVersion'] === '2.1.0' || value['schemaVersion'] === '2.2.0') &&
-    value['format'] === 'mockforge-studio'
-  ) {
-    const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };
-    if (!validateApplicationProject(next)) return null;
     return snapshot({
       ...next,
       review: { ...next.review, checks: [false, false, false, false, false], approvedAt: null },
