@@ -59,6 +59,43 @@ function fixture(): NonNullable<ReturnType<typeof parseApplicationProject>> {
   return p;
 }
 describe('Field access and predefined actors', () => {
+  it('keeps fixed AND presets over hidden fields while removing reader-facing references', () => {
+    const p = fixture(),
+      f = p.forms[0];
+    f.fieldAccess!.approved = { visitor: 'hidden' };
+    const source = {
+      ...f.lists![0],
+      columns: ['name', 'approved'],
+      filters: ['approved'],
+      searchFields: ['approved'],
+      sort: { fieldId: 'approved', direction: 'asc' as const },
+      presets: [
+        { fieldId: 'approved', value: true },
+        { fieldId: 'secret', value: 'A' },
+      ],
+    };
+    const fields = projectFields(f.fields, resolveFieldModes(p, 'visitor', f.id));
+    const projected = projectList(source, fields);
+    expect(projected.presets).toEqual(source.presets);
+    expect(projected.filters).toEqual([]);
+    expect(projected.columns).toEqual(['name']);
+    expect(projected.searchFields).toEqual([]);
+    expect(projected.sort).toBeUndefined();
+    expect(
+      queryCollection(
+        { ...f, fields },
+        projected,
+        [
+          { id: 'match', values: { name: 'One', approved: true, secret: 'A' } },
+          { id: 'wrong-status', values: { name: 'Two', approved: false, secret: 'A' } },
+          { id: 'wrong-secret', values: { name: 'Three', approved: true, secret: 'B' } },
+          { id: 'missing', values: { name: 'Four' } },
+        ],
+        { search: '', filters: new Map() },
+        'en',
+      ).map((record) => record.id),
+    ).toEqual(['match']);
+  });
   it('creates detached visitor/user/admin defaults, bounds users and enforces full admin rights except disabled actions', () => {
     const p = fixture(),
       f = p.forms[0],

@@ -140,13 +140,15 @@ export function projectList(list: CollectionList, fields: readonly Field[]): Col
       )
       .map((column) => column.fieldId),
   );
-  return pruneCollections(fields, [
+  const projected = pruneCollections(fields, [
     {
       ...list,
       columns: list.columns.filter((id) => !emptyGroups.has(id)),
       searchFields: list.searchFields.filter((id) => !emptyGroups.has(id)),
     },
   ])![0];
+  // Fixed presets constrain complete records independently of field visibility.
+  return { ...projected, presets: list.presets };
 }
 /** Protected values are taken only from the saved record; unknown editable input is rejected. */
 export function mergeFieldValues(
