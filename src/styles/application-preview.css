@@ -98,3 +98,7 @@
 .role-switcher label {
   font-weight: 700;
 }
+
+.standalone-application .role-switcher .fine-print {
+  color: #bdcfd6;
+}

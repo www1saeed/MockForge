@@ -1,3 +1,8 @@
+app-access-editor {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
 .access-editor {
   padding: 1.25rem;
   background: var(--paper);
@@ -5,9 +10,9 @@
   border-radius: 1rem;
   min-width: 0;
 }
-.access-editor > select {
+.role-actions select {
   max-width: 100%;
-  margin: 0.75rem;
+  margin: 0;
 }
 .role-labels,
 .role-defaults {
@@ -22,6 +27,7 @@
   min-width: 0;
 }
 .access-matrix-scroll {
+  position: relative;
   max-width: 100%;
   overflow: auto;
 }
@@ -53,4 +59,45 @@
 }
 .right-denied {
   font-weight: 600;
+}
+
+.role-labels,
+.role-defaults {
+  min-inline-size: 0;
+}
+.role-labels input {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.role-defaults legend {
+  overflow-wrap: anywhere;
+}
+
+.role-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 1rem;
+}
+.access-editor input:not([type='checkbox']),
+.access-editor select {
+  min-height: 44px;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+.role-defaults .check-row {
+  min-height: 44px;
+  align-items: center;
+  margin: 0;
+}
+.access-matrix caption {
+  caption-side: top;
+  color: var(--ink);
+  font-weight: 700;
 }
