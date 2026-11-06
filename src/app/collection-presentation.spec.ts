@@ -29,7 +29,7 @@ describe('List presentation contract', () => {
     };
     const before = JSON.stringify(legacy),
       migrated = parseApplicationProject(legacy)!;
-    expect(migrated.schemaVersion).toBe('2.3.0');
+    expect(migrated.schemaVersion).toBe('2.4.0');
     expect(migrated.forms).toEqual(project.forms);
     expect(migrated.review.approvedAt).toBeNull();
     expect(migrated.review.checks).toEqual([false, false, false, false, false]);

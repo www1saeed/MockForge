@@ -1,6 +1,6 @@
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.3.0",
+  "schemaVersion": "2.4.0",
   "name": "03 · Procurement workspace",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -8,8 +8,8 @@
   "scope": "Two forms, seven list views, request line-item table and optional contact cards. Session-only CRUD, filtering, presets and validation. No automatic relationship between requests and suppliers, approval workflow or real identity.",
   "theme": "fluent",
   "languages": ["de", "en"],
-  "decisions": "Stable form/list IDs separate requests from supplier master data. Planned roles: requester creates and maintains own drafts; purchasing processes requests and maintains suppliers; observer reads overview/directory. Current action switches are per-view capabilities for everybody, not role permissions. Presets do not hide records securely. Contact responsibilities are business labels only.",
-  "questions": "Confirm the future role matrix: field visibility/editability, own-record restrictions, status transitions, parent-inherited group rights, create/view/edit/delete per form and list, role assignment and server authorization. What identifies the current user? No rights or user identities are invented here.",
+  "decisions": "Stable form/list IDs separate requests from supplier master data. Simulated roles: coordinator has full rights, purchasing edits without deleting and can create suppliers, observer reads requests while suppliers are blocked. Disabled per-view actions remain blocked for all roles. Presets are not role permissions. Simulation provides no server authorization.",
+  "questions": "Confirm field visibility/editability, own-record restrictions, status transitions, user identity and server authorization for production. The current role picker simulates screen and CRUD rights only.",
   "review": {
     "checks": [false, false, false, false, false],
     "reviewer": "",
@@ -867,7 +867,8 @@
               },
               "align": "start",
               "sortable": true,
-              "display": "badge"
+              "display": "badge",
+              "badgeColor": "green"
             },
             {
               "fieldId": "items",
@@ -1029,7 +1030,8 @@
               },
               "align": "start",
               "sortable": true,
-              "display": "badge"
+              "display": "badge",
+              "badgeColor": "green"
             },
             {
               "fieldId": "items/item-code",
@@ -1590,7 +1592,62 @@
           },
           "columnSettings": []
         }
-      ]
+      ],
+      "access": {
+        "observer": {
+          "open": false
+        },
+        "purchasing": {
+          "create": true
+        }
+      }
+    }
+  ],
+  "roles": [
+    {
+      "id": "coordinator",
+      "label": {
+        "de": "Koordination",
+        "en": "Coordinator",
+        "fa": "هماهنگ‌کننده"
+      },
+      "rights": {
+        "open": true,
+        "create": true,
+        "view": true,
+        "edit": true,
+        "delete": true
+      }
+    },
+    {
+      "id": "purchasing",
+      "label": {
+        "de": "Einkauf",
+        "en": "Purchasing",
+        "fa": "خرید"
+      },
+      "rights": {
+        "open": true,
+        "create": false,
+        "view": true,
+        "edit": true,
+        "delete": false
+      }
+    },
+    {
+      "id": "observer",
+      "label": {
+        "de": "Lesend",
+        "en": "Observer",
+        "fa": "ناظر"
+      },
+      "rights": {
+        "open": true,
+        "create": false,
+        "view": true,
+        "edit": false,
+        "delete": false
+      }
     }
   ]
 }

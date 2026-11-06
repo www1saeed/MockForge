@@ -1,3 +1,5 @@
+import { ApplicationRole } from './application-access';
+import { ApplicationForm } from './application-project';
 import { computed, Injectable, signal } from '@angular/core';
 import {
   allFields,
@@ -324,6 +326,16 @@ export class ProjectStore {
       this.mutationError.set(true);
       return false;
     }
+    return this.commit(next);
+  }
+
+  configureAccess(
+    roles: ApplicationRole[],
+    forms: ApplicationForm[] = this.application().forms,
+  ): boolean {
+    const next = JSON.parse(
+      JSON.stringify({ ...this.application(), roles, forms }),
+    ) as ApplicationProject;
     return this.commit(next);
   }
 
