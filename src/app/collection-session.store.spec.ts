@@ -28,17 +28,19 @@ describe('Session record ownership', () => {
         PatternCheckService,
         {
           provide: COLLECTION_GENERATOR,
-          useValue: (
-            _project: unknown,
-            generatedRequest: typeof request,
-            opts: BatchOptions,
-          ): Promise<BatchResult> => {
-            options = opts;
-            request = generatedRequest;
-            return new Promise((done) => {
-              resolve = done;
-            });
-          },
+          useValue: jest.fn(
+            (
+              _project: unknown,
+              generatedRequest: typeof request,
+              opts: BatchOptions,
+            ): Promise<BatchResult> => {
+              options = opts;
+              request = generatedRequest;
+              return new Promise((done) => {
+                resolve = done;
+              });
+            },
+          ),
         },
       ],
     });
@@ -46,6 +48,121 @@ describe('Session record ownership', () => {
     project.update({ fields: [createField('text', 'name')] });
     data = TestBed.inject(CollectionSessionStore);
     TestBed.tick();
+  });
+  it('refuses stale append at the store boundary and preserves the old signature and values', async () => {
+    const field = { ...createField('select', 'name'), options: [text('A', 'A'), text('B', 'B')] };
+    project.update({ fields: [field] });
+    TestBed.tick();
+    data.save({ name: '1' }, data.context());
+    const before = data.dataset();
+    project.update({ fields: [{ ...field, options: [text('A', 'A')] }] });
+    TestBed.tick();
+    expect(data.stale()).toBe(true);
+    await data.regenerate(data.context(), ['de'], 1, true);
+    expect(TestBed.inject(COLLECTION_GENERATOR)).not.toHaveBeenCalled();
+    expect(data.dataset()).toBe(before);
+    expect(data.stale()).toBe(true);
+    expect(data.save({ name: '0' }, data.context())).toBe(false);
+    const replacement = data.regenerate(data.context(), ['de'], 1);
+    resolve({
+      ...result(),
+      records: [{ index: 0, seed: 1, values: { name: '0' }, diagnostics: [] }],
+    });
+    await replacement;
+    expect(data.stale()).toBe(false);
+    expect(data.records()[0].values['name']).toBe('0');
+  });
+  it('reports per-form/project capacity before generation and disables append across all form cursors', async () => {
+    const registry = TestBed.inject(CollectionSessionRegistry),
+      own = project.activeFormId();
+    const records = (count: number) =>
+      Array.from({ length: count }, (_, i) => ({ id: 'entry-' + i, values: { name: String(i) } }));
+    registry.datasets.set(
+      new Map([
+        [
+          own,
+          {
+            records: records(data.limits.recordsPerForm),
+            signature: data.context().signature,
+            revision: 1,
+            skipped: 0,
+          },
+        ],
+      ]),
+    );
+    expect(data.canAppend()).toBe(false);
+    expect(data.appendLimit()).toBe('formLimit');
+    const before = data.dataset();
+    await data.regenerate(data.context(), ['de'], 1, true);
+    expect(data.notice()).toBe('formLimit');
+    expect(data.dataset()).toBe(before);
+    await data.regenerate(data.context(), ['de'], data.limits.recordsPerForm + 1);
+    expect(data.notice()).toBe('formLimit');
+    const second = project.addForm(text('Second', 'Second'))!,
+      third = project.addForm(text('Third', 'Third'))!;
+    project.selectForm(own);
+    TestBed.tick();
+    data.clear(data.context());
+    registry.datasets.update(
+      (current) =>
+        new Map([
+          ...current,
+          [second, { records: records(500), signature: 'other', revision: 1, skipped: 0 }],
+          [third, { records: records(500), signature: 'other', revision: 1, skipped: 0 }],
+        ]),
+    );
+    expect(data.appendLimit()).toBe('projectLimit');
+    expect(data.canAppend()).toBe(false);
+    await data.regenerate(data.context(), ['de'], 1, true);
+    expect(data.notice()).toBe('projectLimit');
+    expect(TestBed.inject(COLLECTION_GENERATOR)).not.toHaveBeenCalled();
+    registry.datasets.update((current) => new Map([...current].filter(([id]) => id !== third)));
+    expect(data.canAppend()).toBe(true);
+  });
+  it('rechecks concurrent project growth and reports retained-size failures without replacing old records', async () => {
+    const registry = TestBed.inject(CollectionSessionRegistry),
+      own = project.activeFormId(),
+      second = project.addForm(text('Second', 'Second'))!,
+      third = project.addForm(text('Third', 'Third'))!;
+    project.selectForm(own);
+    TestBed.tick();
+    data.save({ name: 'Manual' }, data.context());
+    const make = (count: number) => ({
+      records: Array.from({ length: count }, (_, i) => ({
+        id: 'other-' + i,
+        values: { name: String(i) },
+      })),
+      signature: 'other',
+      revision: 1,
+      skipped: 0,
+    });
+    registry.datasets.update(
+      (current) => new Map([...current, [second, make(499)], [third, make(499)]]),
+    );
+    const before = data.dataset();
+    let pending = data.regenerate(data.context(), ['de'], 1, true);
+    registry.datasets.update((current) => new Map([...current, [third, make(500)]]));
+    resolve(result());
+    await pending;
+    expect(data.notice()).toBe('projectLimit');
+    expect(data.dataset()).toBe(before);
+    expect(data.canAppend()).toBe(false);
+    registry.datasets.set(new Map([[own, before!]]));
+    pending = data.regenerate(data.context(), ['de'], 1, true);
+    resolve({
+      ...result(),
+      records: [
+        {
+          index: 0,
+          seed: 1,
+          values: { name: 'x'.repeat(data.limits.retainedUnits) },
+          diagnostics: [],
+        },
+      ],
+    });
+    await pending;
+    expect(data.notice()).toBe('retainedLimit');
+    expect(data.dataset()).toBe(before);
   });
   it('forwards selected/mixed locales and appends one record atomically without replacing existing answers', async () => {
     data.save({ name: 'Manual' }, data.context());

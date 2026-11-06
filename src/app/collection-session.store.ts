@@ -41,11 +41,14 @@ export class CollectionSessionStore implements OnDestroy {
   private readonly datasets = this.registry.datasets;
   private readonly scope = inject(COLLECTION_VIEW);
   private readonly owner = this.registry.nextOwner();
+  readonly limits = COLLECTION_LIMITS;
   readonly viewSession = this.scope.epoch;
   readonly busy = signal(false);
   readonly progress = signal(0);
   readonly requestedCount = signal(0);
-  readonly notice = signal<'ready' | 'cancelled' | 'failed' | null>(null);
+  readonly notice = signal<
+    'ready' | 'cancelled' | 'failed' | 'formLimit' | 'projectLimit' | 'retainedLimit' | null
+  >(null);
   private controller: AbortController | null = null;
   private session = this.project.projectSession();
   readonly form = computed(
@@ -60,6 +63,19 @@ export class CollectionSessionStore implements OnDestroy {
     () => !!this.dataset() && this.dataset()!.signature !== this.signature(this.form()),
   );
 
+  private capacityFailure(
+    retained: number,
+    requested: number,
+  ): 'formLimit' | 'projectLimit' | null {
+    if (retained + requested > this.limits.recordsPerForm) return 'formLimit';
+    const others = [...this.datasets()].reduce(
+      (total, [id, dataset]) => total + (id === this.form().id ? 0 : dataset.records.length),
+      0,
+    );
+    return others + retained + requested > this.limits.recordsPerProject ? 'projectLimit' : null;
+  }
+  readonly appendLimit = computed(() => this.capacityFailure(this.records().length, 1));
+  readonly canAppend = computed(() => !this.busy() && !this.stale() && this.appendLimit() === null);
   constructor() {
     effect(() => {
       const session = this.project.projectSession();
@@ -122,14 +138,15 @@ export class CollectionSessionStore implements OnDestroy {
       locales.some((locale) => !LOCALES.includes(locale))
     )
       return;
+    if (append && this.stale()) return;
     const retained = append ? this.records() : [];
     const requested = count ?? this.form().entries?.count ?? 25;
-    if (
-      !Number.isInteger(requested) ||
-      requested < 1 ||
-      requested + retained.length > COLLECTION_LIMITS.recordsPerForm
-    )
+    if (!Number.isInteger(requested) || requested < 1) return;
+    const capacity = this.capacityFailure(retained.length, requested);
+    if (capacity) {
+      this.notice.set(capacity);
       return;
+    }
     this.cancel();
     const controller = new AbortController();
     this.controller = controller;
@@ -182,7 +199,9 @@ export class CollectionSessionStore implements OnDestroy {
           skipped + (append ? (this.dataset()?.skipped ?? 0) : 0),
         )
       ) {
-        this.notice.set('failed');
+        this.notice.set(
+          this.capacityFailure(retained.length, result.records.length) ?? 'retainedLimit',
+        );
         return;
       }
       this.notice.set('ready');

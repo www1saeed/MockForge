@@ -3,6 +3,18 @@ import { faCopy } from './translations.fa';
 
 /** German source and English target stay in one typed catalog for instant locale switching. */
 export const copy = {
+  listRetainedLimit: [
+    'Die erzeugten Daten überschreiten das Speicherlimit dieser Sitzung. Verringere Anzahl oder Umfang der Daten.',
+    'Generated data exceeds the session storage budget. Reduce the count or data size.',
+  ],
+  listProjectLimit: [
+    'Das Projekt hat keinen Platz für weitere Sitzungseinträge. Leere Einträge anderer Formulare oder verringere die Anzahl.',
+    'The project has no capacity for more session records. Clear records in other forms or reduce the count.',
+  ],
+  listFormLimit: [
+    'Das Formular erreicht mit dieser Anzahl sein Limit an Sitzungseinträgen. Verringere die Anzahl oder ersetze/leere vorhandene Einträge.',
+    'This count exceeds the form session-record limit. Reduce the count or replace/clear existing records.',
+  ],
   groupDetails: ['Gruppendetails anzeigen', 'Show group details'],
   listCountInvalid: [
     'Wähle eine ganze Anzahl von 1 bis 500.',

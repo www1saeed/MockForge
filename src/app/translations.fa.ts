@@ -2,6 +2,12 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  listRetainedLimit:
+    'داده‌های تولیدشده از سقف حافظهٔ نشست بیشتر است. تعداد یا اندازهٔ داده را کم کنید.',
+  listProjectLimit:
+    'پروژه برای رکورد نشست بیشتر ظرفیت ندارد. رکوردهای فرم‌های دیگر را پاک کنید یا تعداد را کم کنید.',
+  listFormLimit:
+    'این تعداد از سقف رکوردهای نشست فرم بیشتر است. تعداد را کم کنید یا رکوردهای موجود را جایگزین یا پاک کنید.',
   groupDetails: 'نمایش جزئیات گروه',
   listCountInvalid: 'یک عدد صحیح بین ۱ تا ۵۰۰ انتخاب کنید.',
   listSourceForm: 'فرم منبع فهرست',
