@@ -185,6 +185,8 @@ describe('Field access and predefined actors', () => {
       items: [{ product: 'New', code: 'PRIVATE' }],
     });
     expect(old.items[0].product).toBe('Old');
+    f.fields.find((field) => field.id === 'items')!.group!.minItems = 0;
+    expect(mergeFieldValues(f.fields, modes, { name: 'After' }, old)).toBeNull();
     expect(mergeFieldValues(f.fields, modes, { name: 'After', items: [] }, old)).toBeNull();
     expect(
       mergeFieldValues(

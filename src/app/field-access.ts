@@ -209,7 +209,10 @@ export function mergeFieldValues(
         });
       continue;
     }
-    if (value === undefined) continue;
+    if (value === undefined) {
+      if (previous && old !== undefined && lockedGroup(field, modes)) return null;
+      continue;
+    }
     if (
       !Array.isArray(value) ||
       (previous &&
