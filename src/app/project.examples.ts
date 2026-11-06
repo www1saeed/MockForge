@@ -1,6 +1,6 @@
 import { createButton, createField, Field, FieldType, Project, text } from './project.model';
 
-/** Commercial examples are fictional briefs, never customer claims. */
+/** Legacy single-form fixtures. The current gallery uses application-examples.ts and shared JSON assets. */
 export type ExampleKind = 'saas' | 'commerce' | 'agency' | 'complex';
 const PERSIAN_FIELD_LABELS: Readonly<Record<string, string>> = {
   'team-members': 'تیم پروژه',

@@ -1,3 +1,4 @@
+import { APPLICATION_EXAMPLES } from './application-examples';
 import { ButtonAction, ButtonVariant, FieldType, Theme } from './project.model';
 import { CopyKey } from './translations';
 
@@ -6,7 +7,7 @@ export type StudioView =
   'overview' | 'workspace' | 'application' | 'examples' | 'guide' | 'guide-json' | 'guide-ai';
 
 /** Named workflow positions keep visibility defaults understandable at their call sites. */
-export const WORKFLOW = { brief: 0, copy: 1, design: 2, fields: 3, review: 4 } as const;
+export const WORKFLOW = { brief: 0, copy: 1, design: 2, fields: 3, review: 4, lists: 5 } as const;
 /** Outline marks are project-authored; accessible names and Bootstrap tooltips carry details. */
 export const FIELD_ICONS: Record<FieldType, string> = {
   text: 'M4 5h16 M12 5v14 M8 19h8',
@@ -20,7 +21,13 @@ export const FIELD_ICONS: Record<FieldType, string> = {
   checkbox: 'M4 4h16v16H4z M7 12l3 3 7-7',
   group: 'M3 3h8v8H3z M15 3h6v6h-6z M3 15h6v6H3z M13 13h8v8h-8z',
 };
-export const STEP_COPY: readonly CopyKey[] = ['step1', 'step2', 'step3', 'step4', 'step5'];
+export const STEP_COPY: readonly CopyKey[] = [
+  'projectSettings',
+  'step2',
+  'step3',
+  'step4',
+  'step5',
+];
 export const CHECK_COPY: readonly CopyKey[] = ['check1', 'check2', 'check3', 'check4', 'check5'];
 
 /** Project-authored outline icons need no external icon font, package or network request. */
@@ -47,24 +54,13 @@ export const THEMES_COPY: readonly { id: Theme; name: string; description: CopyK
   { id: 'fluent', name: 'Fluent', description: 'fluentDesc' },
 ];
 
-export const SAMPLES = [
-  { id: 'saas', title: 'saasTitle', body: 'saasText', tag: 'B2B SOFTWARE', number: '01' },
-  { id: 'commerce', title: 'commerceTitle', body: 'commerceText', tag: 'E-COMMERCE', number: '02' },
-  {
-    id: 'agency',
-    title: 'agencyTitle',
-    body: 'agencyText',
-    tag: 'PROFESSIONAL SERVICES',
-    number: '03',
-  },
-  {
-    id: 'complex',
-    title: 'complexTitle',
-    body: 'complexText',
-    tag: 'COMPLEX WORKFLOW',
-    number: '04',
-  },
-] as const;
+export const SAMPLES = APPLICATION_EXAMPLES.map(({ id, title, body, tag, number }) => ({
+  id,
+  title,
+  body,
+  tag,
+  number,
+}));
 
 /** Explicit maps let TypeScript verify every supported button label at compile time. */
 export const VARIANT_COPY: Record<ButtonVariant, CopyKey> = {
@@ -84,3 +80,10 @@ export const ACTION_COPY: Record<ButtonAction, CopyKey> = {
   back: 'action_back',
   none: 'action_none',
 };
+
+export const WORKFLOW_TABS = [
+  { value: 0, id: 'project', label: 'projectSettings' },
+  { value: 3, id: 'fields', label: 'step4' },
+  { value: 5, id: 'lists', label: 'listsTitle' },
+  { value: 4, id: 'review', label: 'step5' },
+] as const;

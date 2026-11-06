@@ -14,7 +14,7 @@ test(
   async ({ page }): Promise<void> => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/#workspace');
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.locator('#submit-action').selectOption('delete');
     await page.getByRole('button', { name: 'Vorschau einblenden' }).click();
     await page.locator('.preview-submit').click();
@@ -49,7 +49,7 @@ test(
   async ({ page }): Promise<void> => {
     await page.setViewportSize({ width: 1600, height: 900 });
     await page.goto('/#workspace');
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     const tools = page.locator('.field-list-tools');
     await expect(tools.locator('button').first()).toBeDisabled();
     await tools.locator('button').nth(1).click();
@@ -105,7 +105,7 @@ test(
     await expect(page.locator('.hero')).toHaveCount(0);
     await expect(page.locator('.preview-panel')).toHaveCount(0);
     await expect(page.locator('.configuration')).toBeVisible();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.screenshot({ path: 'reports/editor-full-desktop.png' });
     await page.getByRole('button', { name: 'Vorschau einblenden' }).click();
     await expect(page.locator('.preview-panel')).toBeVisible();
@@ -130,16 +130,16 @@ test(
   },
   async ({ page }): Promise<void> => {
     await page.goto('/#workspace');
-    await page.locator('.workflow button').nth(1).click();
+    await page.locator('.workflow [data-step="project"]').click();
     await page.locator('#form-language-de').uncheck();
     await expect(page.locator('#title-de')).toHaveCount(0);
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await expect(page.locator('#field-label-de')).toHaveCount(0);
     await expect(page.locator('#field-label-en')).toBeVisible();
-    await page.locator('.workflow button').nth(1).click();
+    await page.locator('.workflow [data-step="project"]').click();
     await page.locator('#form-language-de').check();
     await page.screenshot({ path: 'reports/languages-desktop.png' });
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.locator('#field-tooltip-de').fill('Genau drei Großbuchstaben');
     await page.locator('#field-tooltip-en').fill('Exactly three uppercase letters');
     await page.locator('#field-pattern-message-en').fill('Enter three uppercase letters');
@@ -183,12 +183,12 @@ test(
     const path = await (await downloadEvent).path();
     if (!path) throw new Error('Export missing');
     const exported = JSON.parse(await readFile(path, 'utf8'));
-    expect(exported.schemaVersion).toBe('2.1.0');
+    expect(exported.schemaVersion).toBe('2.3.0');
     expect(exported.forms[0].fields[0].pattern).toBe('[A-Z]{3}');
     expect(exported.forms[0].buttons[1].action).toBe('reset');
     expect(exported.forms[0].buttons[1].note).toBe('Clear only preview entries.');
     await page.reload();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await expect(page.locator('#field-tooltip-en')).toHaveValue('Exactly three uppercase letters');
     await expect(page.locator('#button-1-action')).toHaveValue('reset');
   },
@@ -205,7 +205,7 @@ test(
   },
   async ({ page }): Promise<void> => {
     await page.goto('/#workspace');
-    await page.locator('.workflow button').nth(1).click();
+    await page.locator('.workflow [data-step="project"]').click();
     await page.locator('#form-language-en').uncheck();
     await page.locator('#form-language-fa').check();
     await expect(page.locator('#form-language-en')).toBeDisabled();
@@ -214,7 +214,7 @@ test(
     await page.locator('.topbar').getByRole('button', { name: 'FA', exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    await expect(page.locator('.section-description')).toContainText('یک یا دو زبان');
+    await expect(page.locator('.section-description')).toContainText(['یک یا دو زبان']);
     await page.getByRole('button', { name: 'نمایش پیش‌نمایش' }).click();
     await page.locator('.preview-panel').getByRole('button', { name: 'FA', exact: true }).click();
     await expect(page.locator('.rendered-form')).toHaveAttribute('dir', 'rtl');
@@ -252,14 +252,15 @@ test(
   },
   async ({ page }): Promise<void> => {
     await page.goto('/#workspace');
-    await page.getByRole('button', { name: '3 Design auswählen' }).click();
+    await page.locator('.workflow [data-step="project"]').click();
+    await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
     await page.getByRole('button', { name: 'Carbon', exact: false }).click();
     await expect(page.locator('.theme-carbon')).toBeVisible();
-    await page.getByRole('button', { name: '4 Formular gestalten' }).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.getByRole('button', { name: 'Feld hinzufügen' }).click();
     await page.locator('#field-label-de').fill('Kundenreferenz');
     await page.reload();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await expect(page.locator('.field-list')).toContainText('Kundenreferenz');
     await page.locator('.topbar').getByRole('button', { name: 'EN', exact: true }).click();
     await page.getByRole('button', { name: 'Show preview', exact: true }).click();
@@ -322,9 +323,9 @@ test(
   { tag: tagsFor('studio', 'review-handoff', { areas: ['review', 'transfer'], smoke: true }) },
   async ({ page }): Promise<void> => {
     await page.goto('/#workspace');
-    await page.locator('.workflow button').nth(0).click();
+    await page.locator('.workflow [data-step="project"]').click();
     await page.getByLabel('Product Owner', { exact: true }).fill('Taylor');
-    await page.locator('.workflow button').nth(4).click();
+    await page.locator('.workflow [data-step="review"]').click();
     await expect(page.getByRole('button', { name: 'Review dokumentieren' })).toBeDisabled();
     await page.getByLabel('Offene Fragen (vor Freigabe leeren)').fill('');
     await page.getByLabel('Name der prüfenden Person').fill('Taylor');
@@ -339,9 +340,9 @@ test(
     const content = await readFile(file, 'utf8');
     expect(content).toContain('Reviewer: Taylor');
     expect(content).toContain('Full name');
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.locator('#field-label-de').fill('Dein vollständiger Name');
-    await page.locator('.workflow button').nth(4).click();
+    await page.locator('.workflow [data-step="review"]').click();
     await expect(page.locator('.review-record')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Review dokumentieren' })).toBeDisabled();
   },
@@ -359,7 +360,7 @@ test(
     await page.goto('/#workspace');
     for (const locale of ['DE', 'EN']) {
       await page.locator('.topbar').getByRole('button', { name: locale, exact: true }).click();
-      for (let step = 0; step < 5; step++) {
+      for (let step = 0; step < 4; step++) {
         await page.locator('.workflow button').nth(step).click();
         const results = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
@@ -395,7 +396,7 @@ test(
       ).toEqual([]);
       await page.locator('.sidebar a[href="#workspace"]').click();
     }
-    await page.locator('.workflow button').nth(2).click();
+    await page.locator('.workflow [data-step="project"]').click();
     for (const theme of ['Material', 'Carbon', 'Fluent']) {
       await page.getByRole('button', { name: theme, exact: false }).click();
       expect(

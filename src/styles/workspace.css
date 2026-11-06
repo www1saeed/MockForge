@@ -23,7 +23,7 @@
   gap: 15px;
 }
 
-.workspace-heading h2 {
+.workspace-heading h1 {
   font-size: 24px;
   letter-spacing: -0.4px;
   margin-top: 6px;
@@ -63,7 +63,7 @@
 
 .workflow {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   padding: 0 18px;
@@ -122,7 +122,7 @@
   align-items: center;
 }
 
-.section-heading h3 {
+.section-heading h2 {
   font-size: 14px;
   font-weight: 650;
 }
@@ -643,4 +643,10 @@
 }
 .clipboard-tools button {
   font-size: 12px;
+}
+
+.project-section-title {
+  margin-block: 2rem 1rem;
+  padding-block-start: 1.5rem;
+  border-top: 1px solid var(--line);
 }

@@ -140,7 +140,7 @@
           <div class="workspace-heading">
             <div>
               <span class="tiny-label">{{ t('formWorkspace') }}</span>
-              <h2>{{ project().name }}</h2>
+              <h1>{{ project().name }}</h1>
             </div>
             <div class="transfer-actions">
               <button
@@ -148,7 +148,6 @@
                 [attr.aria-expanded]="previewVisible()"
                 [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
                 (click)="togglePreview()"
-                [disabled]="listsOpen()"
               >
                 {{ t(previewVisible() ? 'hidePreview' : 'showPreview') }}</button
               ><button
@@ -156,7 +155,6 @@
                 [attr.aria-pressed]="previewFullWidth()"
                 [attr.aria-controls]="previewVisible() ? 'live-preview' : null"
                 (click)="togglePreviewWidth()"
-                [disabled]="listsOpen()"
               >
                 {{ t(previewFullWidth() ? 'restoreEditor' : 'expandPreview') }}</button
               ><button class="secondary-button" (click)="fileInput.click()">
@@ -174,93 +172,97 @@
             [attr.aria-label]="t('import')"
           />
           <nav class="workflow" [attr.aria-label]="t('formWorkspace')">
-            @for (key of steps; track key; let index = $index) {
+            @for (tab of workflowTabs; track tab.id; let index = $index) {
               <button
-                [class.current]="step() === index"
-                [attr.aria-current]="step() === index ? 'step' : null"
-                [attr.data-step]="['brief', 'copy', 'design', 'fields', 'review'][index]"
-                (click)="setStep(index)"
+                [class.current]="step() === tab.value"
+                [attr.aria-current]="step() === tab.value ? 'step' : null"
+                [attr.data-step]="tab.id"
+                [attr.aria-label]="t(tab.label)"
+                (click)="setStep(tab.value)"
               >
                 <span>{{ index + 1 }}</span
-                >{{ t(key) }}
+                >{{ t(tab.label) }}
               </button>
             }
           </nav>
-          <section class="form-manager" [attr.aria-label]="t('manageForms')">
-            <div class="form-selector">
-              <label for="active-form">{{ t('activeForm') }}</label>
-              <select
-                id="active-form"
-                [ngModel]="store.activeFormId()"
-                (ngModelChange)="selectForm($event)"
-              >
-                @for (form of store.application().forms; track form.id) {
-                  <option [value]="form.id">
-                    {{ form.title[locale()] || form.title[project().languages[0]] || form.id }} ·
-                    {{ form.id }}
-                  </option>
-                }
-              </select>
-            </div>
-            <div class="form-manager-actions">
-              <label class="application-menu-setting"
-                ><input
-                  type="checkbox"
-                  [ngModel]="store.application().forms[formIndex()].menu !== false"
-                  (ngModelChange)="store.setFormMenu($event)"
-                />{{ t('applicationShowForm') }}</label
-              >
-              <button
-                class="secondary-button"
-                [attr.aria-pressed]="listsOpen()"
-                (click)="toggleListWorkspace()"
-              >
-                {{ t(listsOpen() ? 'listBack' : 'listsTitle') }}
-              </button>
-              <button
-                class="secondary-button"
-                (click)="openFormDialog('new')"
-                [disabled]="store.application().forms.length >= 20"
-              >
-                {{ t('newForm') }}
-              </button>
-              <button
-                class="secondary-button"
-                (click)="openFormDialog('duplicate')"
-                [disabled]="store.application().forms.length >= 20"
-              >
-                {{ t('duplicateForm') }}
-              </button>
-              <button
-                class="secondary-button"
-                (click)="moveForm(-1)"
-                [disabled]="formIndex() === 0"
-                [attr.aria-label]="t('moveFormUp')"
-                [title]="t('moveFormUp')"
-              >
-                ↑
-              </button>
-              <button
-                class="secondary-button"
-                (click)="moveForm(1)"
-                [disabled]="formIndex() === store.application().forms.length - 1"
-                [attr.aria-label]="t('moveFormDown')"
-                [title]="t('moveFormDown')"
-              >
-                ↓
-              </button>
-              <button
-                class="secondary-button"
-                (click)="removeForm()"
-                [disabled]="store.application().forms.length === 1"
-              >
-                {{ t('deleteForm') }}
-              </button>
-            </div>
-            <p class="fine-print">{{ t('formSwitchNotice') }}</p>
-          </section>
+          @if (!listsOpen()) {
+            <section class="form-manager" [attr.aria-label]="t('manageForms')">
+              <div class="form-selector">
+                <label for="active-form">{{ t('activeForm') }}</label>
+                <select
+                  id="active-form"
+                  [ngModel]="store.activeFormId()"
+                  (ngModelChange)="selectForm($event)"
+                >
+                  @for (form of store.application().forms; track form.id) {
+                    <option [value]="form.id">
+                      {{ form.title[locale()] || form.title[project().languages[0]] || form.id }} ·
+                      {{ form.id }}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="form-manager-actions">
+                <label class="application-menu-setting"
+                  ><input
+                    type="checkbox"
+                    [ngModel]="store.application().forms[formIndex()].menu !== false"
+                    (ngModelChange)="store.setFormMenu($event)"
+                  />{{ t('applicationShowForm') }}</label
+                >
+
+                <button
+                  class="secondary-button"
+                  (click)="openFormDialog('new')"
+                  [disabled]="store.application().forms.length >= 20"
+                >
+                  {{ t('newForm') }}
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="openFormDialog('duplicate')"
+                  [disabled]="store.application().forms.length >= 20"
+                >
+                  {{ t('duplicateForm') }}
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="moveForm(-1)"
+                  [disabled]="formIndex() === 0"
+                  [attr.aria-label]="t('moveFormUp')"
+                  [title]="t('moveFormUp')"
+                >
+                  ↑
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="moveForm(1)"
+                  [disabled]="formIndex() === store.application().forms.length - 1"
+                  [attr.aria-label]="t('moveFormDown')"
+                  [title]="t('moveFormDown')"
+                >
+                  ↓
+                </button>
+                <button
+                  class="secondary-button"
+                  (click)="removeForm()"
+                  [disabled]="store.application().forms.length === 1"
+                >
+                  {{ t('deleteForm') }}
+                </button>
+              </div>
+              <p class="fine-print">{{ t('formSwitchNotice') }}</p>
+            </section>
+          }
           @if (listsOpen()) {
-            <app-collection-workspace [locale]="locale()" />
+            @defer (on immediate) {
+              <app-collection-configurator
+                [locale]="locale()"
+                [previewVisible]="previewVisible()"
+                [previewFullWidth]="previewFullWidth()"
+                (formSelected)="selectForm($event)"
+              />
+            }
           } @else {
             <div
               class="editor-layout"
@@ -269,7 +271,7 @@
             >
               <section class="configuration">
                 <div class="section-heading">
-                  <h3>{{ t(steps[step()]) }}</h3>
+                  <h2>{{ t(steps[step()]) }}</h2>
                   <span class="status-pill" [class.reviewed]="project().review.approvedAt">{{
                     t(project().review.approvedAt ? 'approved' : 'draft')
                   }}</span>
@@ -309,8 +311,7 @@
                       [ngModel]="project().scope"
                       (ngModelChange)="update({ scope: $event })"
                     ></textarea>
-                  }
-                  @case (1) {
+                    <h3 class="project-section-title">{{ t('projectCopy') }}</h3>
                     <p class="section-description">{{ t('languageLead') }}</p>
                     <fieldset class="language-picker">
                       <legend>{{ t('formLanguages') }}</legend>
@@ -356,8 +357,7 @@
                       }
                     </div>
                     <p class="fine-print">{{ t('buttonsCopyHint') }}</p>
-                  }
-                  @case (2) {
+                    <h3 class="project-section-title">{{ t('projectDesign') }}</h3>
                     <p class="section-description">{{ t('designLead') }}</p>
                     <div class="theme-grid">
                       @for (theme of themes; track theme.id) {
@@ -826,22 +826,30 @@
         </section>
       }
       @if (view() === 'application') {
-        <app-application-preview [locale]="locale()" [route]="applicationRoute()" />
+        @defer (on immediate) {
+          <app-application-preview
+            [locale]="locale()"
+            [route]="applicationRoute()"
+            [exporting]="previewExport.busy()"
+            (exportRequested)="previewExport.download(locale())"
+          />
+        }
       }
       @if (view() === 'examples') {
         <section id="workspace" class="content-page">
-          <p class="eyebrow">COMMERCIAL USE CASES</p>
+          <p class="eyebrow">{{ t('exampleCollection') }}</p>
           <h1>{{ t('businessTitle') }}</h1>
           <p class="page-lead">{{ t('businessLead') }}</p>
+          <p class="fine-print">{{ t('exampleRolesHint') }}</p>
           <div class="example-grid">
             @for (sample of samples; track sample.id) {
               <article class="example-card">
                 <div class="example-art" [class]="'example-art example-' + sample.id">
                   <span>{{ sample.number }}</span
-                  ><span>{{ sample.tag }}</span>
+                  ><span>{{ t(sample.tag) }}</span>
                 </div>
                 <div class="example-content">
-                  <span class="tiny-label">{{ sample.tag }}</span>
+                  <span class="tiny-label">{{ t(sample.tag) }}</span>
                   <h2>{{ t(sample.title) }}</h2>
                   <p>{{ t(sample.body) }}</p>
                   <button class="secondary-button" (click)="loadExample(sample.id)">

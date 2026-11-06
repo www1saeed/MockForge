@@ -3,7 +3,8 @@
 Open **Application preview** in the Studio navigation to walk through the loaded
 project as connected form and list screens. Form/list configuration stays in the
 editor. The Studio shell and synthetic-data tools remain available; this is an
-in-app preview, not an exported standalone application or a production frontend.
+in-app prototype. Download an offline HTML copy using **Download HTML preview**;
+see [standalone export](STANDALONE_PREVIEW.md).
 
 ## Menu and links
 
@@ -17,7 +18,7 @@ optional form `menu` flag. Omission means true. Setting false hides only that
 form's menu link; its lists remain visible and the form still has a direct link.
 This controls navigation presentation, not access or authorization. The change
 invalidates project review like other specification edits. Studio JSON remains
-2.1.0, and no routing state is added to the file.
+2.3.0, and no routing state is added to the file.
 
 | Destination | Hash |
 | --- | --- |
@@ -70,8 +71,8 @@ the existing fixed reference date. UI language remains a Studio preference.
 ## Boundaries and verification
 
 This increment adds no roles, simulated sign-in, access rules, wizard pages,
-inter-form relations, navigation actions on form buttons, standalone/offline app
-export, backend or code generation. A browser mockup does not implement production
+inter-form relations, navigation actions on form buttons, backend or code generation.
+[Standalone HTML export](STANDALONE_PREVIEW.md) is available separately with fresh record sessions. A browser mockup does not implement production
 authentication, authorization or persistence.
 
 Pure route tests cover valid/malformed/deleted/hidden/empty targets. Context tests
@@ -80,3 +81,5 @@ and menu persistence. `e2e/application-navigation.spec.ts` covers history, reloa
 editor isolation, shared CRUD, invalid links, worker/batch disposal, Persian mobile
 Axe and keyboard focus. Run `npm run e2e -- --area navigation`; full regression
 remains the default and automatic CI behavior.
+
+Offline exports use an independent project header/sidebar rather than Studio chrome. List appearance, column settings and action presentation are shared with the detailed configurator. See [standalone behavior](STANDALONE_PREVIEW.md).

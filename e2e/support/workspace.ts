@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import { ApplicationProject } from '../../src/app/application-project';
 import { Project } from '../../src/app/project.model';
+import { example } from '../../src/app/project.examples';
 
 /** Seed one fictional project once; subsequent reloads must exercise real persistence. */
 export async function openProject(
@@ -19,12 +20,23 @@ export async function openProject(
 /** Workflow identity is stable even when new steps are inserted. */
 export async function goToStep(
   page: Page,
-  key: 'brief' | 'copy' | 'design' | 'fields' | 'review',
+  key: 'brief' | 'copy' | 'design' | 'fields' | 'review' | 'lists',
 ): Promise<void> {
-  await page.locator(`.workflow [data-step="${key}"]`).click();
+  await page
+    .locator(
+      `.workflow [data-step="${['brief', 'copy', 'design'].includes(key) ? 'project' : key}"]`,
+    )
+    .click();
 }
 
 export async function dismissToasts(page: Page): Promise<void> {
   while (await page.locator('.toast-close').count())
     await page.locator('.toast-close').first().click();
+}
+
+/** Renderer regressions retain a fixed fixture independently of the public gallery's content. */
+export async function openLegacyComplex(page: Page): Promise<void> {
+  await openProject(page, example('complex'));
+  await goToStep(page, 'fields');
+  await dismissToasts(page);
 }

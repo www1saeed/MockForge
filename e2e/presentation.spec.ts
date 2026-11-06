@@ -23,10 +23,10 @@ test(
     await expect(data).toContainText('Developer API: 1-500 records');
     await expect(shell).toContainText('The project name identifies the draft');
     await expect(shell).toContainText('Direct links support browser history');
-    await expect(quality).toContainText('245');
-    await expect(quality).toContainText('181 unit/component tests');
-    await expect(quality).toContainText('64 Chromium end-to-end tests');
-    await expect(quality).toContainText('97.72%');
+    await expect(quality).toContainText('293');
+    await expect(quality).toContainText('214 unit/component tests');
+    await expect(quality).toContainText('79 Chromium end-to-end tests');
+    await expect(quality).toContainText('97.55%');
     for (const slide of await page.locator('main section').all()) {
       const narration = await slide.getAttribute('data-narration');
       expect(narration!.length).toBeGreaterThan(200);
@@ -151,7 +151,7 @@ test(
     const html = await readFile(path, 'utf8');
     expect(html).toContain('data:image/png;base64,');
     expect(html).toContain('Cut waits for a valid destination');
-    expect(html).toContain('97.72%');
+    expect(html).toContain('97.55%');
     const { resolve } = await import('node:path');
     const { pathToFileURL } = await import('node:url');
     const savedPath = resolve('reports/saved-presentation.html');
@@ -207,10 +207,10 @@ test(
     await page.setViewportSize({ width: 1600, height: 1050 });
     await page.goto('/#workspace');
     await page.locator('.topbar').getByRole('button', { name: 'EN', exact: true }).click();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.getByRole('button', { name: 'Show preview' }).click();
     await page.screenshot({ path: 'docs/images/workspace.png', fullPage: true });
-    await page.locator('.workflow button').nth(2).click();
+    await page.locator('.workflow [data-step="project"]').click();
     await page.screenshot({ path: 'reports/design-selection.png', fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: 'reports/workspace-mobile.png', fullPage: true });

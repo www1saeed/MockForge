@@ -1,56 +1,122 @@
+import { CollectionCellComponent } from './collection-cell.component';
+import { Locale } from './project.model';
+import { CollectionActionComponent } from './collection-action.component';
+import { CollectionColumnSetting, CollectionActionKind } from './collection-presentation';
 import {
   Component,
   computed,
   effect,
   ElementRef,
-  inject,
-  input,
   signal,
   ViewChild,
   OnDestroy,
+  input,
+  output,
+  linkedSignal,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProjectStore } from './project.store';
-import { CollectionSessionStore, RecordContext } from './collection-session.store';
+import { CollectionDefinitionController } from './collection-definition.controller';
+import { CollectionList } from './collection.model';
+import { RecordContext } from './collection-session.store';
 import {
-  CollectionList,
-  collectionChoice,
-  collectionLeaves,
-  createCollectionList,
-} from './collection.model';
-import { CollectionRecord, formatRecordValue, queryCollection } from './collection-query';
-import { Field, Locale, Text } from './project.model';
-import { CopyKey, translate } from './translations';
-import { FeedbackService } from './feedback.service';
+  CollectionRecord,
+  formatRecordValue,
+  queryCollection,
+  collectionValue,
+} from './collection-query';
+import { Field } from './project.model';
 import { FormPreviewComponent } from './form-preview.component';
 import { ownResponse, ResponseValues } from './response-values';
-
 @Component({
   selector: 'app-collection-workspace',
   standalone: true,
-  imports: [FormsModule, FormPreviewComponent],
+  imports: [
+    NgTemplateOutlet,
+    FormsModule,
+    FormPreviewComponent,
+    CollectionActionComponent,
+    CollectionCellComponent,
+  ],
   templateUrl: './collection-workspace.component.html',
 })
-export class CollectionWorkspaceComponent implements OnDestroy {
-  readonly store = inject(ProjectStore);
-  readonly data = inject(CollectionSessionStore);
-  readonly feedback = inject(FeedbackService);
-  readonly locale = input<Locale>('de');
-  readonly contentLanguage = input<Locale | null>(null);
-  readonly previewOnly = input(false);
-  readonly listId = input<string | null>(null);
-  readonly selected = signal('');
-  readonly lists = computed(() => this.data.form().lists ?? []);
-  readonly list = computed<CollectionList | undefined>(() =>
-    this.previewOnly()
-      ? this.lists().find((list) => list.id === this.listId())
-      : (this.lists().find((list) => list.id === this.selected()) ?? this.lists()[0]),
+export class CollectionWorkspaceComponent
+  extends CollectionDefinitionController
+  implements OnDestroy
+{
+  readonly standalone = input(false);
+  readonly showToolbar = input(true);
+  readonly selectedLanguage = signal<Locale | null>(null);
+  readonly mobile = signal(false);
+  readonly fixtureLanguage = signal<Locale | 'mixed' | null>(null);
+  readonly syncFixtureCount = input(false);
+  readonly fixtureCountChange = output<number>();
+  private readonly generationDefaults = computed(
+    () => ({
+      count: this.data.form().entries?.count ?? 25,
+      epoch: this.data.viewSession(),
+      session: this.store.projectSession(),
+    }),
+    { equal: (a, b) => a.count === b.count && a.epoch === b.epoch && a.session === b.session },
   );
-  readonly leaves = computed(() => collectionLeaves(this.data.form().fields));
-  readonly choices = computed(() => this.leaves().filter(collectionChoice));
+  readonly generationCount = linkedSignal({
+    source: this.generationDefaults,
+    computation: (value): number | null => value.count,
+  });
+  setGenerationCount(value: number | null): void {
+    this.generationCount.set(value);
+    if (this.syncFixtureCount() && this.generationValid()) this.fixtureCountChange.emit(value!);
+  }
+  readonly settingsOpen = signal(false);
+  readonly generationValid = computed(() => {
+    const count = this.generationCount();
+    return (
+      count !== null &&
+      Number.isInteger(count) &&
+      count >= 1 &&
+      count <= this.data.limits.recordsPerForm
+    );
+  });
+  override readonly contentLocale = computed(() =>
+    this.selectedLanguage() && this.store.application().languages.includes(this.selectedLanguage()!)
+      ? this.selectedLanguage()!
+      : this.store.application().languages.includes(this.contentLanguage() ?? this.locale())
+        ? (this.contentLanguage() ?? this.locale())
+        : this.store.application().languages[0],
+  );
+  dataLanguages(): Locale[] {
+    const value = this.fixtureLanguage();
+    const languages = this.store.application().languages;
+    return value === 'mixed'
+      ? [...languages]
+      : [value && languages.includes(value) ? value : this.contentLocale()];
+  }
+  appendOne(): void {
+    void this.data.regenerate(this.data.context(), this.dataLanguages(), 1, true);
+  }
+  columnHeading(id: string): string {
+    return (
+      this.list()
+        ?.columnSettings?.find((column) => column.fieldId === id)
+        ?.label[this.contentLocale()]?.trim() ||
+      this.text(this.field(id).label) ||
+      id
+    );
+  }
+  columnSetting(id: string): CollectionColumnSetting | undefined {
+    return this.list()?.columnSettings?.find((column) => column.fieldId === id);
+  }
+  rowActions(): CollectionActionKind[] {
+    return [...(this.list()?.actionOrder ?? this.actions)].filter(
+      (kind) => kind !== 'create' && this.list()?.actions[kind],
+    );
+  }
   readonly search = signal('');
   readonly filters = signal<ReadonlyMap<string, string | boolean>>(new Map());
-  readonly sort = signal<CollectionList['sort']>(undefined);
+  readonly sort = signal<CollectionList['sort'] | null>(undefined);
+  readonly effectiveSort = computed(() =>
+    this.sort() === undefined ? this.list()?.sort : this.sort(),
+  );
   readonly page = signal(0);
   readonly selection = signal<ReadonlySet<string>>(new Set());
   readonly matches = computed(() =>
@@ -87,25 +153,20 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     () =>
       !!this.visible().length && this.visible().every((record) => this.selection().has(record.id)),
   );
-  readonly contentLocale = computed(() =>
-    this.store.application().languages.includes(this.contentLanguage() ?? this.locale())
-      ? (this.contentLanguage() ?? this.locale())
-      : this.store.application().languages[0],
-  );
   readonly editing = signal<{
     context: RecordContext;
     record?: CollectionRecord;
     mode: 'new' | 'edit' | 'view';
   } | null>(null);
   @ViewChild('recordDialog') dialog!: ElementRef<HTMLDialogElement>;
-  readonly actions = ['create', 'view', 'edit', 'delete'] as const;
 
   constructor() {
+    super();
     effect(() => {
       this.data.viewSession();
       this.list();
       this.data.dataset();
-      this.locale();
+      this.contentLocale();
       this.search.set('');
       this.filters.set(new Map());
       this.sort.set(undefined);
@@ -114,103 +175,21 @@ export class CollectionWorkspaceComponent implements OnDestroy {
       this.close();
     });
   }
-  t(key: CopyKey): string {
-    return translate(key, this.locale());
-  }
-  text(value: Text): string {
-    return value[this.contentLocale()];
-  }
-  field(id: string): Field {
-    return this.leaves().find((field) => field.id === id)!;
-  }
   value(record: CollectionRecord, field: Field): string {
-    return formatRecordValue(field, ownResponse(record.values, field.id), this.contentLocale());
+    return formatRecordValue(
+      field,
+      collectionValue(record.values, field.id),
+      this.contentLocale(),
+      this.columnSetting(field.id)?.groupFields,
+    );
   }
   groupRows(record: CollectionRecord, field: Field): ResponseValues[] {
     const rows = ownResponse(record.values, field.id);
     return Array.isArray(rows) ? rows : [];
   }
-  patch(change: Partial<CollectionList>): void {
-    if (this.previewOnly() || !this.list()) return;
-    this.store.updateCollections(
-      this.lists().map((list) => (list.id === this.list()!.id ? { ...list, ...change } : list)),
-    );
-  }
-  title(value: string, lang: Locale): void {
-    this.patch({ title: { ...this.list()!.title, [lang]: value } });
-  }
-  add(): void {
-    if (this.previewOnly()) return;
-    const list = createCollectionList(this.data.form().fields, this.lists());
-    if (this.store.updateCollections([...this.lists(), list])) this.selected.set(list.id);
-  }
-  duplicate(): void {
-    if (this.previewOnly()) return;
-    const source = this.list();
-    if (!source) return;
-    const id = createCollectionList(this.data.form().fields, this.lists()).id;
-    if (this.store.updateCollections([...this.lists(), { ...source, id }])) this.selected.set(id);
-  }
-  move(offset: number): void {
-    if (this.previewOnly()) return;
-    const lists = [...this.lists()],
-      index = lists.indexOf(this.list()!),
-      target = index + offset;
-    if (target < 0 || target >= lists.length) return;
-    [lists[index], lists[target]] = [lists[target], lists[index]];
-    this.store.updateCollections(lists);
-  }
-  removeList(): void {
-    if (this.previewOnly()) return;
-    const list = this.list(),
-      context = this.data.context();
-    if (!list) return;
-    this.feedback.requestDelete(
-      this.text(list.title),
-      () => {
-        if (!this.previewOnly() && this.data.current(context) && this.list() === list)
-          this.store.updateCollections(this.lists().filter((item) => item.id !== list.id));
-      },
-      'listDeleteDescription',
-    );
-  }
-  toggle(kind: 'columns' | 'searchFields' | 'filters', id: string, enabled: boolean): void {
-    const values = this.list()![kind];
-    this.patch({
-      [kind]: enabled ? [...values, id] : values.filter((value) => value !== id),
-      ...(kind === 'columns' && !enabled && this.list()?.sort?.fieldId === id
-        ? { sort: undefined }
-        : {}),
-    });
-  }
-  preset(field: Field, raw: string): void {
-    this.patch({
-      presets: [
-        ...this.list()!.presets.filter((p) => p.fieldId !== field.id),
-        ...(raw === ''
-          ? []
-          : [{ fieldId: field.id, value: field.type === 'checkbox' ? raw === 'true' : raw }]),
-      ],
-    });
-  }
-  presetValue(id: string): string {
-    return String(this.list()!.presets.find((p) => p.fieldId === id)?.value ?? '');
-  }
-  action(key: (typeof this.actions)[number], value: boolean): void {
-    this.patch({ actions: { ...this.list()!.actions, [key]: value } });
-  }
-  entries(key: 'count' | 'seed', value: number): void {
-    if (this.previewOnly()) return;
-    this.store.updateCollections(this.lists(), {
-      ...(this.data.form().entries ?? { count: 25, seed: 1 }),
-      [key]: value,
-    });
-  }
-  defaultSort(id: string): void {
-    this.patch({ sort: id ? { fieldId: id, direction: 'asc' } : undefined });
-  }
   order(id: string): void {
-    const effective = this.sort() ?? this.list()?.sort;
+    if (this.columnSetting(id)?.sortable === false) return;
+    const effective = this.effectiveSort();
     this.sort.set({
       fieldId: id,
       direction: effective?.fieldId === id && effective.direction === 'asc' ? 'desc' : 'asc',
@@ -242,15 +221,21 @@ export class CollectionWorkspaceComponent implements OnDestroy {
     this.selection.set(new Set(this.matches().map((record) => record.id)));
   }
   regenerate(): void {
-    const context = this.data.context();
+    if (!this.generationValid()) return;
+    const context = this.data.context(),
+      count = this.generationCount()!,
+      languages = this.dataLanguages();
+    const generate = (): void => {
+      void this.data.regenerate(context, languages, count);
+    };
     if (!this.data.records().length) {
-      void this.data.regenerate(context);
+      generate();
       return;
     }
     this.feedback.requestDelete(
       this.t('listGenerate'),
       () => {
-        void this.data.regenerate(context);
+        generate();
       },
       'listRegenerateDescription',
     );

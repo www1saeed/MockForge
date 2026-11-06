@@ -16,6 +16,7 @@ import { COLLECTION_LIMITS } from './collection.model';
 import { CollectionRecord, collectionSignature, validRecordValues } from './collection-query';
 import { generateTestDataBatch } from './preview-data-batch';
 import { PatternCheckService } from './pattern-check.service';
+import { Locale, LOCALES } from './project.model';
 import { ResponseValues } from './response-values';
 
 export const COLLECTION_GENERATOR = new InjectionToken('Collection generator', {
@@ -40,10 +41,14 @@ export class CollectionSessionStore implements OnDestroy {
   private readonly datasets = this.registry.datasets;
   private readonly scope = inject(COLLECTION_VIEW);
   private readonly owner = this.registry.nextOwner();
+  readonly limits = COLLECTION_LIMITS;
   readonly viewSession = this.scope.epoch;
   readonly busy = signal(false);
   readonly progress = signal(0);
-  readonly notice = signal<'ready' | 'cancelled' | 'failed' | null>(null);
+  readonly requestedCount = signal(0);
+  readonly notice = signal<
+    'ready' | 'cancelled' | 'failed' | 'formLimit' | 'projectLimit' | 'retainedLimit' | null
+  >(null);
   private controller: AbortController | null = null;
   private session = this.project.projectSession();
   readonly form = computed(
@@ -58,6 +63,19 @@ export class CollectionSessionStore implements OnDestroy {
     () => !!this.dataset() && this.dataset()!.signature !== this.signature(this.form()),
   );
 
+  private capacityFailure(
+    retained: number,
+    requested: number,
+  ): 'formLimit' | 'projectLimit' | null {
+    if (retained + requested > this.limits.recordsPerForm) return 'formLimit';
+    const others = [...this.datasets()].reduce(
+      (total, [id, dataset]) => total + (id === this.form().id ? 0 : dataset.records.length),
+      0,
+    );
+    return others + retained + requested > this.limits.recordsPerProject ? 'projectLimit' : null;
+  }
+  readonly appendLimit = computed(() => this.capacityFailure(this.records().length, 1));
+  readonly canAppend = computed(() => !this.busy() && !this.stale() && this.appendLimit() === null);
   constructor() {
     effect(() => {
       const session = this.project.projectSession();
@@ -106,13 +124,35 @@ export class CollectionSessionStore implements OnDestroy {
     this.busy.set(false);
     if (active) this.notice.set('cancelled');
   }
-  async regenerate(context: RecordContext): Promise<void> {
-    if (!this.current(context)) return;
+  async regenerate(
+    context: RecordContext,
+    locales: readonly Locale[] = [this.project.application().languages[0]],
+    count?: number,
+    append = false,
+  ): Promise<void> {
+    if (
+      !this.current(context) ||
+      !locales.length ||
+      locales.length > 3 ||
+      new Set(locales).size !== locales.length ||
+      locales.some((locale) => !LOCALES.includes(locale))
+    )
+      return;
+    if (append && this.stale()) return;
+    const retained = append ? this.records() : [];
+    const requested = count ?? this.form().entries?.count ?? 25;
+    if (!Number.isInteger(requested) || requested < 1) return;
+    const capacity = this.capacityFailure(retained.length, requested);
+    if (capacity) {
+      this.notice.set(capacity);
+      return;
+    }
     this.cancel();
     const controller = new AbortController();
     this.controller = controller;
     this.generationKey = this.key();
     this.busy.set(true);
+    this.requestedCount.set(requested);
     this.progress.set(0);
     this.notice.set(null);
     try {
@@ -120,7 +160,10 @@ export class CollectionSessionStore implements OnDestroy {
         this.projection(),
         {
           ...(this.form().entries ?? { count: 25, seed: 1 }),
-          locale: this.project.application().languages[0],
+          count: requested,
+          locale: locales[retained.length % locales.length],
+          locales: locales.map((_, index) => locales[(index + retained.length) % locales.length]),
+          ...(append ? { seed: (this.form().entries?.seed ?? 1) + retained.length } : {}),
         },
         {
           signal: controller.signal,
@@ -149,8 +192,16 @@ export class CollectionSessionStore implements OnDestroy {
         (total, record) => total + record.diagnostics.filter((d) => d.outcome === 'skipped').length,
         0,
       );
-      if (!this.install(records, context, skipped)) {
-        this.notice.set('failed');
+      if (
+        !this.install(
+          [...retained, ...records],
+          context,
+          skipped + (append ? (this.dataset()?.skipped ?? 0) : 0),
+        )
+      ) {
+        this.notice.set(
+          this.capacityFailure(retained.length, result.records.length) ?? 'retainedLimit',
+        );
         return;
       }
       this.notice.set('ready');

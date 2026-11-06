@@ -104,52 +104,6 @@
   color: var(--danger);
 }
 
-.locale-toggle {
-  display: flex;
-  border: 1px solid var(--line);
-  padding: 3px;
-  border-radius: 6px;
-  background: white;
-}
-
-.device-toggle {
-  display: flex;
-  border: 1px solid var(--line);
-  padding: 3px;
-  border-radius: 6px;
-  background: white;
-}
-
-.locale-toggle button {
-  border: 0;
-  background: transparent;
-  padding: 6px 10px;
-  border-radius: 3px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.device-toggle button {
-  border: 0;
-  background: transparent;
-  padding: 6px 10px;
-  border-radius: 3px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.locale-toggle .selected {
-  background: #eaf0f2;
-  color: var(--ink);
-}
-
-.device-toggle .selected {
-  background: #eaf0f2;
-  color: var(--ink);
-}
-
 main {
   max-width: none;
   margin: 0;

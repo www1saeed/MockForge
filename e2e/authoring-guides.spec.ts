@@ -30,7 +30,7 @@ test(
         .getByRole('link', { name: jsonTitle, exact: true })
         .click();
       await expect(page.locator('app-authoring-guide h1')).toHaveText(jsonTitle);
-      await expect(page.locator('.authoring-example')).toHaveCount(2);
+      await expect(page.locator('.authoring-example')).toHaveCount(3);
       await page.locator('#example-groups summary').click();
       await expect(page.locator('#json-groups')).toHaveValue(/"layout": "table"/);
       if (locale === 'FA')
@@ -52,7 +52,7 @@ test(
       ).toBe(0);
       await expect(page.locator('.authoring-prompt')).toHaveCount(3);
       await page.locator('#prompt-create summary').click();
-      await expect(page.locator('#prompt-text-create')).toHaveValue(/schemaVersion "2.1.0"/);
+      await expect(page.locator('#prompt-text-create')).toHaveValue(/schemaVersion "2.3.0"/);
       expect(
         (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
           .violations,
@@ -72,10 +72,10 @@ test(
 );
 
 test(
-  'both downloadable examples pass validation and the real Studio import flow',
+  'all three downloadable examples pass validation and the real Studio import flow',
   { tag: tagsFor('authoring-guides', 'guide-examples', { areas: ['guide', 'transfer'] }) },
   async ({ page }): Promise<void> => {
-    for (const id of ['starter', 'groups']) {
+    for (const id of ['starter', 'groups', 'workspace']) {
       await page.goto('/#guide-json');
       await page.locator(`#example-${id} summary`).click();
       const downloading = page.waitForEvent('download');
@@ -97,7 +97,7 @@ test(
       expect(JSON.parse(stored)).toEqual(content);
       if (id === 'groups') {
         await page.getByRole('button', { name: 'Vorschau einblenden', exact: true }).click();
-        await expect(page.locator('app-repeat-group')).toHaveCount(2);
+        await expect(page.locator('app-repeat-group')).toHaveCount(1);
       }
       while (await page.locator('.toast-close').count())
         await page.locator('.toast-close').first().click();
@@ -156,7 +156,7 @@ test(
 );
 
 test(
-  'the downloaded AI kit includes the actual contract and both complete examples',
+  'the downloaded AI kit includes the actual contract and all three complete examples',
   { tag: tagsFor('authoring-guides', 'guide-kit', { areas: ['guide', 'transfer'] }) },
   async ({ page }): Promise<void> => {
     await page.goto('/#guide-ai');
@@ -168,12 +168,12 @@ test(
     const content = await readFile(path, 'utf8');
     expect(content).toContain('export interface Project');
     expect(content).toContain('export interface ApplicationProject');
-    expect(content).toContain('SCHEMA 2.1.0');
+    expect(content).toContain('SCHEMA 2.3.0');
     expect(content).toContain("schemaVersion: '1.3.0'");
     const examples = Array.from(
       content.matchAll(/BEGIN EXAMPLE ([^\n]+)\n([\s\S]*?)\nEND EXAMPLE \1/g),
     );
-    expect(examples).toHaveLength(2);
+    expect(examples).toHaveLength(3);
     for (const example of examples)
       expect(validateApplicationProject(JSON.parse(example[2]))).toBe(true);
     await expect(page.locator('#authoring-kit-url')).toHaveValue(

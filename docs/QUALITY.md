@@ -1,6 +1,54 @@
 # Code quality and test evidence
 
-## Application navigation checkpoint — November 5, 2026
+## PR #8 review corrections — November 6, 2026
+
+**293 Studio tests pass: 214 Jest cases in 28 suites and 79 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.84% statements, 90.38% branches, 96.08% functions, 97.55% lines. Eight new unit/component regressions cover stale append rejection, per-form/project/retained-size limits and concurrent capacity changes, explicit unsorted order, selected-child queries, historical import capabilities, implicit single-child selection and stable dialog scopes. Two new browser journeys exercise card/accordion sorting/search and the single-child checkbox.
+
+Production build passes at 903.27 kB initial size against unchanged 700 kB warning / 1 MB failure. No dependency, schema or resource-budget changes. Format/lint/types, 552 translations, kit synchronization and local documentation references are checked. Full browser evidence: reports/pr8-review-fixes-final-e2e.json; 241.32 seconds, two workers, no retries/skips/flaky/unexpected results or report errors. CI needs its own run after push.
+
+## List usability checkpoint — November 5, 2026
+
+**283 Studio tests pass: 206 Jest cases in 28 suites plus 77 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.70% statements, 90.05% branches, 95.99% functions, 97.45% lines. Format/lint/app+spec+E2E types, 549 translations, synchronized kit, local documentation references and production build pass. Initial bundle901.23kB; unchanged700kB warning/1MB failure. No new dependency, schema revision or resource-budget increase.
+
+A new count regression plus extended parent/child assertions cover default/preview synchronization, invalid drafts, unrelated edits, source changes and immutable confirmation options. Existing group cases cover lazy dialogs, selected children, input/disposal cleanup, empty counts and text-only legacy compatibility. The new browser journey verifies layout-specific controls, spacing, live density/hover/alignment, exact replacement counts and independently scrolling preview. Extended group journeys exercise Close/Escape/focus, actual offline files and Persian mobile dialog Axe/bounds. The duplicate preview heading is removed.
+
+Final full report: reports/pr8-list-usability-final-e2e.json. Current HTML deck remains15slides; its quality figures/narration are updated and desktop/mobile inspected. Previous ignored PDF is a separate export. CI needs its own run after user push.
+
+## Grouped lists and language-aware fixtures — November 5, 2026
+
+**281 Studio tests pass: 205 Jest cases in 28 suites and 76 Chromium journeys.** Ten selector checks remain separate. Coverage: 95.66% statements, 90.17% branches, 95.90% functions and 97.41% lines. Format/lint/app+spec+E2E types, 548 translations, synchronized authoring kit, local documentation targets and production build pass. Full browser evidence: reports/pr8-expanded-lists-final-e2e.json; CI needs its own run after push.
+
+New cases cover safe group/child projection, schema2.2 migration and malformed settings, pruning after definition changes, actual group layouts and localized values, atomic append/cancellation, inactive-language fallback and confirmed generation options. Three browser journeys cover all layouts, selected group children, badges, toolbar/full-width/visibility, language-specific replacement/mixed/single append, real offline export and Persian mobile Axe/keyboard/bounds. Existing CRUD/navigation/example journeys retain their regression assertions.
+
+Studio2.3 adds optional finite layout/display/groupFields settings and migrates older contracts with approval cleared. Nine new unit cases and three journeys extend the previous inventory. Table styles remain four; list layouts are table/card/accordion, with group-specific nested views. Production initial bundle is 897.72 kB (unchanged 700 kB warning / 1 MB failure); configurator and application preview remain lazy. No new dependency, role/auth contract or worker/generation/storage/bundle budget increase. Application preview/configuration are lazy; the offline runtime retains independent header/sidebar, noHTTP/noStudioStorage and session-only records. Actual deck remains fifteen slides; previous ignored PDF is a separate export.
+
+## List designer and independent shell checkpoint — November 5, 2026
+
+**269 Studio tests pass: 196 Jest unit/component cases in 27 suites and 73 Chromium journeys.** Ten E2E selector checks pass separately. Coverage: 95.65% statements, 90.37% branches, 96.25% functions and 97.55% lines (src/app/*.ts; standalone bootstrap is covered in Chromium). Format/lint/app+spec+E2E types, 534 translations, synchronized authoring kit, local documentation targets and build pass.
+
+The four workflow tabs combine Project & design and separate form fields, detailed list configuration and review. Five new unit cases cover 2.1 migration, bounded presentation, pruning, disabled sorting, persisted configuration and confirmation disposal. Two new registered browser journeys cover the merged page, saved column/design/action settings, accessible icon-only actions, matching offline output, Persian mobile layout/Axe and keyboard menu/focus behavior. Existing journeys use semantic workflow identities and preserve their regression assertions. Full evidence: reports/pr8-list-designer-final-e2e.json. The final run has no retries/skips/flaky/unexpected results; CI still needs its own run after push.
+
+Studio JSON is now 2.2.0; 2.1.0 and earlier supported inputs migrate with old approval retired. The configurator is deferred until its tab opens; the standalone build reuses only record interaction/rendering. Four finite table designs, bounded column settings and built-in action icons require no new dependency or arbitrary CSS. Worker/generation/storage resource limits and existing bundle budgets remain unchanged. Production initial bundle is 987.32 kB against the unchanged 700 kB warning / 1 MB failure; the deferred configurator is 18.43 kB. The HTML app has its own project header/sidebar/mobile disclosure and omits Studio form toolbars and fake browser chrome. Configurator, standalone desktop/mobile and changed fifteen-slide deck content were visually inspected. The old ignored PDF remains a separate export.
+
+## Progressive examples checkpoint — November 5, 2026
+
+**262 Studio tests pass: 191 Jest unit/component tests in 25 suites and 71 Chromium journeys.** Ten E2E selector Node checks pass separately. Jest coverage is 95.93% statements, 90.60% branches, 96.67% functions and 97.78% lines. Format/lint/app+spec+E2E types, 484 translations, authoring-kit synchronization, 131 local documentation targets and production build pass. Schema, dependencies, worker/generation limits and build budgets remain unchanged.
+
+The current three-level gallery, JSON guide, downloads and authoring kit share the same canonical 2.1.0 assets. Three unit cases cover valid progressive configurations/translations, detached nested data and the planned-role/current-capability boundary. Four permanent examples journeys exercise real gallery replacement, simple CRUD, repeated position save/restoration, presets/read-only views, independent datasets for two forms, complete offline export with Fluent styles and Persian mobile Axe/layout. Existing authoring journeys now download/import all three files and validate the expanded kit. Full browser evidence: `reports/pr8-examples-final-e2e.json`; 206.53 seconds with two workers, no retries/skips/flaky/unexpected results. CI requires its own run after push.
+
+[Example intent and future-role planning](EXAMPLES.md) distinguish business responsibility from actual authorization. Roles, own-record restrictions and hidden-field security are not implemented. All current viewers share the same configured list capabilities. The separate legacy seed is retained for existing behavior and compatibility tests. Gallery cards and updated slides were inspected desktop/mobile. The current fifteen-slide HTML deck and narration are updated; the older ignored PDF remains a separate export.
+
+Studio initial bundle is **958.43 kB**, above the existing 700 kB warning and below the unchanged 1 MB failure budget. The separately loaded runtime is 1,138,219 serialized UTF-16 units and includes the same theme styles as Studio. Generated and production-copied runtime assets match.
+
+## Previous standalone HTML checkpoint — November 5, 2026
+
+**255 Studio tests pass: 188 Jest unit/component tests in 24 suites and 67 Chromium journeys.** Ten E2E selector Node checks pass separately. Jest coverage of `src/app/*.ts` is 95.94% statements, 90.64% branches, 96.65% functions and 97.77% lines. The standalone bootstrap is exercised in Chromium, outside that Jest coverage scope. Formatting, lint, application/spec/E2E types, 475 translations, authoring-kit synchronization, 121 local documentation links and build pass.
+
+Three permanent offline export journeys download actual HTML and exercise file:// without HTTP or Studio storage, source record/answer exclusion, CRUD/history/reload, hostile author text, worker timeout/recovery, repeat rows through locale changes and Persian mobile Axe/layout. Capture/service cases cover private metadata stripping, import-extension pruning, escaping, invalid/oversized inputs, stale snapshots, retry and disposal. Full evidence: `reports/pr8-standalone-preview-e2e.json`; final run takes 214.96 seconds with two workers and no retries/skips/flaky results. CI requires its own run after push.
+
+Studio initial bundle is **934.42 kB**, above the unchanged 700 kB warning and below 1 MB failure. The standalone runtime is a separately loaded generated asset, approximately 1.13 million serialized UTF-16 units, excluded from that initial total. No schema, dependency or worker/generation-budget change. See [export/session/build limits](STANDALONE_PREVIEW.md). The fifteen-slide HTML deck and narration explain offline sharing and updated evidence. Desktop/mobile exports and changed slides were visually inspected. The older ignored PDF remains a separate export and must be regenerated before sharing. These are local Chromium results, not cross-browser certification or original-edition parity.
+
+## Previous application navigation checkpoint — November 5, 2026
 
 **245 Studio tests pass: 181 Jest unit/component tests in 22 suites and 64
 Chromium journeys.** Ten E2E-selection Node tests pass separately. Coverage is

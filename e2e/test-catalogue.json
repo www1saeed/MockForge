@@ -32,6 +32,10 @@
     "preview-test-data": ["test-data", "preview", "groups"],
     "repeat-groups": ["groups", "authoring", "preview"],
     "shell-context": ["shell"],
-    "studio": ["authoring", "preview", "transfer", "persistence", "review", "shell"]
+    "studio": ["authoring", "preview", "transfer", "persistence", "review", "shell"],
+    "standalone-preview": ["transfer", "navigation", "lists", "preview"],
+    "examples": ["authoring", "forms", "lists", "groups"],
+    "list-configurator": ["authoring", "lists", "transfer"],
+    "list-views": ["lists", "groups", "preview", "test-data"]
   }
 }

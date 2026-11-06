@@ -26,6 +26,7 @@ export const BATCH_LIMITS = Object.freeze({
 export interface BatchRequest {
   count: number;
   locale: Locale;
+  locales?: Locale[];
   seed: number;
   referenceDate?: string;
   scenario?: DataScenario;
@@ -83,6 +84,12 @@ export async function generateTestDataBatch(
   if (
     !validateProject(snapshot) ||
     !LOCALES.includes(settings.locale) ||
+    (settings.locales !== undefined &&
+      (!Array.isArray(settings.locales) ||
+        !settings.locales.length ||
+        settings.locales.length > 3 ||
+        new Set(settings.locales).size !== settings.locales.length ||
+        settings.locales.some((locale) => !LOCALES.includes(locale)))) ||
     !Number.isInteger(settings.count) ||
     settings.count < 1 ||
     settings.count > BATCH_LIMITS.records ||
@@ -138,6 +145,7 @@ export async function generateTestDataBatch(
       form
         .querySelectorAll<ResponseControl>('input,select,textarea')
         .forEach((control) => control.setCustomValidity(''));
+      const locale = settings.locales?.[index % settings.locales.length] ?? settings.locale;
       const seed = normalizeDataSeed(normalizeDataSeed(settings.seed) + index);
       const entries = options.checker
         ? await untilAborted(
@@ -145,7 +153,7 @@ export async function generateTestDataBatch(
               snapshot.fields,
               rows,
               new Set(),
-              { ...settings, seed },
+              { ...settings, locale, seed },
               options.checker,
               controller.signal,
             ),
@@ -156,7 +164,7 @@ export async function generateTestDataBatch(
       const report = fillTestData(
         form,
         fields,
-        settings.locale,
+        locale,
         seed,
         true,
         settings.scenario,

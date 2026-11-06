@@ -6,6 +6,7 @@ import {
   ElementRef,
   inject,
   input,
+  output,
   OnDestroy,
   signal,
   untracked,
@@ -49,9 +50,13 @@ export class ApplicationPreviewComponent implements OnDestroy {
   readonly data = inject(CollectionSessionStore);
   private readonly feedback = inject(FeedbackService);
   readonly locale = input<Locale>('de');
+  readonly standalone = input(false);
+  readonly exporting = input(false);
+  readonly exportRequested = output<void>();
   readonly route = input<ApplicationRoute>({ kind: 'home' });
   readonly selectedLocale = signal<Locale | null>(null);
   readonly mobile = signal(false);
+  readonly menuOpen = signal(false);
   readonly language = computed(() => {
     const requested = this.selectedLocale() ?? this.locale();
     return this.store.application().languages.includes(requested)

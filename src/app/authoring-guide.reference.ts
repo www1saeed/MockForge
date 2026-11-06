@@ -1,14 +1,10 @@
-import starter from '../assets/guides/studio-starter.form.json';
-import groups from '../assets/guides/studio-groups.form.json';
+import { APPLICATION_EXAMPLES } from './application-examples';
 import rules from '../assets/guides/studio-authoring-rules.json';
 import { BUTTON_ACTIONS, BUTTON_VARIANTS, FIELD_TYPES, THEMES } from './project.model';
 import { CopyKey } from './translations';
 
 /** The displayed/downloadable examples and authoring kit share the same asset sources. */
-export const AUTHORING_EXAMPLES = [
-  { id: 'starter', title: 'starterExample', file: 'studio-starter.form.json', value: starter },
-  { id: 'groups', title: 'groupsExample', file: 'studio-groups.form.json', value: groups },
-] as const;
+export const AUTHORING_EXAMPLES = APPLICATION_EXAMPLES;
 export const AUTHORING_RULES = rules.rules
   .map((rule, index): string => `${index + 1}. ${rule}`)
   .join('\n');
@@ -32,7 +28,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
     rows: [
       {
         names: 'format, schemaVersion',
-        type: '"mockforge-studio", "2.1.0"',
+        type: '"mockforge-studio", "2.3.0"',
         description: 'versionRule',
       },
       {
@@ -72,13 +68,18 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
     title: 'listContract',
     rows: [
       {
+        names: 'appearance?, columnSettings?, actionSettings?, actionOrder?',
+        type: 'bounded table/card/accordion/group/column/button presentation',
+        description: 'listAppearanceHint',
+      },
+      {
         names: 'id, title',
         type: 'safe form-local list ID, Text',
         description: 'listContractRule',
       },
       {
         names: 'columns, searchFields, filters',
-        type: 'root leaf ID[]; at most 20 each',
+        type: 'root/group/child paths for columns/search; root choice IDs for filters; at most 20 each',
         description: 'listContractRule',
       },
       {

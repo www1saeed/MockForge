@@ -15,21 +15,21 @@ LocalStorage writes are synchronous after each edit. A form specification is sma
 ## Application foundation (November 5, 2026)
 
 The application-mockup expansion is being implemented in small commits on
-`feature/application-preview-navigation` after the merged multi-form and CRUD increments. Its behavioral reference is the local
+`feature/standalone-preview-export` after the merged multi-form and CRUD increments. Its behavioral reference is the local
 original edition at `0b9b47e` (its changelog calls 0.2.0 a release candidate).
 Original source, private packages and assets are not imported into Studio.
 
 `FormContent` separates the reusable form definition from the unchanged legacy
 `Project`. `application-project.ts` defines the **active**, independently versioned
-Studio 2.1.0 contract: mandatory `format: "mockforge-studio"`, project-wide
+Studio 2.3.0 contract: mandatory `format: "mockforge-studio"`, project-wide
 brief/theme/languages/review and a nonempty `forms` array. Each form has a stable
 ID, title, description, legacy submit copy, column layout, fields and buttons,
 plus an optional menu flag. Field/button IDs are scoped to their form; form IDs
 are unique across the project. The discriminator distinguishes Studio from the
 incompatible original edition's 2.x files. Unknown application/form container keys are rejected rather than silently activating future contracts.
 
-`parseApplicationProject` validates Studio 2.1.0 snapshots or chains the existing
-Studio 1.0–1.3 parser into a one-form migration. Studio 2.0.0 applications migrate to 2.1.0 with review invalidated and no invented list configuration. Migration preserves all supported
+`parseApplicationProject` validates Studio 2.3.0 snapshots, migrates 2.2.0, or chains the existing
+Studio 1.0–1.3 parser into a one-form migration. Studio 2.0.0 applications migrate to 2.3.0 with review invalidated and no invented list configuration. Migration preserves all supported
 brief/form properties and all stored translations, resets review checks and the
 acknowledgement timestamp, retains the reviewer and never mutates the source or
 writes storage. Parsing returns an owned JSON snapshot. Serialization includes
@@ -48,7 +48,7 @@ selection and preview-session epochs belong to the store; native responses and
 workers remain owned by the mounted preview. Confirmation dialogs belong to the UI.
 
 **Active runtime:** Store, JSON persistence/import/export, Markdown, guides,
-downloadable examples and the authoring kit use 2.1.0. The existing LocalStorage
+downloadable examples and the authoring kit use 2.3.0. The existing LocalStorage
 key is retained: restore reads legacy or current data without rewriting bytes;
 the next successful edit writes the entire application. Failed migrations leave
 stored bytes recoverable. `projectForForm` supplies the old 1.3.0 renderer/batch
@@ -81,7 +81,7 @@ the present tags do not imply those capabilities.
 
 1. **Implemented:** application store/form selector, named add/duplicate,
    reorder/confirmed-delete, scoped clipboard, stale-worker disposal, all-form
-   readiness and handoff, 2.1.0 persistence/transfer and updated guides/examples.
+   readiness and handoff, 2.3.0 persistence/transfer and updated guides/examples.
    Four browser journeys cover migration/round-trip, review/drafts, worker and
    generation cancellation, and Persian mobile accessibility.
 2. **Implemented:** one shared session-only record set per form, configurable CRUD lists,
@@ -90,13 +90,14 @@ the present tags do not imply those capabilities.
    pattern-check budgets; regeneration must not silently discard edited records.
 3. **Implemented:** in-app application navigation with stable form/list hash links,
    browser history, separate authoring/preview cursors, shared records, hidden-menu
-   direct links and DE/EN/FA direction. Standalone application export remains later.
+   direct links and DE/EN/FA direction. Standalone HTML export now packages these
+   same components for offline use with fresh record sessions.
 4. Add optional simulated roles, a central inherited-access resolver, rights
    editors and a matrix. Hidden required fields must not validate; read-only
    values survive editing; action handlers recheck effective rights. Sign-in
    selects a mock role and provides no real authentication or authorization.
 5. Add real multi-page forms, localized messages and closing pages, followed by
-   group columns and lists over group items.
+   lists over group items (group columns and nested layouts are active).
 6. Extend review and handoff, then deterministic acceptance criteria and external
    chatbot requirements prompts. Keep translations, authoring kit, documentation,
    examples and presentation aligned with activated capabilities.
@@ -174,19 +175,19 @@ Optional `RepeatGroup.gapless` accepts only boolean values at the import boundar
 
 `preview-test-data.ts` fills mounted native controls, grouping radio instances by response name. The small original DE/EN/FA catalogue is independent of preview language. A bounded seed reproduces values for the same structure; this fills one mounted preview; the separate batch adapter below reuses its validation. Native required/type/pattern validity and explicit text-length checks reject unsuitable candidates, restoring prior values. A finite bounded concatenation subset is generated; deferred known fixture candidates use worker isolation. The renderer refreshes existing custom validity through input events. The default row mode adds one transient row to empty groups; minimum/maximum settings and protected shrink are described below. Results count response instances plus explicitly requested group checks. A session WeakSet records explicitly edited native controls so intentional unchecked answers survive preserve-mode filling. Generation guards its own dispatched events, and reset clears this edit history. Settings use an application-level native dialog outside the simulated mobile viewport. The existing response reset clears the report and restores group minima.
 
-The shell derives workspace navigation names and the header project context from the current project signal. The form title follows the current UI language when active, otherwise the first configured form language. Blank project names use the translated workspace label. Studio branding and route identities remain stable. Application files now use 2.1.0 and contain all forms; the selected renderer projection remains 1.3.0.
+The shell derives workspace navigation names and the header project context from the current project signal. The form title follows the current UI language when active, otherwise the first configured form language. Blank project names use the translated workspace label. Studio branding and route identities remain stable. Application files now use 2.3.0 and contain all forms; the selected renderer projection remains 1.3.0.
 
-The DE/EN/FA in-app guide presents the new authoring, data and shell workflows without changing the five-step editing model. Its content has browser coverage for all three locales. [The feature comparison](FEATURE_COMPARISON.md) documents which original-edition behaviors are shared and which remain absent; the two generators are not interchangeable.
+The DE/EN/FA in-app guide presents authoring, data and shell workflows. The current four workflow tabs combine project settings/copy/design and give lists a dedicated page. Guide content has browser coverage for all three locales. [The feature comparison](FEATURE_COMPARISON.md) documents which original-edition behaviors are shared and which remain absent; the two generators are not interchangeable.
 
 ## Text-editor and AI authoring guides
 
-The hash views `guide-json` and `guide-ai` preserve the shell and never mutate ProjectStore. AuthoringGuideComponent owns a selectable copy fallback and locale/mode-scoped status. It resolves the kit URL against document.baseURI, retaining static deployment prefixes. It sends no network request to any external chatbot. Complete JSON assets are shared by the displayed examples and downloads, and imported with TypeScript resolveJsonModule. Prompt tasks are localized; the exact English contract rules remain common. The TXT kit includes the model's actual type declarations and the same examples. CI checks its deterministic regeneration. Unit tests validate both examples and exact kit content; browser tests use the real download/import boundary, accessibility scans in three locales and clipboard denial fallback.
+The hash views `guide-json` and `guide-ai` preserve the shell and never mutate ProjectStore. AuthoringGuideComponent owns a selectable copy fallback and locale/mode-scoped status. It resolves the kit URL against document.baseURI, retaining static deployment prefixes. It sends no network request to any external chatbot. Complete JSON assets are shared by the displayed examples and downloads, and imported with TypeScript resolveJsonModule. Prompt tasks are localized; the exact English contract rules remain common. The TXT kit includes the model's actual type declarations and the same examples. CI checks its deterministic regeneration. Unit tests validate all three examples and exact kit content; browser tests use the real download/import boundary, accessibility scans in three locales and clipboard denial fallback.
 
 ## Boundary generation and response constraints
 
 `response-constraints.ts` shares UTF-16 text-length checks between `preview-test-data.ts` and `FormPreviewComponent`. The renderer uses custom validity to make programmatically assigned length errors visible to native form validation and clears them on correction/reset. The generator sets candidate controls, dispatches guarded input/change events, observes validity, checks the intended failure rule and restores previous responses on mismatch. Deferred patterns reach only isolated candidate evaluation; empty values bypass patterns. The isolated manual boundary is described below.
 
-`FillReport` contains per-instance diagnostics with expected/observed candidate validity; untouched cases stay untested. The UI displays 20 entries and totals all entries. Explicit row-boundary checks add one diagnostic per group. `RepeatGroupComponent.resizeForTestData` clamps row counts, preserves retained row identities and refuses shrinking without replacement. Settings, diagnostics, row identities and answers remain transient; the renderer projection remains 1.3.0 while the application uses 2.1.0 and project-wide review.
+`FillReport` contains per-instance diagnostics with expected/observed candidate validity; untouched cases stay untested. The UI displays 20 entries and totals all entries. Explicit row-boundary checks add one diagnostic per group. `RepeatGroupComponent.resizeForTestData` clamps row counts, preserves retained row identities and refuses shrinking without replacement. Settings, diagnostics, row identities and answers remain transient; the renderer projection remains 1.3.0 while the application uses 2.3.0 and project-wide review.
 
 ## Coherent records and recognition
 
@@ -219,3 +220,29 @@ Manual pattern dispatch is now serialized centrally in FormPreviewComponent for 
 ## Application routing
 
 `application-navigation.ts` parses strict hash-only form/list targets and builds ordered menu entries. The application root observes hashes without changing editor selection. `ApplicationPreviewComponent` resolves targets against the current specification and remounts response owners on route/project epochs. Missing routes show recovery, never an unrelated form. Route changes focus the screen heading. `CollectionWorkspaceComponent` reuses query/CRUD behavior through its injected view facade, hides authoring configuration in preview-only mode and rejects configuration mutation there. Record dialogs use the facade projection, not the authoring store projection. See [application behavior](APPLICATION_PREVIEW.md).
+
+## Standalone preview runtime
+
+`preview-export.ts` validates/captures a sanitized application and assembles escaped HTML. `PreviewExportService` owns lazy runtime loading, deadlines, stale-project guards and downloads. `src/standalone/main.ts` bootstraps the same `ApplicationPreviewComponent` and collection registry with a store whose restore/persist methods are inert and a Blob-backed worker factory. The application component emits export requests to Studio; the standalone build never imports the download service or Studio editor. The separate AOT build is packaged into one inline script/CSS/worker asset before Studio starts or builds. See [build, session, security and size limits](STANDALONE_PREVIEW.md).
+
+## Progressive example catalogue
+
+`application-examples.ts` owns the current three-level catalogue, backed by the same JSON assets used in the authoring guide, downloads and generated kit. Its factory validates/detaches complete 2.3.0 applications. Gallery metadata is shared through `SAMPLES`; loading stages a whole-application replacement instead of a legacy single-form projection. Legacy fixtures remain separate for compatibility and the initial draft. Planned role responsibilities are brief/questions text; current list capabilities and presets do not introduce an access schema. See [example boundaries](EXAMPLES.md).
+
+## Dedicated list editing and runtime shell
+
+`CollectionDefinitionController` owns shared configuration mutations and stable list selection. `CollectionConfiguratorComponent` contains the detailed editor and is loaded with Angular defer when its workflow tab opens. `CollectionWorkspaceComponent` owns record interaction and renders configured table/actions without editor controls; callback owner/revision guards remain in place. `collection-presentation.ts` admits finite style/icon tokens and bounded column dimensions/labels. The application contract is 2.3.0 and migrates 2.1.0 while retiring prior approval.
+
+Standalone HTML has its own project header, sidebar, mobile menu disclosure and routed content. Application-mode forms omit Studio toolbars, fake browser chrome and developer settings; native validation/isolated workers and session-only CRUD remain shared. The current-document hash URLs still preserve file paths and static-host prefixes.
+
+### Grouped list projections and lazy loading
+
+`collectionFields` enumerates root fields and explicit group/child paths; `collectionValue` projects actual repeated responses without flattening record ownership. `CollectionCellComponent` shares text-safe group, badge and chip rendering between table/card/accordion views. Column pruning also retires removed child paths and group-field preferences. Studio 2.3.0 admits optional layout/display/groupFields settings; earlier approval is cleared on migration. The authoring list preview shares global visibility/full-width controls but owns content/device/data-language settings. The source-form selector emits the same guarded selection used by form authoring.
+
+BatchRequest optional `locales` cycles profiles inside the existing single deadline/output cap. CollectionSessionStore stages either a full replacement or an atomic single append, rotates mixed locales by retained count and retains ownership/revision/cancellation guards. No locale/profile/answer settings are persisted. Application preview and list configuration are deferred until requested, leaving shared record rendering in lazy chunks and preserving existing initial bundle budgets.
+
+### List-preview usability and count ownership
+
+CollectionWorkspace links its count draft to form defaults and cursor/project epochs through linkedSignal with an equality-guarded source. Authoring preview emits only valid counts to the same form entries preference; the application renderer keeps local overrides. A regeneration confirmation captures count/locales once. Invalid drafts disable generation and cannot reach the generator. This removes competing authoring counts without introducing storage for answers or application-view settings.
+
+CollectionCell lazily mounts structured group contents in native dialogs. Input-scope changes and destruction close pending details; native close/Escape restores focus, and guarded post-render focus cannot revive an obsolete dialog. Scalar legacy chip/count displays fall back to text. The configurator hides table-only controls for non-table layouts, while record density/hover/alignment remain active. Preview has an independent bounded scroller and no duplicate heading.

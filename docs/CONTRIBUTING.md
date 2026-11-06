@@ -120,3 +120,11 @@ For pattern work, keep `preview-pattern.ts` admission conservative: static bound
 For batch changes, read [the API contract](TEST_DATA_BATCH_API.md). Keep native validation shared with the preview, output omission for skipped answers, bounded setup before DOM allocation, snapshots, complete-record cancellation and honest observed diversity. Do not use record IDs/seeds to manufacture diversity. Run `preview-data-batch.spec.ts` in Jest and Chromium; the latter bundles the developer API only into its test harness, without adding a debug global or API screen to the production app. Timing is a local smoke observation, not a cross-device acceptance guarantee.
 
 Preserve worker backpressure at callers: large-table Submit must pass on its first attempt without increasing queue limits. Keep pending requests stable across copy-only edits and resolve current rules/messages at completion. Do not regress single-input radio checked state, optional undefined defaults or the shared scope/reason/ID helpers. Finite matchers may be cached only after bounded admission; arbitrary expressions still belong exclusively in workers.
+
+## Standalone preview changes
+
+`npm start` and `npm run build` regenerate the separate AOT preview runtime before serving/packaging Studio. Restart the dev server after changing shared preview code to refresh exports. Never commit generated bundles; test the downloaded file offline rather than testing an HTML template alone. The `standalone-preview` suite belongs to transfer/navigation/lists/preview; selection discovery remains build-free. See [the runtime contract](STANDALONE_PREVIEW.md).
+
+## Updating examples
+
+Edit the canonical JSON in `src/assets/guides`; `application-examples.ts` supplies gallery and authoring metadata and validated copies. Preserve stable form/list IDs so future rights can target those scopes. Keep planned roles in brief/questions instead of inventing schema properties or permission guarantees. Regenerate the authoring kit and run the `examples` and authoring-guide browser suites. See [example intent and boundaries](EXAMPLES.md).

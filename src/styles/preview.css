@@ -398,3 +398,19 @@ app-field-title {
 .test-data-diagnostics code {
   color: var(--ink);
 }
+.test-data-toolbar[hidden],
+.browser-bar[hidden],
+.preview-brand[hidden] {
+  display: none !important;
+}
+.application-form {
+  box-shadow: none;
+}
+
+.preview-caption[hidden] {
+  display: none !important;
+}
+
+.rendered-form h3[hidden] {
+  display: none !important;
+}

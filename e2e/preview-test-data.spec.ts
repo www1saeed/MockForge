@@ -19,7 +19,8 @@ async function openFields(page: Page, fields: Field[]): Promise<string> {
     },
   );
   await page.goto('/#workspace');
-  await page.locator('.workflow button').nth(2).click();
+  await page.locator('.workflow [data-step="project"]').click();
+  await page.locator('.transfer-actions button[aria-expanded="false"]').click();
   return page.evaluate((): string => localStorage.getItem('mockforge-studio-v1')!);
 }
 
@@ -314,7 +315,8 @@ test(
   { tag: tagsFor('preview-test-data', 'record-preserve', { smoke: true }) },
   async ({ page }): Promise<void> => {
     await page.goto('/#workspace');
-    await page.locator('.workflow button').nth(2).click();
+    await page.locator('.workflow [data-step="project"]').click();
+    await page.locator('.transfer-actions button[aria-expanded="false"]').click();
     const preview = page.locator('app-form-preview');
     const form = preview.locator('form');
     const input = form.locator('input[type="text"]').first();
@@ -351,7 +353,8 @@ test(
     ).toBe(before);
     await page.screenshot({ path: 'reports/test-data-desktop.png' });
     await page.reload();
-    await page.locator('.workflow button').nth(2).click();
+    await page.locator('.workflow [data-step="project"]').click();
+    await page.locator('.transfer-actions button[aria-expanded="false"]').click();
     await expect(input).toHaveValue('');
   },
 );

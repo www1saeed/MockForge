@@ -156,9 +156,9 @@ test(
       .locator('.collection-dialog')
       .getByRole('button', { name: 'Schließen', exact: true })
       .click();
-    await page.locator('#active-form').selectOption('second');
+    await page.locator('#list-source-form').selectOption('second');
     await expect(page.locator('.collection-preview tbody')).not.toContainText('Bob');
-    await page.locator('#active-form').selectOption('form-1');
+    await page.locator('#list-source-form').selectOption('form-1');
     await expect(page.locator('.collection-preview tbody')).toContainText('Bob');
     await page
       .locator('.collection-preview')
@@ -216,7 +216,6 @@ test(
     await page.locator('.delete-dialog .delete-confirm-button').click();
     await expect(preview).toContainText('0 Einträge');
     await page.getByRole('button', { name: 'Liste duplizieren', exact: true }).click();
-    await page.getByText('Liste konfigurieren', { exact: true }).click();
     await page.getByLabel('Fester Filter (UND): Status', { exact: true }).selectOption('');
     await expect(preview.locator('tbody')).toContainText('Dora');
   },
@@ -245,7 +244,6 @@ test(
       .getByRole('button', { name: 'Abbrechen', exact: true })
       .click();
     await expect(page.locator('.collection-preview tbody')).toContainText('Alice');
-    await page.getByRole('button', { name: 'Zurück zum Formular', exact: true }).click();
     await goToStep(page, 'fields');
     await page.locator('#field-pattern').fill('[A-Z]{2}');
     await openLists(page);
@@ -258,7 +256,6 @@ test(
     await page.getByRole('button', { name: 'Sitzungseinträge leeren', exact: true }).click();
     await page.locator('.delete-dialog .delete-confirm-button').click();
     await expect(page.locator('.collection-warning')).toHaveCount(0);
-    await page.getByText('Liste konfigurieren', { exact: true }).click();
     await page.getByLabel('Anzahl Testeinträge', { exact: true }).fill('4');
     await page
       .getByRole('button', { name: 'Testeinträge erzeugen / ersetzen', exact: true })
@@ -266,8 +263,8 @@ test(
     await expect(page.locator('.collection-preview')).toContainText('4 Einträge');
     await page.getByRole('button', { name: 'Sitzungseinträge leeren', exact: true }).click();
     await page.keyboard.press('Escape');
-    await page.locator('#active-form').selectOption('second');
-    await page.locator('#active-form').selectOption('form-1');
+    await page.locator('#list-source-form').selectOption('second');
+    await page.locator('#list-source-form').selectOption('form-1');
     await expect(page.locator('.collection-preview')).toContainText('4 Einträge');
   },
 );

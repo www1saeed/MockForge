@@ -1,20 +1,9 @@
 import { tagsFor } from './test-tags';
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 
-async function openComplex(page: Page): Promise<void> {
-  await page.goto('/#examples');
-  await page.locator('.example-card').filter({ hasText: 'Atlas' }).getByRole('button').click();
-  await page.locator('.replace-dialog .primary-button').click();
-  await expect(page.locator('.workspace-heading')).toContainText('Atlas');
-  await page.locator('.toast-close').click();
-}
-
-async function dismissToasts(page: Page): Promise<void> {
-  while (await page.locator('.toast-close').count())
-    await page.locator('.toast-close').first().click();
-}
+import { dismissToasts, openLegacyComplex as openComplex } from './support/workspace';
 
 test(
   'empty optional tables hide headers and row deletion exposes Bootstrap help',
@@ -179,11 +168,11 @@ test(
     const team = project.forms[0].fields.find(
       (field: { id: string }): boolean => field.id === 'team-members',
     );
-    expect(project.schemaVersion).toBe('2.1.0');
+    expect(project.schemaVersion).toBe('2.3.0');
     expect(team.group).toMatchObject({ layout: 'table', minItems: 0, maxItems: 3, gapless: true });
     expect(team.group.fields.at(-1).label.en).toBe('Access type');
     await page.reload();
-    await page.locator('.workflow button').nth(3).click();
+    await page.locator('.workflow [data-step="fields"]').click();
     await page.locator('.root-field-list .field-row').filter({ hasText: 'Projektteam' }).click();
     await expect(page.locator('#group-layout')).toHaveValue('table');
     await expect(page.locator('#group-gapless')).toBeChecked();
