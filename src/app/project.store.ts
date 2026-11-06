@@ -1,4 +1,4 @@
-import { ApplicationRole } from './application-access';
+import { ApplicationRole, AccessPolicy } from './application-access';
 import { ApplicationForm } from './application-project';
 import { computed, Injectable, signal } from '@angular/core';
 import {
@@ -191,7 +191,7 @@ export class ProjectStore {
     return this.commit(next);
   }
 
-  private commit(project: ApplicationProject): boolean {
+  private commit(project: ApplicationProject, policyOnly = false): boolean {
     if (
       !project.forms.every((form): boolean => validateProject(projectForForm(project, form.id)))
     ) {
@@ -200,10 +200,12 @@ export class ProjectStore {
     }
     const next: ApplicationProject = {
       ...project,
-      forms: project.forms.map((form) => ({
-        ...form,
-        ...(form.lists ? { lists: pruneCollections(form.fields, form.lists) } : {}),
-      })),
+      forms: policyOnly
+        ? project.forms
+        : project.forms.map((form) => ({
+            ...form,
+            ...(form.lists ? { lists: pruneCollections(form.fields, form.lists) } : {}),
+          })),
       review: { ...project.review, checks: [false, false, false, false, false], approvedAt: null },
     };
     if (!validateApplicationProject(next)) {
@@ -212,18 +214,19 @@ export class ProjectStore {
     }
     // Unchanged group definitions must keep their identity: cloning them resets
     // mounted response rows and cancels otherwise-current deferred validation.
-    next.forms = next.forms.map((form) => {
-      const previous = this.application().forms.find((item): boolean => item.id === form.id);
-      if (!previous) return form;
-      if (JSON.stringify(form) === JSON.stringify(previous)) return previous;
-      return {
-        ...form,
-        fields: form.fields.map((field) => {
-          const old = previous.fields.find((item): boolean => item.id === field.id);
-          return old && JSON.stringify(old) === JSON.stringify(field) ? old : field;
-        }),
-      };
-    });
+    if (!policyOnly)
+      next.forms = next.forms.map((form) => {
+        const previous = this.application().forms.find((item): boolean => item.id === form.id);
+        if (!previous) return form;
+        if (JSON.stringify(form) === JSON.stringify(previous)) return previous;
+        return {
+          ...form,
+          fields: form.fields.map((field) => {
+            const old = previous.fields.find((item): boolean => item.id === field.id);
+            return old && JSON.stringify(old) === JSON.stringify(field) ? old : field;
+          }),
+        };
+      });
     this.state.set(next);
     this.mutationError.set(false);
     const clip = this.clipboard();
@@ -333,10 +336,50 @@ export class ProjectStore {
     roles: ApplicationRole[],
     forms: ApplicationForm[] = this.application().forms,
   ): boolean {
-    const next = JSON.parse(
-      JSON.stringify({ ...this.application(), roles, forms }),
-    ) as ApplicationProject;
-    return this.commit(next);
+    const current = this.application();
+    // This mutation owns only role definitions and policies, never caller-supplied fields.
+    if (
+      forms.length !== current.forms.length ||
+      new Set(forms.map((form) => form.id)).size !== forms.length ||
+      forms.some((form) => {
+        const previous = current.forms.find((item) => item.id === form.id);
+        return (
+          !previous ||
+          (form.lists?.length ?? 0) !== (previous.lists?.length ?? 0) ||
+          new Set(form.lists?.map((list) => list.id)).size !== (form.lists?.length ?? 0) ||
+          form.lists?.some((list) => !previous.lists?.some((item) => item.id === list.id))
+        );
+      })
+    ) {
+      this.mutationError.set(true);
+      return false;
+    }
+    const ownPolicy = (
+      policy: AccessPolicy | undefined,
+      previous: AccessPolicy | undefined,
+    ): AccessPolicy | undefined =>
+      policy === previous || policy === undefined
+        ? policy
+        : (JSON.parse(JSON.stringify(policy)) as AccessPolicy);
+    const owned = current.forms.map((form) => {
+      const patch = forms.find((item) => item.id === form.id)!;
+      if (patch === form) return form;
+      const access = ownPolicy(patch.access, form.access);
+      const lists = form.lists?.map((list) => {
+        const policy = patch.lists!.find((item) => item.id === list.id)!.access;
+        return policy === list.access ? list : { ...list, access: ownPolicy(policy, list.access) };
+      });
+      if (
+        access === form.access &&
+        (!lists || lists.every((list, index) => list === form.lists![index]))
+      )
+        return form;
+      return { ...form, access, ...(lists ? { lists } : {}) };
+    });
+    return this.commit(
+      { ...current, roles: JSON.parse(JSON.stringify(roles)) as ApplicationRole[], forms: owned },
+      true,
+    );
   }
 
   setFormMenu(included: boolean): boolean {
