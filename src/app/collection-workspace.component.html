@@ -86,7 +86,7 @@
             }}<input
               type="number"
               min="1"
-              max="500"
+              [max]="data.limits.recordsPerForm"
               [ngModel]="generationCount()"
               (ngModelChange)="setGenerationCount($event)"
           /></label>
@@ -105,14 +105,25 @@
       <p role="status">
         {{
           t(
-            notice === 'failed'
-              ? 'listGenerationFailed'
-              : notice === 'cancelled'
-                ? 'dataCancelled'
-                : 'listGenerated'
+            notice === 'formLimit'
+              ? 'listFormLimit'
+              : notice === 'projectLimit'
+                ? 'listProjectLimit'
+                : notice === 'retainedLimit'
+                  ? 'listRetainedLimit'
+                  : notice === 'failed'
+                    ? 'listGenerationFailed'
+                    : notice === 'cancelled'
+                      ? 'dataCancelled'
+                      : 'listGenerated'
           )
         }}
       </p>
+    }
+    @if (data.appendLimit(); as limit) {
+      @if (data.notice() !== limit) {
+        <p role="status">{{ t(limit === 'formLimit' ? 'listFormLimit' : 'listProjectLimit') }}</p>
+      }
     }
     @if (data.dataset()?.skipped) {
       <p role="status">{{ t('listSkipped') }} {{ data.dataset()!.skipped }}</p>
@@ -158,7 +169,7 @@
         @if (view.actions.create) {
           <app-collection-action
             [setting]="button('create')"
-            [label]="buttonLabel('create')"
+            [label]="actionLabel('create')"
             [disabled]="data.stale() || data.busy()"
             (activated)="open('new')"
           />
@@ -170,8 +181,8 @@
             >{{ t('listDefaultSort')
             }}<select
               [attr.aria-label]="t('listDefaultSort')"
-              [ngModel]="(sort() ?? view.sort)?.fieldId ?? ''"
-              (ngModelChange)="$event ? order($event) : sort.set(undefined)"
+              [ngModel]="effectiveSort()?.fieldId ?? ''"
+              (ngModelChange)="$event ? order($event) : sort.set(null)"
             >
               <option value="">—</option>
               @for (id of view.columns; track id) {
@@ -181,9 +192,9 @@
               }
             </select></label
           >
-          @if ((sort() ?? view.sort)?.fieldId; as id) {
+          @if (effectiveSort()?.fieldId; as id) {
             <button class="text-button" (click)="order(id)">
-              {{ t('listDirection') }} · {{ (sort() ?? view.sort)?.direction }}
+              {{ t('listDirection') }} · {{ effectiveSort()?.direction }}
             </button>
           }
           @if (view.selectable) {
@@ -246,8 +257,8 @@
                     [style.width.px]="columnSetting(id)?.width"
                     [style.text-align]="columnSetting(id)?.align ?? 'start'"
                     [attr.aria-sort]="
-                      (sort() ?? view.sort)?.fieldId === id
-                        ? (sort() ?? view.sort)?.direction === 'asc'
+                      effectiveSort()?.fieldId === id
+                        ? effectiveSort()?.direction === 'asc'
                           ? 'ascending'
                           : 'descending'
                         : 'none'
@@ -294,7 +305,7 @@
                       @for (kind of rowActions(); track kind) {
                         <app-collection-action
                           [setting]="button(kind)"
-                          [label]="buttonLabel(kind)"
+                          [label]="actionLabel(kind)"
                           [disabled]="data.stale() || data.busy()"
                           (activated)="
                             kind === 'delete'
@@ -377,7 +388,7 @@
             @for (kind of rowActions(); track kind) {
               <app-collection-action
                 [setting]="button(kind)"
-                [label]="buttonLabel(kind)"
+                [label]="actionLabel(kind)"
                 [disabled]="data.stale() || data.busy()"
                 (activated)="
                   kind === 'delete'

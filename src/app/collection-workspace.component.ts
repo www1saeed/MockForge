@@ -1,13 +1,7 @@
 import { CollectionCellComponent } from './collection-cell.component';
 import { Locale } from './project.model';
 import { CollectionActionComponent } from './collection-action.component';
-import {
-  CollectionColumnSetting,
-  CollectionActionKind,
-  CollectionActionSetting,
-  DEFAULT_ACTION_ICONS,
-  DEFAULT_ACTION_VARIANTS,
-} from './collection-presentation';
+import { CollectionColumnSetting, CollectionActionKind } from './collection-presentation';
 import {
   Component,
   computed,
@@ -76,7 +70,12 @@ export class CollectionWorkspaceComponent
   readonly settingsOpen = signal(false);
   readonly generationValid = computed(() => {
     const count = this.generationCount();
-    return count !== null && Number.isInteger(count) && count >= 1 && count <= 500;
+    return (
+      count !== null &&
+      Number.isInteger(count) &&
+      count >= 1 &&
+      count <= this.data.limits.recordsPerForm
+    );
   });
   override readonly contentLocale = computed(() =>
     this.selectedLanguage() && this.store.application().languages.includes(this.selectedLanguage()!)
@@ -107,30 +106,6 @@ export class CollectionWorkspaceComponent
   columnSetting(id: string): CollectionColumnSetting | undefined {
     return this.list()?.columnSettings?.find((column) => column.fieldId === id);
   }
-  button(kind: CollectionActionKind): CollectionActionSetting {
-    return (
-      this.list()?.actionSettings?.[kind] ?? {
-        label: { de: '', en: '', fa: '' },
-        variant: DEFAULT_ACTION_VARIANTS[kind],
-        icon: DEFAULT_ACTION_ICONS[kind],
-        display: 'text',
-      }
-    );
-  }
-  buttonLabel(kind: CollectionActionKind): string {
-    return (
-      this.button(kind).label[this.contentLocale()].trim() ||
-      this.t(
-        kind === 'create'
-          ? 'recordNew'
-          : kind === 'view'
-            ? 'recordView'
-            : kind === 'edit'
-              ? 'recordEdit'
-              : 'recordDelete',
-      )
-    );
-  }
   rowActions(): CollectionActionKind[] {
     return [...(this.list()?.actionOrder ?? this.actions)].filter(
       (kind) => kind !== 'create' && this.list()?.actions[kind],
@@ -138,7 +113,10 @@ export class CollectionWorkspaceComponent
   }
   readonly search = signal('');
   readonly filters = signal<ReadonlyMap<string, string | boolean>>(new Map());
-  readonly sort = signal<CollectionList['sort']>(undefined);
+  readonly sort = signal<CollectionList['sort'] | null>(undefined);
+  readonly effectiveSort = computed(() =>
+    this.sort() === undefined ? this.list()?.sort : this.sort(),
+  );
   readonly page = signal(0);
   readonly selection = signal<ReadonlySet<string>>(new Set());
   readonly matches = computed(() =>
@@ -211,7 +189,7 @@ export class CollectionWorkspaceComponent
   }
   order(id: string): void {
     if (this.columnSetting(id)?.sortable === false) return;
-    const effective = this.sort() ?? this.list()?.sort;
+    const effective = this.effectiveSort();
     this.sort.set({
       fieldId: id,
       direction: effective?.fieldId === id && effective.direction === 'asc' ? 'desc' : 'asc',

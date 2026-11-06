@@ -309,13 +309,10 @@
                     <label
                       ><input
                         type="checkbox"
-                        [ngModel]="
-                          !column(id).groupFields || column(id).groupFields!.includes(child.id)
-                        "
+                        [ngModel]="groupSelection(id).includes(child.id)"
                         (ngModelChange)="groupField(id, child.id, $event)"
                         [disabled]="
-                          column(id).groupFields?.length === 1 &&
-                          column(id).groupFields!.includes(child.id)
+                          groupSelection(id).length === 1 && groupSelection(id).includes(child.id)
                         "
                       />{{ text(child.label) }}</label
                     >
@@ -535,7 +532,7 @@
               }}<input
                 type="number"
                 min="1"
-                max="500"
+                [max]="data.limits.recordsPerForm"
                 [ngModel]="data.form().entries?.count ?? 25"
                 (ngModelChange)="entries('count', $event)" /></label
             ><label

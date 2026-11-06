@@ -8,8 +8,6 @@ import {
   CollectionActionKind,
   CollectionActionSetting,
   DEFAULT_APPEARANCE,
-  DEFAULT_ACTION_ICONS,
-  DEFAULT_ACTION_VARIANTS,
   TABLE_DESIGNS,
   ACTION_ICONS,
 } from './collection-presentation';
@@ -82,9 +80,11 @@ export class CollectionConfiguratorComponent
         : {}),
     });
   }
+  groupSelection(id: string): readonly string[] {
+    return this.column(id).groupFields ?? this.field(id).group!.fields.map((field) => field.id);
+  }
   groupField(id: string, child: string, enabled: boolean): void {
-    const selected =
-      this.column(id).groupFields ?? this.field(id).group!.fields.map((field) => field.id);
+    const selected = this.groupSelection(id);
     const groupFields = enabled
       ? [...selected, child]
       : selected.filter((value) => value !== child);
@@ -101,16 +101,6 @@ export class CollectionConfiguratorComponent
     [columns[index], columns[target]] = [columns[target], columns[index]];
     this.patch({ columns });
   }
-  button(kind: CollectionActionKind): CollectionActionSetting {
-    return (
-      this.list()?.actionSettings?.[kind] ?? {
-        label: { de: '', en: '', fa: '' },
-        variant: DEFAULT_ACTION_VARIANTS[kind],
-        icon: DEFAULT_ACTION_ICONS[kind],
-        display: 'text',
-      }
-    );
-  }
   buttonPatch(kind: CollectionActionKind, change: Partial<CollectionActionSetting>): void {
     this.patch({
       actionSettings: {
@@ -121,17 +111,6 @@ export class CollectionConfiguratorComponent
   }
   buttonLabel(kind: CollectionActionKind, lang: Locale, value: string): void {
     this.buttonPatch(kind, { label: { ...this.button(kind).label, [lang]: value } });
-  }
-  buttonTitle(kind: CollectionActionKind): string {
-    return this.t(
-      kind === 'create'
-        ? 'recordNew'
-        : kind === 'view'
-          ? 'recordView'
-          : kind === 'edit'
-            ? 'recordEdit'
-            : 'recordDelete',
-    );
   }
   moveAction(kind: CollectionActionKind, offset: number): void {
     const order = [...(this.list()?.actionOrder ?? this.actions)],

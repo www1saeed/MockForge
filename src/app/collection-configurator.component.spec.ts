@@ -53,6 +53,35 @@ describe('Dedicated list configuration', () => {
     c.groupField('items', 'quantity', true);
     expect(c.column('items').groupFields).toEqual(['product', 'quantity']);
   });
+  it('disables the sole implicitly selected group child in the actual checkbox', async () => {
+    const { fixture, c } = setup();
+    c.store.update({
+      fields: [
+        {
+          ...createField('group', 'items'),
+          group: {
+            layout: 'table',
+            minItems: 0,
+            maxItems: 2,
+            fields: [createField('text', 'product')],
+          },
+        },
+      ],
+    });
+    c.toggle('columns', 'items', true);
+    fixture.detectChanges();
+    TestBed.tick();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const checkbox = fixture.nativeElement.querySelector(
+      '.collection-group-field-settings input',
+    ) as HTMLInputElement;
+    expect(checkbox.checked).toBe(true);
+    expect(checkbox.disabled).toBe(true);
+    c.groupField('items', 'product', false);
+    expect(c.groupSelection('items')).toEqual(['product']);
+  });
   it('stores ordered headings, dimensions and disabled sorting without changing answer rules', () => {
     const { fixture, c } = setup();
     c.defaultSort('name');

@@ -12,7 +12,7 @@ export interface CollectionRecord {
 export interface CollectionQuery {
   search: string;
   filters: ReadonlyMap<string, string | boolean>;
-  sort?: { fieldId: string; direction: 'asc' | 'desc' };
+  sort?: { fieldId: string; direction: 'asc' | 'desc' } | null;
 }
 
 export function collectionValue(values: ResponseValues, id: string): unknown {
@@ -56,6 +56,10 @@ export function queryCollection(
   const fields = new Map(collectionFields(form.fields).map((field) => [field.id, field]));
   const matches = (record: CollectionRecord, id: string, value: string | boolean): boolean =>
     ownResponse(record.values, id) === value;
+  const shownChildren = (id: string): readonly string[] | undefined =>
+    list.columns.includes(id)
+      ? list.columnSettings?.find((column) => column.fieldId === id)?.groupFields
+      : undefined;
   const search = query.search.trim().toLocaleLowerCase(locale);
   const result = records.filter(
     (record) =>
@@ -67,12 +71,17 @@ export function queryCollection(
         list.searchFields.some(
           (id): boolean =>
             fields.has(id) &&
-            formatRecordValue(fields.get(id)!, collectionValue(record.values, id), locale)
+            formatRecordValue(
+              fields.get(id)!,
+              collectionValue(record.values, id),
+              locale,
+              shownChildren(id),
+            )
               .toLocaleLowerCase(locale)
               .includes(search),
         )),
   );
-  const sort = query.sort ?? list.sort;
+  const sort = query.sort === undefined ? list.sort : query.sort;
   if (
     sort &&
     list.columns.includes(sort.fieldId) &&
@@ -94,8 +103,8 @@ export function queryCollection(
         Number.isFinite(Number(b))
           ? Number(a) - Number(b)
           : collator.compare(
-              formatRecordValue(field, a, locale),
-              formatRecordValue(field, b, locale),
+              formatRecordValue(field, a, locale, shownChildren(field.id)),
+              formatRecordValue(field, b, locale, shownChildren(field.id)),
             );
       return order
         ? sort.direction === 'desc'

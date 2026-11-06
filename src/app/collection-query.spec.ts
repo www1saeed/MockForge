@@ -15,6 +15,82 @@ describe('Collection queries and native values', () => {
     ];
     return form;
   };
+  it('distinguishes configured sorting, reader sorting and explicit unsorted insertion order', () => {
+    const f = form(),
+      list = {
+        ...createCollectionList(f.fields, []),
+        sort: { fieldId: 'amount', direction: 'asc' as const },
+      };
+    const records = [
+      { id: 'first', values: { amount: '10' } },
+      { id: 'second', values: { amount: '2' } },
+    ];
+    const base = { search: '', filters: new Map() };
+    expect(queryCollection(f, list, records, base, 'en').map((r) => r.id)).toEqual([
+      'second',
+      'first',
+    ]);
+    expect(
+      queryCollection(f, list, records, { ...base, sort: null }, 'en').map((r) => r.id),
+    ).toEqual(['first', 'second']);
+    expect(
+      queryCollection(
+        f,
+        list,
+        records,
+        { ...base, sort: { fieldId: 'amount', direction: 'desc' } },
+        'en',
+      ).map((r) => r.id),
+    ).toEqual(['first', 'second']);
+    expect(list.sort.direction).toBe('asc');
+  });
+  it('queries only displayed group children for column summaries, retaining explicit search-only children', () => {
+    const f = form(),
+      group = {
+        ...createField('group', 'items'),
+        group: {
+          layout: 'table' as const,
+          minItems: 1,
+          maxItems: 2,
+          fields: [createField('text', 'hidden'), createField('text', 'item')],
+        },
+      };
+    f.fields = [group];
+    const list = {
+      ...createCollectionList(f.fields, []),
+      columns: ['items'],
+      searchFields: ['items'],
+      sort: { fieldId: 'items', direction: 'asc' as const },
+      columnSettings: [
+        {
+          fieldId: 'items',
+          label: text('', '', ''),
+          align: 'start' as const,
+          sortable: true,
+          groupFields: ['item'],
+        },
+      ],
+    };
+    const records = [
+      { id: 'z', values: { items: [{ hidden: 'AAA-secret', item: 'Zebra' }] } },
+      { id: 'a', values: { items: [{ hidden: 'ZZZ-secret', item: 'Apple' }] } },
+    ];
+    const base = { search: '', filters: new Map() };
+    expect(queryCollection(f, list, records, base, 'en').map((r) => r.id)).toEqual(['a', 'z']);
+    expect(queryCollection(f, list, records, { ...base, search: 'secret' }, 'en')).toEqual([]);
+    expect(
+      queryCollection(f, list, records, { ...base, search: 'apple' }, 'en').map((r) => r.id),
+    ).toEqual(['a']);
+    expect(
+      queryCollection(
+        f,
+        { ...list, columns: ['items/item'] },
+        records,
+        { ...base, search: 'secret' },
+        'en',
+      ),
+    ).toHaveLength(2);
+  });
   it('combines fixed filters, reader filters, localized search and stable numeric sorting without mutating records', () => {
     const f = form(),
       list = createCollectionList(f.fields, []);

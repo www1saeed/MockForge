@@ -9,6 +9,12 @@ import {
 } from './collection.model';
 import { Field, Locale, Text } from './project.model';
 import { CopyKey, translate } from './translations';
+import {
+  CollectionActionKind,
+  CollectionActionSetting,
+  DEFAULT_ACTION_ICONS,
+  DEFAULT_ACTION_VARIANTS,
+} from './collection-presentation';
 import { FeedbackService } from './feedback.service';
 
 /** Shared definition mutations keep editor controls and renderer callback guards consistent. */
@@ -46,6 +52,28 @@ export class CollectionDefinitionController {
   }
   field(id: string): Field {
     return this.leaves().find((field) => field.id === id)!;
+  }
+  button(kind: CollectionActionKind): CollectionActionSetting {
+    return (
+      this.list()?.actionSettings?.[kind] ?? {
+        label: { de: '', en: '', fa: '' },
+        variant: DEFAULT_ACTION_VARIANTS[kind],
+        icon: DEFAULT_ACTION_ICONS[kind],
+        display: 'text',
+      }
+    );
+  }
+  buttonTitle(kind: CollectionActionKind): string {
+    const keys: Record<CollectionActionKind, CopyKey> = {
+      create: 'recordNew',
+      view: 'recordView',
+      edit: 'recordEdit',
+      delete: 'recordDelete',
+    };
+    return this.t(keys[kind]);
+  }
+  actionLabel(kind: CollectionActionKind): string {
+    return this.button(kind).label[this.contentLocale()].trim() || this.buttonTitle(kind);
   }
   patch(change: Partial<CollectionList>): void {
     if (this.previewOnly() || !this.list()) return;
