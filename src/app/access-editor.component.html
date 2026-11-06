@@ -2,6 +2,12 @@
   <h2>{{ t('rolesTitle') }}</h2>
   <p>{{ t('rolesHint') }}</p>
   <div class="role-actions">
+    <button class="secondary-button" (click)="installPresets()" [disabled]="presetsComplete()">
+      {{ t('installPresets') }}
+    </button>
+    @if (presetNotice(); as notice) {
+      <p role="status">{{ t(notice) }}</p>
+    }
     <button class="secondary-button" (click)="add()" [disabled]="roles().length >= limit">
       {{ t('roleAdd') }}
     </button>
@@ -45,11 +51,27 @@
           ><input
             type="checkbox"
             [ngModel]="current.rights[key]"
+            [disabled]="current.preset === 'admin'"
             (ngModelChange)="defaultRight(key, $event)"
           />{{ rightLabel(key) }}</label
         >
       }
     </fieldset>
+    @if (current.preset === 'admin') {
+      <p>{{ t('adminFullHint') }}</p>
+    }
+    <label
+      >{{ t('defaultFieldMode')
+      }}<select
+        [disabled]="current.preset === 'admin'"
+        [ngModel]="current.fieldMode ?? 'editable'"
+        (ngModelChange)="defaultMode($event)"
+      >
+        @for (mode of fieldModes; track mode) {
+          <option [value]="mode">{{ modeLabel(mode) }}</option>
+        }
+      </select></label
+    >
     <p>{{ t('roleInheritanceHint') }}</p>
     <div
       class="access-matrix-scroll"
@@ -88,7 +110,8 @@
                       >{{ row.label[locale()] || row.id }} · {{ rightLabel(key) }}</span
                     >
                     <select
-                      [ngModel]="choice(row.policy, key)"
+                      [ngModel]="current.preset === 'admin' ? 'allow' : choice(row.policy, key)"
+                      [disabled]="current.preset === 'admin'"
                       (ngModelChange)="override(row.formId, row.listId, key, $event)"
                     >
                       <option value="inherit">{{ t('accessInherit') }}</option>
@@ -113,4 +136,100 @@
   } @else {
     <p>{{ t('rolesDisabled') }}</p>
   }
+
+  @if (role(); as current) {
+    <h3>{{ t('fieldRights') }}</h3>
+    <p>{{ t('fieldRightsHint') }}</p>
+    <div
+      class="access-matrix-scroll"
+      tabindex="0"
+      role="region"
+      [attr.aria-label]="t('fieldRights')"
+    >
+      <table class="access-matrix field-rights-matrix">
+        <caption>
+          {{
+            t('fieldRights')
+          }}
+          ·
+          {{
+            current.label[locale()].trim() || current.id
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ t('roleScreen') }}</th>
+            <th scope="col">{{ t('fieldSetting') }}</th>
+            <th scope="col">{{ t('effectiveFieldMode') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of fieldRows(); track row.id) {
+            <tr [class.role-list-row]="row.ref">
+              <th scope="row">
+                {{ row.label[locale()] || row.id }}<small>{{ row.id }}</small>
+              </th>
+              <td>
+                <label
+                  ><span class="visually-hidden">{{ t('fieldRights') }}: {{ row.id }}</span
+                  ><select
+                    [disabled]="current.preset === 'admin'"
+                    [ngModel]="current.preset === 'admin' ? 'editable' : fieldChoice(row.policy)"
+                    (ngModelChange)="fieldRule(row.formId, row.ref, $event)"
+                  >
+                    <option value="inherit">{{ t('accessInherit') }}</option>
+                    @for (mode of fieldModes; track mode) {
+                      <option [value]="mode">{{ modeLabel(mode) }}</option>
+                    }
+                  </select></label
+                >
+              </td>
+              <td>{{ modeLabel(fieldEffective(row.formId, row.ref)) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  <h3>{{ t('demoUsers') }}</h3>
+  <p>{{ t('demoUsersHint') }}</p>
+  <button
+    class="secondary-button"
+    (click)="addUser()"
+    [disabled]="!roles().length || users().length >= userLimit"
+  >
+    {{ t('addDemoUser') }}
+  </button>
+  <div class="demo-users">
+    @for (user of users(); track user.id) {
+      <fieldset class="demo-user">
+        <legend>{{ user.id }}</legend>
+        @for (lang of store.application().languages; track lang) {
+          <label
+            >{{ t('userName') }} {{ lang.toUpperCase()
+            }}<input
+              required
+              maxlength="256"
+              [attr.aria-label]="t('userName') + ' ' + user.id + ' ' + lang.toUpperCase()"
+              [attr.aria-invalid]="!user.name[lang].trim() ? 'true' : null"
+              [ngModel]="user.name[lang]"
+              (ngModelChange)="userName(user.id, lang, $event)"
+          /></label>
+        }
+        <label
+          >{{ t('assignedRole')
+          }}<select
+            [attr.aria-label]="t('assignedRole') + ' ' + user.id"
+            [ngModel]="user.roleId"
+            (ngModelChange)="userRole(user.id, $event)"
+          >
+            @for (role of roles(); track role.id) {
+              <option [value]="role.id">{{ role.label[locale()].trim() || role.id }}</option>
+            }
+          </select></label
+        >
+        <button class="text-button" (click)="removeUser(user.id)">{{ t('removeDemoUser') }}</button>
+      </fieldset>
+    }
+  </div>
 </section>

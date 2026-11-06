@@ -1,4 +1,6 @@
-import { ApplicationRole, AccessPolicy } from './application-access';
+import { FieldAccess } from './field-access';
+import { collectionFields } from './collection.model';
+import { ApplicationRole, ApplicationUser, AccessPolicy } from './application-access';
 import { ApplicationForm } from './application-project';
 import { computed, Injectable, signal } from '@angular/core';
 import {
@@ -204,6 +206,15 @@ export class ProjectStore {
         ? project.forms
         : project.forms.map((form) => ({
             ...form,
+            ...(form.fieldAccess
+              ? {
+                  fieldAccess: Object.fromEntries(
+                    Object.entries(form.fieldAccess).filter(([id]) =>
+                      collectionFields(form.fields).some((field) => field.id === id),
+                    ),
+                  ),
+                }
+              : {}),
             ...(form.lists ? { lists: pruneCollections(form.fields, form.lists) } : {}),
           })),
       review: { ...project.review, checks: [false, false, false, false, false], approvedAt: null },
@@ -335,6 +346,7 @@ export class ProjectStore {
   configureAccess(
     roles: ApplicationRole[],
     forms: ApplicationForm[] = this.application().forms,
+    users: ApplicationUser[] = this.application().users ?? [],
   ): boolean {
     const current = this.application();
     // This mutation owns only role definitions and policies, never caller-supplied fields.
@@ -365,19 +377,36 @@ export class ProjectStore {
       const patch = forms.find((item) => item.id === form.id)!;
       if (patch === form) return form;
       const access = ownPolicy(patch.access, form.access);
+      const fieldDefaults =
+        patch.fieldDefaults === form.fieldDefaults
+          ? form.fieldDefaults
+          : (JSON.parse(JSON.stringify(patch.fieldDefaults ?? {})) as NonNullable<
+              ApplicationForm['fieldDefaults']
+            >);
+      const fieldAccess =
+        patch.fieldAccess === form.fieldAccess
+          ? form.fieldAccess
+          : (JSON.parse(JSON.stringify(patch.fieldAccess ?? {})) as FieldAccess);
       const lists = form.lists?.map((list) => {
         const policy = patch.lists!.find((item) => item.id === list.id)!.access;
         return policy === list.access ? list : { ...list, access: ownPolicy(policy, list.access) };
       });
       if (
         access === form.access &&
+        fieldDefaults === form.fieldDefaults &&
+        fieldAccess === form.fieldAccess &&
         (!lists || lists.every((list, index) => list === form.lists![index]))
       )
         return form;
-      return { ...form, access, ...(lists ? { lists } : {}) };
+      return { ...form, access, fieldDefaults, fieldAccess, ...(lists ? { lists } : {}) };
     });
     return this.commit(
-      { ...current, roles: JSON.parse(JSON.stringify(roles)) as ApplicationRole[], forms: owned },
+      {
+        ...current,
+        roles: JSON.parse(JSON.stringify(roles)) as ApplicationRole[],
+        users: JSON.parse(JSON.stringify(users)) as ApplicationUser[],
+        forms: owned,
+      },
       true,
     );
   }

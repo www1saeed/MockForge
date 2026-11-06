@@ -6,6 +6,38 @@ import { createCollectionList } from './collection.model';
 import { ALLOW_RIGHTS } from './application-access';
 
 describe('Role authoring', () => {
+  it('does not promote conflicting imported IDs when installing default roles or reassign existing demo users', () => {
+    TestBed.configureTestingModule({ providers: [ProjectStore] });
+    const f = TestBed.createComponent(AccessEditorComponent),
+      c = f.componentInstance;
+    c.store.configureAccess([
+      {
+        id: 'admin',
+        label: { de: 'Custom', en: 'Custom', fa: '' },
+        rights: { ...ALLOW_RIGHTS, edit: false },
+      },
+    ]);
+    const before = c.store.application();
+    c.installPresets();
+    expect(c.presetNotice()).toBe('presetConflict');
+    expect(c.store.application()).toBe(before);
+    expect(c.roles()[0].preset).toBeUndefined();
+    c.store.configureAccess(
+      [
+        {
+          id: 'custom',
+          label: { de: 'Custom', en: 'Custom', fa: '' },
+          rights: { ...ALLOW_RIGHTS },
+        },
+      ],
+      undefined,
+      [{ id: 'visitor-demo', name: { de: 'Custom', en: 'Custom', fa: '' }, roleId: 'custom' }],
+    );
+    const withUser = c.store.application();
+    c.installPresets();
+    expect(c.store.application()).toBe(withUser);
+    expect(c.users()[0].roleId).toBe('custom');
+  });
   it('keeps blank and whitespace role inputs synchronized with storage and exposes a field-level error', async () => {
     TestBed.configureTestingModule({ providers: [ProjectStore] });
     const f = TestBed.createComponent(AccessEditorComponent),

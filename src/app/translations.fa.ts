@@ -2,6 +2,33 @@ import type { CopyKey } from './translations';
 
 /** Persian runtime catalog; kept separate so the source DE/EN pairs stay easy to review. */
 export const faCopy = {
+  simulatedUser: 'کاربر شبیه‌سازی‌شده',
+  freeRole: 'انتخاب آزاد نقش',
+  installPresets: 'افزودن بازدیدکننده / کاربر / مدیر',
+  presetConflict: 'شناسهٔ پیش‌فرض قبلاً استفاده شده است. نقش‌ها و کاربران موجود تغییر نکردند.',
+  presetLimit: 'ظرفیت کافی برای نقش‌ها یا کاربران پیش‌فرض وجود ندارد.',
+  presetsInstalled: 'نقش‌ها و کاربران نمونه تنظیم شدند.',
+  adminFullHint:
+    'مدیر همیشه دسترسی کامل به فرم و فیلدها دارد. عملیات غیرفعال فهرست همچنان غیرفعال است.',
+  defaultFieldMode: 'دسترسی پیش‌فرض فیلد برای نقش',
+  fieldRights: 'دسترسی فیلدها',
+  fieldRightsHint:
+    'پیش‌فرض فرم برای همهٔ فیلدهاست. محدودیت گروه برای زیرفیلدها نیز اعمال می‌شود. زیرفیلد محافظت‌شده ساختار ردیف‌ها را قفل می‌کند.',
+  fieldHidden: 'پنهان',
+  fieldReadonly: 'فقط خواندنی',
+  fieldEditable: 'قابل ویرایش',
+  fieldSetting: 'تنظیم',
+  effectiveFieldMode: 'دسترسی مؤثر فیلد',
+  demoUsers: 'کاربران نمونه',
+  demoUsersHint:
+    'هر کاربر نمونهٔ بدون گذرواژه یک نقش دارد. انتخاب فعال فقط در نشست است؛ ورود واقعی یا بررسی مالکیت وجود ندارد.',
+  addDemoUser: 'افزودن کاربر نمونه',
+  userName: 'نام کاربر',
+  assignedRole: 'نقش کاربر',
+  removeDemoUser: 'حذف کاربر نمونه',
+  userRemoveHint: 'فقط تعریف کاربر نمونه حذف می‌شود. رکوردهای نشست حفظ می‌شوند.',
+  userNamesIncomplete:
+    'نام کاربر نمونه در زبان‌های فعال خالی است. آن را در نقش‌ها و دسترسی‌ها کامل کنید.',
   roleNamesIncomplete:
     'نام نقش در برخی زبان‌های فعال خالی است. آن را در بخش نقش‌ها و دسترسی‌ها تکمیل کنید.',
   roleNameRequired: 'نام نقش در این زبان خالی است. پیش از تأیید بازبینی آن را تکمیل کنید.',
