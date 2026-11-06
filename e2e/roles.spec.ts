@@ -127,7 +127,7 @@ test(
       page.locator('.access-matrix tbody tr').nth(1).getByRole('combobox').first(),
     ).toHaveValue('allow');
     await page
-      .locator('.access-matrix-scroll')
+      .getByRole('region', { name: 'Berechtigungsmatrix', exact: true })
       .screenshot({ path: info.outputPath('rights-matrix-desktop.png') });
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
