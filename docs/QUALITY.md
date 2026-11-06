@@ -2,9 +2,9 @@
 
 ## Field policies and demo profiles checkpoint — November 6, 2026
 
-240 Jest tests in 32 suites pass. Coverage is 95.07% statements, 90.22% branches, 95.57% functions and 97.11% lines against unchanged thresholds. Four new browser journeys cover preset profiles, field inheritance, hidden queries/details, protected controls and repeated values, Admin action limits, actor changes and offline Persian mobile accessibility.
+**329 Studio tests pass: 240 Jest tests in 32 suites and all 89 Chromium journeys.** Coverage is 95.07% statements, 90.22% branches, 95.57% functions and 97.11% lines against unchanged thresholds. Four new browser journeys cover preset profiles, field inheritance, hidden queries/details, protected controls and repeated values, Admin action limits, actor changes and offline Persian mobile accessibility.
 
-Production initial bundle is 940.03 kB, below the unchanged 1 MB failure limit (700 kB warning). Static checks cover 605 translations, the synchronized authoring kit, spec/E2E types, formatting, lint, 146 documentation links and 89 registered browser cases. Studio 2.5 adds bounded demo users and field policies; renderer/batch remains 1.3. No dependency or resource-budget changes. Final full browser evidence is recorded at `reports/field-access-final-e2e.json`; CI must run after push.
+Production initial bundle is 940.03 kB, below the unchanged 1 MB failure limit (700 kB warning). Static checks cover 605 translations, the synchronized authoring kit, spec/E2E types, formatting, lint, 146 documentation links and 89 registered browser cases. Studio 2.5 adds bounded demo users and field policies; renderer/batch remains 1.3. No dependency or resource-budget changes. Final full browser evidence is recorded at `reports/field-access-final-e2e.json`: 281.315 seconds, two workers, zero retries/skips/flaky/unexpected cases or report errors. A previous run exposed one ambiguous matrix screenshot selector (now scoped by region name); another hit the existing workflow Axe test timeout. The isolated workflow passed in 22.7 seconds and the final full run in 21.2 seconds with the unchanged 30-second limit. CI must run after push.
 
 
 ## PR #9 review corrections — November 6, 2026
