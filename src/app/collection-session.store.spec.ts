@@ -3,7 +3,7 @@ import { createEnvironmentInjector, EnvironmentInjector, signal } from '@angular
 import { COLLECTION_VIEW } from './collection-view';
 import { CollectionSessionStore, COLLECTION_GENERATOR } from './collection-session.store';
 import { ProjectStore } from './project.store';
-import { CollectionSessionRegistry } from './collection-session.registry';
+import { CollectionSessionRegistry, CollectionDataset } from './collection-session.registry';
 import { PatternCheckService } from './pattern-check.service';
 import { BatchOptions, BatchResult } from './preview-data-batch';
 import { createField, text, STORAGE_KEY } from './project';
@@ -75,7 +75,7 @@ describe('Session record ownership', () => {
   it('reports per-form/project capacity before generation and disables append across all form cursors', async () => {
     const registry = TestBed.inject(CollectionSessionRegistry),
       own = project.activeFormId();
-    const records = (count: number) =>
+    const records = (count: number): CollectionDataset['records'] =>
       Array.from({ length: count }, (_, i) => ({ id: 'entry-' + i, values: { name: String(i) } }));
     registry.datasets.set(
       new Map([
@@ -127,7 +127,7 @@ describe('Session record ownership', () => {
     project.selectForm(own);
     TestBed.tick();
     data.save({ name: 'Manual' }, data.context());
-    const make = (count: number) => ({
+    const make = (count: number): CollectionDataset => ({
       records: Array.from({ length: count }, (_, i) => ({
         id: 'other-' + i,
         values: { name: String(i) },

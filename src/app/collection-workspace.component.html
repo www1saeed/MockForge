@@ -52,11 +52,7 @@
       >
         {{ t('listClear') }}
       </button>
-      <button
-        class="secondary-button"
-        [disabled]="data.busy() || data.stale() || data.records().length >= 500"
-        (click)="appendOne()"
-      >
+      <button class="secondary-button" [disabled]="!data.canAppend()" (click)="appendOne()">
         {{ t('listAddFixture') }}
       </button>
       <button

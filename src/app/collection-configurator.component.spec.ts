@@ -81,6 +81,34 @@ describe('Dedicated list configuration', () => {
     expect(checkbox.disabled).toBe(true);
     c.groupField('items', 'product', false);
     expect(c.groupSelection('items')).toEqual(['product']);
+    const own = c.store.activeFormId(),
+      second = c.store.addForm({ de: 'Second', en: 'Second', fa: 'دوم' })!,
+      third = c.store.addForm({ de: 'Third', en: 'Third', fa: 'سوم' })!;
+    c.store.selectForm(own);
+    fixture.detectChanges();
+    TestBed.tick();
+    const registry = TestBed.inject(CollectionSessionRegistry);
+    const full = {
+      records: Array.from({ length: 500 }, (_, i) => ({ id: 'other-' + i, values: {} })),
+      signature: 'other',
+      revision: 1,
+      skipped: 0,
+    };
+    registry.datasets.set(
+      new Map([
+        [second, full],
+        [third, full],
+      ]),
+    );
+    fixture.detectChanges();
+    const add = Array.from(fixture.nativeElement.querySelectorAll('button')).find((button) =>
+      (button as HTMLButtonElement).textContent?.includes('Einzelnen Testeintrag hinzufügen'),
+    ) as HTMLButtonElement;
+    expect(c.data.appendLimit()).toBe('projectLimit');
+    expect(add.disabled).toBe(true);
+    registry.datasets.set(new Map());
+    fixture.detectChanges();
+    expect(add.disabled).toBe(false);
   });
   it('stores ordered headings, dimensions and disabled sorting without changing answer rules', () => {
     const { fixture, c } = setup();
