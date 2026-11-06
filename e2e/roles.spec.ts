@@ -339,3 +339,123 @@ test(
     await context.close();
   },
 );
+
+test(
+  'role names remain editable drafts through language activation reload and review',
+  {
+    tag: tagsFor('roles', 'role-review-localized-drafts', {
+      areas: ['roles', 'authoring', 'persistence', 'review'],
+      checks: ['a11y', 'responsive', 'i18n'],
+    }),
+  },
+  async ({ page }, info) => {
+    const p = fixture();
+    p.forms.pop();
+    p.owner = 'Owner';
+    p.questions = '';
+    p.roles![0].label.fa = '';
+    await openProject(page, p);
+    await goToStep(page, 'brief');
+    await page.locator('#form-language-en').uncheck();
+    await page.locator('#form-language-fa').check();
+    expect(
+      await page.evaluate(() => JSON.parse(localStorage.getItem('mockforge-studio-v1')!).languages),
+    ).toEqual(['de', 'fa']);
+    await goToStep(page, 'roles');
+    const fa = page.getByRole('textbox', { name: 'Rollenname FA', exact: true });
+    await expect(fa).toHaveValue('');
+    await expect(fa).toHaveAttribute('aria-invalid', 'true');
+    await fa.fill('خرید');
+    const de = page.getByRole('textbox', { name: 'Rollenname DE', exact: true });
+    await de.fill('');
+    await expect(de).toHaveAttribute('aria-invalid', 'true');
+    expect(
+      await page.evaluate(
+        () => JSON.parse(localStorage.getItem('mockforge-studio-v1')!).roles[0].label.de,
+      ),
+    ).toBe('');
+    await expect(page.locator('#configured-role option:checked')).toHaveText('editor');
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    expect(
+      (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+        .violations,
+    ).toEqual([]);
+    await de.screenshot({ path: info.outputPath('blank-role-name.png') });
+    await page.reload();
+    await goToStep(page, 'roles');
+    await expect(de).toHaveValue('');
+    await goToStep(page, 'review');
+    await page.locator('#reviewer').fill('Reviewer');
+    for (const checkbox of await page.locator('.review-checklist input').all())
+      await checkbox.check();
+    await expect(
+      page.getByRole('button', { name: 'Review dokumentieren', exact: true }),
+    ).toBeDisabled();
+    await expect(page.getByRole('status').filter({ hasText: 'Rollennamen fehlen' })).toBeVisible();
+    await goToStep(page, 'roles');
+    await de.fill('Einkauf');
+    await goToStep(page, 'review');
+    for (const checkbox of await page.locator('.review-checklist input').all())
+      await checkbox.check();
+    await expect(
+      page.getByRole('button', { name: 'Review dokumentieren', exact: true }),
+    ).toBeEnabled();
+    await page.getByRole('button', { name: 'Review dokumentieren', exact: true }).click();
+    await expect(page.locator('.review-record')).toContainText('Reviewer');
+  },
+);
+
+test(
+  'constructor policies inherit correctly and fully denied home stays distinct in app and offline export',
+  {
+    tag: tagsFor('roles', 'role-review-constructor-denied-home', {
+      areas: ['roles', 'navigation', 'authoring', 'transfer'],
+    }),
+  },
+  async ({ page, browser }, info) => {
+    const p = fixture();
+    p.roles![0].id = 'constructor';
+    p.roles![0].label.fa = '';
+    p.roles![0].rights.create = false;
+    p.forms[0].access = { reader: { open: true } };
+    p.forms[0].lists![0].access = { reader: { open: true } };
+    await openProject(page, p);
+    await goToStep(page, 'roles');
+    const rows = page.locator('.access-matrix tbody tr');
+    await expect(rows.nth(0).getByRole('combobox').nth(1)).toHaveValue('inherit');
+    await expect(rows.nth(1).getByRole('combobox').nth(1)).toHaveValue('inherit');
+    await rows.nth(1).getByRole('combobox').nth(1).selectOption('allow');
+    await expect(rows.nth(1).locator('.effective-right').nth(1)).toHaveText('Effektiv: erlaubt');
+    await rows.nth(1).getByRole('combobox').nth(1).selectOption('inherit');
+    await expect(rows.nth(1).locator('.effective-right').nth(1)).toHaveText('Effektiv: gesperrt');
+    await page.locator('.topbar').getByRole('button', { name: 'FA', exact: true }).click();
+    await page.locator('.access-editor .role-actions .text-button').click();
+    await expect(page.locator('.delete-target')).toHaveText('constructor');
+    await page.keyboard.press('Escape');
+    await page.locator('.topbar').getByRole('button', { name: 'DE', exact: true }).click();
+    await page
+      .getByRole('group', { name: 'Standardrechte der Rolle', exact: true })
+      .getByRole('checkbox', { name: 'Öffnen', exact: true })
+      .uncheck();
+    await page.goto('/#application');
+    await expect(page.locator('.application-frame h2')).toHaveText('Für diese Rolle gesperrt');
+    await expect(page.locator('.application-menu a')).toHaveCount(0);
+    await page
+      .locator('.application-frame')
+      .screenshot({ path: info.outputPath('denied-home.png') });
+    const pending = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'HTML-Vorschau herunterladen', exact: true }).click();
+    const file = info.outputPath('denied-home.html');
+    await (await pending).saveAs(file);
+    const context = await browser.newContext({ offline: true }),
+      offline = await context.newPage();
+    await offline.goto(pathToFileURL(file).href);
+    await expect(offline.locator('.application-frame h2')).toHaveText('Für diese Rolle gesperrt');
+    await offline.locator('#preview-role').selectOption('reader');
+    await expect(offline.locator('.application-frame h2')).toHaveText('Auftrag');
+    await context.close();
+  },
+);
