@@ -148,8 +148,8 @@ test(
       JSON.parse(localStorage.getItem('mockforge-studio-v1')!),
     );
     expect(saved.roles.map((role: { id: string }) => role.id)).toEqual(['role-2']);
-    expect(saved.forms[0].access['role-1']).toBeUndefined();
-    expect(saved.forms[0].lists[0].access['role-1']).toBeUndefined();
+    expect(saved.forms[0].access?.['role-1']).toBeUndefined();
+    expect(saved.forms[0].lists[0].access?.['role-1']).toBeUndefined();
     expect(saved.review.approvedAt).toBeNull();
   },
 );
