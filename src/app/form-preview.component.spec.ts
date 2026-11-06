@@ -1,3 +1,5 @@
+import { ALLOW_RIGHTS } from './application-access';
+import { FeedbackService } from './feedback.service';
 import { TestBed } from '@angular/core/testing';
 import { FormPreviewComponent } from './form-preview.component';
 import { BUTTON_ACTIONS, createButton, createField } from './project.model';
@@ -104,5 +106,38 @@ describe('FormPreviewComponent', (): void => {
     component.submit(event);
     expect(event.defaultPrevented).toBe(true);
     expect(component.simulated()).toBe(true);
+  });
+  it('gates normal submit/save/delete simulations and rechecks a pending delete after rights change', () => {
+    TestBed.configureTestingModule({ imports: [FormPreviewComponent] });
+    HTMLDialogElement.prototype.close = jest.fn();
+    const f = TestBed.createComponent(FormPreviewComponent),
+      buttons = ['submit', 'save', 'delete', 'reset'].map((action, index) => ({
+        ...createButton('button-' + index),
+        action: action as 'submit' | 'save' | 'delete' | 'reset',
+      }));
+    f.componentRef.setInput('project', { ...example('saas'), fields: [], buttons });
+    f.componentRef.setInput('operationRights', {
+      ...ALLOW_RIGHTS,
+      create: false,
+      edit: false,
+      delete: false,
+    });
+    f.detectChanges();
+    const c = f.componentInstance,
+      form = f.nativeElement.querySelector('form') as HTMLFormElement,
+      feedback = TestBed.inject(FeedbackService);
+    expect(c.allowedButtons().map((button) => button.action)).toEqual(['reset']);
+    for (const button of buttons.slice(0, 3)) c.runButton(button, form);
+    c.submit({ target: form, preventDefault: jest.fn() } as unknown as Event);
+    expect(c.simulated()).toBe(false);
+    expect(feedback.deletion()).toBeNull();
+    f.componentRef.setInput('operationRights', ALLOW_RIGHTS);
+    f.detectChanges();
+    c.runButton(buttons[2], form);
+    expect(feedback.deletion()).not.toBeNull();
+    f.componentRef.setInput('operationRights', { ...ALLOW_RIGHTS, delete: false });
+    f.detectChanges();
+    feedback.confirmDelete();
+    expect(c.simulated()).toBe(false);
   });
 });

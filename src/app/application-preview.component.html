@@ -80,6 +80,7 @@
           @if (screen.kind === 'form') {
             <app-form-preview
               [project]="data.projection()"
+              [operationRights]="formRights()"
               [uiLocale]="locale()"
               [locale]="language()"
               [mobile]="mobile()"
