@@ -65,7 +65,7 @@ for mixed suites such as `studio` and `presentation`.
 
 Areas are `authoring`, `forms`, `lists`, `roles`, `navigation`, `preview`, `groups`,
 `transfer`, `persistence`, `review`, `shell`, `guide`, `presentation`, `test-data`
-and `patterns`. The `forms` area covers the active multi-form journeys. The `lists` area covers `collections.spec.ts`. The `navigation` area covers `application-navigation.spec.ts`. The future roles area has no tests yet; requesting it fails until its journeys are implemented. Checks
+and `patterns`. The `forms` area covers the active multi-form journeys. The `lists` area covers `collections.spec.ts`. The `navigation` area covers `application-navigation.spec.ts`. The roles area covers the registered editor/runtime/offline journeys in roles.spec.ts. Checks
 are `a11y`, `keyboard`, `responsive`, `i18n` and `performance`. The performance tag
 currently identifies the existing 500-record responsiveness observation; it does
 not establish a benchmark or a representative-device guarantee.
@@ -127,4 +127,4 @@ Preserve worker backpressure at callers: large-table Submit must pass on its fir
 
 ## Updating examples
 
-Edit the canonical JSON in `src/assets/guides`; `application-examples.ts` supplies gallery and authoring metadata and validated copies. Preserve stable form/list IDs so future rights can target those scopes. Keep planned roles in brief/questions instead of inventing schema properties or permission guarantees. Regenerate the authoring kit and run the `examples` and authoring-guide browser suites. See [example intent and boundaries](EXAMPLES.md).
+Edit the canonical JSON in `src/assets/guides`; `application-examples.ts` supplies gallery and authoring metadata and validated copies. Preserve stable form/list IDs so future rights can target those scopes. Use the validated roles/access contract for screen and CRUD simulations; keep field rights, ownership and production authorization questions in the brief. Regenerate the authoring kit and run the `examples` and authoring-guide browser suites. See [example intent and boundaries](EXAMPLES.md).

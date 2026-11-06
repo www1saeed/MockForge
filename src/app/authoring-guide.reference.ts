@@ -38,6 +38,7 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
       },
       { names: 'languages', type: '("de" | "en" | "fa")[]', description: 'languageRule' },
       { names: 'theme', type: THEMES.join(' / '), description: 'layoutRule' },
+      { names: 'roles?', type: 'ApplicationRole[0..10]', description: 'rolesHint' },
       { names: 'forms', type: 'ApplicationForm[1..20]', description: 'applicationFormsRule' },
       {
         names: 'review',
@@ -49,6 +50,11 @@ export const AUTHORING_REFERENCE: readonly ReferenceSection[] = [
   {
     title: 'formContract',
     rows: [
+      {
+        names: 'access?',
+        type: 'AccessPolicy (role ID → partial rights)',
+        description: 'roleInheritanceHint',
+      },
       { names: 'id, menu?', type: 'safe unique form ID, boolean', description: 'formIdRule' },
       {
         names: 'title, description, submit',

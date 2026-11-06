@@ -32,13 +32,13 @@ not its records. Deleting a form also discards its session records.
    radio answers, including group rows, unless replacement is enabled. Missing
    answers remain fillable.
 
-Action switches are mockup configuration, not authorization. Create/view/edit/delete
+Action switches intersect the current simulated role rights in application preview. They remain mockup configuration, not server authorization. Create/view/edit/delete
 handlers check the current switch and session context. Ordinary form-preview
 buttons still simulate their configured actions; they do not insert list records.
 
 ## Persistence, stale data and cancellation
 
-Studio 2.3.0 JSON stores optional `lists` and `entries` preferences inside each
+Studio 2.4.0 JSON stores optional `lists` and `entries` preferences inside each
 form. Storage, JSON, Markdown and review include configuration only. Manual and
 generated records, record IDs, selection, page, queries and open details are never
 persisted or exported. Switching forms or returning to the form editor retains
@@ -78,7 +78,7 @@ These operations cannot be undone after confirmation.
 - Unsupported generator constraints can omit answers. The UI reports their count;
   generated fixtures are not certified complete valid production records. Editing
   such a record requires correcting all required/invalid answers before Save.
-- Lists support table, card and accordion layouts. Roles, wizard pages, relationships and
+- Lists support table, card and accordion layouts. Field rights, wizard pages, relationships and
   lists over group rows remain future work. There is no backend or authentication.
 
 ## Verification
@@ -98,11 +98,11 @@ remains `npm run e2e` and runs automatically for pull requests.
 
 ## Detailed configuration and presentation
 
-The Project & design page combines briefing, language/copy and form styling. The four workflow tabs are Project & design, Fields/actions, Lists/entries and Review. Lists have their own configuration page with section navigation and a live preview. Configure localized titles, page size, selection and default sorting; choose visible/search/filter fields and fixed AND presets; reorder columns and set independent localized headings, 80–600px widths, logical alignment and per-column sorting. Empty headings use field labels.
+The Project & design page combines briefing, language/copy and form styling. The five workflow tabs are Project & design, Fields/actions, Lists/entries, Roles & rights and Review. Lists have their own configuration page with section navigation and a live preview. Configure localized titles, page size, selection and default sorting; choose visible/search/filter fields and fixed AND presets; reorder columns and set independent localized headings, 80–600px widths, logical alignment and per-column sorting. Empty headings use field labels.
 
-Four table designs (classic, striped, cell-bordered, minimal) combine with comfortable/compact density, hover highlight and a locally scrolling sticky header. Existing CRUD actions have per-project-language labels, primary/secondary/ghost/danger variants, built-in icons and text/icon/both display. Row actions can be reordered; Create remains in the toolbar and Delete also applies to selection. Disabled actions remain guarded in handlers. No arbitrary CSS, icon URLs, custom server actions or role permissions are introduced.
+Four table designs (classic, striped, cell-bordered, minimal) combine with comfortable/compact density, hover highlight and a locally scrolling sticky header. Existing CRUD actions have per-project-language labels, primary/secondary/ghost/danger variants, built-in icons and text/icon/both display. Row actions can be reordered; Create remains in the toolbar and Delete also applies to selection. Disabled actions remain guarded in handlers. No arbitrary CSS, icon URLs or custom server actions are introduced. Simulated screen/CRUD rules are described in [Roles & rights](ROLE_ACCESS.md).
 
-Studio 2.3.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.2.0 and 2.1.0 imports retain their list configuration with review acknowledgement reset. Older declarations are validated against their historical capabilities before migration: 2.1 supports leaf lists, 2.2 adds table/column/action presentation, and 2.3 adds group projections, display modes and list layouts. Relabeling newer settings as an older version is rejected. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.
+Studio 2.4.0 persists optional `appearance`, `columnSettings`, `actionSettings` and `actionOrder` per list. Studio 2.2.0 and 2.1.0 imports retain their list configuration with review acknowledgement reset. Older declarations are validated against their historical capabilities before migration: 2.1 supports leaf lists, 2.2 adds table/column/action presentation, and 2.3 adds group projections, display modes and list layouts. Relabeling newer settings as an older version is rejected. The JSON guide and generated kit describe the exact types. [Standalone exports](STANDALONE_PREVIEW.md) use these same table and action settings.
 
 ## Group values and layout
 
@@ -111,3 +111,7 @@ Choose Table, Cards or Accordion independently of the table's four border/stripe
 The list tab has a source-form selector instead of form-management actions. Workspace Show/hide and Full width apply to list preview as they do to forms. Preview language/device controls are independent of the interface language. The test-data toolbar supports whole-dataset replacement (confirmed when nonempty), clearing and adding one generated record. Settings select an active form language or Mixed and a count from 1 to 500. Unconfigured data language follows content preview language. Mixed alternates active languages deterministically, continuing the sequence for single appends. Generation uses one batch-wide time/output/control budget; cancelled/obsolete/over-budget runs preserve the complete old dataset. Language choice and answers remain session-only. In authoring, the preview count and the fixture-default count edit the same project preference; editing either updates the other. Empty/out-of-range/non-integer drafts cannot generate records. Application preview and standalone keep count overrides transient. Replacement confirmation captures its count/languages before opening, so later view-setting changes cannot silently change the request.
 
 The preview has its own keyboard-focusable, bounded vertical scroller. Wide workspaces show editor and preview side by side; narrow screens stack them while retaining independent preview scrolling. Table styles, column widths and sticky headings are offered only for tables. Density, hover, column alignment and shared query/action settings remain effective for cards and accordions. Stored table-only preferences survive switching layouts. Group-child checkbox labels have separate rows and spacing. The duplicate preview heading is omitted; the toolbar and named preview region identify it.
+
+## Badge colors and repeated-row chips
+
+For badge, chips or count columns, select a Badge color: Neutral, Blue, Green, Amber, Red or Violet. The palette uses paired background/text colors and survives layout changes, persistence and offline export. Color is a column presentation setting, not a condition or permission. Group chips show each saved row as a numbered item with the selected child labels and values; text wraps, logical spacing supports RTL and the bounded list supports keyboard scrolling. Scalar badge text and child-path chips share the palette.

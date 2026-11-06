@@ -26,7 +26,7 @@ test(
     await expect(quality).toContainText('307');
     await expect(quality).toContainText('224 unit/component tests');
     await expect(quality).toContainText('83 Chromium end-to-end tests');
-    await expect(quality).toContainText('97.56%');
+    await expect(quality).toContainText('97.57%');
     for (const slide of await page.locator('main section').all()) {
       const narration = await slide.getAttribute('data-narration');
       expect(narration!.length).toBeGreaterThan(200);
@@ -151,7 +151,7 @@ test(
     const html = await readFile(path, 'utf8');
     expect(html).toContain('data:image/png;base64,');
     expect(html).toContain('Cut waits for a valid destination');
-    expect(html).toContain('97.56%');
+    expect(html).toContain('97.57%');
     const { resolve } = await import('node:path');
     const { pathToFileURL } = await import('node:url');
     const savedPath = resolve('reports/saved-presentation.html');

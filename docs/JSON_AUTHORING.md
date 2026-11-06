@@ -1,6 +1,6 @@
 # Design a form in a text editor
 
-Open **Design a form in a text editor** in Studio's navigation, or use `/#guide-json`. The page provides a DE/EN/FA reference, selectable complete JSON, and downloads. The format is **MockForge Studio 2.3.0** with `format: "mockforge-studio"` and `forms[]`; files from the original MockForge edition are incompatible.
+Open **Design a form in a text editor** in Studio's navigation, or use `/#guide-json`. The page provides a DE/EN/FA reference, selectable complete JSON, and downloads. The format is **MockForge Studio 2.4.0** with `format: "mockforge-studio"` and `forms[]`; files from the original MockForge edition are incompatible.
 
 ## Working sequence
 
@@ -23,8 +23,8 @@ The in-app reference groups the properties below. The application contract lives
 
 | Object  | Required properties and bounds                                                                                                                                                                                                       |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Project | `format: "mockforge-studio"`, `schemaVersion: "2.3.0"`; string `name`, `owner`, `audience`, `goal`, `scope`, `decisions`, `questions`; shared `theme`, `languages`, `review`; `forms` with 1–20 entries. |
-| Form | Unique `id`; Text `title`, `description`, `submit`; `columns`, `buttons`, `fields`; optional boolean `menu` (default true) controls its application-menu entry; false keeps lists/direct links reachable. Optional `lists` and `entries`; no roles/flows. |
+| Project | `format: "mockforge-studio"`, `schemaVersion: "2.4.0"`; string `name`, `owner`, `audience`, `goal`, `scope`, `decisions`, `questions`; shared `theme`, `languages`, `review`; `forms` with 1–20 entries. |
+| Form | Unique `id`; Text `title`, `description`, `submit`; `columns`, `buttons`, `fields`; optional boolean `menu` (default true) controls its application-menu entry; false keeps lists/direct links reachable. Optional `lists` and `entries`; optional access policy; no flows. |
 | Text    | `{ "de": "...", "en": "...", "fa": "..." }`. All three keys are required. Activate one or two distinct languages. Empty inactive translations are allowed.                                                                           |
 | Field   | `id`, `type`, `label`, `placeholder`, `help`, `required`, `options`, `note`, `minLength`, `maxLength`, `tooltip`, `pattern`, `patternMessage`. Optional `tooltipPlacement` and, only for groups, `group`.                            |
 | Group   | `layout: "cards"` or `"table"`, integer `minItems` 0–20, `maxItems` 1–20, `minItems <= maxItems`, and 1–20 leaf definitions in `fields`. Optional boolean `gapless`. No nested groups. Set the group's `required` to `minItems > 0`. |
@@ -39,15 +39,15 @@ Length rules are integers 0–10000; maximum 0 means unlimited. Minimum cannot e
 
 Themes: `bootstrap`, `material`, `carbon`, `fluent`; columns: 1 or 2. Button variants: `primary`, `secondary`, `ghost`, `danger`. Actions: `submit`, `validate`, `save`, `reset`, `cancel`, `delete`, `next`, `back`, `none`. Existing CSS class tokens use only letters, digits, underscore, whitespace or hyphen, at most 200 characters. Styles and actions never implement a backend. Next/back simulate navigation within this single-page edition.
 
-Project-wide limits are 500 field definitions including group children and 100 buttons, in addition to the per-form limits of 100 definitions and 20 buttons. Whole-form copies retain local field/button IDs and receive a new form ID. Studio 2.0.0 imports migrate without adding list preferences; legacy Studio 1.0–1.3 imports migrate into one form and clear old acknowledgements; invalid stored bytes remain available for recovery. Older Studio versions cannot read 2.3.0 exports.
+Project-wide limits are 500 field definitions including group children and 100 buttons, in addition to the per-form limits of 100 definitions and 20 buttons. Whole-form copies retain local field/button IDs and receive a new form ID. Studio 2.0.0 imports migrate without adding list preferences; legacy Studio 1.0–1.3 imports migrate into one form and clear old acknowledgements; invalid stored bytes remain available for recovery. Older Studio versions cannot read 2.4.0 exports.
 
 ## Troubleshooting and boundaries
 
-Files above 1 MiB, wrong versions, malformed Text objects, duplicate IDs, unsupported enums, invalid patterns and out-of-range groups are rejected. Studio currently reports a general import failure, not detailed JSON paths. Compare the file with a complete example and check syntax in the editor. Older Studio files use the existing migration path; do not relabel a foreign-edition file as a Studio 2.3.0 file.
+Files above 1 MiB, wrong versions, malformed Text objects, duplicate IDs, unsupported enums, invalid patterns and out-of-range groups are rejected. Studio currently reports a general import failure, not detailed JSON paths. Compare the file with a complete example and check syntax in the editor. Older Studio files use the existing migration path; do not relabel a foreign-edition file as a Studio 2.4.0 file.
 
 See [the complete list contract and session behavior](COLLECTIONS.md). Optional form `entries` stores count/seed only. `lists` stores titles, root/group/child column and search references, filters/presets, sorting, pagination, selection and four explicit action switches. Keep actual records, per-fill preview settings and field-clipboard state out of the file. Extra keys do not add conditional visibility, uploads, wizard pages, numeric min/max validation or integrations. Record production requirements in the brief and notes. For assisted drafting, use [the AI guide](AI_AUTHORING.md).
 
-Application navigation uses [transient form/list hash links](APPLICATION_PREVIEW.md); do not add route, selected-screen, sign-in or role keys to JSON. The existing 2.3.0 contract is unchanged.
+Application navigation uses [transient form/list hash links](APPLICATION_PREVIEW.md); do not add route, selected-screen, selected-role or credentials to JSON. Studio 2.4 adds optional roles and form/list access policies; see [the role contract](ROLE_ACCESS.md).
 
 ## List presentation in 2.3
 
@@ -56,3 +56,5 @@ Application navigation uses [transient form/list hash links](APPLICATION_PREVIEW
 `appearance.layout` is `table`, `cards` or `accordion` (omitted means table). Columns/search can use a root field/group ID or `groupId/childId`; filters/presets use root choice fields. Column `display` is `text`, `badge`, `chips` or `count`; whole-group columns additionally admit `table`, `cards` and `accordion`. Optional nonempty `groupFields` selects existing child IDs of that group, at most 20 unique IDs. Omit it to show all children. These projections never change stored response shape or turn group rows into independent records.
 
 The authoring UI offers chips/count only for repeated group values/paths; scalar roots offer text/badge. Historical scalar chips/count tokens in valid 2.3 files remain accepted and fall back to text. Group table/card/count contents open in accessible dialogs, without adding JSON properties. Layout-specific table settings remain stored when another layout is selected.
+
+Optional roles/access and finite badgeColor tokens are documented in the generated kit. Roles have open/create/view/edit/delete defaults; form/list access contains per-role partial overrides. Badge colors: neutral, blue, green, amber, red, violet.
