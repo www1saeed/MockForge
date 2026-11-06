@@ -1,3 +1,4 @@
+import { FieldModes, fieldMode, lockedGroup, projectFields } from './field-access';
 import { ALLOW_RIGHTS, AccessRights } from './application-access';
 import {
   Component,
@@ -102,6 +103,33 @@ const VALIDATING_ACTIONS: readonly ButtonAction[] = ['submit', 'validate', 'save
 })
 export class FormPreviewComponent implements OnDestroy {
   @ViewChild('previewForm') previewForm!: ElementRef<HTMLFormElement>;
+  readonly fieldModes = input<FieldModes>({});
+  private readonly sourceFields = computed(() => this.project().fields, {
+    equal: (a, b) => a.length === b.length && a.every((field, i) => field === b[i]),
+  });
+  private readonly modeSnapshot = computed(() => this.fieldModes(), {
+    equal: (a, b) => JSON.stringify(a) === JSON.stringify(b),
+  });
+  private readonly visibleDefinitions = computed(
+    () => projectFields(this.sourceFields(), this.modeSnapshot()),
+    { equal: (a, b) => a.length === b.length && a.every((field, i) => field === b[i]) },
+  );
+  readonly displayFields = computed(() =>
+    this.visibleDefinitions().map((field) =>
+      field.group &&
+      field.group.minItems !== 0 &&
+      this.initialValues() &&
+      lockedGroup(field, this.modeSnapshot())
+        ? { ...field, group: { ...field.group, minItems: 0 } }
+        : field,
+    ),
+  );
+  readOnly(id: string): boolean {
+    return fieldMode(this.fieldModes(), id) !== 'editable';
+  }
+  groupLocked(field: Field): boolean {
+    return lockedGroup(field, this.modeSnapshot());
+  }
   readonly recordMode = input(false);
   readonly applicationMode = input(false);
   readonly initialValues = input<ResponseValues | null>(null);
@@ -144,6 +172,7 @@ export class FormPreviewComponent implements OnDestroy {
     return JSON.stringify([
       this.project(),
       this.operationRights(),
+      this.fieldModes(),
       this.uiLocale(),
       this.locale(),
       this.dataLocale(),
@@ -201,8 +230,9 @@ export class FormPreviewComponent implements OnDestroy {
     const plans = this.groups().map((group): { group: RepeatGroupComponent; count: number } => {
       const bounds = group.field().group!;
       const mode = this.dataGroupRows();
-      const count =
-        mode === 'minimum'
+      const count = group.structureReadOnly()
+        ? group.rows().length
+        : mode === 'minimum'
           ? bounds.minItems
           : mode === 'maximum'
             ? bounds.maxItems
@@ -274,7 +304,8 @@ export class FormPreviewComponent implements OnDestroy {
     for (const { group, count } of plans) {
       const mode = this.dataGroupRows();
       const definition = group.field();
-      const applied = group.resizeForTestData(count, this.replaceResponses());
+      const applied =
+        !group.structureReadOnly() && group.resizeForTestData(count, this.replaceResponses());
       if (mode !== 'existing')
         groupDiagnostics.push({
           fieldId: definition.id,
@@ -429,7 +460,7 @@ export class FormPreviewComponent implements OnDestroy {
       const values = this.initialValues()!;
       for (const group of this.groups()) {
         const rows = ownResponse(values, group.field().id);
-        if (Array.isArray(rows)) group.resizeForTestData(rows.length, true);
+        if (Array.isArray(rows)) group.restoreRows(rows.length);
       }
       this.detector.detectChanges();
       const form = this.previewForm.nativeElement;
@@ -535,7 +566,7 @@ export class FormPreviewComponent implements OnDestroy {
       const controls = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
         `[data-field-id="${field.id}"]`,
       );
-      for (const control of Array.from(controls)) {
+      for (const control of Array.from(controls).filter((control) => !control.disabled)) {
         // Keep service backpressure: a large table must not enqueue every response at once.
         if (task)
           task = task.then((): Promise<void> | void => {
@@ -644,6 +675,10 @@ export class FormPreviewComponent implements OnDestroy {
     control: HTMLInputElement | HTMLTextAreaElement,
     field: Field,
   ): Promise<void> | void {
+    if (control.disabled) {
+      control.setCustomValidity('');
+      return;
+    }
     const pending = this.pendingChecks.get(control);
     const length = responseLengthViolation(field, control.value);
     if (
@@ -746,6 +781,7 @@ export class FormPreviewComponent implements OnDestroy {
       );
       if (
         signal.aborted ||
+        control.disabled ||
         epoch !== this.manualCheckEpoch ||
         !this.host.nativeElement.contains(control) ||
         control.value !== value ||

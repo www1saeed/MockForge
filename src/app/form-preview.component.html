@@ -129,10 +129,12 @@
       [attr.dir]="language() === 'fa' ? 'rtl' : 'ltr'"
     >
       <div class="preview-fields" [class.two-columns]="project().columns === 2 && !mobile()">
-        @for (field of project().fields; track field.id) {
+        @for (field of displayFields(); track field.id) {
           @if (field.type === 'group') {
             <app-repeat-group
               [field]="field"
+              [fieldModes]="fieldModes()"
+              [structureReadOnly]="groupLocked(field)"
               [locale]="language()"
               [resetToken]="resetToken()"
               (patternInput)="validatePattern($event.event, $event.field)"
@@ -141,6 +143,7 @@
           } @else {
             <app-preview-field
               [field]="field"
+              [readOnly]="readOnly(field.id)"
               [locale]="language()"
               [controlId]="'preview-' + field.id"
               [class.full-width]="

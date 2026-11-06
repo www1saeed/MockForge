@@ -152,7 +152,7 @@ export function fillTestData(
   const records = new Map<string, PreviewDataRecord>();
   for (const field of fields) {
     const controls = Array.from(
-      form.querySelectorAll<ResponseControl>(`[data-field-id="${field.id}"]`),
+      form.querySelectorAll<ResponseControl>(`[data-field-id="${field.id}"]:not(:disabled)`),
     );
     const groups = new Map<string, ResponseControl[]>();
     for (const control of controls)

@@ -27,6 +27,7 @@ export class PreviewFieldComponent {
   readonly locale = input.required<Locale>();
   readonly controlId = input.required<string>();
   readonly showTooltip = input(true);
+  readonly readOnly = input(false);
   readonly patternInput = output<PatternInput>();
   readonly supportsPattern = supportsPattern;
   readonly isBoundedPattern = isBoundedPattern;
