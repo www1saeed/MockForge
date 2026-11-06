@@ -185,7 +185,7 @@
               </button>
             }
           </nav>
-          @if (!listsOpen()) {
+          @if (!listsOpen() && !rolesOpen()) {
             <section class="form-manager" [attr.aria-label]="t('manageForms')">
               <div class="form-selector">
                 <label for="active-form">{{ t('activeForm') }}</label>
@@ -254,7 +254,11 @@
               <p class="fine-print">{{ t('formSwitchNotice') }}</p>
             </section>
           }
-          @if (listsOpen()) {
+          @if (rolesOpen()) {
+            @defer (on immediate) {
+              <app-access-editor [locale]="locale()" />
+            }
+          } @else if (listsOpen()) {
             @defer (on immediate) {
               <app-collection-configurator
                 [locale]="locale()"

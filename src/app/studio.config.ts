@@ -7,7 +7,15 @@ export type StudioView =
   'overview' | 'workspace' | 'application' | 'examples' | 'guide' | 'guide-json' | 'guide-ai';
 
 /** Named workflow positions keep visibility defaults understandable at their call sites. */
-export const WORKFLOW = { brief: 0, copy: 1, design: 2, fields: 3, review: 4, lists: 5 } as const;
+export const WORKFLOW = {
+  brief: 0,
+  copy: 1,
+  design: 2,
+  fields: 3,
+  review: 4,
+  lists: 5,
+  roles: 6,
+} as const;
 /** Outline marks are project-authored; accessible names and Bootstrap tooltips carry details. */
 export const FIELD_ICONS: Record<FieldType, string> = {
   text: 'M4 5h16 M12 5v14 M8 19h8',
@@ -85,5 +93,6 @@ export const WORKFLOW_TABS = [
   { value: 0, id: 'project', label: 'projectSettings' },
   { value: 3, id: 'fields', label: 'step4' },
   { value: 5, id: 'lists', label: 'listsTitle' },
+  { value: 6, id: 'roles', label: 'rolesTitle' },
   { value: 4, id: 'review', label: 'step5' },
 ] as const;

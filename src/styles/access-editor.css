@@ -1,0 +1,56 @@
+.access-editor {
+  padding: 1.25rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  min-width: 0;
+}
+.access-editor > select {
+  max-width: 100%;
+  margin: 0.75rem;
+}
+.role-labels,
+.role-defaults {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.role-labels label {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.access-matrix-scroll {
+  max-width: 100%;
+  overflow: auto;
+}
+.access-matrix {
+  width: 100%;
+  border-collapse: collapse;
+}
+.access-matrix th,
+.access-matrix td {
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  vertical-align: top;
+}
+.access-matrix select {
+  min-width: 115px;
+  width: 100%;
+}
+.access-matrix small {
+  display: block;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.role-list-row th {
+  padding-inline-start: 1.5rem;
+}
+.effective-right {
+  color: var(--ink);
+  margin-top: 0.35rem;
+}
+.right-denied {
+  font-weight: 600;
+}
