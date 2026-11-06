@@ -339,3 +339,115 @@ test(
     await preview.screenshot({ path: info.outputPath('list-preview-scroll.png') });
   },
 );
+
+test(
+  'reader can clear configured group sorting and search only selected summary fields',
+  {
+    tag: tagsFor('list-views', 'list-review-sort-projection', { areas: ['lists', 'groups'] }),
+  },
+  async ({ page }) => {
+    const p = parseApplicationProject(example('saas'))!,
+      f = p.forms[0];
+    f.fields = [
+      { ...createField('text', 'name'), label: text('Name', 'Name') },
+      {
+        ...createField('group', 'items'),
+        label: text('Positionen', 'Items'),
+        group: {
+          layout: 'table',
+          minItems: 1,
+          maxItems: 2,
+          fields: [
+            { ...createField('text', 'hidden'), label: text('Intern', 'Internal') },
+            { ...createField('text', 'product'), label: text('Artikel', 'Product') },
+          ],
+        },
+      },
+    ];
+    f.lists = [
+      {
+        ...createCollectionList(f.fields, []),
+        columns: ['name', 'items'],
+        searchFields: ['items'],
+        sort: { fieldId: 'items', direction: 'asc' },
+        columnSettings: [
+          {
+            fieldId: 'items',
+            label: text('', '', ''),
+            align: 'start',
+            sortable: true,
+            display: 'text',
+            groupFields: ['product'],
+          },
+        ],
+      },
+    ];
+    await openProject(page, p);
+    await goToStep(page, 'lists');
+    const preview = page.locator('.collection-live-preview');
+    for (const [name, hidden, product] of [
+      ['Zeta', 'AAA-secret', 'Zebra'],
+      ['Alpha', 'ZZZ-secret', 'Apple'],
+    ]) {
+      await preview.getByRole('button', { name: 'Eintrag erstellen', exact: true }).click();
+      const dialog = page.locator('.collection-dialog');
+      await dialog.locator('#preview-name').fill(name);
+      await dialog.locator('[data-field-id="hidden"]').fill(hidden);
+      await dialog.locator('[data-field-id="product"]').fill(product);
+      await dialog.getByRole('button', { name: 'Eintrag speichern', exact: true }).click();
+    }
+    for (const layout of ['cards', 'accordion']) {
+      await page
+        .getByRole('combobox', { name: 'Darstellungsform', exact: true })
+        .selectOption(layout);
+      const cards = preview.locator('.collection-record');
+      await expect(cards.first()).toContainText('Alpha');
+      await preview
+        .getByRole('combobox', { name: 'Standardsortierung', exact: true })
+        .selectOption('');
+      await expect(cards.first()).toContainText('Zeta');
+      await expect(
+        preview.getByRole('combobox', { name: 'Standardsortierung', exact: true }),
+      ).toHaveValue('');
+      await preview.getByRole('searchbox', { name: 'Suche', exact: true }).fill('secret');
+      await expect(cards).toHaveCount(0);
+      await preview.getByRole('searchbox', { name: 'Suche', exact: true }).fill('Apple');
+      await expect(cards).toHaveCount(1);
+      await expect(cards.first()).toContainText('Alpha');
+      await preview.getByRole('searchbox', { name: 'Suche', exact: true }).fill('');
+    }
+  },
+);
+
+test(
+  'a sole implicit group child remains visibly selected and cannot be unchecked',
+  {
+    tag: tagsFor('list-views', 'list-review-single-child', {
+      areas: ['lists', 'groups', 'authoring'],
+    }),
+  },
+  async ({ page }) => {
+    const p = parseApplicationProject(example('saas'))!,
+      f = p.forms[0];
+    f.fields = [
+      {
+        ...createField('group', 'items'),
+        label: text('Positionen', 'Items'),
+        group: {
+          layout: 'table',
+          minItems: 0,
+          maxItems: 2,
+          fields: [{ ...createField('text', 'product'), label: text('Artikel', 'Product') }],
+        },
+      },
+    ];
+    f.lists = [{ ...createCollectionList(f.fields, []), columns: ['items'] }];
+    await openProject(page, p);
+    await goToStep(page, 'lists');
+    const checkbox = page
+      .locator('.collection-group-field-settings')
+      .getByRole('checkbox', { name: 'Artikel', exact: true });
+    await expect(checkbox).toBeChecked();
+    await expect(checkbox).toBeDisabled();
+  },
+);
