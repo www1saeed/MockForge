@@ -177,4 +177,38 @@ describe('Application preview cursor', () => {
     TestBed.tick();
     expect(c.target()?.formId).toBe(form);
   });
+  it('distinguishes a role denied home from a genuinely empty menu and missing routes', () => {
+    TestBed.configureTestingModule({ providers: [ProjectStore, CollectionSessionRegistry] });
+    const store = TestBed.inject(ProjectStore);
+    store.configureAccess([
+      {
+        id: 'blocked',
+        label: text('Gesperrt', 'Blocked', 'مسدود'),
+        rights: { open: false, view: false, create: false, edit: false, delete: false },
+      },
+      { id: 'editor', label: text('Editor', 'Editor', 'ویرایشگر'), rights: { ...ALLOW_RIGHTS } },
+    ]);
+    const f = TestBed.createComponent(ApplicationPreviewComponent);
+    f.detectChanges();
+    TestBed.tick();
+    const c = f.componentInstance;
+    expect(c.target()).toBeNull();
+    expect(c.denied()).toBe(true);
+    expect(f.nativeElement.querySelector('.application-frame h2').textContent).toContain(
+      'Für diese Rolle gesperrt',
+    );
+    c.access.select('editor');
+    f.detectChanges();
+    TestBed.tick();
+    expect(c.target()).not.toBeNull();
+    expect(c.denied()).toBe(false);
+    store.setFormMenu(false);
+    f.detectChanges();
+    TestBed.tick();
+    expect(c.target()).toBeNull();
+    expect(c.denied()).toBe(false);
+    f.componentRef.setInput('route', { kind: 'missing' });
+    f.detectChanges();
+    expect(c.denied()).toBe(false);
+  });
 });

@@ -87,7 +87,13 @@ export class ApplicationPreviewComponent implements OnDestroy {
       : null;
   });
   readonly formRights = computed(() => this.access.rights(this.data.form().id));
-  readonly denied = computed(() => !!this.requestedTarget() && !this.target());
+  readonly denied = computed(
+    () =>
+      (!!this.requestedTarget() && !this.target()) ||
+      (this.route().kind === 'home' &&
+        applicationMenu(this.store.application()).length > 0 &&
+        this.menu().length === 0),
+  );
   readonly sessions = computed(() => [
     { id: `${this.store.projectSession()}:${this.scope.epoch()}` },
   ]);
