@@ -28,13 +28,13 @@ export class CollectionDefinitionController {
   readonly previewOnly = input(false);
   readonly listId = input<string | null>(null);
   readonly selected = signal('');
-  readonly lists = computed(() => this.data.form().lists ?? []);
+  readonly lists = computed(() => this.data.displayLists());
   readonly list = computed<CollectionList | undefined>(() =>
     this.previewOnly()
       ? this.lists().find((list) => list.id === this.listId())
       : (this.lists().find((list) => list.id === this.selected()) ?? this.lists()[0]),
   );
-  readonly leaves = computed(() => collectionFields(this.data.form().fields));
+  readonly leaves = computed(() => collectionFields(this.data.renderForm().fields));
   readonly choices = computed(() =>
     this.leaves().filter((field) => !field.id.includes('/') && collectionChoice(field)),
   );

@@ -102,36 +102,29 @@ export function projectFields(
   modes: FieldModes,
   editableOnly = false,
 ): Field[] {
+  const relax = (field: Field): Field =>
+    !field.required && !field.pattern && !field.minLength && !field.maxLength
+      ? field
+      : { ...field, required: false, pattern: '', minLength: 0, maxLength: 0 };
   return fields.flatMap((field) => {
     const mode = fieldMode(modes, field.id);
     if (mode === 'hidden' || (editableOnly && mode !== 'editable')) return [];
-    if (!field.group)
-      return [
-        mode === 'readonly'
-          ? { ...field, required: false, pattern: '', minLength: 0, maxLength: 0 }
-          : field,
-      ];
+    if (!field.group) return [mode === 'readonly' ? relax(field) : field];
     const children = field.group.fields
       .filter((child) => {
         const mode = fieldMode(modes, field.id + '/' + child.id);
         return mode !== 'hidden' && (!editableOnly || mode === 'editable');
       })
       .map((child) =>
-        fieldMode(modes, field.id + '/' + child.id) === 'readonly'
-          ? { ...child, required: false, pattern: '', minLength: 0, maxLength: 0 }
-          : child,
+        fieldMode(modes, field.id + '/' + child.id) === 'readonly' ? relax(child) : child,
       );
     if (!children.length) return [];
-    return [
-      {
-        ...field,
-        group: {
-          ...field.group,
-          fields: children,
-          ...(mode === 'readonly' ? { minItems: 0 } : {}),
-        },
-      },
-    ];
+    const minItems = mode === 'readonly' ? 0 : field.group.minItems;
+    return children.length === field.group.fields.length &&
+      children.every((child, i) => child === field.group!.fields[i]) &&
+      minItems === field.group.minItems
+      ? [field]
+      : [{ ...field, group: { ...field.group, fields: children, minItems } }];
   });
 }
 export function projectList(list: CollectionList, fields: readonly Field[]): CollectionList {

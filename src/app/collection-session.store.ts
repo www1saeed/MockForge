@@ -1,3 +1,4 @@
+import { projectFields, projectList, mergeFieldValues } from './field-access';
 import { COLLECTION_ACCESS } from './application-access.session';
 import { AccessRight } from './application-access';
 import {
@@ -61,7 +62,32 @@ export class CollectionSessionStore implements OnDestroy {
       this.project.application().forms.find((f) => f.id === this.scope.formId()) ??
       this.project.application().forms[0],
   );
-  readonly projection = computed(() => projectForForm(this.project.application(), this.form().id)!);
+  readonly fieldModes = computed(() => this.access.modes(this.form().id), {
+    equal: (a, b) => JSON.stringify(a) === JSON.stringify(b),
+  });
+  readonly restricted = computed(() =>
+    Object.values(this.fieldModes()).some((mode) => mode !== 'editable'),
+  );
+  readonly renderForm = computed(() =>
+    this.restricted()
+      ? { ...this.form(), fields: projectFields(this.form().fields, this.fieldModes()) }
+      : this.form(),
+  );
+  readonly displayLists = computed(() =>
+    this.restricted()
+      ? (this.form().lists ?? []).map((list) => projectList(list, this.renderForm().fields))
+      : (this.form().lists ?? []),
+  );
+  readonly projection = computed(() => ({
+    ...projectForForm(this.project.application(), this.form().id)!,
+    fields: this.renderForm().fields,
+  }));
+  private generationProjection(): ReturnType<typeof projectForForm> & {} {
+    const p = this.projection();
+    return this.restricted()
+      ? { ...p, fields: projectFields(this.form().fields, this.fieldModes(), true) }
+      : p;
+  }
   readonly dataset = computed(() => this.datasets().get(this.form().id));
   readonly records = computed(() => this.dataset()?.records ?? []);
   readonly stale = computed(
@@ -171,7 +197,7 @@ export class CollectionSessionStore implements OnDestroy {
     this.notice.set(null);
     try {
       const result = await this.generate(
-        this.projection(),
+        this.generationProjection(),
         {
           ...(this.form().entries ?? { count: 25, seed: 1 }),
           count: requested,
@@ -198,9 +224,18 @@ export class CollectionSessionStore implements OnDestroy {
         this.notice.set('failed');
         return;
       }
-      const records = result.records.map((record) => ({
+      const sanitized = result.records.map((record) =>
+        this.restricted()
+          ? mergeFieldValues(this.form().fields, this.fieldModes(), record.values, undefined, true)
+          : record.values,
+      );
+      if (sanitized.some((values) => values === null)) {
+        this.notice.set('failed');
+        return;
+      }
+      const records = result.records.map((record, index) => ({
         id: this.registry.nextId(),
-        values: record.values,
+        values: sanitized[index]!,
       }));
       const skipped = result.records.reduce(
         (total, record) => total + record.diagnostics.filter((d) => d.outcome === 'skipped').length,
@@ -233,14 +268,20 @@ export class CollectionSessionStore implements OnDestroy {
       !this.current(context) ||
       !this.allowed(id ? 'edit' : 'create', context.listId) ||
       this.stale() ||
-      this.busy() ||
-      !validRecordValues(this.form().fields, values)
+      this.busy()
     )
       return false;
-    if (id && !this.records().some((record) => record.id === id)) return false;
+    const previous = id ? this.records().find((record) => record.id === id) : undefined;
+    if (id && !previous) return false;
+    const safe = this.restricted()
+      ? mergeFieldValues(this.form().fields, this.fieldModes(), values, previous?.values)
+      : validRecordValues(this.form().fields, values)
+        ? values
+        : null;
+    if (safe === null) return false;
     const entry = {
       id: id ?? this.registry.nextId(),
-      values: JSON.parse(JSON.stringify(values)) as ResponseValues,
+      values: JSON.parse(JSON.stringify(safe)) as ResponseValues,
     };
     const records = id
       ? this.records().map((record) => (record.id === id ? entry : record))
