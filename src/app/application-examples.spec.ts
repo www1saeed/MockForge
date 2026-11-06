@@ -53,6 +53,9 @@ describe('Current application example catalogue', () => {
       'coordinator',
       'purchasing',
       'observer',
+      'visitor',
+      'user',
+      'admin',
     ]);
     expect(project.forms[1].access?.['observer'].open).toBe(false);
     expect(project.decisions).toContain('not role permissions');

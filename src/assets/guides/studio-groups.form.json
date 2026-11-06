@@ -1,6 +1,6 @@
 {
   "format": "mockforge-studio",
-  "schemaVersion": "2.4.0",
+  "schemaVersion": "2.5.0",
   "name": "02 · Purchase requests",
   "owner": "Fictional example product owner",
   "audience": "Product owners and delivery teams reviewing a fictional prototype",
@@ -731,6 +731,88 @@
           ]
         }
       ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "visitor",
+      "preset": "visitor",
+      "label": {
+        "de": "Besucher",
+        "en": "Visitor",
+        "fa": "بازدیدکننده"
+      },
+      "rights": {
+        "open": true,
+        "create": false,
+        "view": true,
+        "edit": false,
+        "delete": false
+      },
+      "fieldMode": "readonly"
+    },
+    {
+      "id": "user",
+      "preset": "user",
+      "label": {
+        "de": "User",
+        "en": "User",
+        "fa": "کاربر"
+      },
+      "rights": {
+        "open": true,
+        "create": true,
+        "view": true,
+        "edit": true,
+        "delete": false
+      },
+      "fieldMode": "editable"
+    },
+    {
+      "id": "admin",
+      "preset": "admin",
+      "label": {
+        "de": "Admin",
+        "en": "Admin",
+        "fa": "مدیر"
+      },
+      "rights": {
+        "open": true,
+        "create": true,
+        "view": true,
+        "edit": true,
+        "delete": true
+      },
+      "fieldMode": "editable"
+    }
+  ],
+  "users": [
+    {
+      "id": "visitor-demo",
+      "name": {
+        "de": "Demo-Besucher",
+        "en": "Demo visitor",
+        "fa": "بازدیدکنندهٔ نمونه"
+      },
+      "roleId": "visitor"
+    },
+    {
+      "id": "user-demo",
+      "name": {
+        "de": "Demo-User",
+        "en": "Demo user",
+        "fa": "کاربر نمونه"
+      },
+      "roleId": "user"
+    },
+    {
+      "id": "admin-demo",
+      "name": {
+        "de": "Demo-Admin",
+        "en": "Demo admin",
+        "fa": "مدیر نمونه"
+      },
+      "roleId": "admin"
     }
   ]
 }

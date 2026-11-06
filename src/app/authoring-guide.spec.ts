@@ -37,7 +37,7 @@ describe('Studio authoring references', (): void => {
         );
       }
       expect(readFileSync(`src/assets/guides/${example.file}`, 'utf8')).toContain(
-        '"schemaVersion": "2.4.0"',
+        '"schemaVersion": "2.5.0"',
       );
     }
   });
@@ -64,7 +64,7 @@ describe('Studio authoring references', (): void => {
         const content = fixture.componentInstance.prompt(prompt.brief);
         expect(content).toContain(AUTHORING_RULES);
         expect(content).toContain(fixture.componentInstance.t(prompt.brief));
-        expect(content).not.toContain('2.5.0');
+        expect(content).not.toContain('2.4.0');
       }
       expect(fixture.componentInstance.t('guide-json')).not.toBe(
         fixture.componentInstance.t('guide-ai'),

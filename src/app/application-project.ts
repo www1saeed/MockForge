@@ -1,4 +1,12 @@
-import { ApplicationRole, AccessPolicy, validRoles, validAccessPolicy } from './application-access';
+import { FieldPolicy, FieldAccess, validFieldAccess } from './field-access';
+import {
+  ApplicationRole,
+  ApplicationUser,
+  AccessPolicy,
+  validRoles,
+  validUsers,
+  validAccessPolicy,
+} from './application-access';
 import { allFields, FormContent, Project } from './project.model';
 import { parseProject, validateProject } from './project.validation';
 import {
@@ -9,7 +17,7 @@ import {
 } from './collection.model';
 
 /** Studio application contract; legacy forms remain valid import and renderer inputs. */
-export const APPLICATION_SCHEMA_VERSION = '2.4.0';
+export const APPLICATION_SCHEMA_VERSION = '2.5.0';
 export const APPLICATION_LIMITS = { forms: 20, definitions: 500, buttons: 100 } as const;
 const PROJECT_KEYS = new Set([
   'format',
@@ -23,6 +31,7 @@ const PROJECT_KEYS = new Set([
   'languages',
   'forms',
   'roles',
+  'users',
   'decisions',
   'questions',
   'review',
@@ -39,6 +48,8 @@ const FORM_KEYS = new Set([
   'lists',
   'entries',
   'access',
+  'fieldDefaults',
+  'fieldAccess',
 ]);
 
 /** Field and button IDs are unique within this form, including its group children. */
@@ -47,6 +58,8 @@ export interface ApplicationForm extends FormContent {
   /** Omission includes the form in the application menu; direct links still reach hidden forms. */
   menu?: boolean;
   access?: AccessPolicy;
+  fieldDefaults?: FieldPolicy;
+  fieldAccess?: FieldAccess;
   lists?: CollectionList[];
   entries?: CollectionEntries;
 }
@@ -65,6 +78,7 @@ export interface ApplicationProject {
   languages: Project['languages'];
   forms: ApplicationForm[];
   roles?: ApplicationRole[];
+  users?: ApplicationUser[];
   decisions: string;
   questions: string;
   review: Project['review'];
@@ -136,6 +150,7 @@ export function validateApplicationProject(value: unknown): value is Application
     value['format'] !== 'mockforge-studio' ||
     value['schemaVersion'] !== APPLICATION_SCHEMA_VERSION ||
     !validRoles(value['roles']) ||
+    !validUsers(value['users'], (value['roles'] ?? []) as ApplicationRole[]) ||
     value['fields'] !== undefined ||
     value['buttons'] !== undefined ||
     !Array.isArray(value['forms']) ||
@@ -168,6 +183,13 @@ export function validateApplicationProject(value: unknown): value is Application
       )
     )
       return false;
+    if (
+      !validFieldAccess(
+        form as unknown as ApplicationForm,
+        ((value['roles'] ?? []) as ApplicationRole[]).map((role) => role.id),
+      )
+    )
+      return false;
     ids.add(form['id']);
     definitions += allFields(projected.fields).length;
     buttons += projected.buttons.length;
@@ -186,6 +208,15 @@ function snapshot<T>(value: T): T {
 
 /** Older declarations admit only the features released in that version. */
 function supportsApplicationVersion(project: ApplicationProject, version: string): boolean {
+  if (
+    project.users !== undefined ||
+    (project.roles ?? []).some(
+      (role) => role.preset !== undefined || role.fieldMode !== undefined,
+    ) ||
+    project.forms.some((form) => form.fieldDefaults !== undefined || form.fieldAccess !== undefined)
+  )
+    return false;
+  if (version === '2.4.0') return true;
   if (project.roles !== undefined) return false;
   return project.forms.every((form) => {
     if (
@@ -234,7 +265,8 @@ export function parseApplicationProject(value: unknown): ApplicationProject | nu
     (value['schemaVersion'] === '2.0.0' ||
       value['schemaVersion'] === '2.1.0' ||
       value['schemaVersion'] === '2.2.0' ||
-      value['schemaVersion'] === '2.3.0')
+      value['schemaVersion'] === '2.3.0' ||
+      value['schemaVersion'] === '2.4.0')
   ) {
     const next = { ...value, schemaVersion: APPLICATION_SCHEMA_VERSION };
     if (

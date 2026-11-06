@@ -1,3 +1,4 @@
+import { FIELD_MODES, FieldMode } from './field-access';
 import type { ApplicationProject } from './application-project';
 import type { Text } from './project.model';
 
@@ -10,7 +11,15 @@ export interface ApplicationRole {
   id: string;
   label: Text;
   rights: AccessRights;
+  fieldMode?: FieldMode;
+  preset?: 'visitor' | 'user' | 'admin';
 }
+export interface ApplicationUser {
+  id: string;
+  name: Text;
+  roleId: string;
+}
+export const USER_LIMIT = 20;
 export const ROLE_LIMIT = 10;
 export const ALLOW_RIGHTS: Readonly<AccessRights> = Object.freeze({
   open: true,
@@ -54,12 +63,41 @@ export function validRoles(value: unknown): value is ApplicationRole[] | undefin
     value.every(
       (role) =>
         object(role) &&
-        Object.keys(role).every((key) => ['id', 'label', 'rights'].includes(key)) &&
+        Object.keys(role).every((key) =>
+          ['id', 'label', 'rights', 'fieldMode', 'preset'].includes(key),
+        ) &&
         typeof role['id'] === 'string' &&
         /^[a-z][a-z0-9_-]{0,63}$/.test(role['id']) &&
+        (role['fieldMode'] === undefined || FIELD_MODES.includes(role['fieldMode'] as FieldMode)) &&
+        (role['preset'] === undefined ||
+          (['visitor', 'user', 'admin'].includes(String(role['preset'])) &&
+            role['id'] === role['preset'])) &&
+        (role['preset'] !== 'admin' ||
+          (ACCESS_RIGHTS.every((key) => object(role['rights']) && role['rights'][key] === true) &&
+            (role['fieldMode'] === undefined || role['fieldMode'] === 'editable'))) &&
         roleLabel(role['label']) &&
         rights(role['rights'], true),
     )
+  );
+}
+export function validUsers(
+  value: unknown,
+  roles: readonly ApplicationRole[],
+): value is ApplicationUser[] | undefined {
+  return (
+    value === undefined ||
+    (Array.isArray(value) &&
+      value.length <= USER_LIMIT &&
+      new Set(value.map((user) => (object(user) ? user['id'] : null))).size === value.length &&
+      value.every(
+        (user) =>
+          object(user) &&
+          Object.keys(user).every((key) => ['id', 'name', 'roleId'].includes(key)) &&
+          typeof user['id'] === 'string' &&
+          /^[a-z][a-z0-9_-]{0,63}$/.test(user['id']) &&
+          roleLabel(user['name']) &&
+          roles.some((role) => role.id === user['roleId']),
+      ))
   );
 }
 /** Only explicit JSON entries are overrides; safe IDs can also name Object members. */
@@ -95,10 +133,14 @@ export function resolveAccess(
   const roles = project.roles ?? [];
   const role = roles.find((role) => role.id === roleId);
   if (roles.length && !role) return { ...DENY_RIGHTS };
-  const base = role
-    ? { ...role.rights, ...roleOverrides(form.access, role.id) }
-    : { ...ALLOW_RIGHTS };
-  const resolved = role && list ? { ...base, ...roleOverrides(list.access, role.id) } : base;
+  const admin = role?.preset === 'admin';
+  const base = admin
+    ? { ...ALLOW_RIGHTS }
+    : role
+      ? { ...role.rights, ...roleOverrides(form.access, role.id) }
+      : { ...ALLOW_RIGHTS };
+  const resolved =
+    !admin && role && list ? { ...base, ...roleOverrides(list.access, role.id) } : base;
   const open = base.open && resolved.open;
   return Object.fromEntries(
     ACCESS_RIGHTS.map((key) => [

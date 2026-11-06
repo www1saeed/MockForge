@@ -139,7 +139,7 @@ describe('Grouped list projections', () => {
     };
     f.lists = [list];
     const old = { ...p, schemaVersion: '2.1.0' };
-    expect(parseApplicationProject(old)?.schemaVersion).toBe('2.4.0');
+    expect(parseApplicationProject(old)?.schemaVersion).toBe('2.5.0');
     const presented = { ...list, columnSettings: [{ ...setting, fieldId: 'rootname' }] };
     f.lists = [presented];
     expect(parseApplicationProject({ ...p, schemaVersion: '2.2.0' })).not.toBeNull();
@@ -164,7 +164,7 @@ describe('Grouped list projections', () => {
     }
     f.lists = [list];
     expect(parseApplicationProject({ ...p, schemaVersion: '2.0.0' })).toBeNull();
-    expect(p.schemaVersion).toBe('2.4.0');
+    expect(p.schemaVersion).toBe('2.5.0');
   });
   it('preserves an open projected-child dialog through equivalent field and value clones', () => {
     TestBed.configureTestingModule({ imports: [CollectionCellComponent] });
