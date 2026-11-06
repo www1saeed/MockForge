@@ -1,3 +1,5 @@
+import { COLLECTION_ACCESS } from './application-access.session';
+import { AccessRight } from './application-access';
 import {
   computed,
   effect,
@@ -29,6 +31,8 @@ export interface RecordContext {
   formId: string;
   revision: number;
   signature: string;
+  accessKey: string;
+  listId?: string;
 }
 
 /** Browser-session records are deliberately separate from the persisted specification. */
@@ -39,6 +43,7 @@ export class CollectionSessionStore implements OnDestroy {
   private readonly generate = inject(COLLECTION_GENERATOR);
   private readonly registry = inject(CollectionSessionRegistry);
   private readonly datasets = this.registry.datasets;
+  private readonly access = inject(COLLECTION_ACCESS);
   private readonly scope = inject(COLLECTION_VIEW);
   private readonly owner = this.registry.nextOwner();
   readonly limits = COLLECTION_LIMITS;
@@ -88,6 +93,7 @@ export class CollectionSessionStore implements OnDestroy {
     });
     effect(() => {
       this.viewSession();
+      this.access.key();
       this.project.application();
       if (this.controller && this.generationKey !== this.key()) this.cancel();
     });
@@ -99,14 +105,20 @@ export class CollectionSessionStore implements OnDestroy {
     return JSON.stringify([
       this.project.projectSession(),
       this.viewSession(),
+      this.access.key(),
       this.form(),
       this.project.application().languages,
     ]);
   }
   private generationKey = '';
-  context(): RecordContext {
+  allowed(action: AccessRight, listId?: string): boolean {
+    return this.access.rights(this.form().id, listId)[action];
+  }
+  context(listId?: string): RecordContext {
     return {
       owner: this.owner,
+      accessKey: this.access.key(),
+      ...(listId ? { listId } : {}),
       session: this.project.projectSession(),
       formSession: this.viewSession(),
       formId: this.form().id,
@@ -115,7 +127,7 @@ export class CollectionSessionStore implements OnDestroy {
     };
   }
   current(context: RecordContext): boolean {
-    return JSON.stringify(context) === JSON.stringify(this.context());
+    return JSON.stringify(context) === JSON.stringify(this.context(context.listId));
   }
   cancel(): void {
     const active = !!this.controller;
@@ -132,6 +144,8 @@ export class CollectionSessionStore implements OnDestroy {
   ): Promise<void> {
     if (
       !this.current(context) ||
+      !this.allowed('create', context.listId) ||
+      (!append && this.records().length > 0 && !this.allowed('delete', context.listId)) ||
       !locales.length ||
       locales.length > 3 ||
       new Set(locales).size !== locales.length ||
@@ -217,6 +231,7 @@ export class CollectionSessionStore implements OnDestroy {
   save(values: ResponseValues, context: RecordContext, id?: string): boolean {
     if (
       !this.current(context) ||
+      !this.allowed(id ? 'edit' : 'create', context.listId) ||
       this.stale() ||
       this.busy() ||
       !validRecordValues(this.form().fields, values)
@@ -233,7 +248,13 @@ export class CollectionSessionStore implements OnDestroy {
     return this.install(records, context, this.dataset()?.skipped ?? 0);
   }
   remove(ids: readonly string[], context: RecordContext): boolean {
-    if (!this.current(context) || this.stale() || this.busy()) return false;
+    if (
+      !this.current(context) ||
+      !this.allowed('delete', context.listId) ||
+      this.stale() ||
+      this.busy()
+    )
+      return false;
     return this.install(
       this.records().filter((record) => !ids.includes(record.id)),
       context,
@@ -241,7 +262,8 @@ export class CollectionSessionStore implements OnDestroy {
     );
   }
   clear(context: RecordContext): boolean {
-    if (!this.current(context) || this.busy()) return false;
+    if (!this.current(context) || !this.allowed('delete', context.listId) || this.busy())
+      return false;
     return this.install([], context, 0);
   }
   private install(

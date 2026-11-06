@@ -85,3 +85,16 @@
     flex-direction: column;
   }
 }
+.role-switcher {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-width: 0;
+}
+.role-switcher select {
+  width: 100%;
+  min-width: 0;
+}
+.role-switcher label {
+  font-weight: 700;
+}

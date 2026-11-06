@@ -10,8 +10,11 @@ export class ApplicationPreviewSession implements CollectionView {
   private readonly target = signal<ApplicationTarget | null>(null);
   readonly formId = computed(() => this.target()?.formId ?? this.store.application().forms[0].id);
   readonly epoch = signal(0);
-  select(target: ApplicationTarget | null): void {
-    if (JSON.stringify(target) === JSON.stringify(this.target())) return;
+  private accessKey = '';
+  select(target: ApplicationTarget | null, accessKey = ''): void {
+    if (JSON.stringify(target) === JSON.stringify(this.target()) && accessKey === this.accessKey)
+      return;
+    this.accessKey = accessKey;
     this.target.set(target);
     this.epoch.update((epoch) => epoch + 1);
   }

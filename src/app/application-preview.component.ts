@@ -1,3 +1,5 @@
+import { FormsModule } from '@angular/forms';
+import { ApplicationAccessSession, COLLECTION_ACCESS } from './application-access.session';
 import {
   afterRenderEffect,
   Component,
@@ -33,9 +35,11 @@ import { FeedbackService } from './feedback.service';
 @Component({
   selector: 'app-application-preview',
   standalone: true,
-  imports: [FormPreviewComponent, CollectionWorkspaceComponent],
+  imports: [FormsModule, FormPreviewComponent, CollectionWorkspaceComponent],
   providers: [
     ApplicationPreviewSession,
+    ApplicationAccessSession,
+    { provide: COLLECTION_ACCESS, useExisting: ApplicationAccessSession },
     CollectionSessionStore,
     PatternCheckService,
     { provide: COLLECTION_VIEW, useExisting: ApplicationPreviewSession },
@@ -46,6 +50,7 @@ export class ApplicationPreviewComponent implements OnDestroy {
   /** Keep the current document path/query despite a static host's base element. */
   readonly documentUrl = window.location.href.split('#')[0];
   readonly store = inject(ProjectStore);
+  readonly access = inject(ApplicationAccessSession);
   readonly scope = inject(ApplicationPreviewSession);
   readonly data = inject(CollectionSessionStore);
   private readonly feedback = inject(FeedbackService);
@@ -63,10 +68,25 @@ export class ApplicationPreviewComponent implements OnDestroy {
       ? requested
       : this.store.application().languages[0];
   });
-  readonly target = computed(() =>
-    resolveApplicationTarget(this.store.application(), this.route()),
+  readonly menu = computed(() =>
+    applicationMenu(this.store.application()).filter(
+      (item) =>
+        this.access.rights(item.formId, item.kind === 'list' ? item.listId : undefined).open,
+    ),
   );
-  readonly menu = computed(() => applicationMenu(this.store.application()));
+  readonly requestedTarget = computed(() =>
+    this.route().kind === 'home'
+      ? (this.menu()[0] ?? null)
+      : resolveApplicationTarget(this.store.application(), this.route()),
+  );
+  readonly target = computed(() => {
+    const target = this.requestedTarget();
+    return target &&
+      this.access.rights(target.formId, target.kind === 'list' ? target.listId : undefined).open
+      ? target
+      : null;
+  });
+  readonly denied = computed(() => !!this.requestedTarget() && !this.target());
   readonly sessions = computed(() => [
     { id: `${this.store.projectSession()}:${this.scope.epoch()}` },
   ]);
@@ -74,8 +94,9 @@ export class ApplicationPreviewComponent implements OnDestroy {
   readonly href = applicationHref;
   constructor() {
     effect(() => {
-      const target = this.target();
-      untracked(() => this.scope.select(target));
+      const target = this.target(),
+        key = this.access.key();
+      untracked(() => this.scope.select(target, key));
     });
     // The shared modal outlives individual form renderers; retire its old request too.
     effect(() => {

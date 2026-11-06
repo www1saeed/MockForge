@@ -24,6 +24,21 @@
   }
   <div class="application-layout">
     <aside class="application-sidebar">
+      @if (store.application().roles?.length) {
+        <div class="role-switcher">
+          <label for="preview-role">{{ t('simulatedRole') }}</label>
+          <select
+            id="preview-role"
+            [ngModel]="access.roleId()"
+            (ngModelChange)="access.select($event)"
+          >
+            @for (role of store.application().roles; track role.id) {
+              <option [value]="role.id">{{ role.label[language()] || role.id }}</option>
+            }
+          </select>
+          <p class="fine-print">{{ t('roleSimulationHint') }}</p>
+        </div>
+      }
       @if (standalone()) {
         <button
           class="secondary-button application-menu-toggle"
@@ -84,7 +99,15 @@
         }
       } @else {
         <h2 #screenTitle tabindex="-1">
-          {{ t(route().kind === 'home' ? 'applicationEmpty' : 'applicationMissing') }}
+          {{
+            t(
+              denied()
+                ? 'accessDenied'
+                : route().kind === 'home'
+                  ? 'applicationEmpty'
+                  : 'applicationMissing'
+            )
+          }}
         </h2>
         <p>{{ t(standalone() ? 'standaloneRecovery' : 'applicationRecovery') }}</p>
         <a class="secondary-button" [href]="documentUrl + '#application'">{{
